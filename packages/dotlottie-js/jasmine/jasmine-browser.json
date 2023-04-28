@@ -1,0 +1,14 @@
+{
+  "srcDir": "src",
+  "specDir": "src/tests",
+  "specFiles": ["**/*.spec.mjs"],
+  "env": {
+    "stopSpecOnExpectationFailure": true,
+    "stopOnSpecFailure": true,
+    "random": false
+  },
+  "browser": {
+    "name": "headlessChrome"
+  },
+  "reporters": ["jasmine-console-reporter"]
+}

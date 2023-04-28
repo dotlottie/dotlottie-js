@@ -1,0 +1,13 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "main": "index.js",
+  "keywords": [],
+  "scripts": {},
+  "dependencies": {
+    "@dotlottie/dotlottie-js": "workspace:^"
+  }
+}
