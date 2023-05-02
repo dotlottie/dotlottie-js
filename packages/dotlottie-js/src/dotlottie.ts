@@ -90,10 +90,12 @@ export class DotLottie extends DotLottieCommon {
       const imageAssets = animation.imageAssets;
 
       for (const asset of imageAssets) {
-        // Assure we have a base64 encoded version of the image
-        const dataAsString = await asset.toDataURL();
+        if (!asset.excludeFromExport) {
+          // Assure we have a base64 encoded version of the image
+          const dataAsString = await asset.toDataURL();
 
-        dotlottie[`images/${asset.fileName}`] = base64ToUint8Array(dataAsString);
+          dotlottie[`images/${asset.fileName}`] = base64ToUint8Array(dataAsString);
+        }
       }
     }
 

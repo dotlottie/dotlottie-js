@@ -1,6 +1,10 @@
 {
   "name": "@dotlottie/dotlottie-js",
+<<<<<<< HEAD
   "version": "0.0.0",
+=======
+  "version": "2.1.0-beta.11",
+>>>>>>> d9ab487 (feat: moved phash to plugin, added export options)
   "type": "module",
   "description": "This library helps in creating and modifying .lottie files.",
   "repository": {

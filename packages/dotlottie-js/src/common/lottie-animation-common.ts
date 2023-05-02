@@ -11,6 +11,10 @@ import { createError } from './utils';
 
 export type AnimationData = Animation;
 
+export interface ExportOptions {
+  inlineAssets?: boolean;
+}
+
 export interface AnimationOptions extends ManifestAnimation {
   data?: AnimationData;
   defaultActiveAnimation?: boolean;
@@ -152,8 +156,8 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toArrayBuffer(): Promise<ArrayBuffer> {
-    const dataJson = await this.toJSON();
+  public async toArrayBuffer(options: ExportOptions = {}): Promise<ArrayBuffer> {
+    const dataJson = await this.toJSON(options);
 
     return new TextEncoder().encode(JSON.stringify(dataJson)).buffer;
   }
@@ -169,8 +173,8 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toBlob(): Promise<Blob> {
-    const dataJson = await this.toJSON();
+  public async toBlob(options: ExportOptions = {}): Promise<Blob> {
+    const dataJson = await this.toJSON(options);
 
     return new Blob([JSON.stringify(dataJson)], { type: 'application/json' });
   }
@@ -182,7 +186,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toJSON(): Promise<Animation> {
+  public async toJSON(options: ExportOptions = {}): Promise<Animation> {
     if (this._url && !this._data) {
       this._data = await this._fromUrl(this._url);
     }
@@ -190,10 +194,28 @@ export class LottieAnimationCommon {
     this._requireValidLottieData(this._data);
 
     if (this._data.assets?.length) {
+      // Even if the user wants to inline the assets, we still need to extract them
       await this._extractImageAssets();
 
-      for (const image of this._imageAssets) {
-        await image.generatePhash();
+      if (options.inlineAssets) {
+        const animationAssets = this.data?.assets as Animation['assets'];
+
+        if (!animationAssets) throw createError("Failed to inline assets, the animation's assets are undefined.");
+
+        const images = this.imageAssets;
+
+        for (const asset of animationAssets) {
+          if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+            for (const image of images) {
+              if (image.fileName === asset.p) {
+                // encoded is true
+                asset.e = 1;
+                asset.u = '';
+                asset.p = await image.toDataURL();
+              }
+            }
+          }
+        }
       }
     }
 

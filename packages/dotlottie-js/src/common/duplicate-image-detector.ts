@@ -100,13 +100,16 @@ export class DuplicateImageDetector extends DotLottiePlugin {
     recordOfDuplicates: Record<string, LottieImageCommon[]>,
   ): void {
     // Decrement in loop so that the indexes don't get messed up as we remove elements
-
     for (let j = animation.imageAssets.length - 1; j >= 0; j -= 1) {
       for (const key in recordOfDuplicates) {
-        if (key) {
+        if (key && recordOfDuplicates[key] !== undefined) {
           recordOfDuplicates[key]?.forEach((image) => {
-            if (image.id === animation.imageAssets[j]?.id) {
-              animation.imageAssets.splice(j, 1);
+            if (image.id === animation.imageAssets.at(j)?.id) {
+              const imageAsset = animation.imageAssets.at(j);
+
+              if (imageAsset) {
+                imageAsset.excludeFromExport = true;
+              }
             }
           });
         }
@@ -116,6 +119,12 @@ export class DuplicateImageDetector extends DotLottiePlugin {
 
   public override async onBuild(): Promise<void> {
     this._requireDotLottie(this.dotlottie);
+
+    for (const animation of this.dotlottie.animations) {
+      for (const image of animation.imageAssets) {
+        await image.generatePhash();
+      }
+    }
 
     // Create a record of duplicates
     const recordOfDuplicates: Record<string, LottieImageCommon[]> = await this._createRecordOfDuplicates();
