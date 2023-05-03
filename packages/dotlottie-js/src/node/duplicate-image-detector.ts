@@ -10,6 +10,8 @@ import type { LottieAnimationCommon } from '../common/lottie-animation-common';
 import type { LottieImageCommon } from '../common/lottie-image-common';
 import { createError } from '../common/utils';
 
+import { LottieImage } from './lottie-image';
+
 export class DuplicateImageDetector extends DotLottiePlugin {
   private async _createRecordOfDuplicates(): Promise<Record<string, LottieImageCommon[]>> {
     this._requireDotLottie(this.dotlottie);
@@ -172,7 +174,45 @@ export class DuplicateImageDetector extends DotLottiePlugin {
     // Check the record of duplicates and repath the duplicate images
     this.dotlottie.animations.forEach((animation) => {
       this.adjustDuplicateImageAssetPath(animation, recordOfDuplicates);
-      this.filterOutDuplicates(animation, recordOfDuplicates);
     });
+
+    // Create an array of duplicates by looping over the recordOfDuplicates and using the key as the image to use
+    const clonedImages: Record<string, LottieImage> = {};
+
+    for (const key in recordOfDuplicates) {
+      if (key) {
+        for (const image of this.dotlottie.getImages()) {
+          if (image.fileName === key && image.data !== undefined) {
+            clonedImages[key] = new LottieImage({
+              data: image.data,
+              id: image.id,
+              fileName: image.fileName,
+            });
+          }
+        }
+      }
+    }
+
+    if (Object.keys(clonedImages).length !== Object.keys(recordOfDuplicates).length)
+      createError('The number of cloned images does not match the number of duplicate keys.');
+
+    // For each image of recordOfDuplicates, remove itself from all the parent animations and push the clone
+    for (const key in recordOfDuplicates) {
+      if (key) {
+        recordOfDuplicates[key]?.forEach((image) => {
+          if (image.parentAnimation?.length) {
+            for (const parentAnimation of image.parentAnimation) {
+              parentAnimation.imageAssets.splice(parentAnimation.imageAssets.indexOf(image), 1);
+
+              const clonedImage = clonedImages[key];
+
+              if (clonedImage !== undefined) {
+                parentAnimation.imageAssets.push(clonedImage);
+              }
+            }
+          }
+        });
+      }
+    }
   }
 }

@@ -308,7 +308,7 @@ export class DotLottieCommon {
     const images: LottieImageCommon[] = [];
 
     this.animations.map((animation) => {
-      return images.push(...animation.imageAssets.filter((image) => !image.excludeFromExport));
+      return images.push(...animation.imageAssets);
     });
 
     return images;
