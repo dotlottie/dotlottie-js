@@ -12,42 +12,52 @@ import { createError } from '../common/utils';
 
 import { LottieImage } from './lottie-image';
 
+interface LottieImageCompare {
+  excludeFromExport: boolean;
+  hash: string | undefined;
+  image: LottieImageCommon;
+}
 export class DuplicateImageDetector extends DotLottiePlugin {
   private async _createRecordOfDuplicates(): Promise<Record<string, LottieImageCommon[]>> {
     this._requireDotLottie(this.dotlottie);
 
-    const images: Map<string, LottieImageCommon[]> = new Map();
+    const images: LottieImageCompare[] = [];
     const recordOfDuplicates: Record<string, LottieImageCommon[]> = {};
 
-    this.dotlottie.animations.forEach((animation) => {
-      images.set(animation.id, animation.imageAssets);
-    });
+    // push all of the animation image assets in to the images array
+    for (const animation of this.dotlottie.animations) {
+      for (const image of animation.imageAssets) {
+        images.push({
+          excludeFromExport: false,
+          image,
+          hash: await this.generatePhash(image),
+        });
+      }
+    }
 
     // For every array of images
-    for (const [, value] of images) {
-      // Loop over the images of the array
-      for (const image of value) {
-        // Now that we have a single image of the image array, compare it to every other image in the arry
-        for (const [, compareValue] of images) {
-          for (const compareImage of compareValue) {
-            if (
-              image.id !== compareImage.id &&
-              !image.excludeFromExport &&
-              !compareImage.excludeFromExport &&
-              (await this.distanceTo(image, compareImage)) < 5
-            ) {
-              // Check if key is already in use
-              if (!recordOfDuplicates[image.fileName] && !recordOfDuplicates[compareImage.fileName]) {
-                compareImage.excludeFromExport = true;
+    // Loop over the images of the array
+    for (const image of images) {
+      // Now that we have a single image of the image array, compare it to every other image in the arry
+      for (const compareImage of images) {
+        if (
+          image.image.id !== compareImage.image.id &&
+          !image.excludeFromExport &&
+          !compareImage.excludeFromExport &&
+          image.hash &&
+          compareImage.hash &&
+          this._phashDistance(image.hash, compareImage.hash) < 5
+        ) {
+          // Check if key is already in use
+          if (!recordOfDuplicates[image.image.fileName] && !recordOfDuplicates[compareImage.image.fileName]) {
+            compareImage.excludeFromExport = true;
 
-                recordOfDuplicates[image.fileName] = [compareImage];
-              } else if (recordOfDuplicates[compareImage.fileName]) {
-                // Check for duplicates, otherwise push the duplicate image
-                if (!recordOfDuplicates[compareImage.fileName]?.find((item) => item.id === image.id)) {
-                  image.excludeFromExport = true;
-                  recordOfDuplicates[compareImage.fileName]?.push(image);
-                }
-              }
+            recordOfDuplicates[image.image.fileName] = [compareImage.image];
+          } else if (recordOfDuplicates[compareImage.image.fileName]) {
+            // Check for duplicates, otherwise push the duplicate image
+            if (!recordOfDuplicates[compareImage.image.fileName]?.find((item) => item.id === image.image.id)) {
+              image.excludeFromExport = true;
+              recordOfDuplicates[compareImage.image.fileName]?.push(image.image);
             }
           }
         }
@@ -95,32 +105,6 @@ export class DuplicateImageDetector extends DotLottiePlugin {
     }
   }
 
-  /**
-   * Loops through the LotteImages of this object and removes duplicate images.
-   * @param recordOfDuplicates -  A record containing an image fileName as key, and all the LottieImageCommons of which are duplicates to the key.
-   */
-  public filterOutDuplicates(
-    animation: LottieAnimationCommon,
-    recordOfDuplicates: Record<string, LottieImageCommon[]>,
-  ): void {
-    // Decrement in loop so that the indexes don't get messed up as we remove elements
-    for (let j = animation.imageAssets.length - 1; j >= 0; j -= 1) {
-      for (const key in recordOfDuplicates) {
-        if (key && recordOfDuplicates[key] !== undefined) {
-          recordOfDuplicates[key]?.forEach((image) => {
-            if (image.id === animation.imageAssets.at(j)?.id) {
-              const imageAsset = animation.imageAssets.at(j);
-
-              if (imageAsset) {
-                imageAsset.excludeFromExport = true;
-              }
-            }
-          });
-        }
-      }
-    }
-  }
-
   private _phashDistance(targetPhash: string, startPhash: string): number {
     let count = 0;
 
@@ -131,16 +115,6 @@ export class DuplicateImageDetector extends DotLottiePlugin {
     }
 
     return count;
-  }
-
-  public async distanceTo(image: LottieImageCommon, imageToCompare: LottieImageCommon): Promise<number> {
-    const targetPhash = imageToCompare.phash;
-
-    if (!targetPhash || !image.phash) {
-      throw createError(`LottieImage '${imageToCompare.id}' does not have a phash generated.`);
-    }
-
-    return this._phashDistance(targetPhash, image.phash);
   }
 
   public async generatePhash(image: LottieImageCommon): Promise<string> {
@@ -162,12 +136,6 @@ export class DuplicateImageDetector extends DotLottiePlugin {
   public override async onBuild(): Promise<void> {
     this._requireDotLottie(this.dotlottie);
 
-    for (const animation of this.dotlottie.animations) {
-      for (const image of animation.imageAssets) {
-        image.phash = await this.generatePhash(image);
-      }
-    }
-
     // Create a record of duplicates
     const recordOfDuplicates: Record<string, LottieImageCommon[]> = await this._createRecordOfDuplicates();
 
@@ -178,10 +146,11 @@ export class DuplicateImageDetector extends DotLottiePlugin {
 
     // Create an array of duplicates by looping over the recordOfDuplicates and using the key as the image to use
     const clonedImages: Record<string, LottieImage> = {};
+    const images = this.dotlottie.getImages();
 
     for (const key in recordOfDuplicates) {
       if (key) {
-        for (const image of this.dotlottie.getImages()) {
+        for (const image of images) {
           if (image.fileName === key && image.data !== undefined) {
             clonedImages[key] = new LottieImage({
               data: image.data,
@@ -200,14 +169,16 @@ export class DuplicateImageDetector extends DotLottiePlugin {
     for (const key in recordOfDuplicates) {
       if (key) {
         recordOfDuplicates[key]?.forEach((image) => {
-          if (image.parentAnimation?.length) {
-            for (const parentAnimation of image.parentAnimation) {
+          if (image.parentAnimations.length) {
+            for (const parentAnimation of image.parentAnimations) {
               parentAnimation.imageAssets.splice(parentAnimation.imageAssets.indexOf(image), 1);
 
               const clonedImage = clonedImages[key];
 
               if (clonedImage !== undefined) {
                 parentAnimation.imageAssets.push(clonedImage);
+
+                clonedImage.parentAnimations.push(parentAnimation);
               }
             }
           }

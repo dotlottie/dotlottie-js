@@ -2,8 +2,6 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Hash } from 'browser-image-hash';
-
 import type { LottieAnimationCommon } from './lottie-animation-common.js';
 import { createError } from './utils';
 
@@ -13,7 +11,7 @@ export interface ImageOptions {
   data?: ImageData;
   fileName: string;
   id: string;
-  parentAnimation?: LottieAnimationCommon[];
+  parentAnimations?: LottieAnimationCommon[];
   url?: string;
 }
 
@@ -26,13 +24,7 @@ export class LottieImageCommon {
 
   protected _fileName: string = '';
 
-  protected _phash: string | undefined;
-
-  protected _dhash: Hash | undefined;
-
-  protected _excludeFromExport: boolean;
-
-  protected _parentAnimation: LottieAnimationCommon[] | undefined;
+  protected _parentAnimations: LottieAnimationCommon[];
 
   public constructor(options: ImageOptions) {
     this._requireValidId(options.id);
@@ -54,11 +46,11 @@ export class LottieImageCommon {
       this._fileName = options.fileName;
     }
 
-    if (options.parentAnimation) {
-      this._parentAnimation = options.parentAnimation;
+    if (options.parentAnimations) {
+      this._parentAnimations = options.parentAnimations;
+    } else {
+      this._parentAnimations = [];
     }
-
-    this._excludeFromExport = false;
   }
 
   /**
@@ -123,36 +115,12 @@ export class LottieImageCommon {
     this._url = url;
   }
 
-  public get phash(): string | undefined {
-    return this._phash;
+  public get parentAnimations(): LottieAnimationCommon[] {
+    return this._parentAnimations;
   }
 
-  public set phash(phash: string | undefined) {
-    this._phash = phash;
-  }
-
-  public get dhash(): Hash | undefined {
-    return this._dhash;
-  }
-
-  public set dhash(hash: Hash | undefined) {
-    this._dhash = hash;
-  }
-
-  public get excludeFromExport(): boolean {
-    return this._excludeFromExport;
-  }
-
-  public set excludeFromExport(exclude) {
-    this._excludeFromExport = exclude;
-  }
-
-  public get parentAnimation(): LottieAnimationCommon[] | undefined {
-    return this._parentAnimation;
-  }
-
-  public set parentAnimation(parentAnimation: LottieAnimationCommon[] | undefined) {
-    this._parentAnimation = parentAnimation;
+  public set parentAnimations(parentAnimations: LottieAnimationCommon[]) {
+    this._parentAnimations = parentAnimations;
   }
 
   public async toDataURL(): Promise<string> {
