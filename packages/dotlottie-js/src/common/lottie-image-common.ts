@@ -127,8 +127,16 @@ export class LottieImageCommon {
     return this._phash;
   }
 
+  public set phash(phash: string | undefined) {
+    this._phash = phash;
+  }
+
   public get dhash(): Hash | undefined {
     return this._dhash;
+  }
+
+  public set dhash(hash: Hash | undefined) {
+    this._dhash = hash;
   }
 
   public get excludeFromExport(): boolean {
@@ -147,16 +155,8 @@ export class LottieImageCommon {
     this._parentAnimation = parentAnimation;
   }
 
-  public async generatePhash(): Promise<string> {
-    throw createError('generatePhash(): Promise<string> not implemented in concrete class!');
-  }
-
   public async toDataURL(): Promise<string> {
     throw createError('toDataUrl(): Proimse<string> not implemented in concrete class!');
-  }
-
-  public async distanceTo(_imageToCompare: LottieImageCommon): Promise<number> {
-    throw createError('distanceTo(imageToCompare: LottieImageCommon) not implemented in concrete class!');
   }
 
   /**

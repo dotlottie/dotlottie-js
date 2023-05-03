@@ -14,6 +14,7 @@ const commonConfig = {
   sourcemap: true,
   splitting: false,
   tsconfig: 'tsconfig.build.json',
+  noExternal: ['browser-image-hash'],
   treeshake: true,
 };
 
@@ -31,6 +32,5 @@ export default defineConfig([
     outDir: './dist',
     platform: 'browser',
     target: ['es2020'],
-    noExternal: ['browser-image-hash'],
   },
 ]);

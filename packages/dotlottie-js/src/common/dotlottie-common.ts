@@ -5,7 +5,6 @@
 import type { Animation } from '@lottiefiles/lottie-types';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
-import { DuplicateImageDetector } from './duplicate-image-detector';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
 import type { LottieImageCommon } from './lottie-image-common';
 import type { Manifest } from './manifest';
@@ -60,8 +59,6 @@ export class DotLottieCommon {
     this._customData = options?.customData ?? {};
 
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
-
-    if (this.enableDuplicateImageOptimization) this.addPlugins(new DuplicateImageDetector());
   }
 
   public async toBase64(): Promise<string> {

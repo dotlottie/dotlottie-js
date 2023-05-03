@@ -6,7 +6,7 @@ import type { Animation } from '@lottiefiles/lottie-types';
 import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
-import { DotLottieCommon, createError } from './common';
+import { DotLottieCommon, DuplicateImageDetector, createError } from './common';
 import type { DotLottiePlugin, AnimationOptions, DotLottieOptions } from './common';
 import { LottieAnimation } from './lottie-animation';
 import { LottieImage } from './lottie-image';
@@ -15,6 +15,8 @@ import { base64ToUint8Array, getExtensionTypeFromBase64 } from './utils';
 export class DotLottie extends DotLottieCommon {
   public constructor(options?: DotLottieOptions) {
     super(options);
+
+    if (this.enableDuplicateImageOptimization) this.addPlugins(new DuplicateImageDetector());
   }
 
   public override addPlugins(...plugins: DotLottiePlugin[]): DotLottieCommon {

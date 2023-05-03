@@ -3,12 +3,12 @@
  */
 
 import type { Animation } from '@lottiefiles/lottie-types';
-import type { Hash } from 'browser-image-hash';
-import { DifferenceHashBuilder } from 'browser-image-hash';
+import phash from 'sharp-phash';
 
-import { DotLottiePlugin } from './dotlottie-plugin';
-import type { LottieAnimationCommon } from './lottie-animation-common';
-import type { LottieImageCommon } from './lottie-image-common';
+import { DotLottiePlugin } from '../common/dotlottie-plugin';
+import type { LottieAnimationCommon } from '../common/lottie-animation-common';
+import type { LottieImageCommon } from '../common/lottie-image-common';
+import { createError } from '../common/utils';
 
 export class DuplicateImageDetector extends DotLottiePlugin {
   private async _createRecordOfDuplicates(): Promise<Record<string, LottieImageCommon[]>> {
@@ -119,21 +119,42 @@ export class DuplicateImageDetector extends DotLottiePlugin {
     }
   }
 
-  public async distanceTo(image: LottieImageCommon, imageToCompare: LottieImageCommon): Promise<number> {
-    if (image.dhash && imageToCompare.dhash) {
-      return image.dhash.getHammingDistance(imageToCompare.dhash);
+  private _phashDistance(targetPhash: string, startPhash: string): number {
+    let count = 0;
+
+    for (let i = 0; i < targetPhash.length; i += 1) {
+      if (targetPhash[i] !== startPhash[i]) {
+        count += 1;
+      }
     }
 
-    return 0;
+    return count;
   }
 
-  public async generatePhash(image: LottieImageCommon): Promise<Hash> {
-    const builder = new DifferenceHashBuilder();
-    const targetURL = new URL(await image.toDataURL());
+  public async distanceTo(image: LottieImageCommon, imageToCompare: LottieImageCommon): Promise<number> {
+    const targetPhash = imageToCompare.phash;
 
-    const destHash = await builder.build(targetURL);
+    if (!targetPhash || !image.phash) {
+      throw createError(`LottieImage '${imageToCompare.id}' does not have a phash generated.`);
+    }
 
-    return destHash;
+    return this._phashDistance(targetPhash, image.phash);
+  }
+
+  public async generatePhash(image: LottieImageCommon): Promise<string> {
+    if (!image.data) {
+      createError("Can't generate phash value.");
+    }
+
+    const nBuf = await image.toArrayBuffer();
+
+    const decoder = new TextDecoder();
+
+    let phashValue = null;
+
+    phashValue = await phash(Buffer.from(decoder.decode(nBuf), 'base64'));
+
+    return phashValue;
   }
 
   public override async onBuild(): Promise<void> {
@@ -141,7 +162,7 @@ export class DuplicateImageDetector extends DotLottiePlugin {
 
     for (const animation of this.dotlottie.animations) {
       for (const image of animation.imageAssets) {
-        image.dhash = await this.generatePhash(image);
+        image.phash = await this.generatePhash(image);
       }
     }
 
