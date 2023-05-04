@@ -27,6 +27,7 @@ import * as SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization
 import dotlottieAnimation from './__fixtures__/simple/animation.lottie';
 import animationData from './__fixtures__/simple/animation/animations/lottie-1.json';
 import manifest from './__fixtures__/simple/animation/manifest.json';
+import bigMergedDotLottie from './__fixtures__/simple/big-merged-dotlottie.lottie';
 import { customMatchers } from './test-utils';
 
 beforeAll(() => {
@@ -468,6 +469,23 @@ describe('fromArrayBuffer', () => {
     expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
     expect(dotlottie.animations[0]?.data).toEqual(animationData as AnimationData);
     expect(dotlottie.manifest).toEqual(manifest as Manifest);
+  });
+
+  it('loads a dotLottie containing images from an array buffer', async () => {
+    const arrayBuffer = bigMergedDotLottie;
+    let dotlottie = new DotLottie();
+
+    dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
+
+    expect(dotlottie.animations.length).toBe(6);
+    expect(dotlottie.getImages().length).toBe(16);
+    expect(dotlottie.animations[0]?.id).toEqual('v1');
+    expect(dotlottie.animations[1]?.id).toEqual('v2');
+    expect(dotlottie.animations[2]?.id).toEqual('v3');
+    expect(dotlottie.animations[3]?.id).toEqual('v4');
+    expect(dotlottie.animations[4]?.id).toEqual('v5');
+    expect(dotlottie.animations[5]?.id).toEqual('v6');
+    expect(dotlottie.animations.map((animation) => animation.id)).toEqual(['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
   });
 });
 

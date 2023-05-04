@@ -526,7 +526,7 @@ describe('fromArrayBuffer', () => {
     expect(dotlottie.animations[3]?.id).toEqual('v4');
     expect(dotlottie.animations[4]?.id).toEqual('v5');
     expect(dotlottie.animations[5]?.id).toEqual('v6');
-    // expect(dotlottie.animations.map((animation) => animation.id)).toEqual(['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
+    expect(dotlottie.animations.map((animation) => animation.id)).toEqual(['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
   });
 });
 
