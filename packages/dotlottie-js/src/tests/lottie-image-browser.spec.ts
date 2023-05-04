@@ -36,7 +36,22 @@ describe('LottieImage', () => {
       })
       .build()
       .then(async (value: DotLottie) => {
-        expect(value.getImages().length).toBe(5);
+        const images = value.getImages();
+
+        // filter out unique images
+        const uniqueImages = images.filter(
+          (image, index, self) => self.findIndex((compareImage) => compareImage.fileName === image.fileName) === index,
+        );
+
+        expect(uniqueImages.length).toBe(5);
+        expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_1.jpeg',
+          'image_2.jpeg',
+          'image_3.jpeg',
+          'image_4.jpeg',
+          'image_5.jpeg',
+        ]);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_3', 'image_4', 'image_5']);
       });
   });
 
@@ -68,7 +83,22 @@ describe('LottieImage', () => {
       })
       .build()
       .then(async (value: DotLottie) => {
-        expect(value.getImages().length).toBe(5);
+        const images = value.getImages();
+
+        // filter out unique images
+        const uniqueImages = images.filter(
+          (image, index, self) => self.findIndex((compareImage) => compareImage.fileName === image.fileName) === index,
+        );
+
+        expect(uniqueImages.length).toBe(5);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_3', 'image_4', 'image_5']);
+        expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_1.jpeg',
+          'image_2.jpeg',
+          'image_3.jpeg',
+          'image_4.jpeg',
+          'image_5.jpeg',
+        ]);
       });
   });
 
@@ -82,12 +112,20 @@ describe('LottieImage', () => {
       .then(async (value: DotLottie) => {
         const images = value.getImages();
 
-        expect(images.length).toBe(4);
+        // filter out unique images
+        const uniqueImages = images.filter(
+          (image, index, self) => self.findIndex((compareImage) => compareImage.fileName === image.fileName) === index,
+        );
 
-        expect(images[0]?.id).toBe('image_0');
-        expect(images[1]?.id).toBe('image_1');
-        expect(images[2]?.id).toBe('image_3');
-        expect(images[3]?.id).toBe('image_4');
+        expect(uniqueImages.length).toBe(4);
+
+        expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_0.png',
+          'image_1.png',
+          'image_3.jpeg',
+          'image_4.jpeg',
+        ]);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_3', 'image_4']);
       });
   });
 
@@ -101,13 +139,21 @@ describe('LottieImage', () => {
       .then(async (value: DotLottie) => {
         const images = value.getImages();
 
-        expect(images.length).toBe(5);
+        // filter out unique images
+        const uniqueImages = images.filter(
+          (image, index, self) => self.findIndex((compareImage) => compareImage.fileName === image.fileName) === index,
+        );
 
-        expect(images[0]?.id).toBe('image_0');
-        expect(images[1]?.id).toBe('image_1');
-        expect(images[2]?.id).toBe('image_2');
-        expect(images[3]?.id).toBe('image_3');
-        expect(images[4]?.id).toBe('image_4');
+        expect(uniqueImages.length).toBe(5);
+
+        expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_0.png',
+          'image_1.png',
+          'image_2.png',
+          'image_3.jpeg',
+          'image_4.jpeg',
+        ]);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_2', 'image_3', 'image_4']);
       });
   });
 
@@ -141,13 +187,21 @@ describe('LottieImage', () => {
       .then(async (value: DotLottie) => {
         const images = value.getImages();
 
-        expect(images.length).toBe(5);
+        // filter out unique images
+        const uniqueImages = images.filter(
+          (image, index, self) => self.findIndex((compareImage) => compareImage.fileName === image.fileName) === index,
+        );
 
-        expect(images[0]?.id).toBe('image_1');
-        expect(images[1]?.id).toBe('image_2');
-        expect(images[2]?.id).toBe('image_4');
-        expect(images[3]?.id).toBe('image_5');
-        expect(images[4]?.id).toBe('image_9');
+        expect(uniqueImages.length).toBe(5);
+
+        expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_1.png',
+          'image_2.png',
+          'image_4.jpeg',
+          'image_5.jpeg',
+          'image_9.jpeg',
+        ]);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_4', 'image_5', 'image_9']);
       });
   });
 });

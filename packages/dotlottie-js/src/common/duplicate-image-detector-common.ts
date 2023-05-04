@@ -3,8 +3,6 @@
  */
 
 import type { Animation } from '@lottiefiles/lottie-types';
-import type { Hash } from 'browser-image-hash';
-import { DifferenceHashBuilder } from 'browser-image-hash';
 
 import { LottieImage } from '../lottie-image';
 
@@ -15,11 +13,25 @@ import { createError } from './utils';
 
 interface LottieImageCompare {
   excludeFromExport: boolean;
-  hash: Hash | undefined;
+  hash: string | undefined;
   image: LottieImageCommon;
 }
 
-export class DuplicateImageDetector extends DotLottiePlugin {
+export class DuplicateImageDetectorCommon extends DotLottiePlugin {
+  public async generatePhash(_image: LottieImageCommon): Promise<string> {
+    createError('generatePhash(image: LottieImageCommon): Promise<Hash> is not implemented in concrete class.');
+
+    return '';
+  }
+
+  public distanceTo(_imageHash: string, _targetImageHash: string): number {
+    createError(
+      'distanceTo(_imageHash: string, _targetImageHash: string): Promise<number> is not implemented in concrete class.',
+    );
+
+    return 0;
+  }
+
   private async _createRecordOfDuplicates(): Promise<Record<string, LottieImageCommon[]>> {
     this._requireDotLottie(this.dotlottie);
 
@@ -48,7 +60,8 @@ export class DuplicateImageDetector extends DotLottiePlugin {
           !compareImage.excludeFromExport &&
           image.hash &&
           compareImage.hash &&
-          image.hash.getHammingDistance(compareImage.hash) < 5
+          this.distanceTo(image.hash, compareImage.hash) < 5
+          // image.hash.getHammingDistance(compareImage.hash) < 5
         ) {
           // Check if key is already in use
           if (!recordOfDuplicates[image.image.fileName] && !recordOfDuplicates[compareImage.image.fileName]) {
@@ -105,15 +118,6 @@ export class DuplicateImageDetector extends DotLottiePlugin {
         });
       }
     }
-  }
-
-  public async generatePhash(image: LottieImageCommon): Promise<Hash> {
-    const builder = new DifferenceHashBuilder();
-    const targetURL = new URL(await image.toDataURL());
-
-    const destHash = await builder.build(targetURL);
-
-    return destHash;
   }
 
   public override async onBuild(): Promise<void> {

@@ -170,7 +170,7 @@ export class DotLottie extends DotLottieCommon {
               for (const asset of animationAssets) {
                 if ('w' in asset && 'h' in asset) {
                   if (asset.p.includes(image.id)) {
-                    image.parentAnimation?.push(parentAnimation);
+                    image.parentAnimations.push(parentAnimation);
                     parentAnimation.imageAssets.push(image);
                   }
                 }

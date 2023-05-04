@@ -46,11 +46,7 @@ export class LottieImageCommon {
       this._fileName = options.fileName;
     }
 
-    if (options.parentAnimations) {
-      this._parentAnimations = options.parentAnimations;
-    } else {
-      this._parentAnimations = [];
-    }
+    this._parentAnimations = options.parentAnimations || [];
   }
 
   /**
