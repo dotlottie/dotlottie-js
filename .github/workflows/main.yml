@@ -64,6 +64,8 @@ jobs:
     if: ${{ github.repository == 'dotlottie/dotlottie-js' && github.event_name == 'push' }}
     permissions:
       pull-requests: write
+      actions: write #  to cancel/stop running workflows (styfle/cancel-workflow-action)
+      contents: read #  to fetch code (actions/checkout)
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v2
