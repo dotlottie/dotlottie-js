@@ -91,6 +91,14 @@ jobs:
       - name: 🏗 Build
         run: pnpm build
 
+      - name: Create .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
+        env:
+          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
       - name: 🚀 Release
         uses: changesets/action@v1
         with:
