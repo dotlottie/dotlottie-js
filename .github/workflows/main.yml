@@ -15,10 +15,6 @@ permissions:
 
 jobs:
   validate:
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [18]
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -32,11 +28,11 @@ jobs:
         with:
           version: 7
 
-      - name: ⎔ Setup Node@${{ matrix.node }}
+      - name: ⎔ Setup Node@18
         uses: actions/setup-node@v3
         with:
           cache: 'pnpm'
-          node-version: ${{ matrix.node }}
+          node-version: 18
           scope: '@lottiefiles'
           registry-url: 'https://npm.pkg.github.com/'
           always-auth: true
@@ -75,11 +71,11 @@ jobs:
         with:
           version: 7
 
-      - name: ⎔ Setup Node@${{ matrix.node }}
+      - name: ⎔ Setup Node@18
         uses: actions/setup-node@v3
         with:
           cache: 'pnpm'
-          node-version: ${{ matrix.node }}
+          node-version: 18
           scope: '@lottiefiles'
           registry-url: 'https://npm.pkg.github.com/'
           always-auth: true
