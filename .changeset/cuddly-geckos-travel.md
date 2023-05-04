@@ -2,4 +2,4 @@
 "@dotlottie/dotlottie-js": minor
 ---
 
-public release
+initial release
