@@ -9,6 +9,8 @@ import { Base64 } from 'js-base64';
 
 import { LottieAnimation } from '..';
 
+// eslint-disable-next-line import/no-namespace
+import * as BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
 import animationData from './__fixtures__/simple/animation/animations/lottie-1.json';
 
 describe('LottieAnimation', () => {
@@ -77,6 +79,17 @@ describe('LottieAnimation', () => {
       const jsonData = await animation.toJSON();
 
       expect(jsonData).toEqual(animationData as AnimationData);
+    });
+
+    it('returns the animation with inlined data as a JSON object', async () => {
+      const animation = new LottieAnimation({
+        id: 'test',
+        data: structuredClone(BULL_DATA) as unknown as AnimationData,
+      });
+
+      const jsonData = await animation.toJSON({ inlineAssets: true });
+
+      expect(jsonData).toEqual(BULL_DATA as unknown as AnimationData);
     });
 
     it('resolves the animation data from the provided url and returns the animation data as a JSON object', async () => {

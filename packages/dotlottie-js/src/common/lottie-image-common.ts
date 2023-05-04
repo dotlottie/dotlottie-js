@@ -2,8 +2,6 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Hash } from 'browser-image-hash';
-
 import type { LottieAnimationCommon } from './lottie-animation-common.js';
 import { createError } from './utils';
 
@@ -13,7 +11,7 @@ export interface ImageOptions {
   data?: ImageData;
   fileName: string;
   id: string;
-  parentAnimation?: LottieAnimationCommon[];
+  parentAnimations?: LottieAnimationCommon[];
   url?: string;
 }
 
@@ -26,13 +24,7 @@ export class LottieImageCommon {
 
   protected _fileName: string = '';
 
-  protected _phash: string | undefined;
-
-  protected _dhash: Hash | undefined;
-
-  protected _excludeFromExport: boolean;
-
-  protected _parentAnimation: LottieAnimationCommon[] | undefined;
+  protected _parentAnimations: LottieAnimationCommon[];
 
   public constructor(options: ImageOptions) {
     this._requireValidId(options.id);
@@ -54,11 +46,7 @@ export class LottieImageCommon {
       this._fileName = options.fileName;
     }
 
-    if (options.parentAnimation) {
-      this._parentAnimation = options.parentAnimation;
-    }
-
-    this._excludeFromExport = false;
+    this._parentAnimations = options.parentAnimations || [];
   }
 
   /**
@@ -123,40 +111,16 @@ export class LottieImageCommon {
     this._url = url;
   }
 
-  public get phash(): string | undefined {
-    return this._phash;
+  public get parentAnimations(): LottieAnimationCommon[] {
+    return this._parentAnimations;
   }
 
-  public get dhash(): Hash | undefined {
-    return this._dhash;
-  }
-
-  public get excludeFromExport(): boolean {
-    return this._excludeFromExport;
-  }
-
-  public set excludeFromExport(exclude) {
-    this._excludeFromExport = exclude;
-  }
-
-  public get parentAnimation(): LottieAnimationCommon[] | undefined {
-    return this._parentAnimation;
-  }
-
-  public set parentAnimation(parentAnimation: LottieAnimationCommon[] | undefined) {
-    this._parentAnimation = parentAnimation;
-  }
-
-  public async generatePhash(): Promise<string> {
-    throw createError('generatePhash(): Promise<string> not implemented in concrete class!');
+  public set parentAnimations(parentAnimations: LottieAnimationCommon[]) {
+    this._parentAnimations = parentAnimations;
   }
 
   public async toDataURL(): Promise<string> {
     throw createError('toDataUrl(): Proimse<string> not implemented in concrete class!');
-  }
-
-  public async distanceTo(_imageToCompare: LottieImageCommon): Promise<number> {
-    throw createError('distanceTo(imageToCompare: LottieImageCommon) not implemented in concrete class!');
   }
 
   /**

@@ -9,6 +9,7 @@ import { strToU8, unzip, zip, strFromU8 } from 'fflate';
 import { createError, DotLottieCommon } from '../common';
 import type { DotLottieOptions, DotLottiePlugin, AnimationOptions } from '../common';
 
+import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
 import { LottieImage } from './lottie-image';
 import { base64ToUint8Array, getExtensionTypeFromBase64 } from './utils';
@@ -16,6 +17,8 @@ import { base64ToUint8Array, getExtensionTypeFromBase64 } from './utils';
 export class DotLottie extends DotLottieCommon {
   public constructor(options?: DotLottieOptions) {
     super(options);
+
+    if (this.enableDuplicateImageOptimization) this.addPlugins(new DuplicateImageDetector());
   }
 
   public override addPlugins(...plugins: DotLottiePlugin[]): DotLottieCommon {
@@ -167,7 +170,7 @@ export class DotLottie extends DotLottieCommon {
               for (const asset of animationAssets) {
                 if ('w' in asset && 'h' in asset) {
                   if (asset.p.includes(image.id)) {
-                    image.parentAnimation?.push(parentAnimation);
+                    image.parentAnimations.push(parentAnimation);
                     parentAnimation.imageAssets.push(image);
                   }
                 }

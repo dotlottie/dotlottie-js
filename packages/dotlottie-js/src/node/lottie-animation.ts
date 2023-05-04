@@ -64,7 +64,7 @@ export class LottieAnimation extends LottieAnimationCommon {
             data: asset.p,
             id: asset.id,
             fileName,
-            parentAnimation: [this],
+            parentAnimations: [this],
           }),
         );
 
