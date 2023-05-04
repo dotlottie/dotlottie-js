@@ -37,15 +37,17 @@ import { DotLottie } from '@dotlottie/dotlottie-js/node'
 
 > For more use cases check out the documentation on [gitbook](https://docs.lottiefiles.com/dotlottie-js-external/)
 
-```Typescript
+```ts
 import { DotLottie } from '@dotlottie/dotlottie-js';
 //If running on Node
 // import { DotLottie } from '@dotlottie/dotlottie-js/node';
 import like_animation from './like.json';
 
-const dotLottie = new DotLottie();
+async function createDotLottie(){
+  const dotLottie = new DotLottie();
 
-await dotLottie 
+  // build dotLottie
+  await dotLottie 
         .setAuthor('LottieFiles')
         .setVersion('1.0')
         .addAnimation({
@@ -61,9 +63,12 @@ await dotLottie
           autoplay: false
         })
         .build()
-        .then((value) => {
-          value.download('my_animation.lottie');
-        });
+  
+  // download dotLottie
+  await dotlottie.download('my_animation.lottie');
+}
+
+createDotLottie();
 ```
 
 ### Managing the manifest.json
@@ -99,7 +104,7 @@ For examples on how to use in React, Next.js, Vue and Nuxt 3 please refer to the
 
 #### Setting up
 
-```
+```sh
 git clone https://github.com/dotlottie/dotottie-js
 
 cd dotlottie-js
@@ -109,13 +114,13 @@ pnpm i
 
 #### Building
 
-```
+```sh
 pnpm run build
 ```
 
 #### Running test suite
 
-```
+```sh
 pnpm run test
 ```
 
