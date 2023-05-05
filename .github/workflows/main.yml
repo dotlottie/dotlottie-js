@@ -85,7 +85,9 @@ jobs:
         run: pnpm build
 
       - name: remove npmrc
-        run: rm -rf .npmrc
+        run: |
+          rm -rf .npmrc
+          npm config list
 
       - name: 🚀 Release
         uses: changesets/action@v1
