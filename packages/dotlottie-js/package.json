@@ -5,19 +5,19 @@
   "description": "This library helps in creating and modifying .lottie files.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LottieFiles/dotlottie-js.git",
+    "url": "git+https://github.com/dotlottie/dotlottie-js.git",
     "directory": "packages/dotlottie-js"
   },
-  "homepage": "https://github.com/LottieFiles/dotlottie-js#readme",
-  "bugs": "https://github.com/LottieFiles/dotlottie-js/issues",
-  "author": "LottieFiles",
+  "homepage": "https://github.com/dotlottie/dotlottie-js#readme",
+  "bugs": "https://github.com/dotlottie/dotlottie-js/issues",
+  "author": "dotLottie",
   "contributors": [
     "Karam Ali <karam@lottiefiles.com>",
     "Sam Osborne <sam@lottiefiles.com>",
     "Jawish Hameed <jawish@lottiefiles.com>",
     "Abdelrahman Ashraf <a.theashraf@gmail.com>"
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },

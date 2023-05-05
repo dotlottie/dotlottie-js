@@ -1,10 +1,9 @@
 {
   "name": "@dotlottie/dotlottie-js",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "scripts/"
+    "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",
