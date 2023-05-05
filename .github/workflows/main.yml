@@ -84,9 +84,10 @@ jobs:
       - name: 🏗 Build
         run: pnpm build
 
-      - name: remove npmrc
+      - name: update npmrc
         run: |
           rm -rf .npmrc
+          echo "//registry.npmjs.org:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           npm config list
 
       - name: 🚀 Release
