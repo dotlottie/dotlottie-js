@@ -87,13 +87,14 @@ jobs:
       - name: update npmrc
         run: |
           echo "//registry.npmjs.org:_authToken=${{ secrets.NPMJS_TOKEN }}" > ~/.npmrc
+          echo "@dotlottie:registry=https://registry.npmjs.org" > ~/.npmrc
           npm config list
 
-      - name: ⎔ Setup Node@18
-        uses: actions/setup-node@v3
-        with:
-          cache: 'pnpm'
-          node-version: 18
+      # - name: ⎔ Setup Node@18
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     cache: 'pnpm'
+      #     node-version: 18
 
       - name: Environment
         shell: bash
