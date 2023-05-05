@@ -87,7 +87,7 @@ jobs:
       - name: update npmrc
         run: |
           echo "@dotlottie:registry=https://registry.npmjs.org" >> ~/.npmrc
-          echo "//registry.npmjs.org:_authToken=${{ secrets.NPMJS_TOKEN }}" >> ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_TOKEN }}" >> ~/.npmrc
           npm config list
 
       # - name: ⎔ Setup Node@18
@@ -119,4 +119,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+          # NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
