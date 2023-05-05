@@ -89,6 +89,12 @@ jobs:
           echo "//registry.npmjs.org:_authToken=${{ secrets.NPMJS_TOKEN }}" > ~/.npmrc
           npm config list
 
+      - name: ⎔ Setup Node@18
+        uses: actions/setup-node@v3
+        with:
+          cache: 'pnpm'
+          node-version: 18
+
       - name: Environment
         shell: bash
         run: |
