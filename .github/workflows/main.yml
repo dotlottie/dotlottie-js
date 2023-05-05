@@ -29,9 +29,6 @@ jobs:
         with:
           cache: 'pnpm'
           node-version: 18
-          scope: '@lottiefiles'
-          registry-url: 'https://npm.pkg.github.com/'
-          always-auth: true
 
       - name: 📥 Download deps
         run: pnpm install
@@ -72,9 +69,6 @@ jobs:
         with:
           cache: 'pnpm'
           node-version: 18
-          scope: '@lottiefiles'
-          registry-url: 'https://npm.pkg.github.com/'
-          always-auth: true
 
       - name: 📥 Download deps
         run: pnpm install
@@ -83,12 +77,6 @@ jobs:
 
       - name: 🏗 Build
         run: pnpm build
-
-      - name: ⎔ Setup Node@18
-        uses: actions/setup-node@v3
-        with:
-          cache: 'pnpm'
-          node-version: 18
 
       # - name: update npmrc
       #   run: |
