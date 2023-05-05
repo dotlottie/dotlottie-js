@@ -86,9 +86,15 @@ jobs:
 
       - name: update npmrc
         run: |
-          rm -rf .npmrc
           echo "//registry.npmjs.org:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           npm config list
+
+      # - name: ⎔ Setup Node@18
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     cache: 'pnpm'
+      #     node-version: 18
+      #     registry-url: 'https://registry.npmjs.org/'
 
       - name: 🚀 Release
         uses: changesets/action@v1
