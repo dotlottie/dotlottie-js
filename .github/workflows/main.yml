@@ -84,17 +84,23 @@ jobs:
       - name: 🏗 Build
         run: pnpm build
 
-      - name: update npmrc
-        run: |
-          echo "@dotlottie:registry=https://registry.npmjs.org" >> ~/.npmrc
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_TOKEN }}" >> ~/.npmrc
-          npm config list
+      - name: ⎔ Setup Node@18
+        uses: actions/setup-node@v3
+        with:
+          cache: 'pnpm'
+          node-version: 18
 
-      # - name: ⎔ Setup Node@18
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     cache: 'pnpm'
-      #     node-version: 18
+      # - name: update npmrc
+      #   run: |
+      #     echo "@dotlottie:registry=https://registry.npmjs.org" >> ~/.npmrc
+      #     echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_TOKEN }}" >> ~/.npmrc
+      #     npm config list
+
+      # # - name: ⎔ Setup Node@18
+      # #   uses: actions/setup-node@v3
+      # #   with:
+      # #     cache: 'pnpm'
+      # #     node-version: 18
 
       - name: Environment
         shell: bash
