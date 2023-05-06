@@ -4,6 +4,8 @@
 
 import type { Animation } from '@lottiefiles/lottie-types';
 
+import pkg from '../../package.json';
+
 import type { DotLottiePlugin } from './dotlottie-plugin';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
 import type { LottieImageCommon } from './lottie-image-common';
@@ -50,11 +52,11 @@ export class DotLottieCommon {
 
     this._description = options?.description ?? '';
 
-    this._generator = options?.generator ?? 'dotLottie-js_v2.0';
+    this._generator = options?.generator ?? pkg.name;
 
     this._keywords = options?.keywords ?? 'dotLottie';
 
-    this._version = options?.version ?? '1.0';
+    this._version = options?.version ?? pkg.version;
 
     this._customData = options?.customData ?? {};
 
