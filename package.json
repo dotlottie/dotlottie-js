@@ -1,5 +1,6 @@
 {
   "name": "@dotlottie/dotlottie-js",
+  "homepage": "https://github.com/dotlottie/dotlottie-js#readme",
   "license": "MIT",
   "private": true,
   "workspaces": [
