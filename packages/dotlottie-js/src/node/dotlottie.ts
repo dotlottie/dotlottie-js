@@ -17,7 +17,7 @@ import { base64ToUint8Array, getExtensionTypeFromBase64 } from './utils';
 
 export class DotLottie extends DotLottieCommon {
   public constructor(options?: DotLottieOptions) {
-    const generator = options?.generator ?? `${pkg.name}/node`;
+    const generator = options?.generator ?? `${pkg.name}/node@${pkg.version}`;
 
     super({
       ...options,

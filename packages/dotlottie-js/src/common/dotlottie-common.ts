@@ -52,7 +52,7 @@ export class DotLottieCommon {
 
     this._description = options?.description ?? '';
 
-    this._generator = options?.generator ?? pkg.name;
+    this._generator = options?.generator ?? `${pkg.name}@${pkg.version}`;
 
     this._keywords = options?.keywords ?? 'dotLottie';
 
