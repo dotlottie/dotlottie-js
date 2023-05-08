@@ -85,6 +85,7 @@ jobs:
           title: 'chore: 🤖 update versions'
           publish: pnpm release:publish
           version: pnpm release:version
+          token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
