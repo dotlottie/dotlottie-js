@@ -79,14 +79,14 @@ The manifest file allows the player to know what animations are contained inside
 
 There are two levels of customization possible, the first being on the dotLottie level which concerns things like the ```author```, ```version``` of the animation and more. The second is on the animation level, setting options like ```autoplay```, ```loop``` and more.
 
-All of the dotLottie object customization options are visible [here](https://app.gitbook.com/o/-MY5xai2gE1dn4A5MxPC/s/255RqgJTuWDILh0FJ2NK/documentation/dotlottie).
+All of the dotLottie object customization options are visible [here](https://docs.lottiefiles.com/dotlottie-js-external/documentation/dotlottie).
 
-All of the animation object customization options are visible [here](https://app.gitbook.com/o/-MY5xai2gE1dn4A5MxPC/s/255RqgJTuWDILh0FJ2NK/documentation/lottieanimation).
+All of the animation object customization options are visible [here](https://docs.lottiefiles.com/dotlottie-js-external/documentation/lottieanimation).
 
 
 ### Usage in frameworks
 
-For examples on how to use in React, Next.js, Vue and Nuxt 3 please refer to the [full documentation page]().
+For examples on how to use in React, Next.js, Vue and Nuxt 3 please refer to the [full documentation page](https://docs.lottiefiles.com/dotlottie-js-external/usage-scenarios).
 
 
 ### Development
