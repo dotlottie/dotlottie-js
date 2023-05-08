@@ -56,7 +56,7 @@ export class DotLottieCommon {
 
     this._keywords = options?.keywords ?? 'dotLottie';
 
-    this._version = options?.version ?? pkg.version;
+    this._version = options?.version ?? '1.0';
 
     this._customData = options?.customData ?? {};
 
