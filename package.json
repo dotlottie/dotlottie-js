@@ -1,10 +1,16 @@
 {
   "name": "@dotlottie/dotlottie-js",
+  "repository": "https://github.com/dotlottie/dotlottie-js.git",
   "homepage": "https://github.com/dotlottie/dotlottie-js#readme",
   "license": "MIT",
   "private": true,
   "workspaces": [
     "packages/*"
+  ],
+  "keywords": [
+    "dotLottie",
+    "Lottie",
+    "LottieFiles"
   ],
   "scripts": {
     "build": "turbo run build",
