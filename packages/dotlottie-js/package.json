@@ -79,6 +79,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "directory": "packages/dotlottie-js",
   "packageManager": "pnpm@7.1.6"
 }
