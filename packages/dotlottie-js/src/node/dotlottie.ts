@@ -6,6 +6,7 @@ import type { Animation } from '@lottiefiles/lottie-types';
 import type { Zippable } from 'fflate';
 import { strToU8, unzip, zip, strFromU8 } from 'fflate';
 
+import pkg from '../../package.json';
 import { createError, DotLottieCommon } from '../common';
 import type { DotLottieOptions, DotLottiePlugin, AnimationOptions } from '../common';
 
@@ -16,7 +17,12 @@ import { base64ToUint8Array, getExtensionTypeFromBase64 } from './utils';
 
 export class DotLottie extends DotLottieCommon {
   public constructor(options?: DotLottieOptions) {
-    super(options);
+    const generator = options?.generator ?? `${pkg.name}/node@${pkg.version}`;
+
+    super({
+      ...options,
+      generator,
+    });
 
     if (this.enableDuplicateImageOptimization) this.addPlugins(new DuplicateImageDetector());
   }

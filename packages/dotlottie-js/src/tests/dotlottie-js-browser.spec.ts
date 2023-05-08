@@ -7,6 +7,7 @@
 import { Base64 } from 'js-base64';
 
 import { DotLottie, LottieAnimation } from '..';
+import pkg from '../../package.json';
 import type { AnimationData, Manifest } from '../common';
 import { DotLottiePlugin } from '../common';
 
@@ -107,6 +108,12 @@ describe('setGenerator', () => {
     dotlottie.setGenerator(generator);
 
     expect(dotlottie.generator).toBe(generator);
+  });
+
+  it('has proper generator when no input provided', () => {
+    const dotLottie = new DotLottie();
+
+    expect(dotLottie.generator).toBe(`${pkg.name}@${pkg.version}`);
   });
 });
 
