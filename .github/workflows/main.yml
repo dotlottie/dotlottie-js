@@ -58,6 +58,8 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CHANGESET_RELEASE_TOKEN }}
 
       - name: ⎔ Setup pnpm@7
         uses: pnpm/action-setup@v2
@@ -85,7 +87,6 @@ jobs:
           title: 'chore: 🤖 update versions'
           publish: pnpm release:publish
           version: pnpm release:version
-          token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
