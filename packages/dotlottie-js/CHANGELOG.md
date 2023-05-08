@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.1.3
+
+### Patch Changes
+
+- 893aaa6: added keywords and repository to package.json
+
 ## 0.1.2
 
 ### Patch Changes
