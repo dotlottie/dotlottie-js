@@ -34,9 +34,13 @@ export class LottieAnimationCommon {
 
   private _playMode: PlayMode;
 
-  private _loop: boolean;
+  private _loop: boolean | number;
 
   private _autoplay: boolean;
+
+  private _hover: boolean;
+
+  private _intermission: number;
 
   // Will be translated to 'activeAnimationId' inside of the manifest file
   // This indicates if the player should play this animation by default rather than the first in the list.
@@ -57,6 +61,8 @@ export class LottieAnimationCommon {
     this._loop = options.loop ?? false;
     this._autoplay = options.autoplay ?? false;
     this._defaultActiveAnimation = options.defaultActiveAnimation ?? false;
+    this._hover = options.hover ?? false;
+    this._intermission = options.intermission ?? 0;
   }
 
   public async toBase64(): Promise<string> {
@@ -125,11 +131,11 @@ export class LottieAnimationCommon {
     this._playMode = playMode;
   }
 
-  public get loop(): boolean {
+  public get loop(): boolean | number {
     return this._loop;
   }
 
-  public set loop(loop: boolean) {
+  public set loop(loop: boolean | number) {
     this._loop = loop;
   }
 
@@ -147,6 +153,22 @@ export class LottieAnimationCommon {
 
   public set defaultActiveAnimation(defaultActiveAnimation: boolean) {
     this._defaultActiveAnimation = defaultActiveAnimation;
+  }
+
+  public get hover(): boolean {
+    return this._hover;
+  }
+
+  public set hover(hover: boolean) {
+    this._hover = hover;
+  }
+
+  public get intermission(): number {
+    return this._intermission;
+  }
+
+  public set intermission(intermission: number) {
+    this._intermission = intermission;
   }
 
   /**

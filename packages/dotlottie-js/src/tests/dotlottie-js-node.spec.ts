@@ -7,8 +7,8 @@
 import { Base64 } from 'js-base64';
 
 import pkg from '../../package.json';
-import type { AnimationData, Manifest } from '../common';
-import { DotLottiePlugin } from '../common';
+import type { AnimationData, AnimationOptions, Manifest, ManifestAnimation } from '../common';
+import { PlayMode, DotLottiePlugin } from '../common';
 import { DotLottie, LottieAnimation } from '../node';
 
 // eslint-disable-next-line import/no-namespace
@@ -164,6 +164,45 @@ describe('addAnimation', () => {
     const animation = dotlottie.animations[0];
 
     expect(animation?.id).toBe(manifest.animations[0]?.id);
+  });
+
+  it('adds an animation using all customizable options', () => {
+    const animationId = 'test_animation';
+
+    const dotlottie = new DotLottie();
+
+    const animationOptions: AnimationOptions = {
+      id: animationId,
+      data: animationData as AnimationData,
+      autoplay: true,
+      direction: -1,
+      hover: true,
+      intermission: 1000,
+      loop: true,
+      playMode: PlayMode.Bounce,
+      speed: 1.5,
+    };
+
+    const manifestDataToCompare: ManifestAnimation = {
+      id: animationId,
+      autoplay: true,
+      direction: -1,
+      hover: true,
+      intermission: 1000,
+      loop: true,
+      playMode: PlayMode.Bounce,
+      speed: 1.5,
+    };
+
+    dotlottie.addAnimation({
+      ...animationOptions,
+    });
+
+    dotlottie.build();
+
+    const animationManifest = dotlottie.manifest.animations[0];
+
+    expect(animationManifest).toEqual(manifestDataToCompare);
   });
 });
 

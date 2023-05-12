@@ -13,9 +13,15 @@ export interface ManifestAnimation {
   // Define playback direction 1 forward, -1 backward
   direction?: number;
 
+  // Play on hover
+  hover?: boolean;
+
   id: string;
 
-  loop?: boolean;
+  // Time to wait between loops in milliseconds
+  intermission?: number;
+
+  loop?: boolean | number;
 
   // Choice between 'bounce' and 'normal'
   playMode?: PlayMode;

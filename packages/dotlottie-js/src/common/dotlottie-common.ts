@@ -332,6 +332,8 @@ export class DotLottieCommon {
         playMode: animation.playMode,
         loop: animation.loop,
         autoplay: animation.autoplay,
+        hover: animation.hover,
+        intermission: animation.intermission,
       })),
       ...(this.description && this.description.trim() !== '' ? { description: this.description } : {}),
       ...(activeAnimationId && activeAnimationId.trim() !== '' ? { activeAnimationId } : {}),
