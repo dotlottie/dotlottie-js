@@ -34,9 +34,13 @@ export class LottieAnimationCommon {
 
   private _playMode: PlayMode;
 
-  private _loop: boolean;
+  private _loop: boolean | number;
 
   private _autoplay: boolean;
+
+  private _hover: boolean;
+
+  private _intermission: number;
 
   // Will be translated to 'activeAnimationId' inside of the manifest file
   // This indicates if the player should play this animation by default rather than the first in the list.
@@ -57,6 +61,8 @@ export class LottieAnimationCommon {
     this._loop = options.loop ?? false;
     this._autoplay = options.autoplay ?? false;
     this._defaultActiveAnimation = options.defaultActiveAnimation ?? false;
+    this._hover = options.hover ?? false;
+    this._intermission = options.intermission ?? 0;
   }
 
   public async toBase64(): Promise<string> {
@@ -125,11 +131,12 @@ export class LottieAnimationCommon {
     this._playMode = playMode;
   }
 
-  public get loop(): boolean {
+  public get loop(): boolean | number {
     return this._loop;
   }
 
-  public set loop(loop: boolean) {
+  public set loop(loop: boolean | number) {
+    this._requireValidLoop(loop);
     this._loop = loop;
   }
 
@@ -147,6 +154,23 @@ export class LottieAnimationCommon {
 
   public set defaultActiveAnimation(defaultActiveAnimation: boolean) {
     this._defaultActiveAnimation = defaultActiveAnimation;
+  }
+
+  public get hover(): boolean {
+    return this._hover;
+  }
+
+  public set hover(hover: boolean) {
+    this._hover = hover;
+  }
+
+  public get intermission(): number {
+    return this._intermission;
+  }
+
+  public set intermission(intermission: number) {
+    this._requireValidIntermission(intermission);
+    this._intermission = intermission;
   }
 
   /**
@@ -308,6 +332,28 @@ export class LottieAnimationCommon {
   }
 
   /**
+   * Ensure that the provided intermission is a valid, positive number.
+   * @param intermission - The intermission to validate.
+   * @throws Error - if the intermission is not a valid number.
+   */
+  private _requireValidIntermission(intermission: number): asserts intermission is number {
+    if (intermission < 0 || !Number.isInteger(intermission)) {
+      throw createError('intermission must be a positive number');
+    }
+  }
+
+  /**
+   * Ensure that the provided loop is a valid, positive number or boolean.
+   * @param loop - The loop to validate.
+   * @throws Error - if the loop is not a valid number or boolean.
+   */
+  private _requireValidLoop(loop: number | boolean): asserts loop is number | boolean {
+    if (typeof loop === 'number' && (!Number.isInteger(loop) || loop < 0)) {
+      throw createError('loop must be a positive number or boolean');
+    }
+  }
+
+  /**
    * Ensure that the provided options object is a valid AnimationOptions object.
    * The options object must contain the following mandatory properties: id, data or url.
    * If the options object does not contain all mandatory properties, an error will be thrown.
@@ -335,6 +381,14 @@ export class LottieAnimationCommon {
 
     if (options.direction) {
       this._requireValidDirection(options.direction);
+    }
+
+    if (options.intermission) {
+      this._requireValidIntermission(options.intermission);
+    }
+
+    if (options.loop) {
+      this._requireValidLoop(options.loop);
     }
   }
 }
