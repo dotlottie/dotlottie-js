@@ -337,7 +337,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the intermission is not a valid number.
    */
   private _requireValidIntermission(intermission: number): asserts intermission is number {
-    if (intermission < 0) {
+    if (intermission < 0 || !Number.isInteger(intermission)) {
       throw createError('intermission must be a positive number');
     }
   }
@@ -348,7 +348,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the loop is not a valid number or boolean.
    */
   private _requireValidLoop(loop: number | boolean): asserts loop is number | boolean {
-    if (typeof loop === 'number' && loop < 0) {
+    if ((typeof loop === 'number' && loop < 0) || !Number.isInteger(loop)) {
       throw createError('loop must be a positive number or boolean');
     }
   }
