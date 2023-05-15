@@ -136,6 +136,7 @@ export class LottieAnimationCommon {
   }
 
   public set loop(loop: boolean | number) {
+    this._requireValidLoop(loop);
     this._loop = loop;
   }
 
@@ -168,6 +169,7 @@ export class LottieAnimationCommon {
   }
 
   public set intermission(intermission: number) {
+    this._requireValidIntermission(intermission);
     this._intermission = intermission;
   }
 
@@ -330,6 +332,28 @@ export class LottieAnimationCommon {
   }
 
   /**
+   * Ensure that the provided intermission is a valid, positive number.
+   * @param intermission - The intermission to validate.
+   * @throws Error - if the intermission is not a valid number.
+   */
+  private _requireValidIntermission(intermission: number): asserts intermission is number {
+    if (intermission < 0) {
+      throw createError('intermission must be a positive number');
+    }
+  }
+
+  /**
+   * Ensure that the provided loop is a valid, positive number or boolean.
+   * @param loop - The loop to validate.
+   * @throws Error - if the loop is not a valid number or boolean.
+   */
+  private _requireValidLoop(loop: number | boolean): asserts loop is number | boolean {
+    if (typeof loop === 'number' && loop < 0) {
+      throw createError('loop must be a positive number or boolean');
+    }
+  }
+
+  /**
    * Ensure that the provided options object is a valid AnimationOptions object.
    * The options object must contain the following mandatory properties: id, data or url.
    * If the options object does not contain all mandatory properties, an error will be thrown.
@@ -357,6 +381,14 @@ export class LottieAnimationCommon {
 
     if (options.direction) {
       this._requireValidDirection(options.direction);
+    }
+
+    if (options.intermission) {
+      this._requireValidIntermission(options.intermission);
+    }
+
+    if (options.loop) {
+      this._requireValidLoop(options.loop);
     }
   }
 }

@@ -166,7 +166,7 @@ describe('addAnimation', () => {
     expect(animation?.id).toBe(manifest.animations[0]?.id);
   });
 
-  it('adds an animation using all customizable options', () => {
+  it('adds an animation using all customizable options', async () => {
     const animationId = 'test_animation';
 
     const dotlottie = new DotLottie();
@@ -198,7 +198,7 @@ describe('addAnimation', () => {
       ...animationOptions,
     });
 
-    dotlottie.build();
+    await dotlottie.build();
 
     const animationManifest = dotlottie.manifest.animations[0];
 
