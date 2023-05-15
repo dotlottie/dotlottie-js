@@ -348,7 +348,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the loop is not a valid number or boolean.
    */
   private _requireValidLoop(loop: number | boolean): asserts loop is number | boolean {
-    if ((typeof loop === 'number' && loop < 0) || !Number.isInteger(loop)) {
+    if (typeof loop === 'number' && (!Number.isInteger(loop) || loop < 0)) {
       throw createError('loop must be a positive number or boolean');
     }
   }
