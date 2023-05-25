@@ -20,6 +20,7 @@ export interface DotLottieOptions {
   generator?: string;
   keywords?: string;
   plugins?: DotLottiePlugin[];
+  revision?: number;
   version?: string;
 }
 
@@ -42,6 +43,8 @@ export class DotLottieCommon {
 
   protected _version?: string;
 
+  protected _revision?: number;
+
   // Custom data for the dotLottie
   protected _customData?: Record<string, unknown>;
 
@@ -59,6 +62,8 @@ export class DotLottieCommon {
     this._version = options?.version ?? '1.0';
 
     this._customData = options?.customData ?? {};
+
+    this._revision = options?.revision ?? 1;
 
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
@@ -99,6 +104,10 @@ export class DotLottieCommon {
 
   public get version(): string | undefined {
     return this._version;
+  }
+
+  public get revision(): number | undefined {
+    return this._revision;
   }
 
   public get author(): string | undefined {
@@ -161,6 +170,12 @@ export class DotLottieCommon {
 
   public setVersion(version: string): DotLottieCommon {
     this._version = version;
+
+    return this;
+  }
+
+  public setRevision(revision: number): DotLottieCommon {
+    this._revision = revision;
 
     return this;
   }
@@ -322,6 +337,7 @@ export class DotLottieCommon {
 
     const manifest: Manifest = {
       version: this.version,
+      revision: this.revision,
       keywords: this.keywords,
       author: this.author,
       generator: this.generator,

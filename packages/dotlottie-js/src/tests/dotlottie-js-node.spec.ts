@@ -73,6 +73,26 @@ describe('setAuthor', () => {
   });
 });
 
+describe('setRevision', () => {
+  it('returns the dotlottie instance', () => {
+    const dotlottie = new DotLottie();
+
+    const result = dotlottie.setRevision(1);
+
+    expect(result).toBe(dotlottie);
+  });
+
+  it('sets the revision', () => {
+    const dotlottie = new DotLottie();
+
+    const revision = 1.5;
+
+    dotlottie.setRevision(revision);
+
+    expect(dotlottie.revision).toBe(revision);
+  });
+});
+
 describe('setDescription', () => {
   it('returns the dotlottie instance', () => {
     const dotlottie = new DotLottie();
