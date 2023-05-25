@@ -26,9 +26,12 @@ import * as IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization
 // eslint-disable-next-line import/no-namespace
 import * as SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
 import dotlottieAnimation from './__fixtures__/simple/animation.lottie';
+import editedAnimationData from './__fixtures__/simple/animation/animations/edited-lottie.json';
 import animationData from './__fixtures__/simple/animation/animations/lottie-1.json';
 import manifest from './__fixtures__/simple/animation/manifest.json';
+import editedManifest from './__fixtures__/simple/animation/non-default-manifest.json';
 import bigMergedDotLottie from './__fixtures__/simple/big-merged-dotlottie.lottie';
+import editedDotlottieAnimation from './__fixtures__/simple/edited-settings.lottie';
 import { customMatchers } from './test-utils';
 
 beforeAll(() => {
@@ -541,6 +544,25 @@ describe('fromURL', () => {
     expect(dotLottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
     expect(dotLottie.animations[0]?.data).toEqual(animationData as AnimationData);
     expect(dotLottie.manifest).toEqual(manifest as Manifest);
+  });
+
+  it('loads a dotLottie with non-default settings from a URL and verifies the animation settings', async () => {
+    const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
+      Promise.resolve(new Response(editedDotlottieAnimation)),
+    );
+
+    const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
+
+    let dotlottie = new DotLottie();
+
+    dotlottie = (await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie')) as DotLottie;
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledWith(animationURL);
+    expect(dotlottie.animations.length).toBe(1);
+    expect(dotlottie.animations[0]?.id).toEqual(editedManifest.animations[0]?.id as string);
+    expect(dotlottie.animations[0]?.data).toEqual(editedAnimationData as AnimationData);
+    expect(dotlottie.manifest).toEqual(editedManifest as Manifest);
   });
 });
 
