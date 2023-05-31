@@ -2,8 +2,6 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation } from '@lottiefiles/lottie-types';
-
 import type { LottieImageCommon } from './lottie-image-common';
 import type { ManifestAnimation } from './manifest';
 import { PlayMode } from './manifest';

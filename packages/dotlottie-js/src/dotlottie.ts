@@ -2,12 +2,11 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation } from '@lottiefiles/lottie-types';
 import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
 import { DotLottieCommon, createError } from './common';
-import type { DotLottiePlugin, AnimationOptions, DotLottieOptions } from './common';
+import type { DotLottiePlugin, AnimationOptions, DotLottieOptions, ManifestAnimation } from './common';
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
 import { LottieImage } from './lottie-image';
@@ -137,73 +136,115 @@ export class DotLottie extends DotLottieCommon {
 
       const tmpImages = [];
 
-      for (const key of Object.keys(contentObj)) {
-        // true is passed to use binary string, otherwise btoa fails
-        const decodedStr = strFromU8(contentObj[key] as Uint8Array, true);
+      if (contentObj['manifest.json'] instanceof Uint8Array) {
+        // valid buffer
+        try {
+          // Parse the manifest first so that we can pick up animation settings
+          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'] as Uint8Array, false));
+          const { author, custom, description, generator, keywords, version } = manifest;
 
-        if (key === 'manifest.json') {
-          const { author, description, generator, version } = JSON.parse(decodedStr);
-
-          dotlottie.setVersion(version as string);
-          dotlottie.setDescription(description as string);
-          dotlottie.setAuthor(author as string);
-          dotlottie.setGenerator(generator as string);
-        } else if (key.startsWith('animations/') && key.endsWith('.json')) {
-          // extract animationId from key as the key = `animations/${animationId}.json`
-          const animationId = /animations\/(.+)\.json/u.exec(key)?.[1];
-
-          if (!animationId) {
-            throw createError('Invalid animation id');
+          if (author) {
+            this._requireValidAuthor(author);
+            dotlottie.setAuthor(author);
+          }
+          if (custom) {
+            this._requireValidCustomData(custom);
+            dotlottie.setCustomData(custom);
+          }
+          if (description) {
+            this._requireValidDescription(description);
+            dotlottie.setDescription(description);
+          }
+          if (generator) {
+            this._requireValidGenerator(generator);
+            dotlottie.setGenerator(generator);
+          }
+          if (keywords) {
+            this._requireValidKeywords(keywords);
+            dotlottie.setKeywords(keywords);
+          }
+          if (version) {
+            this._requireValidVersion(version);
+            dotlottie.setVersion(version);
           }
 
-          const animation = JSON.parse(decodedStr);
+          for (const key of Object.keys(contentObj)) {
+            // true is passed to use binary string, otherwise btoa fails
+            const decodedStr = strFromU8(contentObj[key] as Uint8Array, true);
 
-          dotlottie.addAnimation({
-            id: animationId,
-            data: animation,
-          });
-        } else if (key.startsWith('images/')) {
-          // extract imageId from key as the key = `images/${imageId}.${ext}`
-          const imageId = /images\/(.+)\./u.exec(key)?.[1];
+            if (key.startsWith('animations/') && key.endsWith('.json')) {
+              // extract animationId from key as the key = `animations/${animationId}.json`
+              const animationId = /animations\/(.+)\.json/u.exec(key)?.[1];
 
-          if (!imageId) {
-            throw createError('Invalid image id');
+              if (!animationId) {
+                throw createError('Invalid animation id');
+              }
+
+              const animation = JSON.parse(decodedStr);
+
+              const animationSettings = manifest['animations'].find(
+                (anim: ManifestAnimation) => anim.id === animationId,
+              );
+
+              if (animationSettings === undefined) {
+                throw createError('Animation not found inside manifest');
+              }
+
+              dotlottie.addAnimation({
+                id: animationId,
+                data: animation,
+                ...animationSettings,
+              });
+            } else if (key.startsWith('images/')) {
+              // extract imageId from key as the key = `images/${imageId}.${ext}`
+              const imageId = /images\/(.+)\./u.exec(key)?.[1];
+
+              if (!imageId) {
+                throw createError('Invalid image id');
+              }
+
+              let decodedImg = btoa(decodedStr);
+
+              const ext = getExtensionTypeFromBase64(decodedImg);
+
+              // Push the images in to a temporary array
+              decodedImg = `data:image/${ext};base64,${decodedImg}`;
+              tmpImages.push(
+                new LottieImage({
+                  id: imageId,
+                  data: decodedImg,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
+            }
           }
 
-          let decodedImg = btoa(decodedStr);
+          // Go through the images and find to which animation they belong
+          for (const image of tmpImages) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const animationAssets = parentAnimation.data.assets as Animation['assets'];
 
-          const ext = getExtensionTypeFromBase64(decodedImg);
-
-          // Push the images in to a temporary array
-          decodedImg = `data:image/${ext};base64,${decodedImg}`;
-          tmpImages.push(
-            new LottieImage({
-              id: imageId,
-              data: decodedImg,
-              fileName: key.split('/')[1] || '',
-            }),
-          );
-        }
-      }
-
-      // Go through the images and find to which animation they belong
-      for (const image of tmpImages) {
-        for (const parentAnimation of dotlottie.animations) {
-          if (parentAnimation.data) {
-            const animationAssets = parentAnimation.data.assets as Animation['assets'];
-
-            if (animationAssets) {
-              for (const asset of animationAssets) {
-                if ('w' in asset && 'h' in asset) {
-                  if (asset.p.includes(image.id)) {
-                    image.parentAnimations.push(parentAnimation);
-                    parentAnimation.imageAssets.push(image);
+                if (animationAssets) {
+                  for (const asset of animationAssets) {
+                    if ('w' in asset && 'h' in asset) {
+                      if (asset.p.includes(image.id)) {
+                        image.parentAnimations.push(parentAnimation);
+                        parentAnimation.imageAssets.push(image);
+                      }
+                    }
                   }
                 }
               }
             }
           }
+        } catch (err) {
+          // throw error as it's invalid json
+          throw createError('Invalid manifest inside buffer!');
         }
+      } else {
+        // throw error as it's invalid buffer
+        throw createError('Invalid buffer');
       }
     } catch (err) {
       if (err instanceof Error) {
