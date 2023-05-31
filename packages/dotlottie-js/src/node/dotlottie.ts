@@ -2,7 +2,6 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation } from '@lottiefiles/lottie-types';
 import type { Zippable } from 'fflate';
 import { strToU8, unzip, zip, strFromU8 } from 'fflate';
 

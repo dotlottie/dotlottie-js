@@ -2,8 +2,6 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation } from '@lottiefiles/lottie-types';
-
 import pkg from '../../package.json';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
