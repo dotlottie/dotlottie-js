@@ -555,7 +555,7 @@ describe('fromURL', () => {
 
     let dotlottie = new DotLottie();
 
-    dotlottie = (await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie')) as DotLottie;
+    dotlottie = await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie');
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);

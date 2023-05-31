@@ -496,7 +496,7 @@ describe('fromURL', () => {
 
     let dotlottie = new DotLottie();
 
-    dotlottie = (await dotlottie.fromURL(animationURL)) as DotLottie;
+    dotlottie = await dotlottie.fromURL(animationURL);
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
@@ -515,7 +515,7 @@ describe('fromURL', () => {
 
     let dotlottie = new DotLottie();
 
-    dotlottie = (await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie')) as DotLottie;
+    dotlottie = await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie');
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
@@ -531,7 +531,7 @@ describe('fromArrayBuffer', () => {
     const arrayBuffer = dotlottieAnimation;
     let dotlottie = new DotLottie();
 
-    dotlottie = (await dotlottie.fromArrayBuffer(arrayBuffer)) as DotLottie;
+    dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
 
     expect(dotlottie.animations.length).toBe(1);
     expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
