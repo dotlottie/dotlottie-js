@@ -26,9 +26,12 @@ import * as IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization
 // eslint-disable-next-line import/no-namespace
 import * as SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
 import dotlottieAnimation from './__fixtures__/simple/animation.lottie';
+import editedAnimationData from './__fixtures__/simple/animation/animations/edited-lottie.json';
 import animationData from './__fixtures__/simple/animation/animations/lottie-1.json';
 import manifest from './__fixtures__/simple/animation/manifest.json';
+import editedManifest from './__fixtures__/simple/animation/non-default-manifest.json';
 import bigMergedDotLottie from './__fixtures__/simple/big-merged-dotlottie.lottie';
+import editedDotlottieAnimation from './__fixtures__/simple/edited-settings.lottie';
 import { customMatchers } from './test-utils';
 
 beforeAll(() => {
@@ -163,7 +166,7 @@ describe('addAnimation', () => {
 
     const result = dotlottie.addAnimation({
       id: manifest.animations[0]?.id as string,
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
     });
 
     expect(result).toBe(dotlottie);
@@ -176,7 +179,7 @@ describe('addAnimation', () => {
 
     dotlottie.addAnimation({
       id: animationId,
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
     });
 
     expect(dotlottie.animations.length).toBe(1);
@@ -193,7 +196,7 @@ describe('addAnimation', () => {
 
     const animationOptions: AnimationOptions = {
       id: animationId,
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
       autoplay: true,
       direction: -1,
       hover: true,
@@ -232,7 +235,7 @@ describe('removeAnimation', () => {
 
     const result = dotlottie.addAnimation({
       id: manifest.animations[0]?.id as string,
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
     });
 
     expect(result).toBe(dotlottie);
@@ -243,7 +246,7 @@ describe('removeAnimation', () => {
 
     dotlottie.addAnimation({
       id: manifest.animations[0]?.id as string,
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
     });
 
     expect(dotlottie.animations.length).toBe(1);
@@ -260,7 +263,7 @@ describe('getAnimation', () => {
 
     dotlottie.addAnimation({
       id: manifest.animations[0]?.id as string,
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
     });
 
     const animation = await dotlottie.getAnimation(manifest.animations[0]?.id as string);
@@ -268,7 +271,7 @@ describe('getAnimation', () => {
     expect(animation).toBeInstanceOf(LottieAnimation);
 
     expect(animation?.id).toBe(manifest.animations[0]?.id);
-    expect(animation?.data).toEqual(animationData as AnimationData);
+    expect(animation?.data).toEqual(animationData as unknown as Animation);
   });
 
   it('returns undefined if the animation does not exist', async () => {
@@ -429,7 +432,7 @@ describe('download', () => {
       dotlottie
         .addAnimation({
           id: 'test_animation',
-          data: animationData as AnimationData,
+          data: animationData as unknown as Animation,
         })
         .download('file'),
     ).toBeRejectedWithError('[dotlottie-js]: Cannot download dotlottie in a non-browser environment');
@@ -446,7 +449,7 @@ describe('toBlob', () => {
       .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
-        data: animationData as AnimationData,
+        data: animationData as unknown as Animation,
       })
       .toBlob();
 
@@ -468,7 +471,7 @@ describe('toArrayBuffer', () => {
       .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
-        data: animationData as AnimationData,
+        data: animationData as unknown as Animation,
       })
       .toArrayBuffer();
 
@@ -487,7 +490,7 @@ describe('toBase64', () => {
       .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
-        data: animationData as AnimationData,
+        data: animationData as unknown as Animation,
       })
       .toBase64();
 
@@ -513,14 +516,33 @@ describe('fromURL', () => {
 
     let dotlottie = new DotLottie();
 
-    dotlottie = (await dotlottie.fromURL(animationURL)) as DotLottie;
+    dotlottie = await dotlottie.fromURL(animationURL);
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
     expect(dotlottie.animations.length).toBe(1);
     expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
-    expect(dotlottie.animations[0]?.data).toEqual(animationData as AnimationData);
+    expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as Animation);
     expect(dotlottie.manifest).toEqual(manifest as Manifest);
+  });
+
+  it('loads a dotLottie with non-default settings from a URL and verifies the animation settings', async () => {
+    const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
+      Promise.resolve(new Response(editedDotlottieAnimation)),
+    );
+
+    const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
+
+    let dotlottie = new DotLottie();
+
+    dotlottie = await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie');
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledWith(animationURL);
+    expect(dotlottie.animations.length).toBe(1);
+    expect(dotlottie.animations[0]?.id).toEqual(editedManifest.animations[0]?.id as string);
+    expect(dotlottie.animations[0]?.data).toEqual(editedAnimationData as unknown as Animation);
+    expect(dotlottie.manifest).toEqual(editedManifest as Manifest);
   });
 });
 
@@ -529,11 +551,11 @@ describe('fromArrayBuffer', () => {
     const arrayBuffer = dotlottieAnimation;
     let dotlottie = new DotLottie();
 
-    dotlottie = (await dotlottie.fromArrayBuffer(arrayBuffer)) as DotLottie;
+    dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
 
     expect(dotlottie.animations.length).toBe(1);
     expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
-    expect(dotlottie.animations[0]?.data).toEqual(animationData as AnimationData);
+    expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as Animation);
     expect(dotlottie.manifest).toEqual(manifest as Manifest);
   });
 
@@ -618,12 +640,12 @@ describe('merge', () => {
   it('merges two dotlottie files', async () => {
     const dotlottie1 = new DotLottie().addAnimation({
       id: 'lottie1',
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
     });
 
     const dotlottie2 = new DotLottie().addAnimation({
       id: 'lottie2',
-      data: animationData as AnimationData,
+      data: animationData as unknown as Animation,
     });
 
     const dotlottie3 = new DotLottie().addAnimation({
@@ -696,10 +718,10 @@ describe('merge', () => {
     expect(mergedDotlottie.animations.length).toBe(2);
 
     expect(mergedDotlottie.animations[0]?.id).toEqual('lottie1');
-    expect(mergedDotlottie.animations[0]?.data).toEqual(animationData as AnimationData);
+    expect(mergedDotlottie.animations[0]?.data).toEqual(animationData as unknown as Animation);
 
     expect(mergedDotlottie.animations[1]?.id).toEqual('lottie2');
-    expect(mergedDotlottie.animations[1]?.data).toEqual(animationData as AnimationData);
+    expect(mergedDotlottie.animations[1]?.data).toEqual(animationData as unknown as Animation);
   });
 });
 
@@ -720,7 +742,7 @@ describe('build', () => {
 
     await dotlottie.build();
 
-    expect(dotlottie.animations[0]?.data).toEqual(animationData as AnimationData);
+    expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as Animation);
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
@@ -775,7 +797,7 @@ describe('build', () => {
     const dotlottie = new DotLottie()
       .addAnimation({
         id: 'lottie1',
-        data: animationData as AnimationData,
+        data: animationData as unknown as Animation,
       })
       .addPlugins(
         new Sequential1TestPlugin(),

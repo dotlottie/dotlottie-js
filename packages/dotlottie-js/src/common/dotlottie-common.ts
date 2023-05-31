@@ -2,8 +2,6 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation } from '@lottiefiles/lottie-types';
-
 import pkg from '../../package.json';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
@@ -138,38 +136,38 @@ export class DotLottieCommon {
     return this._customData;
   }
 
-  public setCustomData(customData: Record<string, unknown>): DotLottieCommon {
-    this._customData = customData;
+  public setCustomData(customData: Record<string, unknown> | undefined): DotLottieCommon {
+    this._customData = customData ?? {};
 
     return this;
   }
 
-  public setAuthor(author: string): DotLottieCommon {
-    this._author = author;
+  public setAuthor(author: string | undefined): DotLottieCommon {
+    this._author = author ?? 'LottieFiles';
 
     return this;
   }
 
-  public setDescription(description: string): DotLottieCommon {
-    this._description = description;
+  public setDescription(description: string | undefined): DotLottieCommon {
+    this._description = description ?? '';
 
     return this;
   }
 
-  public setGenerator(generator: string): DotLottieCommon {
-    this._generator = generator;
+  public setGenerator(generator: string | undefined): DotLottieCommon {
+    this._generator = generator ?? `${pkg.name}@${pkg.version}`;
 
     return this;
   }
 
-  public setKeywords(keywords: string): DotLottieCommon {
-    this._keywords = keywords;
+  public setKeywords(keywords: string | undefined): DotLottieCommon {
+    this._keywords = keywords ?? 'dotLottie';
 
     return this;
   }
 
-  public setVersion(version: string): DotLottieCommon {
-    this._version = version;
+  public setVersion(version: string | undefined): DotLottieCommon {
+    this._version = version ?? '1.0';
 
     return this;
   }
@@ -452,5 +450,31 @@ export class DotLottieCommon {
     }
 
     return mergedDotlottie;
+  }
+
+  protected _requireValidAuthor(author: string | undefined): asserts author is string {
+    if (!author) throw createError('Invalid author');
+  }
+
+  protected _requireValidDescription(description: string | undefined): asserts description is string {
+    if (!description) throw createError('Invalid description');
+  }
+
+  protected _requireValidGenerator(generator: string | undefined): asserts generator is string {
+    if (!generator) throw createError('Invalid generator');
+  }
+
+  protected _requireValidKeywords(keywords: string | undefined): asserts keywords is string {
+    if (!keywords) throw createError('Invalid keywords');
+  }
+
+  protected _requireValidVersion(version: string | undefined): asserts version is string {
+    if (!version) throw createError('Invalid version');
+  }
+
+  protected _requireValidCustomData(
+    customData: Record<string, unknown> | undefined,
+  ): asserts customData is Record<string, unknown> {
+    if (!customData) throw createError('Invalid customData');
   }
 }
