@@ -240,7 +240,7 @@ export class DotLottie extends DotLottieCommon {
           }
         } catch (err) {
           // throw error as it's invalid json
-          throw createError(`Invalid manifest inside buffer! ${err.message}`);
+          throw createError('Invalid manifest inside buffer!');
         }
       } else {
         // throw error as it's invalid buffer
