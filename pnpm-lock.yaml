@@ -1874,7 +1874,7 @@ packages:
     dev: true
 
   /@lottiefiles/lottie-player/1.7.1:
-    resolution: {integrity: sha512-U2gokX7ZXHCD+DgRXfaFyxuVsc0SYfC2mXndnCVwGvpdApUGqvpZovihdB8p9fDKU2SBWLWBq38CuJTVz6k3Hg==, tarball: download/@LottieFiles/lottie-player/1.7.1/d2827bbdd7b0235e7b967486019acea364e01bef}
+    resolution: {integrity: sha512-U2gokX7ZXHCD+DgRXfaFyxuVsc0SYfC2mXndnCVwGvpdApUGqvpZovihdB8p9fDKU2SBWLWBq38CuJTVz6k3Hg==}
     dependencies:
       '@types/pako': 1.0.4
       lit: 2.7.2
@@ -1896,7 +1896,7 @@ packages:
     dev: true
 
   /@lottiefiles/react-lottie-player/3.5.3_react@18.2.0:
-    resolution: {integrity: sha512-6pGbiTMjGnPddR1ur8M/TIDCiogZMc1aKIUbMEKXKAuNeYwZ2hvqwBJ+w5KRm88ccdcU88C2cGyLVsboFlSdVQ==, tarball: download/@LottieFiles/react-lottie-player/3.5.3/e7e848f29577bc4eede87d677a0054de29378127}
+    resolution: {integrity: sha512-6pGbiTMjGnPddR1ur8M/TIDCiogZMc1aKIUbMEKXKAuNeYwZ2hvqwBJ+w5KRm88ccdcU88C2cGyLVsboFlSdVQ==}
     peerDependencies:
       react: 16 - 18
     dependencies:
@@ -1946,7 +1946,7 @@ packages:
     dev: true
 
   /@lottiefiles/tsconfig/2.0.0_typescript@4.7.4:
-    resolution: {integrity: sha512-rcDiXVc+WlDCL72IHjW/BCLp9TdEi/DGYAPrpT/GbCaKs5a3UoD8N7zyZt9gRIAjU+XmdHLFTxr8oL5IvqqR8Q==, tarball: download/@LottieFiles/tsconfig/2.0.0/f8914c6cf8d1a4955a2e1e451a4b64da656bdafa}
+    resolution: {integrity: sha512-UyVhFQ0N3AMMKuuHgsnh7XNi1FXumMtKvXszDmrwuACn0z5O3O/ut5pOARlZieTX3vzYUiNLv9T634EhGcej1w==}
     engines: {node: '>= 14'}
     peerDependencies:
       typescript: '*'
@@ -1955,7 +1955,7 @@ packages:
     dev: true
 
   /@lottiefiles/vue-lottie-player/1.1.0:
-    resolution: {integrity: sha512-NX6aS+QdtHG++SUbF0um+hs9rT5ZYyWJeFzbKFPNHZxV1dk+PhREsHlPixZ4iVRW7TJndrp5FE7CAgURf59f0Q==, tarball: download/@LottieFiles/vue-lottie-player/1.1.0/a7b7b2c5d91e52289ae8aac1d508ba6e2acf6d9c}
+    resolution: {integrity: sha512-NX6aS+QdtHG++SUbF0um+hs9rT5ZYyWJeFzbKFPNHZxV1dk+PhREsHlPixZ4iVRW7TJndrp5FE7CAgURf59f0Q==}
     dependencies:
       '@lottiefiles/lottie-player': 1.7.1
       vue: 2.7.14
