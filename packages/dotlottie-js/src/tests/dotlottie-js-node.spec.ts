@@ -161,6 +161,21 @@ describe('setKeywords', () => {
 });
 
 describe('addAnimation', () => {
+  it('throws an error if it receives a duplicate id when constructed', () => {
+    expect(() => {
+      const dotLottie = new DotLottie();
+
+      dotLottie.addAnimation({
+        id: 'test',
+        url: 'https://example.com/test.lottie' 
+      });
+      dotLottie.addAnimation({
+        id: 'test',
+        url: 'https://example.com/test.lottie' 
+      });
+    }).toThrowError('[dotlottie-js]: Duplicate animation id detected, aborting.');
+  });
+
   it('returns the dotlottie instance', () => {
     const dotlottie = new DotLottie();
 
