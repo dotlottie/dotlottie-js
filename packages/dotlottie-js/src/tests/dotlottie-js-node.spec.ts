@@ -167,11 +167,11 @@ describe('addAnimation', () => {
 
       dotLottie.addAnimation({
         id: 'test',
-        url: 'https://example.com/test.lottie' 
+        url: 'https://example.com/test.lottie',
       });
       dotLottie.addAnimation({
         id: 'test',
-        url: 'https://example.com/test.lottie' 
+        url: 'https://example.com/test.lottie',
       });
     }).toThrowError('[dotlottie-js]: Duplicate animation id detected, aborting.');
   });
