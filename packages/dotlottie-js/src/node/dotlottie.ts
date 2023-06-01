@@ -53,6 +53,10 @@ export class DotLottie extends DotLottieCommon {
   public override addAnimation(animationOptions: AnimationOptions): DotLottieCommon {
     const animation = new LottieAnimation(animationOptions);
 
+    if (this._animationsMap.get(animationOptions.id)) {
+      throw createError('Duplicate animation id detected, aborting.');
+    }
+
     this._animationsMap.set(animation.id, animation);
 
     return this;
