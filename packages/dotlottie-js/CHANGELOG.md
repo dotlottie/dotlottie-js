@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.1.5
+
+### Patch Changes
+
+- bb21a10: added lottie-types
+
 ## 0.1.4
 
 ### Patch Changes
