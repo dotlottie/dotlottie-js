@@ -3,7 +3,7 @@
  */
 
 /* eslint-disable no-new */
-import type { AnimationType as AnimationType } from '@lottiefiles/lottie-types';
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import { Base64 } from 'js-base64';
 
 import { LottieAnimation } from '..';
