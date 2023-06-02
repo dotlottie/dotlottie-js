@@ -7,6 +7,8 @@ import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import pkg from '../../package.json';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
+import type { ThemeOptions } from './dotlottie-theme-common';
+import { LottieThemeCommon } from './dotlottie-theme-common';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
 import type { LottieImageCommon } from './lottie-image-common';
 import type { Manifest } from './manifest';
@@ -32,6 +34,8 @@ export class DotLottieCommon {
   protected readonly _animationsMap: Map<string, LottieAnimationCommon> = new Map();
 
   protected readonly _plugins: DotLottiePlugin[] = [];
+
+  protected readonly _themesMap: Map<string, LottieThemeCommon> = new Map();
 
   protected _author?: string;
 
@@ -136,6 +140,10 @@ export class DotLottieCommon {
 
   public get custom(): Record<string, unknown> | undefined {
     return this._customData;
+  }
+
+  public get themes(): LottieThemeCommon[] {
+    return Array.from(this._themesMap.values());
   }
 
   public setCustomData(customData: Record<string, unknown> | undefined): DotLottieCommon {
@@ -331,8 +339,13 @@ export class DotLottieCommon {
     return images;
   }
 
+  public getTheme(themeId: string): LottieThemeCommon | undefined {
+    return this._themesMap.get(themeId);
+  }
+
   protected _buildManifest(): Manifest {
     const animationsList = Array.from(this._animationsMap.values());
+    const themesList = Array.from(this._themesMap.values());
     const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
@@ -350,11 +363,19 @@ export class DotLottieCommon {
         autoplay: animation.autoplay,
         hover: animation.hover,
         intermission: animation.intermission,
+        ...(animation.defaultTheme ? { defaultTheme: animation.defaultTheme } : {}),
       })),
       ...(this.description && this.description.trim() !== '' ? { description: this.description } : {}),
       ...(activeAnimationId && activeAnimationId.trim() !== '' ? { activeAnimationId } : {}),
       ...(this._customData && Object.keys(this._customData).length !== 0 ? { custom: this._customData } : {}),
     };
+
+    if (themesList.length > 0) {
+      manifest.themes = themesList.map((theme) => ({
+        id: theme.id,
+        animations: theme.animations.map((animation) => animation.id),
+      }));
+    }
 
     return manifest;
   }
@@ -370,6 +391,10 @@ export class DotLottieCommon {
 
     for (const animation of this.animations) {
       await animation.toJSON();
+    }
+
+    for (const theme of this.themes) {
+      await theme.toString();
     }
 
     if (this.animations.length > 1) {
@@ -449,9 +474,76 @@ export class DotLottieCommon {
           });
         }
       });
+
+      dotlottie.themes.forEach((theme) => {
+        if (theme.data) {
+          mergedDotlottie.addTheme({
+            id: theme.id,
+            data: theme.data,
+          });
+        } else if (theme.url) {
+          mergedDotlottie.addTheme({
+            id: theme.id,
+            url: theme.url,
+          });
+        }
+
+        theme.animations.forEach((animation) => {
+          mergedDotlottie.assignTheme({
+            animationId: animation.id,
+            themeId: theme.id,
+          });
+        });
+      });
     }
 
     return mergedDotlottie;
+  }
+
+  public addTheme(themeOptions: ThemeOptions): DotLottieCommon {
+    const theme = new LottieThemeCommon(themeOptions);
+
+    this._themesMap.set(theme.id, theme);
+
+    return this;
+  }
+
+  public removeTheme(id: string): DotLottieCommon {
+    this._themesMap.delete(id);
+
+    return this;
+  }
+
+  public assignTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
+    const theme = this._themesMap.get(themeId);
+
+    if (!theme) throw createError(`Failed to find theme with id ${themeId}`);
+
+    const animation = this._animationsMap.get(animationId);
+
+    if (!animation) throw createError(`Failed to find animation with id ${animationId}`);
+
+    theme.addAnimation(animation);
+
+    animation.addTheme(theme);
+
+    return this;
+  }
+
+  public unassignTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
+    const theme = this._themesMap.get(themeId);
+
+    if (!theme) throw createError(`Failed to find theme with id ${themeId}`);
+
+    const animation = this._animationsMap.get(animationId);
+
+    if (!animation) throw createError(`Failed to find animation with id ${animationId}`);
+
+    theme.removeAnimation(animation.id);
+
+    animation.removeTheme(theme.id);
+
+    return this;
   }
 
   protected _requireValidAuthor(author: string | undefined): asserts author is string {

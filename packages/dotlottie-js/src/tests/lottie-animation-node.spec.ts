@@ -2,17 +2,16 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable no-new */
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import { Base64 } from 'js-base64';
 
-import type { AnimationData } from '../common';
-import { LottieAnimation } from '../node';
+import { LottieAnimation, LottieTheme } from '../node';
 
-// eslint-disable-next-line import/no-namespace
-import * as BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
-import animationData from './__fixtures__/simple/animation/animations/lottie-1.json';
+import BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
+import animationData from './__fixtures__/simple/animation/animations/lottie1.json';
 
 describe('LottieAnimation', () => {
   it('throws an error if it receives an invalid id when constructed', () => {
@@ -30,7 +29,7 @@ describe('LottieAnimation', () => {
   });
 
   it('throws an error if it receives an invalid lottie data when constructed', () => {
-    const invalidData = {} as AnimationData;
+    const invalidData = {} as Animation;
 
     expect(() => {
       new LottieAnimation({ id: 'test', data: invalidData });
@@ -73,6 +72,28 @@ describe('LottieAnimation', () => {
     expect(animation.url).toEqual('https://example.com');
   });
 
+  it('gets and sets the default theme', () => {
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+
+    expect(animation.defaultTheme).toBeUndefined();
+
+    animation.defaultTheme = 'theme1';
+
+    expect(animation.defaultTheme).toEqual('theme1');
+  });
+
+  it('gets assigned themes', () => {
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+
+    expect(animation.themes).toEqual([]);
+
+    const theme = new LottieTheme({ id: 'theme1', url: 'http://fake.lottiefiles.com/theme.lss' });
+
+    animation.addTheme(theme);
+
+    expect(animation.themes).toEqual([theme]);
+  });
+
   describe('toJSON', () => {
     it('returns the animation data as a JSON object', async () => {
       const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
@@ -85,12 +106,12 @@ describe('LottieAnimation', () => {
     it('returns the animation with inlined data as a JSON object', async () => {
       const animation = new LottieAnimation({
         id: 'test',
-        data: structuredClone(BULL_DATA) as unknown as AnimationData,
+        data: structuredClone(BULL_DATA) as unknown as unknown as Animation,
       });
 
       const jsonData = await animation.toJSON({ inlineAssets: true });
 
-      expect(jsonData).toEqual(BULL_DATA as unknown as AnimationData);
+      expect(jsonData).toEqual(BULL_DATA as unknown as unknown as Animation);
     });
 
     it('resolves the animation data from the provided url and returns the animation data as a JSON object', async () => {

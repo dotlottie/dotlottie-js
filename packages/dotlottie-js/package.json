@@ -46,11 +46,12 @@
     "stats:ts": "tsc -p tsconfig.build.json --extendedDiagnostics",
     "test": "pnpm test:browser && pnpm test:node",
     "test:browser": "pnpm test:build:browser && jasmine-browser-runner runSpecs --config=./jasmine/jasmine-browser.json --port=4444",
-    "test:browser:watch": "nodemon -e ts --watch src/tests --exec 'pnpm test:build && jasmine-browser-runner serve --config=./jasmine/jasmine-browser.json --port=4444'",
+    "test:browser:watch": "nodemon -e ts --watch src/tests --exec 'pnpm test:browser'",
     "test:build:browser": "tsup --platform='browser' --config ./jasmine/tsup.config.js",
     "test:build:node": "tsup --platform='node' --config ./jasmine/tsup.config.js",
     "test:build:watch": "pnpm test:build --watch",
     "test:node": "pnpm test:build:node && jasmine --config=./jasmine/jasmine.json --reporter=jasmine-console-reporter",
+    "test:node:watch": "nodemon -e ts --watch src/tests --exec 'pnpm test:node'",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

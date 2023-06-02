@@ -4,6 +4,7 @@
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
+import type { LottieThemeCommon } from './dotlottie-theme-common';
 import type { LottieImageCommon } from './lottie-image-common';
 import type { ManifestAnimation } from './manifest';
 import { PlayMode } from './manifest';
@@ -48,6 +49,10 @@ export class LottieAnimationCommon {
 
   protected _imageAssets: LottieImageCommon[] = [];
 
+  protected _themesMap: Map<string, LottieThemeCommon> = new Map();
+
+  protected _defaultTheme?: string;
+
   public constructor(options: AnimationOptions) {
     this._requireValidOptions(options);
 
@@ -77,6 +82,27 @@ export class LottieAnimationCommon {
     this._requireValidId(id);
 
     this._id = id;
+  }
+
+  public get defaultTheme(): string | undefined {
+    return this._defaultTheme;
+  }
+
+  public set defaultTheme(defaultTheme: string | undefined) {
+    if (defaultTheme) {
+      this._defaultTheme = defaultTheme;
+    }
+  }
+
+  public get themes(): LottieThemeCommon[] {
+    return Array.from(this._themesMap.values());
+  }
+
+  public set themes(themes: LottieThemeCommon[]) {
+    this._themesMap = new Map();
+    themes.forEach((theme) => {
+      this._themesMap.set(theme.id, theme);
+    });
   }
 
   public get imageAssets(): LottieImageCommon[] {
@@ -171,6 +197,14 @@ export class LottieAnimationCommon {
   public set intermission(intermission: number) {
     this._requireValidIntermission(intermission);
     this._intermission = intermission;
+  }
+
+  public addTheme(theme: LottieThemeCommon): void {
+    this._themesMap.set(theme.id, theme);
+  }
+
+  public removeTheme(themeId: string): void {
+    this._themesMap.delete(themeId);
   }
 
   /**

@@ -6,22 +6,14 @@ import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
 import { DotLottie } from '..';
 
-// eslint-disable-next-line import/no-namespace
-import * as BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_1_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-1.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_5_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_4_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_3_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2.json';
-// eslint-disable-next-line import/no-namespace
-import * as DUPES_DATA from './__fixtures__/image-asset-optimization/lots-of-dupes.json';
-// eslint-disable-next-line import/no-namespace
-import * as SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
+import BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
+import IMAGE_ANIMATION_1_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-1.json';
+import IMAGE_ANIMATION_5_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
+import IMAGE_ANIMATION_4_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4.json';
+import IMAGE_ANIMATION_3_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3.json';
+import IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2.json';
+import DUPES_DATA from './__fixtures__/image-asset-optimization/lots-of-dupes.json';
+import SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
 
 describe('LottieImage', () => {
   it('Adds two bull animations via data.', async () => {

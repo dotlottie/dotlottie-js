@@ -10,6 +10,9 @@ export enum PlayMode {
 export interface ManifestAnimation {
   autoplay?: boolean;
 
+  // default theme id
+  defaultTheme?: string;
+
   // Define playback direction 1 forward, -1 backward
   direction?: number;
 
@@ -31,6 +34,13 @@ export interface ManifestAnimation {
 
   // Theme color
   themeColor?: string;
+}
+
+export interface ManifestTheme {
+  // scoped animations ids
+  animations: string[];
+
+  id: string;
 }
 
 export interface Manifest {
@@ -57,6 +67,9 @@ export interface Manifest {
 
   // Revision version number of the dotLottie
   revision?: number | undefined;
+
+  // List of themes
+  themes?: ManifestTheme[];
 
   // Target dotLottie version
   version?: string | undefined;

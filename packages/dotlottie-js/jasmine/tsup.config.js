@@ -17,6 +17,7 @@ export default defineConfig(({ platform }) => {
     noExternal: platform === 'browser' ? ['fflate', 'browser-image-hash'] : ['browser-image-hash'],
     loader: {
       '.lottie': 'binary',
+      '.lss': 'text',
     },
     outExtension: ({ format }) => ({
       js: `.${format === 'esm' ? 'mjs' : format}`,

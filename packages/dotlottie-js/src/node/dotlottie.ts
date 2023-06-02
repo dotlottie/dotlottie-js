@@ -8,7 +8,7 @@ import { strToU8, unzip, zip, strFromU8 } from 'fflate';
 
 import pkg from '../../package.json';
 import { createError, DotLottieCommon } from '../common';
-import type { DotLottieOptions, DotLottiePlugin, AnimationOptions, ManifestAnimation } from '../common';
+import type { DotLottieOptions, DotLottiePlugin, AnimationOptions, ManifestAnimation, Manifest } from '../common';
 
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
@@ -85,6 +85,12 @@ export class DotLottie extends DotLottieCommon {
       }
     }
 
+    for (const theme of this.themes) {
+      const lss = await theme.toString();
+
+      dotlottie[`themes/${theme.id}.lss`] = strToU8(lss);
+    }
+
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
       zip(dotlottie, (err, data) => {
         if (err) {
@@ -124,7 +130,7 @@ export class DotLottie extends DotLottieCommon {
 
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         try {
-          const manifest = JSON.parse(strFromU8(contentObj['manifest.json']));
+          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
           const { author, custom, description, generator, keywords, version } = manifest;
 
           if (author) {
@@ -174,7 +180,6 @@ export class DotLottie extends DotLottieCommon {
               }
 
               dotlottie.addAnimation({
-                id: animationId,
                 data: animation,
                 ...animationSettings,
               });
@@ -199,6 +204,26 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
+            } else if (key.startsWith('themes/') && key.endsWith('.lss')) {
+              // extract themeId from key as the key = `themes/${themeId}.lss`
+              const themeId = /themes\/(.+)\.lss/u.exec(key)?.[1];
+
+              if (!themeId) {
+                throw createError('Invalid theme id');
+              }
+
+              manifest.themes?.forEach((theme) => {
+                if (theme.id === themeId) {
+                  dotlottie.addTheme(theme);
+
+                  theme.animations.forEach((animationId) => {
+                    dotlottie.assignTheme({
+                      animationId,
+                      themeId,
+                    });
+                  });
+                }
+              });
             }
           }
 
@@ -223,11 +248,11 @@ export class DotLottie extends DotLottieCommon {
           }
         } catch (err) {
           // throw error as it's invalid json
-          throw createError('node Invalid manifest inside buffer!');
+          throw createError('Invalid manifest inside buffer!');
         }
       } else {
         // throw error as it's invalid buffer
-        throw createError('node Invalid buffer');
+        throw createError('Invalid buffer');
       }
     } catch (err) {
       if (err instanceof Error) {

@@ -2,6 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable max-classes-per-file */
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
@@ -9,30 +10,24 @@ import { Base64 } from 'js-base64';
 
 import pkg from '../../package.json';
 import type { AnimationData, AnimationOptions, Manifest, ManifestAnimation } from '../common';
-import { PlayMode, DotLottiePlugin } from '../common';
+import { LottieThemeCommon, PlayMode, DotLottiePlugin } from '../common';
 import { DotLottie, LottieAnimation } from '../node';
 
-// eslint-disable-next-line import/no-namespace
-import * as bullData from './__fixtures__/image-asset-optimization/bull.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_1_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-1.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_5_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_4_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_3_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3.json';
-// eslint-disable-next-line import/no-namespace
-import * as IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2.json';
-// eslint-disable-next-line import/no-namespace
-import * as SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
+import bullData from './__fixtures__/image-asset-optimization/bull.json';
+import IMAGE_ANIMATION_1_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-1.json';
+import IMAGE_ANIMATION_5_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
+import IMAGE_ANIMATION_4_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3-4.json';
+import IMAGE_ANIMATION_3_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2-3.json';
+import IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2.json';
+import SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
 import dotlottieAnimation from './__fixtures__/simple/animation.lottie';
-import editedAnimationData from './__fixtures__/simple/animation/animations/edited-lottie.json';
-import animationData from './__fixtures__/simple/animation/animations/lottie-1.json';
+import animationData from './__fixtures__/simple/animation/animations/lottie1.json';
 import manifest from './__fixtures__/simple/animation/manifest.json';
-import editedManifest from './__fixtures__/simple/animation/non-default-manifest.json';
+import themeData from './__fixtures__/simple/animation/themes/theme1.lss';
 import bigMergedDotLottie from './__fixtures__/simple/big-merged-dotlottie.lottie';
 import editedDotlottieAnimation from './__fixtures__/simple/edited-settings.lottie';
+import editedAnimationData from './__fixtures__/simple/edited-settings/animations/lottie01.json';
+import editedManifest from './__fixtures__/simple/edited-settings/manifest.json';
 import { customMatchers } from './test-utils';
 
 beforeAll(() => {
@@ -138,6 +133,26 @@ describe('setGenerator', () => {
     const dotLottie = new DotLottie();
 
     expect(dotLottie.generator).toBe(`${pkg.name}/node@${pkg.version}`);
+  });
+});
+
+describe('setRevision', () => {
+  it('returns the dotlottie instance', () => {
+    const dotlottie = new DotLottie();
+
+    const result = dotlottie.setRevision(1);
+
+    expect(result).toBe(dotlottie);
+  });
+
+  it('sets the revision', () => {
+    const dotlottie = new DotLottie();
+
+    const revision = 1.5;
+
+    dotlottie.setRevision(revision);
+
+    expect(dotlottie.revision).toBe(revision);
   });
 });
 
@@ -439,7 +454,7 @@ describe('getAnimation', () => {
 
 describe('download', () => {
   it('throws error on node environment', async () => {
-    // skip te st if running in browser environment
+    // skip test if running in browser environment
     if (typeof window !== 'undefined') return;
 
     const dotlottie = new DotLottie();
@@ -452,6 +467,48 @@ describe('download', () => {
         })
         .download('file'),
     ).toBeRejectedWithError('[dotlottie-js]: Cannot download dotlottie in a non-browser environment');
+  });
+
+  it('downloads dotlottie file on browser', async () => {
+    // skip test if running in node environment
+    if (typeof window === 'undefined') return;
+
+    const dotlottie = new DotLottie();
+
+    const fileName = 'test.lottie';
+
+    const fakeLink = document.createElement('a');
+
+    const clickSpy = spyOn(fakeLink, 'click').and.callFake(() => {
+      // do nothing
+    });
+
+    spyOn(document, 'createElement').and.callFake(() => {
+      return fakeLink;
+    });
+
+    const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callThrough();
+
+    await dotlottie
+      .setAuthor(manifest.author)
+      .setVersion(manifest.version)
+      .setGenerator(manifest.generator)
+      .addAnimation({
+        id: 'lottie1',
+        data: animationData as unknown as AnimationType,
+      })
+      .build();
+
+    await dotlottie.download(fileName);
+
+    const blob = await dotlottie.toBlob();
+
+    expect(createObjectURLSpy).toHaveBeenCalledTimes(1);
+    expect(createObjectURLSpy).toHaveBeenCalledWith(blob);
+
+    expect(fakeLink.download).toBe(fileName);
+    expect(fakeLink.style.display).toBe('none');
+    expect(clickSpy).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -466,6 +523,14 @@ describe('toBlob', () => {
       .addAnimation({
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
+      })
+      .addTheme({
+        id: manifest.themes[0]?.id as string,
+        data: themeData,
+      })
+      .assignTheme({
+        animationId: manifest.animations[0]?.id as string,
+        themeId: manifest.themes[0]?.id as string,
       })
       .toBlob();
 
@@ -489,6 +554,14 @@ describe('toArrayBuffer', () => {
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
       })
+      .addTheme({
+        id: manifest.themes[0]?.id as string,
+        data: themeData,
+      })
+      .assignTheme({
+        animationId: manifest.animations[0]?.id as string,
+        themeId: manifest.themes[0]?.id as string,
+      })
       .toArrayBuffer();
 
     expect(arrayBuffer).toBeInstanceOf(ArrayBuffer);
@@ -508,6 +581,14 @@ describe('toBase64', () => {
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
       })
+      .addTheme({
+        id: manifest.themes[0]?.id as string,
+        data: themeData,
+      })
+      .assignTheme({
+        animationId: manifest.animations[0]?.id as string,
+        themeId: manifest.themes[0]?.id as string,
+      })
       .toBase64();
 
     const actualArrayBuffer = Base64.toUint8Array(dataURL).buffer;
@@ -518,9 +599,9 @@ describe('toBase64', () => {
 
 describe('fromURL', () => {
   it('throws an error if the URL is invalid', async () => {
-    const dotlottie = new DotLottie();
+    const dotLottie = new DotLottie();
 
-    await expectAsync(dotlottie.fromURL('invalid-url')).toBeRejectedWithError('[dotlottie-js]: Invalid URL');
+    await expectAsync(dotLottie.fromURL('invalid-url')).toBeRejectedWithError('[dotlottie-js]: Invalid URL');
   });
 
   it('loads a dotlottie file from a URL', async () => {
@@ -530,16 +611,14 @@ describe('fromURL', () => {
 
     const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
 
-    let dotlottie = new DotLottie();
-
-    dotlottie = await dotlottie.fromURL(animationURL);
+    const dotLottie = await new DotLottie().fromURL(animationURL);
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
-    expect(dotlottie.animations.length).toBe(1);
-    expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
-    expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
-    expect(dotlottie.manifest).toEqual(manifest as Manifest);
+    expect(dotLottie.animations.length).toBe(1);
+    expect(dotLottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
+    expect(dotLottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
+    expect(dotLottie.manifest).toEqual(manifest as Manifest);
   });
 
   it('loads a dotLottie with non-default settings from a URL and verifies the animation settings', async () => {
@@ -565,6 +644,7 @@ describe('fromURL', () => {
 describe('fromArrayBuffer', () => {
   it('loads a dotlottie file from an array buffer', async () => {
     const arrayBuffer = dotlottieAnimation;
+
     let dotlottie = new DotLottie();
 
     dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
@@ -842,5 +922,239 @@ describe('build', () => {
     expect(parallel1OnBuild).toHaveBeenCalledBefore(parallel2OnBuild);
     expect(parallel2OnBuild).toHaveBeenCalledBefore(sequential1OnBuild);
     expect(sequential1OnBuild).toHaveBeenCalledBefore(sequential2OnBuild);
+  });
+
+  describe('addTheme', () => {
+    it('returns dotLottie instance', () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      const theme = {
+        id: 'theme_1',
+        data: `FillShape { fill-color: red; }`,
+      };
+
+      // act
+      const result = dotlottie.addTheme(theme);
+
+      // assert
+      expect(result).toBe(dotlottie);
+    });
+
+    it('adds theme', () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      const theme1 = {
+        id: 'theme_1',
+        data: `FillShape { fill-color: red; }`,
+      };
+
+      const theme2 = {
+        id: 'theme_2',
+        url: 'https://fake.lottiefiles.com/theme.lss',
+      };
+
+      // act
+      dotlottie.addTheme(theme1).addTheme(theme2);
+
+      const themes = dotlottie.themes;
+
+      // assert
+      expect(themes.length).toBe(2);
+
+      expect(themes[0]).toBeInstanceOf(LottieThemeCommon);
+      expect(themes[0]?.id).toBe(theme1.id);
+      expect(themes[0]?.data).toBe(theme1.data);
+      expect(themes[0]?.url).toBeUndefined();
+
+      expect(themes[1]).toBeInstanceOf(LottieThemeCommon);
+      expect(themes[1]?.id).toBe(theme2.id);
+      expect(themes[1]?.url).toBe(theme2.url);
+      expect(themes[1]?.data).toBeUndefined();
+    });
+  });
+
+  describe('removeTheme', () => {
+    it('returns dotLottie instance', () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      const theme = {
+        id: 'theme_1',
+        data: `FillShape { fill-color: red; }`,
+      };
+
+      // act
+      const result = dotlottie.addTheme(theme).removeTheme(theme.id);
+
+      // assert
+      expect(result).toBe(dotlottie);
+    });
+
+    it('removes theme', () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      const theme1 = {
+        id: 'theme_1',
+        data: `FillShape { fill-color: red; }`,
+      };
+
+      const theme2 = {
+        id: 'theme_2',
+        url: 'https://fake.lottiefiles.com/theme.lss',
+      };
+
+      // act
+      dotlottie.addTheme(theme1).addTheme(theme2).removeTheme(theme1.id);
+
+      // assert
+      expect(dotlottie.themes.length).toBe(1);
+      expect(dotlottie.themes[0]?.id).toBe(theme2.id);
+    });
+  });
+
+  describe('getTheme', () => {
+    it('returns theme by id', () => {
+      // arrange
+      const dotLottie = new DotLottie();
+
+      const theme = {
+        id: 'theme_1',
+        data: `FillShape { fill-color: red; }`,
+      };
+
+      dotLottie.addTheme(theme);
+
+      // act
+      const result = dotLottie.getTheme(theme.id);
+
+      // assert
+      expect(result).toBeInstanceOf(LottieThemeCommon);
+      expect(result?.id).toBe(theme.id);
+      expect(result?.data).toBe(theme.data);
+    });
+
+    it('returns undefined if theme does not exist', () => {
+      // arrange
+      const dotLottie = new DotLottie();
+
+      // act
+      const result = dotLottie.getTheme('theme_1');
+
+      // assert
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('assignTheme', () => {
+    it('returns dotLottie instance', () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      // act
+      const result = dotlottie
+        .addAnimation({
+          id: 'animation_1',
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        })
+        .assignTheme({
+          themeId: 'theme_1',
+          animationId: 'animation_1',
+        });
+
+      // assert
+      expect(result).toBe(dotlottie);
+    });
+
+    it('throws error if animation does not exist', () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      const theme = {
+        id: 'theme_1',
+        data: `FillShape { fill-color: red; }`,
+      };
+
+      const animation = {
+        id: 'animation_1',
+        data: animationData as unknown as Animation,
+      };
+
+      expect(() => {
+        // act
+        dotlottie.addTheme(theme).assignTheme({
+          themeId: theme.id,
+          animationId: animation.id,
+        });
+        // assert
+      }).toThrowError(`[dotlottie-js]: Failed to find animation with id ${animation.id}`);
+    });
+
+    it('throws error if theme does not exist', () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      const theme = {
+        id: 'theme_1',
+        data: `FillShape { fill-color: red; }`,
+      };
+
+      const animation = {
+        id: 'animation_1',
+        data: animationData as unknown as AnimationType,
+      };
+
+      expect(() => {
+        // act
+        dotlottie.addAnimation(animation).assignTheme({
+          themeId: theme.id,
+          animationId: animation.id,
+        });
+        // assert
+      }).toThrowError(`[dotlottie-js]: Failed to find theme with id ${theme.id}`);
+    });
+
+    it('assigns an existing theme to an existing animation', async () => {
+      // arrange
+      const dotlottie = new DotLottie();
+
+      // act
+      dotlottie
+        .addAnimation({
+          id: 'animation_1',
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        })
+        .assignTheme({
+          themeId: 'theme_1',
+          animationId: 'animation_1',
+        });
+
+      // assert
+      const assignedTheme = dotlottie.getTheme('theme_1');
+      const animation = await dotlottie.getAnimation('animation_1');
+
+      expect(assignedTheme?.animations.length).toBe(1);
+      expect(assignedTheme?.animations[0]).toBe(animation);
+
+      expect(animation?.themes.length).toBe(1);
+      expect(animation?.themes[0]).toBe(assignedTheme);
+
+      expect(dotlottie.manifest.themes).toEqual([
+        {
+          id: 'theme_1',
+          animations: ['animation_1'],
+        },
+      ]);
+    });
   });
 });
