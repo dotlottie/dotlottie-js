@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+
 import { DotLottie } from '..';
 
 // eslint-disable-next-line import/no-namespace
@@ -26,11 +28,11 @@ describe('LottieImage', () => {
     await new DotLottie({ enableDuplicateImageOptimization: true })
       .addAnimation({
         id: 'animation_1',
-        data: structuredClone(BULL_DATA) as unknown as Animation,
+        data: structuredClone(BULL_DATA) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_2',
-        data: structuredClone(BULL_DATA) as unknown as Animation,
+        data: structuredClone(BULL_DATA) as unknown as AnimationType,
       })
       .build()
       .then(async (value: DotLottie) => {
@@ -57,11 +59,11 @@ describe('LottieImage', () => {
     await new DotLottie()
       .addAnimation({
         id: 'animation_1',
-        data: structuredClone(BULL_DATA) as unknown as Animation,
+        data: structuredClone(BULL_DATA) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_2',
-        data: structuredClone(BULL_DATA) as unknown as Animation,
+        data: structuredClone(BULL_DATA) as unknown as AnimationType,
       })
       .build()
       .then(async (value: DotLottie) => {
@@ -73,11 +75,11 @@ describe('LottieImage', () => {
     await new DotLottie({ enableDuplicateImageOptimization: true })
       .addAnimation({
         id: 'animation_1',
-        data: structuredClone(BULL_DATA) as unknown as Animation,
+        data: structuredClone(BULL_DATA) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_2',
-        data: structuredClone(BULL_DATA) as unknown as Animation,
+        data: structuredClone(BULL_DATA) as unknown as AnimationType,
       })
       .build()
       .then(async (value: DotLottie) => {
@@ -104,7 +106,7 @@ describe('LottieImage', () => {
     await new DotLottie({ enableDuplicateImageOptimization: true })
       .addAnimation({
         id: 'animation_1',
-        data: structuredClone(DUPES_DATA) as unknown as Animation,
+        data: structuredClone(DUPES_DATA) as unknown as AnimationType,
       })
       .build()
       .then(async (value: DotLottie) => {
@@ -131,7 +133,7 @@ describe('LottieImage', () => {
     await new DotLottie({ enableDuplicateImageOptimization: false })
       .addAnimation({
         id: 'animation_1',
-        data: structuredClone(DUPES_DATA) as unknown as Animation,
+        data: structuredClone(DUPES_DATA) as unknown as AnimationType,
       })
       .build()
       .then(async (value: DotLottie) => {
@@ -159,27 +161,27 @@ describe('LottieImage', () => {
     await new DotLottie({ enableDuplicateImageOptimization: true })
       .addAnimation({
         id: 'animation_0',
-        data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as Animation,
+        data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_1',
-        data: structuredClone(IMAGE_ANIMATION_1_DATA) as unknown as Animation,
+        data: structuredClone(IMAGE_ANIMATION_1_DATA) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_2',
-        data: structuredClone(IMAGE_ANIMATION_2_DATA) as unknown as Animation,
+        data: structuredClone(IMAGE_ANIMATION_2_DATA) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_3',
-        data: structuredClone(IMAGE_ANIMATION_3_DATA) as unknown as Animation,
+        data: structuredClone(IMAGE_ANIMATION_3_DATA) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_4',
-        data: structuredClone(IMAGE_ANIMATION_4_DATA) as unknown as Animation,
+        data: structuredClone(IMAGE_ANIMATION_4_DATA) as unknown as AnimationType,
       })
       .addAnimation({
         id: 'animation_5',
-        data: structuredClone(IMAGE_ANIMATION_5_DATA) as unknown as Animation,
+        data: structuredClone(IMAGE_ANIMATION_5_DATA) as unknown as AnimationType,
       })
       .build()
       .then(async (value: DotLottie) => {

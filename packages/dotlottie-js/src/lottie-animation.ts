@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+
 import type { AnimationOptions } from './common';
 import { LottieAnimationCommon, createError } from './common';
 import { LottieImage } from './lottie-image';
@@ -39,7 +41,7 @@ export class LottieAnimation extends LottieAnimationCommon {
   protected override async _extractImageAssets(): Promise<boolean> {
     if (!this._data) throw createError('Asset extraction failed.');
 
-    const animationAssets = this._data.assets as Animation['assets'];
+    const animationAssets = this._data.assets as AnimationType['assets'];
 
     if (!animationAssets) throw createError('Asset extraction failed.');
 
