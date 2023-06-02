@@ -1047,7 +1047,7 @@ describe('build', () => {
       const result = dotlottie
         .addAnimation({
           id: 'animation_1',
-          data: animationData as unknown as Animation,
+          data: animationData as unknown as AnimationType,
         })
         .addTheme({
           id: 'theme_1',
@@ -1073,7 +1073,7 @@ describe('build', () => {
 
       const animation = {
         id: 'animation_1',
-        data: animationData as unknown as Animation,
+        data: animationData as unknown as AnimationType,
       };
 
       expect(() => {
@@ -1097,7 +1097,7 @@ describe('build', () => {
 
       const animation = {
         id: 'animation_1',
-        data: animationData as unknown as Animation,
+        data: animationData as unknown as AnimationType,
       };
 
       expect(() => {
@@ -1118,7 +1118,7 @@ describe('build', () => {
       dotlottie
         .addAnimation({
           id: 'animation_1',
-          data: animationData as unknown as Animation,
+          data: animationData as unknown as AnimationType,
         })
         .addTheme({
           id: 'theme_1',

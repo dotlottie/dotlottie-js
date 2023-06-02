@@ -29,7 +29,7 @@ describe('LottieAnimation', () => {
   });
 
   it('throws an error if it receives an invalid lottie data when constructed', () => {
-    const invalidData = {} as Animation;
+    const invalidData = {} as AnimationType;
 
     expect(() => {
       new LottieAnimation({ id: 'test', data: invalidData });
@@ -73,7 +73,7 @@ describe('LottieAnimation', () => {
   });
 
   it('gets and sets the default theme', () => {
-    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
     expect(animation.defaultTheme).toBeUndefined();
 
@@ -83,7 +83,7 @@ describe('LottieAnimation', () => {
   });
 
   it('gets assigned themes', () => {
-    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
     expect(animation.themes).toEqual([]);
 
@@ -106,12 +106,12 @@ describe('LottieAnimation', () => {
     it('returns the animation with inlined data as a JSON object', async () => {
       const animation = new LottieAnimation({
         id: 'test',
-        data: structuredClone(BULL_DATA) as unknown as unknown as Animation,
+        data: structuredClone(BULL_DATA) as unknown as AnimationType,
       });
 
       const jsonData = await animation.toJSON({ inlineAssets: true });
 
-      expect(jsonData).toEqual(BULL_DATA as unknown as unknown as Animation);
+      expect(jsonData).toEqual(BULL_DATA as unknown as AnimationType);
     });
 
     it('resolves the animation data from the provided url and returns the animation data as a JSON object', async () => {

@@ -1083,7 +1083,7 @@ describe('build', () => {
 
       const animation = {
         id: 'animation_1',
-        data: animationData as unknown as Animation,
+        data: animationData as unknown as AnimationType,
       };
 
       expect(() => {

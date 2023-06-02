@@ -5,6 +5,8 @@
 /* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable no-new */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+
 import { LottieTheme, LottieAnimation } from '..';
 
 import animationData from './__fixtures__/simple/animation/animations/lottie1.json';
@@ -88,7 +90,7 @@ describe('LottieTheme', () => {
 
     const animation = new LottieAnimation({
       id: 'animation1',
-      data: animationData as unknown as Animation,
+      data: animationData as unknown as AnimationType,
     });
 
     expect(theme.animations.length).toEqual(0);
@@ -108,7 +110,7 @@ describe('LottieTheme', () => {
 
     const animation = new LottieAnimation({
       id: 'animation1',
-      data: animationData as unknown as Animation,
+      data: animationData as unknown as AnimationType,
     });
 
     expect(theme.animations.length).toEqual(0);
@@ -132,12 +134,12 @@ describe('LottieTheme', () => {
 
     const animation1 = new LottieAnimation({
       id: 'animation1',
-      data: animationData as unknown as Animation,
+      data: animationData as unknown as AnimationType,
     });
 
     const animation2 = new LottieAnimation({
       id: 'animation2',
-      data: animationData as unknown as Animation,
+      data: animationData as unknown as AnimationType,
     });
 
     // act

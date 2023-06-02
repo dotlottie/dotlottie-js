@@ -72,7 +72,7 @@ describe('LottieAnimation', () => {
   });
 
   it('gets and sets the default theme', () => {
-    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
     expect(animation.defaultTheme).toBeUndefined();
 
@@ -82,7 +82,7 @@ describe('LottieAnimation', () => {
   });
 
   it('gets assigned themes', () => {
-    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
     expect(animation.themes).toEqual([]);
 
