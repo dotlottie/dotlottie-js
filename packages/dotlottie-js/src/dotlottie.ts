@@ -2,6 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
@@ -223,7 +224,7 @@ export class DotLottie extends DotLottieCommon {
           for (const image of tmpImages) {
             for (const parentAnimation of dotlottie.animations) {
               if (parentAnimation.data) {
-                const animationAssets = parentAnimation.data.assets as Animation['assets'];
+                const animationAssets = parentAnimation.data.assets as AnimationType['assets'];
 
                 if (animationAssets) {
                   for (const asset of animationAssets) {

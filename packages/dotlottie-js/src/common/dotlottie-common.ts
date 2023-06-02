@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+
 import pkg from '../../package.json';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
@@ -205,7 +207,7 @@ export class DotLottieCommon {
 
         if (!animation.data) throw createError('No animation data available.');
 
-        const animationAssets = animation.data.assets as Animation['assets'];
+        const animationAssets = animation.data.assets as AnimationType['assets'];
 
         if (!animationAssets) throw createError('No image assets to rename.');
 
@@ -266,7 +268,7 @@ export class DotLottieCommon {
    * @returns LottieAnimationCommon with inlined assets
    */
   private async _findImageAssetAndInline(animation: LottieAnimationCommon): Promise<LottieAnimationCommon> {
-    const animationAssets = animation.data?.assets as Animation['assets'];
+    const animationAssets = animation.data?.assets as AnimationType['assets'];
 
     if (!animationAssets) throw createError("Failed to inline assets, the animation's assets are undefined.");
 

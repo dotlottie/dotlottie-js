@@ -2,12 +2,14 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+
 import type { LottieImageCommon } from './lottie-image-common';
 import type { ManifestAnimation } from './manifest';
 import { PlayMode } from './manifest';
 import { createError } from './utils';
 
-export type AnimationData = Animation;
+export type AnimationData = AnimationType;
 
 export interface ExportOptions {
   inlineAssets?: boolean;
@@ -208,7 +210,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toJSON(options: ExportOptions = {}): Promise<Animation> {
+  public async toJSON(options: ExportOptions = {}): Promise<AnimationType> {
     if (this._url && !this._data) {
       this._data = await this._fromUrl(this._url);
     }
@@ -220,7 +222,7 @@ export class LottieAnimationCommon {
       await this._extractImageAssets();
 
       if (options.inlineAssets) {
-        const animationAssets = this.data?.assets as Animation['assets'];
+        const animationAssets = this.data?.assets as AnimationType['assets'];
 
         if (!animationAssets) throw createError("Failed to inline assets, the animation's assets are undefined.");
 
@@ -251,7 +253,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the fetch request fails.
    * @throws Error - if the data object is not a valid Lottie animation data object.
    */
-  private async _fromUrl(url: string): Promise<Animation> {
+  private async _fromUrl(url: string): Promise<AnimationType> {
     const response = await fetch(url);
 
     const text = await response.text();

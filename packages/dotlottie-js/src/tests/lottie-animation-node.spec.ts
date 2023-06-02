@@ -4,6 +4,7 @@
 
 /* eslint-disable no-new */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import { Base64 } from 'js-base64';
 
 import type { AnimationData } from '../common';
@@ -43,7 +44,7 @@ describe('LottieAnimation', () => {
   });
 
   it('gets and sets the id', () => {
-    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
     expect(animation.id).toEqual('test');
 
@@ -57,13 +58,13 @@ describe('LottieAnimation', () => {
 
     expect(animation.data).toBeUndefined();
 
-    animation.data = animationData as unknown as Animation;
+    animation.data = animationData as unknown as AnimationType;
 
-    expect(animation.data).toEqual(animationData as unknown as Animation);
+    expect(animation.data).toEqual(animationData as unknown as AnimationType);
   });
 
   it('gets and sets the url', () => {
-    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
     expect(animation.url).toBeUndefined();
 
@@ -74,11 +75,11 @@ describe('LottieAnimation', () => {
 
   describe('toJSON', () => {
     it('returns the animation data as a JSON object', async () => {
-      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
       const jsonData = await animation.toJSON();
 
-      expect(jsonData).toEqual(animationData as unknown as Animation);
+      expect(jsonData).toEqual(animationData as unknown as AnimationType);
     });
 
     it('returns the animation with inlined data as a JSON object', async () => {
@@ -108,7 +109,7 @@ describe('LottieAnimation', () => {
 
       expect(fetchSpy).toHaveBeenCalledWith(animationURL);
 
-      expect(jsonData).toEqual(animationData as unknown as Animation);
+      expect(jsonData).toEqual(animationData as unknown as AnimationType);
     });
 
     it('throws an error if the animation data cannot be resolved from the provided url', async () => {
@@ -126,7 +127,7 @@ describe('LottieAnimation', () => {
 
   describe('toBase64', () => {
     it('returns the base64 of the animation', async () => {
-      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
       const dataUrl = await animation.toBase64();
 
@@ -167,7 +168,7 @@ describe('LottieAnimation', () => {
 
   describe('toBlob', () => {
     it('returns the animation data as a blob', async () => {
-      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
       const blob = await animation.toBlob();
 
@@ -216,7 +217,7 @@ describe('LottieAnimation', () => {
 
   describe('toArrayBuffer', () => {
     it('returns the animation data as an array buffer', async () => {
-      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as Animation });
+      const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 
       const arrayBuffer = await animation.toArrayBuffer();
 

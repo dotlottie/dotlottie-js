@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+
 import { LottieImage } from '../lottie-image';
 
 import { DotLottiePlugin } from './dotlottie-plugin';
@@ -96,7 +98,7 @@ export class DuplicateImageDetectorCommon extends DotLottiePlugin {
           // Check if this animation has the image before loop over data to save time ?
 
           if (animation.data) {
-            const animationAssets = animation.data.assets as Animation['assets'];
+            const animationAssets = animation.data.assets as AnimationType['assets'];
 
             if (animationAssets) {
               animationAssets.forEach((asset) => {
