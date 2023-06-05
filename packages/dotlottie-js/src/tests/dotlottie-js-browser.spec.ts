@@ -72,6 +72,26 @@ describe('setAuthor', () => {
   });
 });
 
+describe('setRevision', () => {
+  it('returns the dotlottie instance', () => {
+    const dotlottie = new DotLottie();
+
+    const result = dotlottie.setRevision(1);
+
+    expect(result).toBe(dotlottie);
+  });
+
+  it('sets the revision', () => {
+    const dotlottie = new DotLottie();
+
+    const revision = 1.5;
+
+    dotlottie.setRevision(revision);
+
+    expect(dotlottie.revision).toBe(revision);
+  });
+});
+
 describe('setDescription', () => {
   it('returns the dotlottie instance', () => {
     const dotlottie = new DotLottie();
@@ -599,9 +619,7 @@ describe('fromURL', () => {
 
     const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
 
-    let dotLottie = new DotLottie();
-
-    dotLottie = await dotLottie.fromURL(animationURL);
+    const dotLottie = await new DotLottie().fromURL(animationURL);
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
@@ -609,6 +627,9 @@ describe('fromURL', () => {
     expect(dotLottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
     expect(dotLottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
     expect(dotLottie.manifest).toEqual(manifest as Manifest);
+    expect(dotLottie.themes.length).toBe(1);
+    expect(dotLottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
+    expect(dotLottie.themes[0]?.data).toEqual(themeData);
   });
 
   it('loads a dotLottie with non-default settings from a URL and verifies the animation settings', async () => {
@@ -626,7 +647,7 @@ describe('fromURL', () => {
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
     expect(dotlottie.animations.length).toBe(1);
     expect(dotlottie.animations[0]?.id).toEqual(editedManifest.animations[0]?.id as string);
-    expect(dotlottie.animations[0]?.data).toEqual(editedAnimationData as unknown as AnimationData);
+    expect(dotlottie.animations[0]?.data).toEqual(editedAnimationData as unknown as AnimationType);
     expect(dotlottie.manifest).toEqual(editedManifest as Manifest);
   });
 });
@@ -643,6 +664,9 @@ describe('fromArrayBuffer', () => {
     expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
     expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
     expect(dotlottie.manifest).toEqual(manifest as Manifest);
+    expect(dotlottie.themes.length).toBe(1);
+    expect(dotlottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
+    expect(dotlottie.themes[0]?.data).toEqual(themeData);
   });
 
   it('loads a dotLottie containing images from an array buffer', async () => {

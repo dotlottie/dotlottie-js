@@ -324,7 +324,20 @@ export class DotLottieCommon {
   }
 
   public removeAnimation(animationId: string): DotLottieCommon {
-    this._animationsMap.delete(animationId);
+    const targetAnimation = this._animationsMap.get(animationId);
+
+    if (targetAnimation) {
+      const assignedThemes = targetAnimation.themes;
+
+      for (const assignedTheme of assignedThemes) {
+        this.unassignTheme({
+          animationId: targetAnimation.id,
+          themeId: assignedTheme.id,
+        });
+      }
+
+      this._animationsMap.delete(targetAnimation.id);
+    }
 
     return this;
   }
@@ -509,7 +522,20 @@ export class DotLottieCommon {
   }
 
   public removeTheme(id: string): DotLottieCommon {
-    this._themesMap.delete(id);
+    const targetTheme = this._themesMap.get(id);
+
+    if (targetTheme) {
+      const scopedAnimations = targetTheme.animations;
+
+      for (const scopedAnimation of scopedAnimations) {
+        this.unassignTheme({
+          animationId: scopedAnimation.id,
+          themeId: id,
+        });
+      }
+
+      this._themesMap.delete(targetTheme.id);
+    }
 
     return this;
   }

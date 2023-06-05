@@ -214,7 +214,10 @@ export class DotLottie extends DotLottieCommon {
 
               manifest.themes?.forEach((theme) => {
                 if (theme.id === themeId) {
-                  dotlottie.addTheme(theme);
+                  dotlottie.addTheme({
+                    id: theme.id,
+                    data: decodedStr,
+                  });
 
                   theme.animations.forEach((animationId) => {
                     dotlottie.assignTheme({

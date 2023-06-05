@@ -497,6 +497,14 @@ describe('download', () => {
         id: 'lottie1',
         data: animationData as unknown as AnimationType,
       })
+      .addTheme({
+        id: 'theme1',
+        data: themeData,
+      })
+      .assignTheme({
+        animationId: 'lottie1',
+        themeId: 'theme1',
+      })
       .build();
 
     await dotlottie.download(fileName);
@@ -619,6 +627,9 @@ describe('fromURL', () => {
     expect(dotLottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
     expect(dotLottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
     expect(dotLottie.manifest).toEqual(manifest as Manifest);
+    expect(dotLottie.themes.length).toBe(1);
+    expect(dotLottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
+    expect(dotLottie.themes[0]?.data).toEqual(themeData);
   });
 
   it('loads a dotLottie with non-default settings from a URL and verifies the animation settings', async () => {
@@ -653,6 +664,9 @@ describe('fromArrayBuffer', () => {
     expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
     expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
     expect(dotlottie.manifest).toEqual(manifest as Manifest);
+    expect(dotlottie.themes.length).toBe(1);
+    expect(dotlottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
+    expect(dotlottie.themes[0]?.data).toEqual(themeData);
   });
 
   it('loads a dotLottie containing images from an array buffer', async () => {
