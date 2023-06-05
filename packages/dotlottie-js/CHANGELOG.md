@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.2.0
+
+### Minor Changes
+
+- ee228ac: feat: 🎸 theming
+
 ## 0.1.5
 
 ### Patch Changes
