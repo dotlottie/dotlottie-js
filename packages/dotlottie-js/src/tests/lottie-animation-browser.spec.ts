@@ -2,15 +2,15 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable no-new */
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import { Base64 } from 'js-base64';
 
-import { LottieAnimation } from '..';
+import { LottieAnimation, LottieTheme } from '..';
 
-// eslint-disable-next-line import/no-namespace
-import * as BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
-import animationData from './__fixtures__/simple/animation/animations/lottie-1.json';
+import BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
+import animationData from './__fixtures__/simple/animation/animations/lottie1.json';
 
 describe('LottieAnimation', () => {
   it('throws an error if it receives an invalid id when constructed', () => {
@@ -69,6 +69,28 @@ describe('LottieAnimation', () => {
     animation.url = 'https://example.com';
 
     expect(animation.url).toEqual('https://example.com');
+  });
+
+  it('gets and sets the default theme', () => {
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
+
+    expect(animation.defaultTheme).toBeUndefined();
+
+    animation.defaultTheme = 'theme1';
+
+    expect(animation.defaultTheme).toEqual('theme1');
+  });
+
+  it('gets assigned themes', () => {
+    const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
+
+    expect(animation.themes).toEqual([]);
+
+    const theme = new LottieTheme({ id: 'theme1', url: 'http://fake.lottiefiles.com/theme.lss' });
+
+    animation.addTheme(theme);
+
+    expect(animation.themes).toEqual([theme]);
   });
 
   describe('toJSON', () => {

@@ -7,7 +7,7 @@ import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
 import { DotLottieCommon, createError } from './common';
-import type { DotLottiePlugin, AnimationOptions, DotLottieOptions, ManifestAnimation } from './common';
+import type { DotLottiePlugin, AnimationOptions, DotLottieOptions, ManifestAnimation, Manifest } from './common';
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
 import { LottieImage } from './lottie-image';
@@ -100,6 +100,12 @@ export class DotLottie extends DotLottieCommon {
       }
     }
 
+    for (const theme of this.themes) {
+      const lss = await theme.toString();
+
+      dotlottie[`themes/${theme.id}.lss`] = strToU8(lss);
+    }
+
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
       zip(dotlottie, (err, data) => {
         if (err) {
@@ -141,7 +147,7 @@ export class DotLottie extends DotLottieCommon {
         // valid buffer
         try {
           // Parse the manifest first so that we can pick up animation settings
-          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'] as Uint8Array, false));
+          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
           const { author, custom, description, generator, keywords, version } = manifest;
 
           if (author) {
@@ -192,7 +198,6 @@ export class DotLottie extends DotLottieCommon {
               }
 
               dotlottie.addAnimation({
-                id: animationId,
                 data: animation,
                 ...animationSettings,
               });
@@ -217,6 +222,29 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
+            } else if (key.startsWith('themes/') && key.endsWith('.lss')) {
+              // extract themeId from key as the key = `themes/${themeId}.lss`
+              const themeId = /themes\/(.+)\.lss/u.exec(key)?.[1];
+
+              if (!themeId) {
+                throw createError('Invalid theme id');
+              }
+
+              manifest.themes?.forEach((theme) => {
+                if (theme.id === themeId) {
+                  dotlottie.addTheme({
+                    id: theme.id,
+                    data: decodedStr,
+                  });
+
+                  theme.animations.forEach((animationId) => {
+                    dotlottie.assignTheme({
+                      animationId,
+                      themeId,
+                    });
+                  });
+                }
+              });
             }
           }
 
