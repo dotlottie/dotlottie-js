@@ -30,1145 +30,1147 @@ import editedAnimationData from './__fixtures__/simple/edited-settings/animation
 import editedManifest from './__fixtures__/simple/edited-settings/manifest.json';
 import { customMatchers } from './test-utils';
 
-beforeAll(() => {
-  jasmine.addMatchers(customMatchers);
-});
-
-describe('setVersion', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
-
-    const result = dotlottie.setVersion('1.0.0');
-
-    expect(result).toBe(dotlottie);
+describe('DotLottie', () => {
+  beforeAll(() => {
+    jasmine.addMatchers(customMatchers);
   });
 
-  it('sets the version', () => {
-    const dotlottie = new DotLottie();
+  describe('setVersion', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    const version = '1.0.0';
+      const result = dotlottie.setVersion('1.0.0');
 
-    dotlottie.setVersion(version);
+      expect(result).toBe(dotlottie);
+    });
 
-    expect(dotlottie.version).toBe(version);
-  });
-});
+    it('sets the version', () => {
+      const dotlottie = new DotLottie();
 
-describe('setAuthor', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
+      const version = '1.0.0';
 
-    const result = dotlottie.setAuthor('Design Barn');
+      dotlottie.setVersion(version);
 
-    expect(result).toBe(dotlottie);
-  });
-
-  it('sets the author', () => {
-    const dotlottie = new DotLottie();
-
-    dotlottie.setAuthor('Design Barn');
-
-    expect(dotlottie.author).toBe('Design Barn');
-  });
-});
-
-describe('setRevision', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
-
-    const result = dotlottie.setRevision(1);
-
-    expect(result).toBe(dotlottie);
+      expect(dotlottie.version).toBe(version);
+    });
   });
 
-  it('sets the revision', () => {
-    const dotlottie = new DotLottie();
+  describe('setAuthor', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    const revision = 1.5;
+      const result = dotlottie.setAuthor('Design Barn');
 
-    dotlottie.setRevision(revision);
+      expect(result).toBe(dotlottie);
+    });
 
-    expect(dotlottie.revision).toBe(revision);
-  });
-});
+    it('sets the author', () => {
+      const dotlottie = new DotLottie();
 
-describe('setDescription', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
+      dotlottie.setAuthor('Design Barn');
 
-    const result = dotlottie.setDescription('A description');
-
-    expect(result).toBe(dotlottie);
+      expect(dotlottie.author).toBe('Design Barn');
+    });
   });
 
-  it('sets the description', () => {
-    const dotlottie = new DotLottie();
+  describe('setRevision', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    dotlottie.setDescription('A description');
+      const result = dotlottie.setRevision(1);
 
-    expect(dotlottie.description).toBe('A description');
-  });
-});
+      expect(result).toBe(dotlottie);
+    });
 
-describe('setGenerator', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
+    it('sets the revision', () => {
+      const dotlottie = new DotLottie();
 
-    const result = dotlottie.setGenerator('Design Barn');
+      const revision = 1.5;
 
-    expect(result).toBe(dotlottie);
-  });
+      dotlottie.setRevision(revision);
 
-  it('sets the generator', () => {
-    const dotlottie = new DotLottie();
-
-    const generator = 'Design Barn';
-
-    dotlottie.setGenerator(generator);
-
-    expect(dotlottie.generator).toBe(generator);
+      expect(dotlottie.revision).toBe(revision);
+    });
   });
 
-  it('has proper generator when no input provided', () => {
-    const dotLottie = new DotLottie();
+  describe('setDescription', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    expect(dotLottie.generator).toBe(`${pkg.name}@${pkg.version}`);
-  });
-});
+      const result = dotlottie.setDescription('A description');
 
-describe('setRevision', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
+      expect(result).toBe(dotlottie);
+    });
 
-    const result = dotlottie.setRevision(1);
+    it('sets the description', () => {
+      const dotlottie = new DotLottie();
 
-    expect(result).toBe(dotlottie);
-  });
+      dotlottie.setDescription('A description');
 
-  it('sets the revision', () => {
-    const dotlottie = new DotLottie();
-
-    const revision = 1.5;
-
-    dotlottie.setRevision(revision);
-
-    expect(dotlottie.revision).toBe(revision);
-  });
-});
-
-describe('setKeywords', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
-
-    const result = dotlottie.setKeywords('animation, design, lottie');
-
-    expect(result).toBe(dotlottie);
+      expect(dotlottie.description).toBe('A description');
+    });
   });
 
-  it('sets the keywords', () => {
-    const dotlottie = new DotLottie();
+  describe('setGenerator', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    const keywords = 'animation, design, lottie';
+      const result = dotlottie.setGenerator('Design Barn');
 
-    dotlottie.setKeywords(keywords);
+      expect(result).toBe(dotlottie);
+    });
 
-    expect(dotlottie.keywords).toBe(keywords);
-  });
-});
+    it('sets the generator', () => {
+      const dotlottie = new DotLottie();
 
-describe('addAnimation', () => {
-  it('throws an error if it receives a duplicate id when constructed', () => {
-    expect(() => {
+      const generator = 'Design Barn';
+
+      dotlottie.setGenerator(generator);
+
+      expect(dotlottie.generator).toBe(generator);
+    });
+
+    it('has proper generator when no input provided', () => {
       const dotLottie = new DotLottie();
 
-      dotLottie.addAnimation({
-        id: 'test',
-        url: 'https://example.com/test.lottie',
-      });
-      dotLottie.addAnimation({
-        id: 'test',
-        url: 'https://example.com/test.lottie',
-      });
-    }).toThrowError('[dotlottie-js]: Duplicate animation id detected, aborting.');
+      expect(dotLottie.generator).toBe(`${pkg.name}@${pkg.version}`);
+    });
   });
 
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
+  describe('setRevision', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    const result = dotlottie.addAnimation({
-      id: manifest.animations[0]?.id as string,
-      data: animationData as unknown as AnimationType,
+      const result = dotlottie.setRevision(1);
+
+      expect(result).toBe(dotlottie);
     });
 
-    expect(result).toBe(dotlottie);
+    it('sets the revision', () => {
+      const dotlottie = new DotLottie();
+
+      const revision = 1.5;
+
+      dotlottie.setRevision(revision);
+
+      expect(dotlottie.revision).toBe(revision);
+    });
   });
 
-  it('adds an animation', () => {
-    const animationId = manifest.animations[0]?.id as string;
+  describe('setKeywords', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    const dotlottie = new DotLottie();
+      const result = dotlottie.setKeywords('animation, design, lottie');
 
-    dotlottie.addAnimation({
-      id: animationId,
-      data: animationData as unknown as AnimationType,
+      expect(result).toBe(dotlottie);
     });
 
-    expect(dotlottie.animations.length).toBe(1);
+    it('sets the keywords', () => {
+      const dotlottie = new DotLottie();
 
-    const animation = dotlottie.animations[0];
+      const keywords = 'animation, design, lottie';
 
-    expect(animation?.id).toBe(manifest.animations[0]?.id);
+      dotlottie.setKeywords(keywords);
+
+      expect(dotlottie.keywords).toBe(keywords);
+    });
   });
 
-  it('adds an animation using all customizable options', async () => {
-    const animationId = 'test_animation';
+  describe('addAnimation', () => {
+    it('throws an error if it receives a duplicate id when constructed', () => {
+      expect(() => {
+        const dotLottie = new DotLottie();
 
-    const dotlottie = new DotLottie();
-
-    const animationOptions: AnimationOptions = {
-      id: animationId,
-      data: animationData as unknown as AnimationType,
-      autoplay: true,
-      direction: -1,
-      hover: true,
-      intermission: 1000,
-      loop: true,
-      playMode: PlayMode.Bounce,
-      speed: 1.5,
-    };
-
-    const manifestDataToCompare: ManifestAnimation = {
-      id: animationId,
-      autoplay: true,
-      direction: -1,
-      hover: true,
-      intermission: 1000,
-      loop: true,
-      playMode: PlayMode.Bounce,
-      speed: 1.5,
-    };
-
-    dotlottie.addAnimation({
-      ...animationOptions,
+        dotLottie.addAnimation({
+          id: 'test',
+          url: 'https://example.com/test.lottie',
+        });
+        dotLottie.addAnimation({
+          id: 'test',
+          url: 'https://example.com/test.lottie',
+        });
+      }).toThrowError('[dotlottie-js]: Duplicate animation id detected, aborting.');
     });
 
-    await dotlottie.build();
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    const animationManifest = dotlottie.manifest.animations[0];
-
-    expect(animationManifest).toEqual(manifestDataToCompare);
-  });
-});
-
-describe('removeAnimation', () => {
-  it('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
-
-    const result = dotlottie.addAnimation({
-      id: manifest.animations[0]?.id as string,
-      data: animationData as unknown as AnimationType,
-    });
-
-    expect(result).toBe(dotlottie);
-  });
-
-  it('removes an animation', () => {
-    const dotlottie = new DotLottie();
-
-    dotlottie.addAnimation({
-      id: manifest.animations[0]?.id as string,
-      data: animationData as unknown as AnimationType,
-    });
-
-    expect(dotlottie.animations.length).toBe(1);
-
-    dotlottie.removeAnimation(manifest.animations[0]?.id as string);
-
-    expect(dotlottie.animations.length).toBe(0);
-  });
-});
-
-describe('getAnimation', () => {
-  it('returns animation instance', async () => {
-    const dotlottie = new DotLottie();
-
-    dotlottie.addAnimation({
-      id: manifest.animations[0]?.id as string,
-      data: animationData as unknown as AnimationType,
-    });
-
-    const animation = await dotlottie.getAnimation(manifest.animations[0]?.id as string);
-
-    expect(animation).toBeInstanceOf(LottieAnimation);
-
-    expect(animation?.id).toBe(manifest.animations[0]?.id);
-    expect(animation?.data).toEqual(animationData as unknown as AnimationType);
-  });
-
-  it('returns undefined if the animation does not exist', async () => {
-    const dotlottie = new DotLottie();
-
-    const animation = await dotlottie.getAnimation('non_existent_animation');
-
-    expect(animation).toBeUndefined();
-  });
-
-  it('returns animation instance with inlined assets', async () => {
-    const dotlottie = new DotLottie();
-
-    dotlottie.addAnimation({
-      id: manifest.animations[0]?.id as string,
-      data: structuredClone(bullData) as unknown as AnimationData,
-    });
-
-    const animation = await dotlottie.getAnimation(manifest.animations[0]?.id as string, { inlineAssets: true });
-
-    expect(animation).toBeInstanceOf(LottieAnimation);
-    expect(animation?.id).toBe(manifest.animations[0]?.id);
-    expect(animation?.data).toEqual(bullData as unknown as AnimationData);
-  });
-
-  it('adds multiple animations and verifies their inlined assets', async () => {
-    const dotlottie = new DotLottie({ enableDuplicateImageOptimization: false });
-
-    dotlottie
-      .addAnimation({
-        id: 'v1',
-        data: structuredClone(IMAGE_ANIMATION_1_DATA) as unknown as AnimationData,
-      })
-      .addAnimation({
-        id: 'v2',
-        data: structuredClone(IMAGE_ANIMATION_2_DATA) as unknown as AnimationData,
-      })
-      .addAnimation({
-        id: 'v3',
-        data: structuredClone(IMAGE_ANIMATION_3_DATA) as unknown as AnimationData,
-      })
-      .addAnimation({
-        id: 'v4',
-        data: structuredClone(IMAGE_ANIMATION_4_DATA) as unknown as AnimationData,
-      })
-      .addAnimation({
-        id: 'v5',
-        data: structuredClone(IMAGE_ANIMATION_5_DATA) as unknown as AnimationData,
-      })
-      .addAnimation({
-        id: 'v6',
-        data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationData,
+      const result = dotlottie.addAnimation({
+        id: manifest.animations[0]?.id as string,
+        data: animationData as unknown as AnimationType,
       });
 
-    const animationV1 = await dotlottie.getAnimation('v1', { inlineAssets: true });
-    const animationV2 = await dotlottie.getAnimation('v2', { inlineAssets: true });
-    const animationV3 = await dotlottie.getAnimation('v3', { inlineAssets: true });
-    const animationV4 = await dotlottie.getAnimation('v4', { inlineAssets: true });
-    const animationV5 = await dotlottie.getAnimation('v5', { inlineAssets: true });
-    const animationV6 = await dotlottie.getAnimation('v6', { inlineAssets: true });
+      expect(result).toBe(dotlottie);
+    });
 
-    expect(animationV1).toBeInstanceOf(LottieAnimation);
-    expect(animationV1?.id).toBe('v1');
-    expect(animationV1?.data).toEqual(IMAGE_ANIMATION_1_DATA as unknown as AnimationData);
+    it('adds an animation', () => {
+      const animationId = manifest.animations[0]?.id as string;
 
-    expect(animationV2).toBeInstanceOf(LottieAnimation);
-    expect(animationV2?.id).toBe('v2');
-    expect(animationV2?.data).toEqual(IMAGE_ANIMATION_2_DATA as unknown as AnimationData);
+      const dotlottie = new DotLottie();
 
-    expect(animationV3).toBeInstanceOf(LottieAnimation);
-    expect(animationV3?.id).toBe('v3');
-    expect(animationV3?.data).toEqual(IMAGE_ANIMATION_3_DATA as unknown as AnimationData);
+      dotlottie.addAnimation({
+        id: animationId,
+        data: animationData as unknown as AnimationType,
+      });
 
-    expect(animationV4).toBeInstanceOf(LottieAnimation);
-    expect(animationV4?.id).toBe('v4');
-    expect(animationV4?.data).toEqual(IMAGE_ANIMATION_4_DATA as unknown as AnimationData);
+      expect(dotlottie.animations.length).toBe(1);
 
-    expect(animationV5).toBeInstanceOf(LottieAnimation);
-    expect(animationV5?.id).toBe('v5');
-    expect(animationV5?.data).toEqual(IMAGE_ANIMATION_5_DATA as unknown as AnimationData);
+      const animation = dotlottie.animations[0];
 
-    expect(animationV6).toBeInstanceOf(LottieAnimation);
-    expect(animationV6?.id).toBe('v6');
-    expect(animationV6?.data).toEqual(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData);
+      expect(animation?.id).toBe(manifest.animations[0]?.id);
+    });
+
+    it('adds an animation using all customizable options', async () => {
+      const animationId = 'test_animation';
+
+      const dotlottie = new DotLottie();
+
+      const animationOptions: AnimationOptions = {
+        id: animationId,
+        data: animationData as unknown as AnimationType,
+        autoplay: true,
+        direction: -1,
+        hover: true,
+        intermission: 1000,
+        loop: true,
+        playMode: PlayMode.Bounce,
+        speed: 1.5,
+      };
+
+      const manifestDataToCompare: ManifestAnimation = {
+        id: animationId,
+        autoplay: true,
+        direction: -1,
+        hover: true,
+        intermission: 1000,
+        loop: true,
+        playMode: PlayMode.Bounce,
+        speed: 1.5,
+      };
+
+      dotlottie.addAnimation({
+        ...animationOptions,
+      });
+
+      await dotlottie.build();
+
+      const animationManifest = dotlottie.manifest.animations[0];
+
+      expect(animationManifest).toEqual(manifestDataToCompare);
+    });
   });
 
-  it('adds multiple animations, optimizes the images and verifies their inlined assets', async () => {
-    const dotlottie = new DotLottie({ enableDuplicateImageOptimization: true });
+  describe('removeAnimation', () => {
+    it('returns the dotlottie instance', () => {
+      const dotlottie = new DotLottie();
 
-    await dotlottie
-      .addAnimation({
-        id: 'v1',
-        data: structuredClone(IMAGE_ANIMATION_1_DATA as unknown as AnimationData),
-      })
-      .addAnimation({
-        id: 'v2',
-        data: structuredClone(IMAGE_ANIMATION_2_DATA as unknown as AnimationData),
-      })
-      .addAnimation({
-        id: 'v3',
-        data: structuredClone(IMAGE_ANIMATION_3_DATA as unknown as AnimationData),
-      })
-      .addAnimation({
-        id: 'v4',
-        data: structuredClone(IMAGE_ANIMATION_4_DATA as unknown as AnimationData),
-      })
-      .addAnimation({
-        id: 'v5',
-        data: structuredClone(IMAGE_ANIMATION_5_DATA as unknown as AnimationData),
-      })
-      .addAnimation({
-        id: 'v6',
-        data: structuredClone(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData),
-      })
-      .build();
+      const result = dotlottie.addAnimation({
+        id: manifest.animations[0]?.id as string,
+        data: animationData as unknown as AnimationType,
+      });
 
-    const animationV1 = await dotlottie.getAnimation('v1', { inlineAssets: true });
-    const animationV2 = await dotlottie.getAnimation('v2', { inlineAssets: true });
-    const animationV3 = await dotlottie.getAnimation('v3', { inlineAssets: true });
-    const animationV4 = await dotlottie.getAnimation('v4', { inlineAssets: true });
-    const animationV5 = await dotlottie.getAnimation('v5', { inlineAssets: true });
-    const animationV6 = await dotlottie.getAnimation('v6', { inlineAssets: true });
+      expect(result).toBe(dotlottie);
+    });
 
-    expect(animationV1).toBeInstanceOf(LottieAnimation);
-    expect(animationV1?.id).toBe('v1');
-    expect(animationV1?.data).toEqual(IMAGE_ANIMATION_1_DATA as unknown as AnimationData);
+    it('removes an animation', () => {
+      const dotlottie = new DotLottie();
 
-    expect(animationV2).toBeInstanceOf(LottieAnimation);
-    expect(animationV2?.id).toBe('v2');
-    expect(animationV2?.data).toEqual(IMAGE_ANIMATION_2_DATA as unknown as AnimationData);
+      dotlottie.addAnimation({
+        id: manifest.animations[0]?.id as string,
+        data: animationData as unknown as AnimationType,
+      });
 
-    expect(animationV3).toBeInstanceOf(LottieAnimation);
-    expect(animationV3?.id).toBe('v3');
-    expect(animationV3?.data).toEqual(IMAGE_ANIMATION_3_DATA as unknown as AnimationData);
+      expect(dotlottie.animations.length).toBe(1);
 
-    expect(animationV4).toBeInstanceOf(LottieAnimation);
-    expect(animationV4?.id).toBe('v4');
-    expect(animationV4?.data).toEqual(IMAGE_ANIMATION_4_DATA as unknown as AnimationData);
+      dotlottie.removeAnimation(manifest.animations[0]?.id as string);
 
-    expect(animationV5).toBeInstanceOf(LottieAnimation);
-    expect(animationV5?.id).toBe('v5');
-    expect(animationV5?.data).toEqual(IMAGE_ANIMATION_5_DATA as unknown as AnimationData);
-
-    expect(animationV6).toBeInstanceOf(LottieAnimation);
-    expect(animationV6?.id).toBe('v6');
-    expect(animationV6?.data).toEqual(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData);
+      expect(dotlottie.animations.length).toBe(0);
+    });
   });
-});
 
-describe('download', () => {
-  it('throws error on node environment', async () => {
-    // skip test if running in browser environment
-    if (typeof window !== 'undefined') return;
+  describe('getAnimation', () => {
+    it('returns animation instance', async () => {
+      const dotlottie = new DotLottie();
 
-    const dotlottie = new DotLottie();
+      dotlottie.addAnimation({
+        id: manifest.animations[0]?.id as string,
+        data: animationData as unknown as AnimationType,
+      });
 
-    await expectAsync(
+      const animation = await dotlottie.getAnimation(manifest.animations[0]?.id as string);
+
+      expect(animation).toBeInstanceOf(LottieAnimation);
+
+      expect(animation?.id).toBe(manifest.animations[0]?.id);
+      expect(animation?.data).toEqual(animationData as unknown as AnimationType);
+    });
+
+    it('returns undefined if the animation does not exist', async () => {
+      const dotlottie = new DotLottie();
+
+      const animation = await dotlottie.getAnimation('non_existent_animation');
+
+      expect(animation).toBeUndefined();
+    });
+
+    it('returns animation instance with inlined assets', async () => {
+      const dotlottie = new DotLottie();
+
+      dotlottie.addAnimation({
+        id: manifest.animations[0]?.id as string,
+        data: structuredClone(bullData) as unknown as AnimationData,
+      });
+
+      const animation = await dotlottie.getAnimation(manifest.animations[0]?.id as string, { inlineAssets: true });
+
+      expect(animation).toBeInstanceOf(LottieAnimation);
+      expect(animation?.id).toBe(manifest.animations[0]?.id);
+      expect(animation?.data).toEqual(bullData as unknown as AnimationData);
+    });
+
+    it('adds multiple animations and verifies their inlined assets', async () => {
+      const dotlottie = new DotLottie({ enableDuplicateImageOptimization: false });
+
       dotlottie
         .addAnimation({
-          id: 'test_animation',
+          id: 'v1',
+          data: structuredClone(IMAGE_ANIMATION_1_DATA) as unknown as AnimationData,
+        })
+        .addAnimation({
+          id: 'v2',
+          data: structuredClone(IMAGE_ANIMATION_2_DATA) as unknown as AnimationData,
+        })
+        .addAnimation({
+          id: 'v3',
+          data: structuredClone(IMAGE_ANIMATION_3_DATA) as unknown as AnimationData,
+        })
+        .addAnimation({
+          id: 'v4',
+          data: structuredClone(IMAGE_ANIMATION_4_DATA) as unknown as AnimationData,
+        })
+        .addAnimation({
+          id: 'v5',
+          data: structuredClone(IMAGE_ANIMATION_5_DATA) as unknown as AnimationData,
+        })
+        .addAnimation({
+          id: 'v6',
+          data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationData,
+        });
+
+      const animationV1 = await dotlottie.getAnimation('v1', { inlineAssets: true });
+      const animationV2 = await dotlottie.getAnimation('v2', { inlineAssets: true });
+      const animationV3 = await dotlottie.getAnimation('v3', { inlineAssets: true });
+      const animationV4 = await dotlottie.getAnimation('v4', { inlineAssets: true });
+      const animationV5 = await dotlottie.getAnimation('v5', { inlineAssets: true });
+      const animationV6 = await dotlottie.getAnimation('v6', { inlineAssets: true });
+
+      expect(animationV1).toBeInstanceOf(LottieAnimation);
+      expect(animationV1?.id).toBe('v1');
+      expect(animationV1?.data).toEqual(IMAGE_ANIMATION_1_DATA as unknown as AnimationData);
+
+      expect(animationV2).toBeInstanceOf(LottieAnimation);
+      expect(animationV2?.id).toBe('v2');
+      expect(animationV2?.data).toEqual(IMAGE_ANIMATION_2_DATA as unknown as AnimationData);
+
+      expect(animationV3).toBeInstanceOf(LottieAnimation);
+      expect(animationV3?.id).toBe('v3');
+      expect(animationV3?.data).toEqual(IMAGE_ANIMATION_3_DATA as unknown as AnimationData);
+
+      expect(animationV4).toBeInstanceOf(LottieAnimation);
+      expect(animationV4?.id).toBe('v4');
+      expect(animationV4?.data).toEqual(IMAGE_ANIMATION_4_DATA as unknown as AnimationData);
+
+      expect(animationV5).toBeInstanceOf(LottieAnimation);
+      expect(animationV5?.id).toBe('v5');
+      expect(animationV5?.data).toEqual(IMAGE_ANIMATION_5_DATA as unknown as AnimationData);
+
+      expect(animationV6).toBeInstanceOf(LottieAnimation);
+      expect(animationV6?.id).toBe('v6');
+      expect(animationV6?.data).toEqual(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData);
+    });
+
+    it('adds multiple animations, optimizes the images and verifies their inlined assets', async () => {
+      const dotlottie = new DotLottie({ enableDuplicateImageOptimization: true });
+
+      await dotlottie
+        .addAnimation({
+          id: 'v1',
+          data: structuredClone(IMAGE_ANIMATION_1_DATA as unknown as AnimationData),
+        })
+        .addAnimation({
+          id: 'v2',
+          data: structuredClone(IMAGE_ANIMATION_2_DATA as unknown as AnimationData),
+        })
+        .addAnimation({
+          id: 'v3',
+          data: structuredClone(IMAGE_ANIMATION_3_DATA as unknown as AnimationData),
+        })
+        .addAnimation({
+          id: 'v4',
+          data: structuredClone(IMAGE_ANIMATION_4_DATA as unknown as AnimationData),
+        })
+        .addAnimation({
+          id: 'v5',
+          data: structuredClone(IMAGE_ANIMATION_5_DATA as unknown as AnimationData),
+        })
+        .addAnimation({
+          id: 'v6',
+          data: structuredClone(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData),
+        })
+        .build();
+
+      const animationV1 = await dotlottie.getAnimation('v1', { inlineAssets: true });
+      const animationV2 = await dotlottie.getAnimation('v2', { inlineAssets: true });
+      const animationV3 = await dotlottie.getAnimation('v3', { inlineAssets: true });
+      const animationV4 = await dotlottie.getAnimation('v4', { inlineAssets: true });
+      const animationV5 = await dotlottie.getAnimation('v5', { inlineAssets: true });
+      const animationV6 = await dotlottie.getAnimation('v6', { inlineAssets: true });
+
+      expect(animationV1).toBeInstanceOf(LottieAnimation);
+      expect(animationV1?.id).toBe('v1');
+      expect(animationV1?.data).toEqual(IMAGE_ANIMATION_1_DATA as unknown as AnimationData);
+
+      expect(animationV2).toBeInstanceOf(LottieAnimation);
+      expect(animationV2?.id).toBe('v2');
+      expect(animationV2?.data).toEqual(IMAGE_ANIMATION_2_DATA as unknown as AnimationData);
+
+      expect(animationV3).toBeInstanceOf(LottieAnimation);
+      expect(animationV3?.id).toBe('v3');
+      expect(animationV3?.data).toEqual(IMAGE_ANIMATION_3_DATA as unknown as AnimationData);
+
+      expect(animationV4).toBeInstanceOf(LottieAnimation);
+      expect(animationV4?.id).toBe('v4');
+      expect(animationV4?.data).toEqual(IMAGE_ANIMATION_4_DATA as unknown as AnimationData);
+
+      expect(animationV5).toBeInstanceOf(LottieAnimation);
+      expect(animationV5?.id).toBe('v5');
+      expect(animationV5?.data).toEqual(IMAGE_ANIMATION_5_DATA as unknown as AnimationData);
+
+      expect(animationV6).toBeInstanceOf(LottieAnimation);
+      expect(animationV6?.id).toBe('v6');
+      expect(animationV6?.data).toEqual(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData);
+    });
+  });
+
+  describe('download', () => {
+    it('throws error on node environment', async () => {
+      // skip test if running in browser environment
+      if (typeof window !== 'undefined') return;
+
+      const dotlottie = new DotLottie();
+
+      await expectAsync(
+        dotlottie
+          .addAnimation({
+            id: 'test_animation',
+            data: animationData as unknown as AnimationType,
+          })
+          .download('file'),
+      ).toBeRejectedWithError('[dotlottie-js]: Cannot download dotlottie in a non-browser environment');
+    });
+
+    it('downloads dotlottie file on browser', async () => {
+      // skip test if running in node environment
+      if (typeof window === 'undefined') return;
+
+      const dotlottie = new DotLottie();
+
+      const fileName = 'test.lottie';
+
+      const fakeLink = document.createElement('a');
+
+      const clickSpy = spyOn(fakeLink, 'click').and.callFake(() => {
+        // do nothing
+      });
+
+      spyOn(document, 'createElement').and.callFake(() => {
+        return fakeLink;
+      });
+
+      const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callThrough();
+
+      await dotlottie
+        .setAuthor(manifest.author)
+        .setVersion(manifest.version)
+        .setGenerator(manifest.generator)
+        .addAnimation({
+          id: 'lottie1',
           data: animationData as unknown as AnimationType,
         })
-        .download('file'),
-    ).toBeRejectedWithError('[dotlottie-js]: Cannot download dotlottie in a non-browser environment');
+        .addTheme({
+          id: 'theme1',
+          data: themeData,
+        })
+        .assignTheme({
+          animationId: 'lottie1',
+          themeId: 'theme1',
+        })
+        .build();
+
+      await dotlottie.download(fileName);
+
+      const blob = await dotlottie.toBlob();
+
+      expect(createObjectURLSpy).toHaveBeenCalledTimes(1);
+      expect(createObjectURLSpy).toHaveBeenCalledWith(blob);
+
+      expect(fakeLink.download).toBe(fileName);
+      expect(fakeLink.style.display).toBe('none');
+      expect(clickSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('downloads dotlottie file on browser', async () => {
-    // skip test if running in node environment
-    if (typeof window === 'undefined') return;
+  describe('toBlob', () => {
+    it('returns a blob', async () => {
+      const dotlottie = new DotLottie();
 
-    const dotlottie = new DotLottie();
+      const blob = await dotlottie
+        .setAuthor(manifest.author)
+        .setVersion(manifest.version)
+        .setGenerator(manifest.generator)
+        .addAnimation({
+          id: manifest.animations[0]?.id as string,
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: manifest.themes[0]?.id as string,
+          data: themeData,
+        })
+        .assignTheme({
+          animationId: manifest.animations[0]?.id as string,
+          themeId: manifest.themes[0]?.id as string,
+        })
+        .toBlob();
 
-    const fileName = 'test.lottie';
+      expect(blob).toBeInstanceOf(Blob);
 
-    const fakeLink = document.createElement('a');
+      const arrayBuffer = await blob.arrayBuffer();
 
-    const clickSpy = spyOn(fakeLink, 'click').and.callFake(() => {
-      // do nothing
+      expect(arrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+    });
+  });
+
+  describe('toArrayBuffer', () => {
+    it('returns an array buffer', async () => {
+      const dotlottie = new DotLottie();
+
+      const arrayBuffer = await dotlottie
+        .setAuthor(manifest.author)
+        .setVersion(manifest.version)
+        .setGenerator(manifest.generator)
+        .addAnimation({
+          id: manifest.animations[0]?.id as string,
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: manifest.themes[0]?.id as string,
+          data: themeData,
+        })
+        .assignTheme({
+          animationId: manifest.animations[0]?.id as string,
+          themeId: manifest.themes[0]?.id as string,
+        })
+        .toArrayBuffer();
+
+      expect(arrayBuffer).toBeInstanceOf(ArrayBuffer);
+      expect(arrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+    });
+  });
+
+  describe('toBase64', () => {
+    it('returns base64 string', async () => {
+      const dotlottie = new DotLottie();
+
+      const dataURL = await dotlottie
+        .setAuthor(manifest.author)
+        .setVersion(manifest.version)
+        .setGenerator(manifest.generator)
+        .addAnimation({
+          id: manifest.animations[0]?.id as string,
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: manifest.themes[0]?.id as string,
+          data: themeData,
+        })
+        .assignTheme({
+          animationId: manifest.animations[0]?.id as string,
+          themeId: manifest.themes[0]?.id as string,
+        })
+        .toBase64();
+
+      const actualArrayBuffer = Base64.toUint8Array(dataURL).buffer;
+
+      expect(actualArrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+    });
+  });
+
+  describe('fromURL', () => {
+    it('throws an error if the URL is invalid', async () => {
+      const dotLottie = new DotLottie();
+
+      await expectAsync(dotLottie.fromURL('invalid-url')).toBeRejectedWithError('[dotlottie-js]: Invalid URL');
     });
 
-    spyOn(document, 'createElement').and.callFake(() => {
-      return fakeLink;
-    });
-
-    const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callThrough();
-
-    await dotlottie
-      .setAuthor(manifest.author)
-      .setVersion(manifest.version)
-      .setGenerator(manifest.generator)
-      .addAnimation({
-        id: 'lottie1',
-        data: animationData as unknown as AnimationType,
-      })
-      .addTheme({
-        id: 'theme1',
-        data: themeData,
-      })
-      .assignTheme({
-        animationId: 'lottie1',
-        themeId: 'theme1',
-      })
-      .build();
-
-    await dotlottie.download(fileName);
-
-    const blob = await dotlottie.toBlob();
-
-    expect(createObjectURLSpy).toHaveBeenCalledTimes(1);
-    expect(createObjectURLSpy).toHaveBeenCalledWith(blob);
-
-    expect(fakeLink.download).toBe(fileName);
-    expect(fakeLink.style.display).toBe('none');
-    expect(clickSpy).toHaveBeenCalledTimes(1);
-  });
-});
-
-describe('toBlob', () => {
-  it('returns a blob', async () => {
-    const dotlottie = new DotLottie();
-
-    const blob = await dotlottie
-      .setAuthor(manifest.author)
-      .setVersion(manifest.version)
-      .setGenerator(manifest.generator)
-      .addAnimation({
-        id: manifest.animations[0]?.id as string,
-        data: animationData as unknown as AnimationType,
-      })
-      .addTheme({
-        id: manifest.themes[0]?.id as string,
-        data: themeData,
-      })
-      .assignTheme({
-        animationId: manifest.animations[0]?.id as string,
-        themeId: manifest.themes[0]?.id as string,
-      })
-      .toBlob();
-
-    expect(blob).toBeInstanceOf(Blob);
-
-    const arrayBuffer = await blob.arrayBuffer();
-
-    expect(arrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
-  });
-});
-
-describe('toArrayBuffer', () => {
-  it('returns an array buffer', async () => {
-    const dotlottie = new DotLottie();
-
-    const arrayBuffer = await dotlottie
-      .setAuthor(manifest.author)
-      .setVersion(manifest.version)
-      .setGenerator(manifest.generator)
-      .addAnimation({
-        id: manifest.animations[0]?.id as string,
-        data: animationData as unknown as AnimationType,
-      })
-      .addTheme({
-        id: manifest.themes[0]?.id as string,
-        data: themeData,
-      })
-      .assignTheme({
-        animationId: manifest.animations[0]?.id as string,
-        themeId: manifest.themes[0]?.id as string,
-      })
-      .toArrayBuffer();
-
-    expect(arrayBuffer).toBeInstanceOf(ArrayBuffer);
-    expect(arrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
-  });
-});
-
-describe('toBase64', () => {
-  it('returns base64 string', async () => {
-    const dotlottie = new DotLottie();
-
-    const dataURL = await dotlottie
-      .setAuthor(manifest.author)
-      .setVersion(manifest.version)
-      .setGenerator(manifest.generator)
-      .addAnimation({
-        id: manifest.animations[0]?.id as string,
-        data: animationData as unknown as AnimationType,
-      })
-      .addTheme({
-        id: manifest.themes[0]?.id as string,
-        data: themeData,
-      })
-      .assignTheme({
-        animationId: manifest.animations[0]?.id as string,
-        themeId: manifest.themes[0]?.id as string,
-      })
-      .toBase64();
-
-    const actualArrayBuffer = Base64.toUint8Array(dataURL).buffer;
-
-    expect(actualArrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
-  });
-});
-
-describe('fromURL', () => {
-  it('throws an error if the URL is invalid', async () => {
-    const dotLottie = new DotLottie();
-
-    await expectAsync(dotLottie.fromURL('invalid-url')).toBeRejectedWithError('[dotlottie-js]: Invalid URL');
-  });
-
-  it('loads a dotlottie file from a URL', async () => {
-    const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
-      Promise.resolve(new Response(dotlottieAnimation)),
-    );
-
-    const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
-
-    const dotLottie = await new DotLottie().fromURL(animationURL);
-
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy).toHaveBeenCalledWith(animationURL);
-    expect(dotLottie.animations.length).toBe(1);
-    expect(dotLottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
-    expect(dotLottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
-    expect(dotLottie.manifest).toEqual(manifest as Manifest);
-    expect(dotLottie.themes.length).toBe(1);
-    expect(dotLottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
-    expect(dotLottie.themes[0]?.data).toEqual(themeData);
-  });
-
-  it('loads a dotLottie with non-default settings from a URL and verifies the animation settings', async () => {
-    const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
-      Promise.resolve(new Response(editedDotlottieAnimation)),
-    );
-
-    const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
-
-    let dotlottie = new DotLottie();
-
-    dotlottie = await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie');
-
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy).toHaveBeenCalledWith(animationURL);
-    expect(dotlottie.animations.length).toBe(1);
-    expect(dotlottie.animations[0]?.id).toEqual(editedManifest.animations[0]?.id as string);
-    expect(dotlottie.animations[0]?.data).toEqual(editedAnimationData as unknown as AnimationType);
-    expect(dotlottie.manifest).toEqual(editedManifest as Manifest);
-  });
-});
-
-describe('fromArrayBuffer', () => {
-  it('loads a dotlottie file from an array buffer', async () => {
-    const arrayBuffer = dotlottieAnimation;
-
-    let dotlottie = new DotLottie();
-
-    dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
-
-    expect(dotlottie.animations.length).toBe(1);
-    expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
-    expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
-    expect(dotlottie.manifest).toEqual(manifest as Manifest);
-    expect(dotlottie.themes.length).toBe(1);
-    expect(dotlottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
-    expect(dotlottie.themes[0]?.data).toEqual(themeData);
-  });
-
-  it('loads a dotLottie containing images from an array buffer', async () => {
-    const arrayBuffer = bigMergedDotLottie;
-    let dotlottie = new DotLottie();
-
-    dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
-
-    expect(dotlottie.animations.length).toBe(6);
-    expect(dotlottie.getImages().length).toBe(16);
-    expect(dotlottie.animations[0]?.id).toEqual('v1');
-    expect(dotlottie.animations[1]?.id).toEqual('v2');
-    expect(dotlottie.animations[2]?.id).toEqual('v3');
-    expect(dotlottie.animations[3]?.id).toEqual('v4');
-    expect(dotlottie.animations[4]?.id).toEqual('v5');
-    expect(dotlottie.animations[5]?.id).toEqual('v6');
-    expect(dotlottie.animations.map((animation) => animation.id)).toEqual(['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
-  });
-});
-
-describe('addPlugins', () => {
-  it('adds plugins to the animation', () => {
-    class TestPlugin extends DotLottiePlugin {
-      public readonly name = 'test';
-
-      public override async onBuild(): Promise<void> {
-        return Promise.resolve();
-      }
-    }
-
-    const dotlottie = new DotLottie();
-
-    const plugin = new TestPlugin();
-
-    dotlottie.addPlugins(plugin);
-
-    expect(dotlottie.plugins).toContain(plugin);
-  });
-});
-
-describe('removePlugins', () => {
-  it('removes plugins from the animation', () => {
-    class TestPlugin extends DotLottiePlugin {
-      public readonly name = 'test';
-
-      public override async onBuild(): Promise<void> {
-        return Promise.resolve();
-      }
-    }
-
-    const dotlottie = new DotLottie();
-
-    const plugin = new TestPlugin();
-
-    dotlottie.addPlugins(plugin);
-
-    expect(dotlottie.plugins).toContain(plugin);
-
-    dotlottie.removePlugins(plugin);
-
-    expect(dotlottie.plugins).not.toContain(plugin);
-  });
-});
-
-describe('imageAssets', () => {
-  it('Adds the Bull animation and checks number of images.', async () => {
-    const dotlottie = await new DotLottie()
-      .addAnimation({
-        id: 'animation_1',
-        data: structuredClone(bullData) as unknown as AnimationData,
-      })
-      .build();
-
-    const animation1 = await dotlottie.getAnimation('animation_1');
-
-    expect(animation1?.imageAssets.length).toBe(5);
-  });
-});
-
-describe('merge', () => {
-  it('merges two dotlottie files', async () => {
-    const dotlottie1 = new DotLottie().addAnimation({
-      id: 'lottie1',
-      data: animationData as unknown as AnimationType,
-    });
-
-    const dotlottie2 = new DotLottie().addAnimation({
-      id: 'lottie2',
-      data: animationData as unknown as AnimationType,
-    });
-
-    const dotlottie3 = new DotLottie().addAnimation({
-      id: 'lottie3',
-      data: structuredClone(bullData as unknown as AnimationData),
-    });
-
-    const dotlottie4 = new DotLottie().addAnimation({
-      id: 'lottie4',
-      data: structuredClone(bullData as unknown as AnimationData),
-    });
-
-    const shrekVariant1 = new DotLottie().addAnimation({
-      id: 'v1',
-      data: structuredClone(IMAGE_ANIMATION_1_DATA as unknown as AnimationData),
-    });
-
-    const shrekVariant2 = new DotLottie().addAnimation({
-      id: 'v2',
-      data: structuredClone(IMAGE_ANIMATION_2_DATA as unknown as AnimationData),
-    });
-
-    const shrekVariant3 = new DotLottie().addAnimation({
-      id: 'v3',
-      data: structuredClone(IMAGE_ANIMATION_3_DATA as unknown as AnimationData),
-    });
-
-    const shrekVariant4 = new DotLottie().addAnimation({
-      id: 'v4',
-      data: structuredClone(IMAGE_ANIMATION_4_DATA as unknown as AnimationData),
-    });
-
-    const shrekVariant5 = new DotLottie().addAnimation({
-      id: 'v5',
-      data: structuredClone(IMAGE_ANIMATION_5_DATA as unknown as AnimationData),
-    });
-
-    const shrekVariant6 = new DotLottie().addAnimation({
-      id: 'v6',
-      data: structuredClone(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData),
-    });
-
-    const [mergedImageLottie] = await Promise.all([
-      new DotLottie().merge(dotlottie3, dotlottie4),
-      new DotLottie().merge(dotlottie3, dotlottie4).build(),
-    ]);
-
-    const [bigMergedImageLottie, mergedDotlottie] = await Promise.all([
-      new DotLottie()
-        .merge(shrekVariant1, shrekVariant2, shrekVariant3, shrekVariant4, shrekVariant5, shrekVariant6)
-        .build(),
-      new DotLottie().merge(dotlottie1, dotlottie2).build(),
-    ]);
-
-    expect(mergedImageLottie.animations.length).toBe(2);
-
-    expect(bigMergedImageLottie.animations.length).toBe(6);
-
-    expect(bigMergedImageLottie.animations.map((animation) => animation.id)).toEqual([
-      'v1',
-      'v2',
-      'v3',
-      'v4',
-      'v5',
-      'v6',
-    ]);
-
-    expect(mergedDotlottie).toBeInstanceOf(DotLottie);
-
-    expect(mergedDotlottie.animations.length).toBe(2);
-
-    expect(mergedDotlottie.animations[0]?.id).toEqual('lottie1');
-    expect(mergedDotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
-
-    expect(mergedDotlottie.animations[1]?.id).toEqual('lottie2');
-    expect(mergedDotlottie.animations[1]?.data).toEqual(animationData as unknown as AnimationType);
-  });
-});
-
-describe('build', () => {
-  it('it resolves lottie animations', async () => {
-    const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
-      Promise.resolve(new Response(JSON.stringify(animationData))),
-    );
-
-    const animationURL = 'https://lottiefiles.fake/animation.json';
-
-    const dotlottie = new DotLottie().addAnimation({
-      url: animationURL,
-      id: 'lottie1',
-    });
-
-    expect(dotlottie.animations[0]?.data).toBeUndefined();
-
-    await dotlottie.build();
-
-    expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
-
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy).toHaveBeenCalledWith(animationURL);
-  });
-
-  it('runs plugins in correct order', async () => {
-    const parallel1OnBuild = jasmine.createSpy('parallel1OnBuild');
-    const parallel2OnBuild = jasmine.createSpy('parallel2OnBuild');
-
-    const sequential1OnBuild = jasmine.createSpy('sequential1OnBuild');
-    const sequential2OnBuild = jasmine.createSpy('sequential2OnBuild');
-
-    class Parallel1TestPlugin extends DotLottiePlugin {
-      public readonly name = 'parallel-test';
-
-      public constructor() {
-        super({ parallel: true });
-      }
-
-      public override async onBuild(): Promise<void> {
-        parallel1OnBuild(this.dotlottie);
-      }
-    }
-    class Parallel2TestPlugin extends DotLottiePlugin {
-      public readonly name = 'parallel-test';
-
-      public constructor() {
-        super({ parallel: true });
-      }
-
-      public override async onBuild(): Promise<void> {
-        parallel2OnBuild(this.dotlottie);
-      }
-    }
-
-    class Sequential1TestPlugin extends DotLottiePlugin {
-      public readonly name = 'sequential-test';
-
-      public override async onBuild(): Promise<void> {
-        sequential1OnBuild(this.dotlottie);
-      }
-    }
-
-    class Sequential2TestPlugin extends DotLottiePlugin {
-      public readonly name = 'sequential-test';
-
-      public override async onBuild(): Promise<void> {
-        sequential2OnBuild(this.dotlottie);
-      }
-    }
-
-    const dotlottie = new DotLottie()
-      .addAnimation({
-        id: 'lottie1',
-        data: animationData as unknown as AnimationType,
-      })
-      .addPlugins(
-        new Sequential1TestPlugin(),
-        new Parallel1TestPlugin(),
-        new Parallel2TestPlugin(),
-        new Sequential2TestPlugin(),
+    it('loads a dotlottie file from a URL', async () => {
+      const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
+        Promise.resolve(new Response(dotlottieAnimation)),
       );
 
-    expect(parallel1OnBuild).not.toHaveBeenCalled();
-    expect(parallel2OnBuild).not.toHaveBeenCalled();
-    expect(sequential1OnBuild).not.toHaveBeenCalled();
-    expect(sequential2OnBuild).not.toHaveBeenCalled();
+      const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
 
-    await dotlottie.build();
+      const dotLottie = await new DotLottie().fromURL(animationURL);
 
-    expect(parallel1OnBuild).toHaveBeenCalledTimes(1);
-    expect(parallel2OnBuild).toHaveBeenCalledTimes(1);
-    expect(sequential1OnBuild).toHaveBeenCalledTimes(1);
-    expect(sequential2OnBuild).toHaveBeenCalledTimes(1);
-
-    expect(parallel1OnBuild).toHaveBeenCalledWith(dotlottie);
-    expect(parallel2OnBuild).toHaveBeenCalledWith(dotlottie);
-    expect(sequential1OnBuild).toHaveBeenCalledWith(dotlottie);
-    expect(sequential2OnBuild).toHaveBeenCalledWith(dotlottie);
-
-    expect(parallel1OnBuild).toHaveBeenCalledBefore(parallel2OnBuild);
-    expect(parallel2OnBuild).toHaveBeenCalledBefore(sequential1OnBuild);
-    expect(sequential1OnBuild).toHaveBeenCalledBefore(sequential2OnBuild);
-  });
-
-  describe('addTheme', () => {
-    it('returns dotLottie instance', () => {
-      // arrange
-      const dotlottie = new DotLottie();
-
-      const theme = {
-        id: 'theme_1',
-        data: `FillShape { fill-color: red; }`,
-      };
-
-      // act
-      const result = dotlottie.addTheme(theme);
-
-      // assert
-      expect(result).toBe(dotlottie);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(fetchSpy).toHaveBeenCalledWith(animationURL);
+      expect(dotLottie.animations.length).toBe(1);
+      expect(dotLottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
+      expect(dotLottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
+      expect(dotLottie.manifest).toEqual(manifest as Manifest);
+      expect(dotLottie.themes.length).toBe(1);
+      expect(dotLottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
+      expect(dotLottie.themes[0]?.data).toEqual(themeData);
     });
 
-    it('adds theme', () => {
-      // arrange
-      const dotlottie = new DotLottie();
+    it('loads a dotLottie with non-default settings from a URL and verifies the animation settings', async () => {
+      const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
+        Promise.resolve(new Response(editedDotlottieAnimation)),
+      );
 
-      const theme1 = {
-        id: 'theme_1',
-        data: `FillShape { fill-color: red; }`,
-      };
+      const animationURL = 'https://lottiefiles.fake/animation/animation.lottie';
 
-      const theme2 = {
-        id: 'theme_2',
-        url: 'https://fake.lottiefiles.com/theme.lss',
-      };
+      let dotlottie = new DotLottie();
 
-      // act
-      dotlottie.addTheme(theme1).addTheme(theme2);
+      dotlottie = await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie');
 
-      const themes = dotlottie.themes;
-
-      // assert
-      expect(themes.length).toBe(2);
-
-      expect(themes[0]).toBeInstanceOf(LottieThemeCommon);
-      expect(themes[0]?.id).toBe(theme1.id);
-      expect(themes[0]?.data).toBe(theme1.data);
-      expect(themes[0]?.url).toBeUndefined();
-
-      expect(themes[1]).toBeInstanceOf(LottieThemeCommon);
-      expect(themes[1]?.id).toBe(theme2.id);
-      expect(themes[1]?.url).toBe(theme2.url);
-      expect(themes[1]?.data).toBeUndefined();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(fetchSpy).toHaveBeenCalledWith(animationURL);
+      expect(dotlottie.animations.length).toBe(1);
+      expect(dotlottie.animations[0]?.id).toEqual(editedManifest.animations[0]?.id as string);
+      expect(dotlottie.animations[0]?.data).toEqual(editedAnimationData as unknown as AnimationType);
+      expect(dotlottie.manifest).toEqual(editedManifest as Manifest);
     });
   });
 
-  describe('removeTheme', () => {
-    it('returns dotLottie instance', () => {
-      // arrange
-      const dotlottie = new DotLottie();
+  describe('fromArrayBuffer', () => {
+    it('loads a dotlottie file from an array buffer', async () => {
+      const arrayBuffer = dotlottieAnimation;
 
-      const theme = {
-        id: 'theme_1',
-        data: `FillShape { fill-color: red; }`,
-      };
+      let dotlottie = new DotLottie();
 
-      // act
-      const result = dotlottie.addTheme(theme).removeTheme(theme.id);
+      dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
 
-      // assert
-      expect(result).toBe(dotlottie);
-    });
-
-    it('removes theme', () => {
-      // arrange
-      const dotlottie = new DotLottie();
-
-      const theme1 = {
-        id: 'theme_1',
-        data: `FillShape { fill-color: red; }`,
-      };
-
-      const theme2 = {
-        id: 'theme_2',
-        url: 'https://fake.lottiefiles.com/theme.lss',
-      };
-
-      // act
-      dotlottie.addTheme(theme1).addTheme(theme2).removeTheme(theme1.id);
-
-      // assert
+      expect(dotlottie.animations.length).toBe(1);
+      expect(dotlottie.animations[0]?.id).toEqual(manifest.animations[0]?.id as string);
+      expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
+      expect(dotlottie.manifest).toEqual(manifest as Manifest);
       expect(dotlottie.themes.length).toBe(1);
-      expect(dotlottie.themes[0]?.id).toBe(theme2.id);
+      expect(dotlottie.themes[0]?.id).toEqual(manifest.themes[0]?.id);
+      expect(dotlottie.themes[0]?.data).toEqual(themeData);
+    });
+
+    it('loads a dotLottie containing images from an array buffer', async () => {
+      const arrayBuffer = bigMergedDotLottie;
+      let dotlottie = new DotLottie();
+
+      dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
+
+      expect(dotlottie.animations.length).toBe(6);
+      expect(dotlottie.getImages().length).toBe(16);
+      expect(dotlottie.animations[0]?.id).toEqual('v1');
+      expect(dotlottie.animations[1]?.id).toEqual('v2');
+      expect(dotlottie.animations[2]?.id).toEqual('v3');
+      expect(dotlottie.animations[3]?.id).toEqual('v4');
+      expect(dotlottie.animations[4]?.id).toEqual('v5');
+      expect(dotlottie.animations[5]?.id).toEqual('v6');
+      expect(dotlottie.animations.map((animation) => animation.id)).toEqual(['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
     });
   });
 
-  describe('getTheme', () => {
-    it('returns theme by id', () => {
-      // arrange
-      const dotLottie = new DotLottie();
+  describe('addPlugins', () => {
+    it('adds plugins to the animation', () => {
+      class TestPlugin extends DotLottiePlugin {
+        public readonly name = 'test';
 
-      const theme = {
-        id: 'theme_1',
-        data: `FillShape { fill-color: red; }`,
-      };
+        public override async onBuild(): Promise<void> {
+          return Promise.resolve();
+        }
+      }
 
-      dotLottie.addTheme(theme);
+      const dotlottie = new DotLottie();
 
-      // act
-      const result = dotLottie.getTheme(theme.id);
+      const plugin = new TestPlugin();
 
-      // assert
-      expect(result).toBeInstanceOf(LottieThemeCommon);
-      expect(result?.id).toBe(theme.id);
-      expect(result?.data).toBe(theme.data);
-    });
+      dotlottie.addPlugins(plugin);
 
-    it('returns undefined if theme does not exist', () => {
-      // arrange
-      const dotLottie = new DotLottie();
-
-      // act
-      const result = dotLottie.getTheme('theme_1');
-
-      // assert
-      expect(result).toBeUndefined();
+      expect(dotlottie.plugins).toContain(plugin);
     });
   });
 
-  describe('assignTheme', () => {
-    it('returns dotLottie instance', () => {
-      // arrange
+  describe('removePlugins', () => {
+    it('removes plugins from the animation', () => {
+      class TestPlugin extends DotLottiePlugin {
+        public readonly name = 'test';
+
+        public override async onBuild(): Promise<void> {
+          return Promise.resolve();
+        }
+      }
+
       const dotlottie = new DotLottie();
 
-      // act
-      const result = dotlottie
+      const plugin = new TestPlugin();
+
+      dotlottie.addPlugins(plugin);
+
+      expect(dotlottie.plugins).toContain(plugin);
+
+      dotlottie.removePlugins(plugin);
+
+      expect(dotlottie.plugins).not.toContain(plugin);
+    });
+  });
+
+  describe('imageAssets', () => {
+    it('Adds the Bull animation and checks number of images.', async () => {
+      const dotlottie = await new DotLottie()
         .addAnimation({
           id: 'animation_1',
-          data: animationData as unknown as AnimationType,
+          data: structuredClone(bullData) as unknown as AnimationData,
         })
-        .addTheme({
-          id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
-        })
-        .assignTheme({
-          themeId: 'theme_1',
-          animationId: 'animation_1',
-        });
+        .build();
 
-      // assert
-      expect(result).toBe(dotlottie);
+      const animation1 = await dotlottie.getAnimation('animation_1');
+
+      expect(animation1?.imageAssets.length).toBe(5);
     });
+  });
 
-    it('throws error if animation does not exist', () => {
-      // arrange
-      const dotlottie = new DotLottie();
-
-      const theme = {
-        id: 'theme_1',
-        data: `FillShape { fill-color: red; }`,
-      };
-
-      const animation = {
-        id: 'animation_1',
+  describe('merge', () => {
+    it('merges two dotlottie files', async () => {
+      const dotlottie1 = new DotLottie().addAnimation({
+        id: 'lottie1',
         data: animationData as unknown as AnimationType,
-      };
+      });
 
-      expect(() => {
-        // act
-        dotlottie.addTheme(theme).assignTheme({
-          themeId: theme.id,
-          animationId: animation.id,
-        });
-        // assert
-      }).toThrowError(`[dotlottie-js]: Failed to find animation with id ${animation.id}`);
-    });
-
-    it('throws error if theme does not exist', () => {
-      // arrange
-      const dotlottie = new DotLottie();
-
-      const theme = {
-        id: 'theme_1',
-        data: `FillShape { fill-color: red; }`,
-      };
-
-      const animation = {
-        id: 'animation_1',
+      const dotlottie2 = new DotLottie().addAnimation({
+        id: 'lottie2',
         data: animationData as unknown as AnimationType,
-      };
+      });
 
-      expect(() => {
-        // act
-        dotlottie.addAnimation(animation).assignTheme({
-          themeId: theme.id,
-          animationId: animation.id,
-        });
-        // assert
-      }).toThrowError(`[dotlottie-js]: Failed to find theme with id ${theme.id}`);
-    });
+      const dotlottie3 = new DotLottie().addAnimation({
+        id: 'lottie3',
+        data: structuredClone(bullData as unknown as AnimationData),
+      });
 
-    it('assigns an existing theme to an existing animation', async () => {
-      // arrange
-      const dotlottie = new DotLottie();
+      const dotlottie4 = new DotLottie().addAnimation({
+        id: 'lottie4',
+        data: structuredClone(bullData as unknown as AnimationData),
+      });
 
-      // act
-      dotlottie
-        .addAnimation({
-          id: 'animation_1',
-          data: animationData as unknown as AnimationType,
-        })
-        .addTheme({
-          id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
-        })
-        .assignTheme({
-          themeId: 'theme_1',
-          animationId: 'animation_1',
-        });
+      const shrekVariant1 = new DotLottie().addAnimation({
+        id: 'v1',
+        data: structuredClone(IMAGE_ANIMATION_1_DATA as unknown as AnimationData),
+      });
 
-      // assert
-      const assignedTheme = dotlottie.getTheme('theme_1');
-      const animation = await dotlottie.getAnimation('animation_1');
+      const shrekVariant2 = new DotLottie().addAnimation({
+        id: 'v2',
+        data: structuredClone(IMAGE_ANIMATION_2_DATA as unknown as AnimationData),
+      });
 
-      expect(assignedTheme?.animations.length).toBe(1);
-      expect(assignedTheme?.animations[0]).toBe(animation);
+      const shrekVariant3 = new DotLottie().addAnimation({
+        id: 'v3',
+        data: structuredClone(IMAGE_ANIMATION_3_DATA as unknown as AnimationData),
+      });
 
-      expect(animation?.themes.length).toBe(1);
-      expect(animation?.themes[0]).toBe(assignedTheme);
+      const shrekVariant4 = new DotLottie().addAnimation({
+        id: 'v4',
+        data: structuredClone(IMAGE_ANIMATION_4_DATA as unknown as AnimationData),
+      });
 
-      expect(dotlottie.manifest.themes).toEqual([
-        {
-          id: 'theme_1',
-          animations: ['animation_1'],
-        },
+      const shrekVariant5 = new DotLottie().addAnimation({
+        id: 'v5',
+        data: structuredClone(IMAGE_ANIMATION_5_DATA as unknown as AnimationData),
+      });
+
+      const shrekVariant6 = new DotLottie().addAnimation({
+        id: 'v6',
+        data: structuredClone(SIMPLE_IMAGE_ANIMATION as unknown as AnimationData),
+      });
+
+      const [mergedImageLottie] = await Promise.all([
+        new DotLottie().merge(dotlottie3, dotlottie4),
+        new DotLottie().merge(dotlottie3, dotlottie4).build(),
       ]);
+
+      const [bigMergedImageLottie, mergedDotlottie] = await Promise.all([
+        new DotLottie()
+          .merge(shrekVariant1, shrekVariant2, shrekVariant3, shrekVariant4, shrekVariant5, shrekVariant6)
+          .build(),
+        new DotLottie().merge(dotlottie1, dotlottie2).build(),
+      ]);
+
+      expect(mergedImageLottie.animations.length).toBe(2);
+
+      expect(bigMergedImageLottie.animations.length).toBe(6);
+
+      expect(bigMergedImageLottie.animations.map((animation) => animation.id)).toEqual([
+        'v1',
+        'v2',
+        'v3',
+        'v4',
+        'v5',
+        'v6',
+      ]);
+
+      expect(mergedDotlottie).toBeInstanceOf(DotLottie);
+
+      expect(mergedDotlottie.animations.length).toBe(2);
+
+      expect(mergedDotlottie.animations[0]?.id).toEqual('lottie1');
+      expect(mergedDotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
+
+      expect(mergedDotlottie.animations[1]?.id).toEqual('lottie2');
+      expect(mergedDotlottie.animations[1]?.data).toEqual(animationData as unknown as AnimationType);
+    });
+  });
+
+  describe('build', () => {
+    it('it resolves lottie animations', async () => {
+      const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
+        Promise.resolve(new Response(JSON.stringify(animationData))),
+      );
+
+      const animationURL = 'https://lottiefiles.fake/animation.json';
+
+      const dotlottie = new DotLottie().addAnimation({
+        url: animationURL,
+        id: 'lottie1',
+      });
+
+      expect(dotlottie.animations[0]?.data).toBeUndefined();
+
+      await dotlottie.build();
+
+      expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(fetchSpy).toHaveBeenCalledWith(animationURL);
+    });
+
+    it('runs plugins in correct order', async () => {
+      const parallel1OnBuild = jasmine.createSpy('parallel1OnBuild');
+      const parallel2OnBuild = jasmine.createSpy('parallel2OnBuild');
+
+      const sequential1OnBuild = jasmine.createSpy('sequential1OnBuild');
+      const sequential2OnBuild = jasmine.createSpy('sequential2OnBuild');
+
+      class Parallel1TestPlugin extends DotLottiePlugin {
+        public readonly name = 'parallel-test';
+
+        public constructor() {
+          super({ parallel: true });
+        }
+
+        public override async onBuild(): Promise<void> {
+          parallel1OnBuild(this.dotlottie);
+        }
+      }
+      class Parallel2TestPlugin extends DotLottiePlugin {
+        public readonly name = 'parallel-test';
+
+        public constructor() {
+          super({ parallel: true });
+        }
+
+        public override async onBuild(): Promise<void> {
+          parallel2OnBuild(this.dotlottie);
+        }
+      }
+
+      class Sequential1TestPlugin extends DotLottiePlugin {
+        public readonly name = 'sequential-test';
+
+        public override async onBuild(): Promise<void> {
+          sequential1OnBuild(this.dotlottie);
+        }
+      }
+
+      class Sequential2TestPlugin extends DotLottiePlugin {
+        public readonly name = 'sequential-test';
+
+        public override async onBuild(): Promise<void> {
+          sequential2OnBuild(this.dotlottie);
+        }
+      }
+
+      const dotlottie = new DotLottie()
+        .addAnimation({
+          id: 'lottie1',
+          data: animationData as unknown as AnimationType,
+        })
+        .addPlugins(
+          new Sequential1TestPlugin(),
+          new Parallel1TestPlugin(),
+          new Parallel2TestPlugin(),
+          new Sequential2TestPlugin(),
+        );
+
+      expect(parallel1OnBuild).not.toHaveBeenCalled();
+      expect(parallel2OnBuild).not.toHaveBeenCalled();
+      expect(sequential1OnBuild).not.toHaveBeenCalled();
+      expect(sequential2OnBuild).not.toHaveBeenCalled();
+
+      await dotlottie.build();
+
+      expect(parallel1OnBuild).toHaveBeenCalledTimes(1);
+      expect(parallel2OnBuild).toHaveBeenCalledTimes(1);
+      expect(sequential1OnBuild).toHaveBeenCalledTimes(1);
+      expect(sequential2OnBuild).toHaveBeenCalledTimes(1);
+
+      expect(parallel1OnBuild).toHaveBeenCalledWith(dotlottie);
+      expect(parallel2OnBuild).toHaveBeenCalledWith(dotlottie);
+      expect(sequential1OnBuild).toHaveBeenCalledWith(dotlottie);
+      expect(sequential2OnBuild).toHaveBeenCalledWith(dotlottie);
+
+      expect(parallel1OnBuild).toHaveBeenCalledBefore(parallel2OnBuild);
+      expect(parallel2OnBuild).toHaveBeenCalledBefore(sequential1OnBuild);
+      expect(sequential1OnBuild).toHaveBeenCalledBefore(sequential2OnBuild);
+    });
+
+    describe('addTheme', () => {
+      it('returns dotLottie instance', () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        const theme = {
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        };
+
+        // act
+        const result = dotlottie.addTheme(theme);
+
+        // assert
+        expect(result).toBe(dotlottie);
+      });
+
+      it('adds theme', () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        const theme1 = {
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        };
+
+        const theme2 = {
+          id: 'theme_2',
+          url: 'https://fake.lottiefiles.com/theme.lss',
+        };
+
+        // act
+        dotlottie.addTheme(theme1).addTheme(theme2);
+
+        const themes = dotlottie.themes;
+
+        // assert
+        expect(themes.length).toBe(2);
+
+        expect(themes[0]).toBeInstanceOf(LottieThemeCommon);
+        expect(themes[0]?.id).toBe(theme1.id);
+        expect(themes[0]?.data).toBe(theme1.data);
+        expect(themes[0]?.url).toBeUndefined();
+
+        expect(themes[1]).toBeInstanceOf(LottieThemeCommon);
+        expect(themes[1]?.id).toBe(theme2.id);
+        expect(themes[1]?.url).toBe(theme2.url);
+        expect(themes[1]?.data).toBeUndefined();
+      });
+    });
+
+    describe('removeTheme', () => {
+      it('returns dotLottie instance', () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        const theme = {
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        };
+
+        // act
+        const result = dotlottie.addTheme(theme).removeTheme(theme.id);
+
+        // assert
+        expect(result).toBe(dotlottie);
+      });
+
+      it('removes theme', () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        const theme1 = {
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        };
+
+        const theme2 = {
+          id: 'theme_2',
+          url: 'https://fake.lottiefiles.com/theme.lss',
+        };
+
+        // act
+        dotlottie.addTheme(theme1).addTheme(theme2).removeTheme(theme1.id);
+
+        // assert
+        expect(dotlottie.themes.length).toBe(1);
+        expect(dotlottie.themes[0]?.id).toBe(theme2.id);
+      });
+    });
+
+    describe('getTheme', () => {
+      it('returns theme by id', () => {
+        // arrange
+        const dotLottie = new DotLottie();
+
+        const theme = {
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        };
+
+        dotLottie.addTheme(theme);
+
+        // act
+        const result = dotLottie.getTheme(theme.id);
+
+        // assert
+        expect(result).toBeInstanceOf(LottieThemeCommon);
+        expect(result?.id).toBe(theme.id);
+        expect(result?.data).toBe(theme.data);
+      });
+
+      it('returns undefined if theme does not exist', () => {
+        // arrange
+        const dotLottie = new DotLottie();
+
+        // act
+        const result = dotLottie.getTheme('theme_1');
+
+        // assert
+        expect(result).toBeUndefined();
+      });
+    });
+
+    describe('assignTheme', () => {
+      it('returns dotLottie instance', () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        // act
+        const result = dotlottie
+          .addAnimation({
+            id: 'animation_1',
+            data: animationData as unknown as AnimationType,
+          })
+          .addTheme({
+            id: 'theme_1',
+            data: `FillShape { fill-color: red; }`,
+          })
+          .assignTheme({
+            themeId: 'theme_1',
+            animationId: 'animation_1',
+          });
+
+        // assert
+        expect(result).toBe(dotlottie);
+      });
+
+      it('throws error if animation does not exist', () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        const theme = {
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        };
+
+        const animation = {
+          id: 'animation_1',
+          data: animationData as unknown as AnimationType,
+        };
+
+        expect(() => {
+          // act
+          dotlottie.addTheme(theme).assignTheme({
+            themeId: theme.id,
+            animationId: animation.id,
+          });
+          // assert
+        }).toThrowError(`[dotlottie-js]: Failed to find animation with id ${animation.id}`);
+      });
+
+      it('throws error if theme does not exist', () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        const theme = {
+          id: 'theme_1',
+          data: `FillShape { fill-color: red; }`,
+        };
+
+        const animation = {
+          id: 'animation_1',
+          data: animationData as unknown as AnimationType,
+        };
+
+        expect(() => {
+          // act
+          dotlottie.addAnimation(animation).assignTheme({
+            themeId: theme.id,
+            animationId: animation.id,
+          });
+          // assert
+        }).toThrowError(`[dotlottie-js]: Failed to find theme with id ${theme.id}`);
+      });
+
+      it('assigns an existing theme to an existing animation', async () => {
+        // arrange
+        const dotlottie = new DotLottie();
+
+        // act
+        dotlottie
+          .addAnimation({
+            id: 'animation_1',
+            data: animationData as unknown as AnimationType,
+          })
+          .addTheme({
+            id: 'theme_1',
+            data: `FillShape { fill-color: red; }`,
+          })
+          .assignTheme({
+            themeId: 'theme_1',
+            animationId: 'animation_1',
+          });
+
+        // assert
+        const assignedTheme = dotlottie.getTheme('theme_1');
+        const animation = await dotlottie.getAnimation('animation_1');
+
+        expect(assignedTheme?.animations.length).toBe(1);
+        expect(assignedTheme?.animations[0]).toBe(animation);
+
+        expect(animation?.themes.length).toBe(1);
+        expect(animation?.themes[0]).toBe(assignedTheme);
+
+        expect(dotlottie.manifest.themes).toEqual([
+          {
+            id: 'theme_1',
+            animations: ['animation_1'],
+          },
+        ]);
+      });
     });
   });
 });
