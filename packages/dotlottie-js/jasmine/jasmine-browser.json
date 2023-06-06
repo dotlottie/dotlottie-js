@@ -4,11 +4,9 @@
   "specFiles": ["**/*.spec.mjs"],
   "env": {
     "stopSpecOnExpectationFailure": true,
-    "stopOnSpecFailure": true,
-    "random": false
+    "stopOnSpecFailure": true
   },
   "browser": {
     "name": "headlessChrome"
-  },
-  "reporters": ["jasmine-console-reporter"]
+  }
 }
