@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.2.1
+
+### Patch Changes
+
+- 0e3df79: chore: 🤖 export necessary types
+
 ## 0.2.0
 
 ### Minor Changes
