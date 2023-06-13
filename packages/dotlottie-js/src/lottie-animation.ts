@@ -9,6 +9,8 @@ import { LottieAnimationCommon, createError } from './common';
 import { LottieImage } from './lottie-image';
 import { getExtensionTypeFromBase64 } from './utils';
 
+export type { AnimationOptions };
+
 export class LottieAnimation extends LottieAnimationCommon {
   public constructor(options: AnimationOptions) {
     super(options);

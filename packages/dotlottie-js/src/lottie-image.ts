@@ -5,6 +5,8 @@
 import type { ImageOptions } from './common';
 import { LottieImageCommon } from './common';
 
+export type { ImageOptions };
+
 export class LottieImage extends LottieImageCommon {
   public constructor(options: ImageOptions) {
     super(options);
