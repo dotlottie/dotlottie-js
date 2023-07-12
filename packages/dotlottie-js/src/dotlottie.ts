@@ -58,7 +58,7 @@ export class DotLottie extends DotLottieCommon {
     return window.btoa(binaryString);
   }
 
-  public override async download(fileName: string, options: ConversionOptions | undefined): Promise<void> {
+  public override async download(fileName: string, options: ConversionOptions | undefined = undefined): Promise<void> {
     const blob = await this.toBlob(options);
 
     const dataURL = URL.createObjectURL(blob);
