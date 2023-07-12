@@ -4,7 +4,7 @@
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
-import { DotLottie } from '../node';
+import { DotLottie, LottieImage } from '../node';
 
 import BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
 import IMAGE_ANIMATION_1_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-1.json';
@@ -16,6 +16,30 @@ import DUPES_DATA from './__fixtures__/image-asset-optimization/lots-of-dupes.js
 import SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
 
 describe('LottieImage', () => {
+  it('gets and sets the zipOptions', () => {
+    const theme = new LottieImage({
+      id: 'image_1',
+      fileName: 'image_1.jpeg',
+      zipOptions: {
+        level: 9,
+        mem: 1,
+      },
+    });
+
+    expect(theme.zipOptions).toEqual({
+      level: 9,
+      mem: 1,
+    });
+
+    theme.zipOptions = {
+      level: 1,
+    };
+
+    expect(theme.zipOptions).toEqual({
+      level: 1,
+    });
+  });
+
   it('Adds two bull animations via data.', async () => {
     await new DotLottie({ enableDuplicateImageOptimization: true })
       .addAnimation({

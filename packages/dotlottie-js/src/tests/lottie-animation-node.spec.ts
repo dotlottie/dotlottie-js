@@ -42,6 +42,30 @@ describe('LottieAnimation', () => {
     }).toThrowError('[dotlottie-js]: No data or url provided.');
   });
 
+  it('gets and sets the zipOptions', () => {
+    const animation = new LottieAnimation({
+      id: 'test',
+      data: animationData as unknown as AnimationType,
+      zipOptions: {
+        level: 9,
+        mem: 1,
+      },
+    });
+
+    expect(animation.zipOptions).toEqual({
+      level: 9,
+      mem: 1,
+    });
+
+    animation.zipOptions = {
+      level: 1,
+    };
+
+    expect(animation.zipOptions).toEqual({
+      level: 1,
+    });
+  });
+
   it('gets and sets the id', () => {
     const animation = new LottieAnimation({ id: 'test', data: animationData as unknown as AnimationType });
 

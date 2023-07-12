@@ -3,6 +3,7 @@
  */
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+import type { ZipOptions } from 'fflate';
 
 import type { LottieThemeCommon } from './dotlottie-theme-common';
 import type { LottieImageCommon } from './lottie-image-common';
@@ -20,6 +21,7 @@ export interface AnimationOptions extends ManifestAnimation {
   data?: AnimationData;
   defaultActiveAnimation?: boolean;
   url?: string;
+  zipOptions?: ZipOptions;
 }
 
 export class LottieAnimationCommon {
@@ -43,6 +45,8 @@ export class LottieAnimationCommon {
 
   private _intermission: number;
 
+  private _zipOptions: ZipOptions;
+
   // Will be translated to 'activeAnimationId' inside of the manifest file
   // This indicates if the player should play this animation by default rather than the first in the list.
   protected _defaultActiveAnimation: boolean;
@@ -57,6 +61,9 @@ export class LottieAnimationCommon {
     this._requireValidOptions(options);
 
     this._id = options.id;
+
+    this._zipOptions = options.zipOptions ?? {};
+
     if (options.data) this._data = options.data;
     if (options.url) this._url = options.url;
 
@@ -72,6 +79,14 @@ export class LottieAnimationCommon {
 
   public async toBase64(): Promise<string> {
     throw createError('lottie animation controls tobase64 not implemented!');
+  }
+
+  public get zipOptions(): ZipOptions {
+    return this._zipOptions;
+  }
+
+  public set zipOptions(zipOptions: ZipOptions) {
+    this._zipOptions = zipOptions;
   }
 
   public get id(): string {

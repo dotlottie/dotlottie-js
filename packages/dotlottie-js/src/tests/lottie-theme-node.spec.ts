@@ -45,6 +45,30 @@ describe('LottieTheme', () => {
     }).toThrowError('[dotlottie-js]: Invalid theme data');
   });
 
+  it('gets and sets the zipOptions', () => {
+    const theme = new LottieTheme({
+      id: 'test',
+      data: themeData,
+      zipOptions: {
+        level: 9,
+        mem: 1,
+      },
+    });
+
+    expect(theme.zipOptions).toEqual({
+      level: 9,
+      mem: 1,
+    });
+
+    theme.zipOptions = {
+      level: 1,
+    };
+
+    expect(theme.zipOptions).toEqual({
+      level: 1,
+    });
+  });
+
   it('gets and sets the id', () => {
     // arrange
     const animation = new LottieTheme({ id: 'test', data: themeData });
