@@ -549,6 +549,49 @@ describe('DotLottie', () => {
 
       expect(arrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
     });
+
+    it('Controls the compression level of the whole dotLottie file', async () => {
+      const dotlottie = new DotLottie();
+
+      const blob1 = await dotlottie
+        .setAuthor(manifest.author)
+        .setVersion(manifest.version)
+        .setGenerator(manifest.generator)
+        .addAnimation({
+          id: manifest.animations[0]?.id as string,
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: manifest.themes[0]?.id as string,
+          data: themeData,
+        })
+        .assignTheme({
+          animationId: manifest.animations[0]?.id as string,
+          themeId: manifest.themes[0]?.id as string,
+        })
+        .toBlob({
+          zipOptions: {
+            level: 9,
+          },
+        });
+
+      const blob2 = await dotlottie.toBlob({
+        zipOptions: {
+          level: 0,
+        },
+      });
+
+      expect(blob1).toBeInstanceOf(Blob);
+      expect(blob2).toBeInstanceOf(Blob);
+
+      const arrayBuffer1 = await blob1.arrayBuffer();
+      const arrayBuffer2 = await blob2.arrayBuffer();
+
+      expect(arrayBuffer1).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+      expect(arrayBuffer2).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+
+      expect(arrayBuffer1.byteLength).toBeLessThan(arrayBuffer2.byteLength);
+    });
   });
 
   describe('toArrayBuffer', () => {
@@ -575,6 +618,46 @@ describe('DotLottie', () => {
 
       expect(arrayBuffer).toBeInstanceOf(ArrayBuffer);
       expect(arrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+    });
+
+    it('Controls the compression level of the whole dotLottie file', async () => {
+      const dotLottie1 = new DotLottie();
+
+      const arrayBuffer1 = await dotLottie1
+        .setAuthor(manifest.author)
+        .setVersion(manifest.version)
+        .setGenerator(manifest.generator)
+        .addAnimation({
+          id: manifest.animations[0]?.id as string,
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: manifest.themes[0]?.id as string,
+          data: themeData,
+        })
+        .assignTheme({
+          animationId: manifest.animations[0]?.id as string,
+          themeId: manifest.themes[0]?.id as string,
+        })
+        .toArrayBuffer({
+          zipOptions: {
+            level: 9,
+          },
+        });
+
+      const arrayBuffer2 = await dotLottie1.toArrayBuffer({
+        zipOptions: {
+          level: 0,
+        },
+      });
+
+      expect(arrayBuffer1).toBeInstanceOf(ArrayBuffer);
+      expect(arrayBuffer1).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+
+      expect(arrayBuffer2).toBeInstanceOf(ArrayBuffer);
+      expect(arrayBuffer2).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+
+      expect(arrayBuffer1.byteLength).toBeLessThan(arrayBuffer2.byteLength);
     });
   });
 
@@ -603,6 +686,46 @@ describe('DotLottie', () => {
       const actualArrayBuffer = Base64.toUint8Array(dataURL).buffer;
 
       expect(actualArrayBuffer).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+    });
+
+    it('Controls the compression level of the whole dotLottie file', async () => {
+      const dotLottie1 = new DotLottie();
+
+      const dataURL1 = await dotLottie1
+        .setAuthor(manifest.author)
+        .setVersion(manifest.version)
+        .setGenerator(manifest.generator)
+        .addAnimation({
+          id: manifest.animations[0]?.id as string,
+          data: animationData as unknown as AnimationType,
+        })
+        .addTheme({
+          id: manifest.themes[0]?.id as string,
+          data: themeData,
+        })
+        .assignTheme({
+          animationId: manifest.animations[0]?.id as string,
+          themeId: manifest.themes[0]?.id as string,
+        })
+        .toBase64({
+          zipOptions: {
+            level: 9,
+          },
+        });
+
+      const dataURL2 = await dotLottie1.toBase64({
+        zipOptions: {
+          level: 0,
+        },
+      });
+
+      const actualArrayBuffer1 = Base64.toUint8Array(dataURL1).buffer;
+      const actualArrayBuffer2 = Base64.toUint8Array(dataURL2).buffer;
+
+      expect(actualArrayBuffer1).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+      expect(actualArrayBuffer2).toBeEqualDotlottieArrayBuffer(dotlottieAnimation);
+
+      expect(actualArrayBuffer1.byteLength).toBeLessThan(actualArrayBuffer2.byteLength);
     });
   });
 

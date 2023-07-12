@@ -8,7 +8,14 @@ import { strToU8, unzip, zip, strFromU8 } from 'fflate';
 
 import pkg from '../../package.json';
 import { createError, DotLottieCommon } from '../common';
-import type { DotLottieOptions, DotLottiePlugin, AnimationOptions, ManifestAnimation, Manifest } from '../common';
+import type {
+  DotLottieOptions,
+  DotLottiePlugin,
+  AnimationOptions,
+  ManifestAnimation,
+  Manifest,
+  ConversionOptions,
+} from '../common';
 
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
@@ -41,8 +48,8 @@ export class DotLottie extends DotLottieCommon {
     return new DotLottie();
   }
 
-  public override async toBase64(): Promise<string> {
-    const data = await this.toArrayBuffer();
+  public override async toBase64(options: ConversionOptions | undefined): Promise<string> {
+    const data = await this.toArrayBuffer(options);
 
     return Buffer.from(data).toString('base64');
   }
@@ -63,17 +70,23 @@ export class DotLottie extends DotLottieCommon {
     return this;
   }
 
-  public override async toArrayBuffer(): Promise<ArrayBuffer> {
+  public override async toArrayBuffer(options: ConversionOptions | undefined): Promise<ArrayBuffer> {
     const manifest = this._buildManifest();
 
     const dotlottie: Zippable = {
-      'manifest.json': strToU8(JSON.stringify(manifest)),
+      'manifest.json': [
+        strToU8(JSON.stringify(manifest)),
+        {
+          // no compression for manifest
+          level: 0,
+        },
+      ],
     };
 
     for (const animation of this.animations) {
       const json = await animation.toJSON();
 
-      dotlottie[`animations/${animation.id}.json`] = strToU8(JSON.stringify(json));
+      dotlottie[`animations/${animation.id}.json`] = [strToU8(JSON.stringify(json)), animation.zipOptions];
 
       const imageAssets = animation.imageAssets;
 
@@ -81,18 +94,18 @@ export class DotLottie extends DotLottieCommon {
         // Assure we have a base64 encoded version of the image
         const dataAsString = await asset.toDataURL();
 
-        dotlottie[`images/${asset.fileName}`] = base64ToUint8Array(dataAsString);
+        dotlottie[`images/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
       }
     }
 
     for (const theme of this.themes) {
       const lss = await theme.toString();
 
-      dotlottie[`themes/${theme.id}.lss`] = strToU8(lss);
+      dotlottie[`themes/${theme.id}.lss`] = [strToU8(lss), theme.zipOptions];
     }
 
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
-      zip(dotlottie, (err, data) => {
+      zip(dotlottie, options?.zipOptions || {}, (err, data) => {
         if (err) {
           reject(err);
 

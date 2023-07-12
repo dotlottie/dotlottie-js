@@ -3,6 +3,7 @@
  */
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+import type { ZipOptions } from 'fflate';
 
 import pkg from '../../package.json';
 
@@ -28,6 +29,10 @@ export interface DotLottieOptions {
 
 export interface GetAnimationOptions {
   inlineAssets?: boolean;
+}
+
+export interface ConversionOptions {
+  zipOptions?: ZipOptions;
 }
 
 export class DotLottieCommon {
@@ -72,7 +77,7 @@ export class DotLottieCommon {
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
 
-  public async toBase64(): Promise<string> {
+  public async toBase64(_options: ConversionOptions | undefined = undefined): Promise<string> {
     throw createError('toBase64() method not implemented in concrete class!');
   }
 
@@ -98,7 +103,7 @@ export class DotLottieCommon {
     );
   }
 
-  public async toArrayBuffer(): Promise<ArrayBuffer> {
+  public async toArrayBuffer(_options: ConversionOptions | undefined = undefined): Promise<ArrayBuffer> {
     throw createError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
   }
 
@@ -437,8 +442,8 @@ export class DotLottieCommon {
     return this;
   }
 
-  public async toBlob(): Promise<Blob> {
-    const arrayBuffer = await this.toArrayBuffer();
+  public async toBlob(options: ConversionOptions | undefined = undefined): Promise<Blob> {
+    const arrayBuffer = await this.toArrayBuffer(options);
 
     return new Blob([arrayBuffer], { type: 'application/zip' });
   }
