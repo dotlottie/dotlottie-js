@@ -3,7 +3,7 @@
  */
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
-import type { ZipOptions, Zippable } from 'fflate';
+import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
 import { DotLottieCommon, createError } from './common';
@@ -49,7 +49,7 @@ export class DotLottie extends DotLottieCommon {
     return this;
   }
 
-  public override async toBase64(options: { zipOptions: ZipOptions } = { zipOptions: {} }): Promise<string> {
+  public override async toBase64(options: ConversionOptions | undefined): Promise<string> {
     const data = await this.toArrayBuffer(options);
 
     const uint8Array = new Uint8Array(data);
@@ -58,8 +58,8 @@ export class DotLottie extends DotLottieCommon {
     return window.btoa(binaryString);
   }
 
-  public override async download(fileName: string): Promise<void> {
-    const blob = await this.toBlob();
+  public override async download(fileName: string, options: ConversionOptions | undefined): Promise<void> {
+    const blob = await this.toBlob(options);
 
     const dataURL = URL.createObjectURL(blob);
 

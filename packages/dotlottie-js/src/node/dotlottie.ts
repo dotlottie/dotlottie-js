@@ -54,7 +54,10 @@ export class DotLottie extends DotLottieCommon {
     return Buffer.from(data).toString('base64');
   }
 
-  public override async download(_fileName: string): Promise<void> {
+  public override async download(
+    _fileName: string,
+    _options: ConversionOptions | undefined = undefined,
+  ): Promise<void> {
     throw createError('Cannot download dotlottie in a non-browser environment');
   }
 

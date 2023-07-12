@@ -85,7 +85,7 @@ export class DotLottieCommon {
     throw createError('create() method not implemented in concrete class!');
   }
 
-  public async download(_fileName: string): Promise<void> {
+  public async download(_fileName: string, _options: ConversionOptions | undefined = undefined): Promise<void> {
     throw createError('download(fileName:string) method not implemented in concrete class!');
   }
 
