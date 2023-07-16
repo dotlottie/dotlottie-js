@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import type { ZipOptions } from 'fflate';
+
 import type { LottieAnimationCommon } from './lottie-animation-common.js';
 import { createError } from './utils';
 
@@ -13,6 +15,7 @@ export interface ImageOptions {
   id: string;
   parentAnimations?: LottieAnimationCommon[];
   url?: string;
+  zipOptions?: ZipOptions;
 }
 
 export class LottieImageCommon {
@@ -26,9 +29,13 @@ export class LottieImageCommon {
 
   protected _parentAnimations: LottieAnimationCommon[];
 
+  protected _zipOptions: ZipOptions;
+
   public constructor(options: ImageOptions) {
     this._requireValidId(options.id);
     this._requireValidFileName(options.fileName);
+
+    this._zipOptions = options.zipOptions ?? {};
 
     if (options.data) {
       this._data = options.data;
@@ -47,6 +54,14 @@ export class LottieImageCommon {
     }
 
     this._parentAnimations = options.parentAnimations || [];
+  }
+
+  public get zipOptions(): ZipOptions {
+    return this._zipOptions;
+  }
+
+  public set zipOptions(zipOptions: ZipOptions) {
+    this._zipOptions = zipOptions;
   }
 
   /**
