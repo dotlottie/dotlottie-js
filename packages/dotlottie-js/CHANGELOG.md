@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.3.0
+
+### Minor Changes
+
+- 86ef0bf: feat: 🎸 control compression level and other zip options
+
 ## 0.2.1
 
 ### Patch Changes
