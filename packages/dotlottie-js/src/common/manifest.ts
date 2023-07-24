@@ -68,6 +68,9 @@ export interface Manifest {
   // Revision version number of the dotLottie
   revision?: number | undefined;
 
+  // List of states
+  states?: string[];
+
   // List of themes
   themes?: ManifestTheme[];
 
