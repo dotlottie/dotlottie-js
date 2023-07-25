@@ -249,6 +249,22 @@ export class DotLottie extends DotLottieCommon {
                   });
                 }
               });
+            } else if (key.startsWith('states/') && key.endsWith('.json')) {
+              // extract stateId from key as the key = `states/${stateId}.json`
+              const stateId = /states\/(.+)\.json/u.exec(key)?.[1];
+
+              if (!stateId) {
+                throw createError('Invalid theme id');
+              }
+
+              manifest.states?.forEach((state) => {
+                if (state === stateId) {
+                  dotlottie.addState({
+                    id: state,
+                    state: JSON.parse(state),
+                  });
+                }
+              });
             }
           }
 
