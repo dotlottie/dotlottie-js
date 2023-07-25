@@ -41,14 +41,14 @@ export const PigeonState = {
 }
 
 
-export const BounceWifiState = {
+export const SmileyWifi = {
     descriptor: {
       id: 'simple_click_to_next_prev',
       initial: 'bounceState',
     },
     states: {
-      bounceState: {
-        animationId: 'bounce',
+      smileyState: {
+        animationId: 'smiley',
         statePlaybackSettings: {
           autoplay: true,
           loop: true,
@@ -69,7 +69,7 @@ export const BounceWifiState = {
           defaultTheme: 'wifi-dark',
         },
         onMouseLeave: {
-          state: 'bounceState',
+          state: 'smileyState',
         },
       },
     },
