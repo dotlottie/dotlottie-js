@@ -2,8 +2,6 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-/* eslint-disable no-new */
-
 import type { AnimationData } from '../common';
 import { DotLottie } from '../dotlottie';
 import { LottieState } from '../lottie-state';
@@ -17,6 +15,7 @@ describe('LottieState', () => {
   it('throws an error if it receives an invalid id when constructed', () => {
     expect(() => {
       // act
+      // eslint-disable-next-line no-new
       new LottieState({ id: '' });
       // assert
     }).toThrowError('[dotlottie-js]: Invalid id.');
