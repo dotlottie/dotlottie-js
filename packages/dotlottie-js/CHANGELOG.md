@@ -30,6 +30,11 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.0
+
+### Minor Changes
+
+- 6e1b901: added state exporting
 
 ## 0.3.0
 
