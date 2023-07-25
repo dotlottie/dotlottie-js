@@ -21,6 +21,28 @@ async function createDotLottie() {
       url: 'https://lottie.host/cf7b43d1-3d6b-407a-970b-6305b18bebfa/uB1Jboo1o1.json',
       autoplay: true,
     })
+    .addState({
+      id: 'state_1',
+      state: {
+        descriptor: {
+          id: 'state_1',
+          animationId: 'animation_1',
+        },
+        states: {
+          runState: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: 3,
+              direction: 1,
+              segments: 'explosion',
+            },
+            onComplete: {
+              state: 'feathers',
+            },
+          },
+        },
+      },
+    })
     .build()
     .then((value) => {
       return value.toArrayBuffer();
