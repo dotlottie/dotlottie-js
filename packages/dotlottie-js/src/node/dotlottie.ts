@@ -106,6 +106,12 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`themes/${theme.id}.lss`] = [strToU8(lss), theme.zipOptions];
     }
 
+    for (const state of this.states) {
+      const stateData = state.toString();
+
+      dotlottie[`states/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
+    }
+
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
       zip(dotlottie, options?.zipOptions || {}, (err, data) => {
         if (err) {
