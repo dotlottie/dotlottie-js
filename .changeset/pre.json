@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@dotlottie/dotlottie-js": "0.3.0"
+  },
+  "changesets": [
+    "shy-laws-taste"
+  ]
+}
