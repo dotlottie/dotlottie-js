@@ -261,7 +261,7 @@ export class DotLottie extends DotLottieCommon {
                 if (state === stateId) {
                   dotlottie.addState({
                     id: state,
-                    state: JSON.parse(state),
+                    state: JSON.parse(decodedStr),
                   });
                 }
               });
@@ -287,9 +287,9 @@ export class DotLottie extends DotLottieCommon {
               }
             }
           }
-        } catch (err) {
+        } catch (err: any) {
           // throw error as it's invalid json
-          throw createError('Invalid manifest inside buffer!');
+          throw createError(`Invalid manifest inside buffer! ${err.message}`);
         }
       } else {
         // throw error as it's invalid buffer

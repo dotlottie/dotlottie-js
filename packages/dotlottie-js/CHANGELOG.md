@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.1
+
+### Patch Changes
+
+- fixed fromArrayBuffer and states
+
 ## 0.4.0-beta.0
 
 ### Minor Changes
