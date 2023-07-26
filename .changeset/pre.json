@@ -4,5 +4,8 @@
   "initialVersions": {
     "@dotlottie/dotlottie-js": "0.3.0"
   },
-  "changesets": ["shy-laws-taste"]
+  "changesets": [
+    "great-actors-arrive",
+    "shy-laws-taste"
+  ]
 }

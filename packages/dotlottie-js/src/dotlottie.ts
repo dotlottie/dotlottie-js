@@ -275,7 +275,7 @@ export class DotLottie extends DotLottieCommon {
                 if (state === stateId) {
                   dotlottie.addState({
                     id: state,
-                    state: JSON.parse(state),
+                    state: JSON.parse(decodedStr),
                   });
                 }
               });
