@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.5
+
+### Patch Changes
+
+- added manifest export
+
 ## 0.4.0-beta.4
 
 ### Patch Changes
