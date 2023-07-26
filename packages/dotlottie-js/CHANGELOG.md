@@ -30,6 +30,12 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.2
+
+### Patch Changes
+
+- added dotlottiestatecommon export
+
 ## 0.4.0-beta.1
 
 ### Patch Changes
