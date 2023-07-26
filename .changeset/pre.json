@@ -4,10 +4,5 @@
   "initialVersions": {
     "@dotlottie/dotlottie-js": "0.3.0"
   },
-  "changesets": [
-    "four-plums-obey",
-    "great-actors-arrive",
-    "orange-bobcats-allow",
-    "shy-laws-taste"
-  ]
+  "changesets": ["four-plums-obey", "great-actors-arrive", "orange-bobcats-allow", "shy-laws-taste"]
 }
