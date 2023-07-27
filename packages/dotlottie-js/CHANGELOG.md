@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.6
+
+### Patch Changes
+
+- removed hover from stateplaybacksettings
+
 ## 0.4.0-beta.5
 
 ### Patch Changes
