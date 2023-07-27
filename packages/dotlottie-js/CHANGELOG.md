@@ -30,6 +30,12 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.6
+
+### Patch Changes
+
+- removed hover from stateplaybacksettings
+
 ## 0.4.0-beta.5
 
 ### Patch Changes

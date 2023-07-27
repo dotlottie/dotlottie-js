@@ -4,7 +4,7 @@
 
 import type { ManifestAnimation } from './manifest';
 
-export type PlaybackOptions = Omit<ManifestAnimation, 'id'>;
+export type PlaybackOptions = Omit<ManifestAnimation, 'id' | 'hover'>;
 
 export interface StateAnimationSettings extends PlaybackOptions {
   segments?: [number, number] | string;
