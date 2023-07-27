@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.3.1
+
+### Patch Changes
+
+- 76cbfee: fix: 🐛 export all types
+
 ## 0.3.0
 
 ### Minor Changes
