@@ -40,6 +40,8 @@ export const EVENT_MAP = {
   mouseenter: 'onMouseEnter',
   mouseleave: 'onMouseLeave',
   complete: 'onComplete',
+  after: 'onAfter',
+  enter: 'onEnter',
 };
 
 export const DotLottieStateEvents = Object.values(EVENT_MAP);
@@ -77,6 +79,7 @@ export interface XStateTargetEvent {
 }
 
 export interface XState {
+  after: Record<number, XStateTargetEvent>;
   entry?: () => void;
   exit?: () => void;
   meta: StateAnimationSettings;

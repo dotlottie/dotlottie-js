@@ -30,6 +30,12 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.7
+
+### Patch Changes
+
+- added after and enter state
+
 ## 0.4.0-beta.6
 
 ### Patch Changes
