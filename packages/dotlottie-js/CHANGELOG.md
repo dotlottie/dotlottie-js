@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.8
+
+### Patch Changes
+
+- reverted hover to playbackoptions
+
 ## 0.4.0-beta.7
 
 ### Patch Changes
