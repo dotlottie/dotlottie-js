@@ -175,6 +175,7 @@ export class DotLottie extends DotLottieCommon {
           }
 
           for (const key of Object.keys(contentObj)) {
+            const decompressedFile = contentObj[key] as Uint8Array;
             const decodedStr = strFromU8(contentObj[key] as Uint8Array, false);
 
             if (key.startsWith('animations/') && key.endsWith('.json')) {
@@ -207,16 +208,17 @@ export class DotLottie extends DotLottieCommon {
                 throw createError('Invalid image id');
               }
 
-              let decodedImg = Buffer.from(decodedStr).toString('base64');
+              const base64 = Buffer.from(decompressedFile).toString('base64');
 
-              const ext = getExtensionTypeFromBase64(decodedImg);
+              const ext = getExtensionTypeFromBase64(base64);
 
               // Push the images in to a temporary array
-              decodedImg = `data:image/${ext};base64,${decodedImg}`;
+              const imgDataURL = `data:image/${ext};base64,${base64}`;
+
               tmpImages.push(
                 new LottieImage({
                   id: imageId,
-                  data: decodedImg,
+                  data: imgDataURL,
                   fileName: key.split('/')[1] || '',
                 }),
               );

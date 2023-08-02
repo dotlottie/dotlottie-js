@@ -15,10 +15,8 @@ export class LottieImage extends LottieImageCommon {
 
     const buffer = await this.toArrayBuffer();
 
-    let ret = Buffer.from(buffer).toString();
+    const base64 = Buffer.from(buffer).toString('base64');
 
-    ret = `data:image/${this.fileName.split('.')[1] || 'jpeg'};base64,${ret}`;
-
-    return ret;
+    return `data:image/${this.fileName.split('.')[1] || 'jpeg'};base64,${base64}`;
   }
 }
