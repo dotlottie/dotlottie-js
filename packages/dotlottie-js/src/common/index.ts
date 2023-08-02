@@ -10,3 +10,4 @@ export * from './duplicate-image-detector-common';
 export * from './utils';
 export * from './manifest';
 export * from './dotlottie-theme-common';
+export * from './dotlottie-utils';
