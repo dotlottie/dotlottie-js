@@ -30,6 +30,12 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.9
+
+### Patch Changes
+
+- removed extra id outside of descriptor
+
 ## 0.4.0-beta.8
 
 ### Patch Changes

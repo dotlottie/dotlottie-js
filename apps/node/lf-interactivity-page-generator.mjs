@@ -112,18 +112,15 @@ async function createDotLottie() {
         },
         states: {
           startIdle: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: false,
               loop: false,
-              segments: [0, 0],
             },
             onClick: {
               state: 'playSun',
             },
           },
           playSun: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: true,
               loop: false,
@@ -134,18 +131,15 @@ async function createDotLottie() {
             },
           },
           endIdle: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: false,
               loop: false,
-              segments: [30, 30],
             },
             onClick: {
               state: 'playReverse',
             },
           },
           playReverse: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: true,
               loop: false,
@@ -891,7 +885,7 @@ async function createSingles() {
             },
             onClick: {
               state: 'wait',
-            }
+            },
           },
         },
       },
@@ -934,7 +928,7 @@ async function createSingles() {
             },
             onComplete: {
               state: 'afterOnComplete',
-            }
+            },
           },
           afterOnComplete: {
             animationId: 'confetti',
@@ -981,7 +975,7 @@ async function createSingles() {
             },
             onClick: {
               state: 'secondGear',
-            }
+            },
           },
           secondGear: {
             statePlaybackSettings: {
@@ -991,7 +985,7 @@ async function createSingles() {
             },
             onClick: {
               state: 'thirdGear',
-            }
+            },
           },
           thirdGear: {
             statePlaybackSettings: {
@@ -1001,7 +995,7 @@ async function createSingles() {
             },
             onClick: {
               state: 'fourthGear',
-            }
+            },
           },
           fourthGear: {
             statePlaybackSettings: {
@@ -1011,7 +1005,7 @@ async function createSingles() {
             },
             onClick: {
               state: 'firstGear',
-            }
+            },
           },
         },
       },
@@ -1026,7 +1020,6 @@ async function createSingles() {
       console.log('> Writing to file: ' + filename);
       fs.writeFileSync(filename, Buffer.from(value));
     });
-
 
   // const errorDotLottie = await new DotLottie().fromURL(
   //   'https://lottie.host/d76e204a-35eb-4258-ab86-1473a6966765/WUvJ2K6yO0.lottie',
