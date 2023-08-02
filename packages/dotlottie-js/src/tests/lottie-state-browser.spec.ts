@@ -73,14 +73,14 @@ describe('LottieState', () => {
 
   it('gets and sets the data', async () => {
     // arrange
-    const state = new LottieState({ state: PigeonState });
+    const pigeonState = new LottieState({ state: PigeonState });
 
     // assert
-    expect(state.id).toEqual(PigeonState.descriptor.id);
+    expect(pigeonState.id).toEqual(PigeonState.descriptor.id);
 
-    expect(state.state?.descriptor.initial).toEqual(PigeonState.descriptor.initial);
+    expect(pigeonState.state.descriptor.initial).toEqual(PigeonState.descriptor.initial);
 
-    expect(state.state?.states).toEqual(PigeonState.states);
+    expect(pigeonState.state.states).toEqual(PigeonState.states);
 
     const dotlottie = new DotLottie();
 

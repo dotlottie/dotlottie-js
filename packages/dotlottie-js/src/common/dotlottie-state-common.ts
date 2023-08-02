@@ -17,7 +17,7 @@ export class DotLottieStateCommon {
 
   protected _zipOptions: ZipOptions;
 
-  protected _state?: DotLottieState | undefined;
+  protected _state: DotLottieState;
 
   public constructor(options: StateOptions) {
     this._requireValidId(options.state.descriptor.id);
@@ -47,11 +47,11 @@ export class DotLottieStateCommon {
     this._id = id;
   }
 
-  public get state(): DotLottieState | undefined {
+  public get state(): DotLottieState {
     return this._state;
   }
 
-  public set state(state: DotLottieState | undefined) {
+  public set state(state: DotLottieState) {
     this._state = state;
   }
 
