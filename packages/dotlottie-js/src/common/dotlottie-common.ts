@@ -595,7 +595,7 @@ export class DotLottieCommon {
   public addState(state: StateOptions): DotLottieCommon {
     const newState = new DotLottieStateCommon(state);
 
-    this._stateMap.set(state.id, newState);
+    this._stateMap.set(state.state.descriptor.id, newState);
 
     return this;
   }

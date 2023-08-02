@@ -8,8 +8,7 @@ import type { DotLottieState } from './dotlottie-state';
 import { createError } from './utils';
 
 export interface StateOptions {
-  id: string;
-  state?: DotLottieState;
+  state: DotLottieState;
   zipOptions?: ZipOptions;
 }
 
@@ -21,13 +20,13 @@ export class DotLottieStateCommon {
   protected _state?: DotLottieState | undefined;
 
   public constructor(options: StateOptions) {
-    this._requireValidId(options.id);
+    this._requireValidId(options.state.descriptor.id);
 
-    this._id = options.id;
+    if (options.state.descriptor.id) this._id = options.state.descriptor.id;
 
     this._zipOptions = options.zipOptions ?? {};
 
-    if (options.state) this._state = options.state;
+    this._state = options.state;
   }
 
   public get zipOptions(): ZipOptions {
