@@ -34,15 +34,14 @@ async function createDotLottie() {
       url: 'https://assets2.lottiefiles.com/packages/lf20_4fET62.json',
     })
     .addState({
-      id: 'state_segments',
       state: {
         descriptor: {
           id: 'state_segments',
           initial: 'loopState',
         },
         states: {
-          animationId: 'segments',
           loopState: {
+            animationId: 'segments',
             statePlaybackSettings: {
               autoplay: true,
               loop: true,
@@ -57,15 +56,14 @@ async function createDotLottie() {
       url: 'https://assets9.lottiefiles.com/packages/lf20_gr2cHM.json',
     })
     .addState({
-      id: 'state_segments_on_hover',
       state: {
         descriptor: {
           id: 'state_segments_on_hover',
           initial: 'loopState',
         },
         states: {
-          animationId: 'segments_on_hover',
           loopState: {
+            animationId: 'segments_on_hover',
             statePlaybackSettings: {
               autoplay: true,
               loop: true,
@@ -81,7 +79,6 @@ async function createDotLottie() {
       url: 'https://assets8.lottiefiles.com/packages/lf20_zwath9pn.json',
     })
     .addState({
-      id: 'state_animation_on_hover',
       state: {
         descriptor: {
           id: 'state_animation_on_hover',
@@ -104,7 +101,6 @@ async function createDotLottie() {
       url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
     })
     .addState({
-      id: 'state_toggle',
       state: {
         descriptor: {
           id: 'state_toggle',
@@ -112,6 +108,7 @@ async function createDotLottie() {
         },
         states: {
           startIdle: {
+            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: false,
               loop: false,
@@ -157,7 +154,6 @@ async function createDotLottie() {
       url: 'https://assets4.lottiefiles.com/packages/lf20_zyquagfl.json',
     })
     .addState({
-      id: 'exploding_pigeon',
       state: {
         descriptor: {
           id: 'exploding_pigeon',
@@ -205,14 +201,13 @@ async function createDotLottie() {
     })
     .addAnimation({
       id: 'repeat',
-      url: 'https://assets4.lottiefiles.com/packages/lf20_bshezgfo.json',
+      url: 'https://lottie.host/82f9aac1-c166-4124-9143-002bf32e235f/p1fb9yQ3lu.json',
     })
     .addAnimation({
       id: 'repeat_second_animation',
-      url: 'https://assets2.lottiefiles.com/packages/lf20_2m1smtya.json',
+      url: 'https://lottie.host/5f095db6-2486-4020-ba31-77ef9697d031/izCcpDAsdG.json',
     })
     .addState({
-      id: 'state_repeat',
       state: {
         descriptor: {
           id: 'state_repeat',
@@ -225,7 +220,6 @@ async function createDotLottie() {
               autoplay: true,
               loop: 3,
               direction: 1,
-              segments: 'repeat',
             },
             onComplete: {
               state: 'success',
@@ -258,7 +252,6 @@ async function createDotLottie() {
       url: 'https://assets9.lottiefiles.com/packages/lf20_pKiaUR.json',
     })
     .addState({
-      id: 'state_load_in_queue_1',
       state: {
         descriptor: {
           id: 'state_load_in_queue_1',

@@ -528,6 +528,15 @@ export class DotLottieCommon {
           });
         });
       });
+
+      dotlottie.states.forEach((state) => {
+        const stateOption = {
+          state: state.state,
+          zipOptions: state.zipOptions,
+        };
+
+        mergedDotlottie.addState(stateOption);
+      });
     }
 
     return mergedDotlottie;
