@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.3.2
+
+### Patch Changes
+
+- 97fda37: fix: 🐛 unzipped image to data url
+
 ## 0.3.1
 
 ### Patch Changes
