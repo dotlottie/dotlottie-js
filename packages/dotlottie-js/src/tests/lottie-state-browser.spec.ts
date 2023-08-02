@@ -17,14 +17,22 @@ describe('LottieState', () => {
   it('throws an error if it receives an invalid id when constructed', () => {
     expect(() => {
       // act
-      new LottieState({ id: '' });
+      new LottieState({
+        state: {
+          descriptor: { id: '', initial: '' },
+          states: {},
+        },
+      });
       // assert
     }).toThrowError('[dotlottie-js]: Invalid id.');
   });
 
   it('gets and sets the zipOptions', () => {
     const theme = new LottieState({
-      id: 'test',
+      state: {
+        descriptor: { id: 'test', initial: '' },
+        states: {},
+      },
       zipOptions: {
         level: 9,
         mem: 1,
@@ -47,7 +55,12 @@ describe('LottieState', () => {
 
   it('gets and sets the id', () => {
     // arrange
-    const state = new LottieState({ id: 'test' });
+    const state = new LottieState({
+      state: {
+        descriptor: { id: 'test', initial: '' },
+        states: {},
+      },
+    });
 
     expect(state.id).toEqual('test');
 
@@ -60,7 +73,7 @@ describe('LottieState', () => {
 
   it('gets and sets the data', async () => {
     // arrange
-    const state = new LottieState({ id: PigeonState.descriptor.id, state: PigeonState });
+    const state = new LottieState({ state: PigeonState });
 
     // assert
     expect(state.id).toEqual(PigeonState.descriptor.id);
@@ -77,7 +90,6 @@ describe('LottieState', () => {
         data: animationData as unknown as AnimationData,
       })
       .addState({
-        id: PigeonState.descriptor.id,
         state: PigeonState,
       })
       .addAnimation({
@@ -89,7 +101,6 @@ describe('LottieState', () => {
         data: smileyAnimationData as unknown as AnimationData,
       })
       .addState({
-        id: SmileyWifi.descriptor.id,
         state: SmileyWifi,
       });
 
@@ -125,7 +136,6 @@ describe('LottieState', () => {
         data: animationData as unknown as AnimationData,
       })
       .addState({
-        id: PigeonState.descriptor.id,
         state: PigeonState,
       })
       .addAnimation({
@@ -137,7 +147,6 @@ describe('LottieState', () => {
         data: smileyAnimationData as unknown as AnimationData,
       })
       .addState({
-        id: SmileyWifi.descriptor.id,
         state: SmileyWifi,
       });
 

@@ -323,15 +323,14 @@ async function createDotLottie() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('lf_interactivity_page.lottie', Buffer.from(value));
+      const filename = 'lf_interactivity_page.lottie';
+
+      console.log('> Writing to file: ', filename);
+      fs.writeFileSync(filename, Buffer.from(value));
 
       let test = new DotLottie();
 
       test = await test.fromArrayBuffer(value);
-
-      console.log(test.getState('state_segments'));
-      console.log(test.getState('exploding_pigeon'));
-      console.log(test.getState('exploding_pigeon').state.states.running);
     });
 }
 
@@ -346,7 +345,6 @@ async function createSingles() {
       url: 'https://assets2.lottiefiles.com/packages/lf20_4fET62.json',
     })
     .addState({
-      id: 'state_segments',
       state: {
         descriptor: {
           id: 'state_segments',
@@ -369,7 +367,10 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('stateSegments.lottie', Buffer.from(value));
+      const filename = 'stateSegments.lottie';
+
+      console.log('> Writing to file: ', filename);
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 
   const stateSegmentsOnHover = new DotLottie();
@@ -380,7 +381,6 @@ async function createSingles() {
       url: 'https://assets9.lottiefiles.com/packages/lf20_gr2cHM.json',
     })
     .addState({
-      id: 'state_segments_on_hover',
       state: {
         descriptor: {
           id: 'state_segments_on_hover',
@@ -404,7 +404,10 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('segmentsOnHover.lottie', Buffer.from(value));
+      const filename = 'segmentsOnHover.lottie';
+
+      console.log('> Writing to file: ', filename);
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 
   const animationOnHover = new DotLottie();
@@ -415,7 +418,6 @@ async function createSingles() {
       url: 'https://assets8.lottiefiles.com/packages/lf20_zwath9pn.json',
     })
     .addState({
-      id: 'state_animation_on_hover',
       state: {
         descriptor: {
           id: 'state_animation_on_hover',
@@ -438,7 +440,10 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('animationOnHover.lottie', Buffer.from(value));
+      const filename = 'animationOnHover.lottie';
+
+      console.log('> Writing to file: ', filename);
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 
   const toggle = new DotLottie();
@@ -449,7 +454,6 @@ async function createSingles() {
       url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
     })
     .addState({
-      id: 'state_toggle',
       state: {
         descriptor: {
           id: 'state_toggle',
@@ -457,7 +461,6 @@ async function createSingles() {
         },
         states: {
           startIdle: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: false,
               loop: false,
@@ -467,7 +470,6 @@ async function createSingles() {
             },
           },
           playSun: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: true,
               loop: false,
@@ -478,7 +480,6 @@ async function createSingles() {
             },
           },
           endIdle: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: false,
               loop: false,
@@ -488,7 +489,6 @@ async function createSingles() {
             },
           },
           playReverse: {
-            animationId: 'toggle',
             statePlaybackSettings: {
               autoplay: true,
               loop: false,
@@ -506,7 +506,132 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('toggle.lottie', Buffer.from(value));
+      const filename = 'toggle.lottie';
+
+      console.log('> Writing to file: ', filename);
+      fs.writeFileSync(filename, Buffer.from(value));
+    });
+
+  const toggleTest = new DotLottie();
+
+  await toggleTest
+    .addAnimation({
+      id: 'toggle',
+      url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
+    })
+    .addState({
+      state: {
+        descriptor: {
+          id: 'state_toggle',
+          initial: 'startIdle',
+        },
+        states: {
+          startIdle: {
+            statePlaybackSettings: {
+              autoplay: false,
+              loop: false,
+            },
+            onClick: {
+              state: 'playSun',
+            },
+          },
+          playSun: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: false,
+              segments: [0, 30],
+            },
+          },
+          // endIdle: {
+          //   statePlaybackSettings: {
+          //     autoplay: false,
+          //     loop: false,
+          //   },
+          //   onClick: {
+          //     state: 'playReverse',
+          //   },
+          // },
+          // playReverse: {
+          //   statePlaybackSettings: {
+          //     autoplay: true,
+          //     loop: false,
+          //     segments: [30, 0],
+          //   },
+          //   onComplete: {
+          //     state: 'startIdle',
+          //   },
+          // },
+        },
+      },
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then(async (value) => {
+      const filename = 'toggle_test.lottie';
+
+      console.log('> Writing to file: ', filename);
+      fs.writeFileSync(filename, Buffer.from(value));
+    });
+
+  const mouseEnterMouseLeave = new DotLottie();
+
+  await mouseEnterMouseLeave
+    .addAnimation({
+      id: 'mouseEnterMouseLeave',
+      url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
+    })
+    .addState({
+      state: {
+        descriptor: {
+          id: 'mouseEnterMouseLeave',
+          initial: 'startIdle',
+        },
+        states: {
+          startIdle: {
+            animationId: 'mouseEnterMouseLeave',
+            statePlaybackSettings: {
+              autoplay: false,
+              loop: false,
+            },
+            onMouseEnter: {
+              state: 'playSun',
+            },
+          },
+          playSun: {
+            animationId: 'mouseEnterMouseLeave',
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: false,
+            },
+            onMouseLeave: {
+              state: 'playReverse',
+            },
+          },
+          playReverse: {
+            animationId: 'mouseEnterMouseLeave',
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: false,
+              direction: -1,
+            },
+            onComplete: {
+              state: 'startIdle',
+            },
+          },
+        },
+      },
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then(async (value) => {
+      const filename = 'mouseEnterLeave.lottie';
+
+      console.log('> Writing to file: ', filename);
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 
   const pigeon = new DotLottie();
@@ -517,7 +642,6 @@ async function createSingles() {
       url: 'https://assets4.lottiefiles.com/packages/lf20_zyquagfl.json',
     })
     .addState({
-      id: 'exploding_pigeon',
       state: {
         descriptor: {
           id: 'exploding_pigeon',
@@ -540,7 +664,7 @@ async function createSingles() {
             animationId: 'pigeon',
             statePlaybackSettings: {
               autoplay: true,
-              loop: 3,
+              loop: 1,
               direction: 1,
               segments: 'explosion',
             },
@@ -568,7 +692,11 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('pigeon.lottie', Buffer.from(value));
+      const filename = 'pigeon.lottie';
+
+      console.log('> Writing to file: ', filename);
+
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 
   const repeat = new DotLottie();
@@ -583,7 +711,6 @@ async function createSingles() {
       url: 'https://assets2.lottiefiles.com/packages/lf20_2m1smtya.json',
     })
     .addState({
-      id: 'state_repeat',
       state: {
         descriptor: {
           id: 'state_repeat',
@@ -595,8 +722,6 @@ async function createSingles() {
             statePlaybackSettings: {
               autoplay: true,
               loop: 3,
-              direction: 1,
-              segments: 'repeat',
             },
             onComplete: {
               state: 'success',
@@ -621,7 +746,10 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('repeat.lottie', Buffer.from(value));
+      const filename = 'repeat.lottie';
+
+      console.log('> Writing to file: repeat.lottie');
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 
   const loadInQueue = new DotLottie();
@@ -640,7 +768,6 @@ async function createSingles() {
       url: 'https://assets9.lottiefiles.com/packages/lf20_pKiaUR.json',
     })
     .addState({
-      id: 'state_load_in_queue_1',
       state: {
         descriptor: {
           id: 'state_load_in_queue_1',
@@ -699,7 +826,10 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('loadInQueue.lottie', Buffer.from(value));
+      const filename = 'loadInQueue.lottie';
+      console.log('> Writing to file: loadInQueue.lottie');
+
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 
   const onAfter = new DotLottie();
@@ -709,8 +839,15 @@ async function createSingles() {
       id: 'onAfter',
       url: 'https://assets8.lottiefiles.com/packages/lf20_zwath9pn.json',
     })
+    .addAnimation({
+      id: 'well_done',
+      url: 'https://assets9.lottiefiles.com/packages/lf20_pKiaUR.json',
+    })
+    .addAnimation({
+      id: 'confetti',
+      url: 'https://assets6.lottiefiles.com/packages/lf20_opn6z1qt.json',
+    })
     .addState({
-      id: 'onAfter',
       state: {
         descriptor: {
           id: 'onAfter',
@@ -722,18 +859,90 @@ async function createSingles() {
             statePlaybackSettings: {
               autoplay: true,
               loop: true,
-              intermission: 3000,
+              intermission: 500,
             },
-            onComplete: {
+            onAfter: {
+              ms: 3000,
               state: 'after3000',
             },
           },
           after3000: {
+            animationId: 'well_done',
             statePlaybackSettings: {
               autoplay: true,
               loop: true,
-              speed: 5,
+              speed: 1.5,
               direction: -1,
+            },
+            onAfter: {
+              ms: 5000,
+              state: 'after5000',
+            },
+          },
+          after5000: {
+            animationId: 'confetti',
+            statePlaybackSettings: {
+              autoplay: true,
+              speed: 2,
+              direction: 1,
+            },
+            onComplete: {
+              state: 'wait',
+            },
+            onClick: {
+              state: 'wait',
+            }
+          },
+        },
+      },
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then(async (value) => {
+      const filename = 'onAfter.lottie';
+
+      console.log('> Writing to file: onAfter.lottie');
+      fs.writeFileSync(filename, Buffer.from(value));
+    });
+
+  const onComplete = new DotLottie();
+
+  await onComplete
+    .addAnimation({
+      id: 'well_done',
+      url: 'https://assets9.lottiefiles.com/packages/lf20_pKiaUR.json',
+    })
+    .addAnimation({
+      id: 'confetti',
+      url: 'https://assets6.lottiefiles.com/packages/lf20_opn6z1qt.json',
+    })
+    .addState({
+      state: {
+        descriptor: {
+          id: 'onComplete',
+          initial: 'startState',
+        },
+        states: {
+          startState: {
+            animationId: 'well_done',
+            statePlaybackSettings: {
+              autoplay: true,
+              speed: 0.5,
+              direction: 1,
+            },
+            onComplete: {
+              state: 'afterOnComplete',
+            }
+          },
+          afterOnComplete: {
+            animationId: 'confetti',
+            statePlaybackSettings: {
+              autoplay: true,
+            },
+            onComplete: {
+              state: 'startState',
             },
           },
         },
@@ -744,8 +953,96 @@ async function createSingles() {
       return value.toArrayBuffer();
     })
     .then(async (value) => {
-      fs.writeFileSync('onAfter.lottie', Buffer.from(value));
+      const filename = 'onComplete.lottie';
+
+      console.log('> Writing to file: ' + filename);
+      fs.writeFileSync(filename, Buffer.from(value));
     });
+
+  const inheritAttributes = await new DotLottie();
+
+  await inheritAttributes
+    .addAnimation({
+      id: 'car',
+      url: 'https://lottie.host/82f9aac1-c166-4124-9143-002bf32e235f/p1fb9yQ3lu.json',
+    })
+    .addState({
+      state: {
+        descriptor: {
+          id: 'start',
+          initial: 'firstGear',
+        },
+        states: {
+          firstGear: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: true,
+              speed: 0.5,
+            },
+            onClick: {
+              state: 'secondGear',
+            }
+          },
+          secondGear: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: true,
+              speed: 1,
+            },
+            onClick: {
+              state: 'thirdGear',
+            }
+          },
+          thirdGear: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: true,
+              speed: 2,
+            },
+            onClick: {
+              state: 'fourthGear',
+            }
+          },
+          fourthGear: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: true,
+              speed: 4,
+            },
+            onClick: {
+              state: 'firstGear',
+            }
+          },
+        },
+      },
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then(async (value) => {
+      const filename = 'car.lottie';
+
+      console.log('> Writing to file: ' + filename);
+      fs.writeFileSync(filename, Buffer.from(value));
+    });
+
+
+  // const errorDotLottie = await new DotLottie().fromURL(
+  //   'https://lottie.host/d76e204a-35eb-4258-ab86-1473a6966765/WUvJ2K6yO0.lottie',
+  // );
+
+  // const animation = await errorDotLottie.getAnimation(errorDotLottie.manifest.animations[0].id);
+
+  // console.log(">> Writing errorDotLottie.json")
+  // fs.writeFileSync(
+  //   'errorDotLottie.json',
+  //   JSON.stringify(
+  //     await animation.toJSON({
+  //       inlineAssets: true,
+  //     }),
+  //   ),
+  // );
 }
 
 createDotLottie();
