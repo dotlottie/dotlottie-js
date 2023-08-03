@@ -20,7 +20,7 @@ export enum ErrorCodes {
   INVALID_URL = 'INVALID_URL',
 }
 
-class DotLottieError extends Error {
+export class DotLottieError extends Error {
   public code: ErrorCodes;
 
   public constructor(message: string, code: ErrorCodes) {
@@ -44,7 +44,7 @@ export function dataUrlFromU8(uint8Data: Uint8Array): string {
     base64 = Buffer.from(uint8Data).toString('base64');
   } else {
     // Using window.btoa for browser environments
-    const binaryString = strFromU8(uint8Data, false);
+    const binaryString = Array.prototype.map.call(uint8Data, (byte: number) => String.fromCharCode(byte)).join('');
 
     base64 = window.btoa(binaryString);
   }
@@ -123,7 +123,7 @@ export async function getManifest(dotLottie: Uint8Array): Promise<Manifest> {
   const unzippedManifest = unzipped[manifestFileName];
 
   if (!(unzippedManifest instanceof Uint8Array)) {
-    throw new DotLottieError('Manifest not found', ErrorCodes.INVALID_DOTLOTTIE);
+    throw new DotLottieError('Invalid .lottie file, manifest.json is missing', ErrorCodes.INVALID_DOTLOTTIE);
   }
 
   return JSON.parse(strFromU8(unzippedManifest, false)) as Manifest;
@@ -144,7 +144,7 @@ export async function validateDotLottie(dotLottie: Uint8Array): Promise<{ error?
   const manifestValidationResult = ManifestSchema.safeParse(manifest);
 
   if (!manifestValidationResult.success) {
-    const error = manifestValidationResult.error.toString();
+    const error = `Invalid .lottie file, manifest.json structure is invalid, ${manifestValidationResult.error.toString()}`;
 
     return { success: false, error };
   }
@@ -162,8 +162,8 @@ export async function loadFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<Uin
 
   const validationResult = await validateDotLottie(dotLottie);
 
-  if (!validationResult.success) {
-    throw new DotLottieError(validationResult.error ?? 'Invalid .lottie file', ErrorCodes.INVALID_DOTLOTTIE);
+  if (validationResult.error) {
+    throw new DotLottieError(validationResult.error, ErrorCodes.INVALID_DOTLOTTIE);
   }
 
   return dotLottie;
@@ -176,7 +176,7 @@ export async function loadFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<Uin
  */
 export async function loadFromURL(src: string): Promise<Uint8Array> {
   if (!isValidURL(src)) {
-    throw new DotLottieError('Invalid URL provided', ErrorCodes.INVALID_URL);
+    throw new DotLottieError('Invalid url provided for .lottie file', ErrorCodes.INVALID_URL);
   }
 
   const response = await fetch(src);
