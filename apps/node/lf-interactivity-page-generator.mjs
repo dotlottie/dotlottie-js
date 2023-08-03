@@ -11,14 +11,14 @@ async function createDotLottie() {
 
   // This dotlottie doesnt contain scrolling interactivity
   // Interactions skipped:
+  // tldlr: scrolling, syncing to cursor, playing when visible, clicking x amount of times
+
   // sync-with-scroll
   // scroll relative to container
   // scroll with offset
   // Scroll effect with offset and segment looping
   // Sync animation with cursor position
   // Sync animation with cursor horizontal movement
-  // Play animation on click
-  // Toggle (But can be done with segments)
   // Play animation when visible
   // Play animation on hold
   // Pausehold animation
@@ -33,20 +33,18 @@ async function createDotLottie() {
       id: 'segments',
       url: 'https://assets2.lottiefiles.com/packages/lf20_4fET62.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_segments',
-          initial: 'loopState',
-        },
-        states: {
-          loopState: {
-            animationId: 'segments',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              segments: [70, 500],
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'state_segments',
+        initial: 'loopState',
+      },
+      states: {
+        loopState: {
+          animationId: 'segments',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            segments: [70, 500],
           },
         },
       },
@@ -55,21 +53,19 @@ async function createDotLottie() {
       id: 'segments_on_hover',
       url: 'https://assets9.lottiefiles.com/packages/lf20_gr2cHM.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_segments_on_hover',
-          initial: 'loopState',
-        },
-        states: {
-          loopState: {
-            animationId: 'segments_on_hover',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              hover: true,
-              segments: [45, 60],
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'state_segments_on_hover',
+        initial: 'loopState',
+      },
+      states: {
+        loopState: {
+          animationId: 'segments_on_hover',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            hover: true,
+            segments: [45, 60],
           },
         },
       },
@@ -78,19 +74,90 @@ async function createDotLottie() {
       id: 'animation_on_hover',
       url: 'https://assets8.lottiefiles.com/packages/lf20_zwath9pn.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_animation_on_hover',
-          initial: 'loopState',
+    .addStateMachine({
+      descriptor: {
+        id: 'state_animation_on_hover',
+        initial: 'loopState',
+      },
+      states: {
+        loopState: {
+          animationId: 'animation_on_hover',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            hover: true,
+          },
         },
+      },
+    })
+    .addAnimation({
+      id: 'play_on_hold',
+      url: 'https://assets10.lottiefiles.com/packages/lf20_dmd1gncl.json',
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'play_on_hold',
+        initial: 'idleState',
         states: {
-          loopState: {
-            animationId: 'animation_on_hover',
+          idleState: {
+            animationId: 'play_on_hold',
+            statePlaybackSettings: {
+              autoplay: false,
+              loop: false,
+            },
+            onMouseEnter: {
+              state: 'playState',
+            },
+          },
+          playState: {
             statePlaybackSettings: {
               autoplay: true,
-              loop: true,
-              hover: true,
+              loop: false,
+              direction: 1,
+            },
+            onMouseLeave: {
+              state: 'reversePlayState',
+            },
+          },
+          reversePlayState: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: false,
+              direction: -1,
+            },
+            onMouseEnter: {
+              state: 'playState',
+            },
+            onComplete: {
+              state: 'idleState',
+            },
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'play_on_hold_pause',
+        initial: 'idleState',
+        states: {
+          idleState: {
+            animationId: 'play_on_hold',
+            statePlaybackSettings: {
+              autoplay: false,
+              loop: false,
+            },
+            onMouseEnter: {
+              state: 'playState',
+            },
+          },
+          playState: {
+            statePlaybackSettings: {
+              autoplay: true,
+              loop: false,
+              direction: 1,
+            },
+            onMouseLeave: {
+              state: 'idleState',
             },
           },
         },
@@ -100,51 +167,49 @@ async function createDotLottie() {
       id: 'toggle',
       url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_toggle',
-          initial: 'startIdle',
+    .addStateMachine({
+      descriptor: {
+        id: 'state_toggle',
+        initial: 'startIdle',
+      },
+      states: {
+        startIdle: {
+          animationId: 'toggle',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onClick: {
+            state: 'playSun',
+          },
         },
-        states: {
-          startIdle: {
-            animationId: 'toggle',
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onClick: {
-              state: 'playSun',
-            },
+        playSun: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            segments: [0, 30],
           },
-          playSun: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              segments: [0, 30],
-            },
-            onComplete: {
-              state: 'endIdle',
-            },
+          onComplete: {
+            state: 'endIdle',
           },
-          endIdle: {
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onClick: {
-              state: 'playReverse',
-            },
+        },
+        endIdle: {
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
           },
-          playReverse: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              segments: [30, 0],
-            },
-            onComplete: {
-              state: 'startIdle',
-            },
+          onClick: {
+            state: 'playReverse',
+          },
+        },
+        playReverse: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            segments: [30, 0],
+          },
+          onComplete: {
+            state: 'startIdle',
           },
         },
       },
@@ -153,48 +218,46 @@ async function createDotLottie() {
       id: 'pigeon',
       url: 'https://assets4.lottiefiles.com/packages/lf20_zyquagfl.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'exploding_pigeon',
-          initial: 'running',
+    .addStateMachine({
+      descriptor: {
+        id: 'exploding_pigeon',
+        initial: 'running',
+      },
+      states: {
+        running: {
+          animationId: 'pigeon',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            direction: 1,
+            segments: 'bird',
+          },
+          onClick: {
+            state: 'exploding',
+          },
         },
-        states: {
-          running: {
-            animationId: 'pigeon',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              direction: 1,
-              segments: 'bird',
-            },
-            onClick: {
-              state: 'exploding',
-            },
+        exploding: {
+          animationId: 'pigeon',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: 3,
+            direction: 1,
+            segments: 'explosion',
           },
-          exploding: {
-            animationId: 'pigeon',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: 3,
-              direction: 1,
-              segments: 'explosion',
-            },
-            onComplete: {
-              state: 'feathers',
-            },
+          onComplete: {
+            state: 'feathers',
           },
-          feathers: {
-            animationId: 'pigeon',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-              segments: 'feathers',
-            },
-            onComplete: {
-              state: 'running',
-            },
+        },
+        feathers: {
+          animationId: 'pigeon',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+            segments: 'feathers',
+          },
+          onComplete: {
+            state: 'running',
           },
         },
       },
@@ -207,34 +270,32 @@ async function createDotLottie() {
       id: 'repeat_second_animation',
       url: 'https://lottie.host/5f095db6-2486-4020-ba31-77ef9697d031/izCcpDAsdG.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_repeat',
-          initial: 'repeat_3_times',
-        },
-        states: {
-          repeat_3_times: {
-            animationId: 'repeat',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: 3,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'success',
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'state_repeat',
+        initial: 'repeat_3_times',
+      },
+      states: {
+        repeat_3_times: {
+          animationId: 'repeat',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: 3,
+            direction: 1,
           },
-          success: {
-            animationId: 'repeat_second_animation',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'repeat_3_times',
-            },
+          onComplete: {
+            state: 'success',
+          },
+        },
+        success: {
+          animationId: 'repeat_second_animation',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+          },
+          onComplete: {
+            state: 'repeat_3_times',
           },
         },
       },
@@ -251,56 +312,54 @@ async function createDotLottie() {
       id: 'well_done',
       url: 'https://assets9.lottiefiles.com/packages/lf20_pKiaUR.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_load_in_queue_1',
-          initial: 'bullseye_idle',
+    .addStateMachine({
+      descriptor: {
+        id: 'state_load_in_queue_1',
+        initial: 'bullseye_idle',
+      },
+      states: {
+        bullseye_idle: {
+          animationId: 'bullseye',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+            direction: 1,
+          },
+          onClick: {
+            state: 'bullseye_hit',
+          },
         },
-        states: {
-          bullseye_idle: {
-            animationId: 'bullseye',
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-              direction: 1,
-            },
-            onClick: {
-              state: 'bullseye_hit',
-            },
+        bullseye_hit: {
+          animationId: 'bullseye',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
           },
-          bullseye_hit: {
-            animationId: 'bullseye',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'state_load_in_queue_2',
-            },
+          onComplete: {
+            state: 'state_load_in_queue_2',
           },
-          state_load_in_queue_2: {
-            animationId: 'confetti',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'state_load_in_queue_3',
-            },
+        },
+        state_load_in_queue_2: {
+          animationId: 'confetti',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
           },
-          state_load_in_queue_3: {
-            animationId: 'well_done',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'bullseye_idle',
-            },
+          onComplete: {
+            state: 'state_load_in_queue_3',
+          },
+        },
+        state_load_in_queue_3: {
+          animationId: 'well_done',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+          },
+          onComplete: {
+            state: 'bullseye_idle',
           },
         },
       },
@@ -331,7 +390,7 @@ async function createSingles() {
       id: 'segments',
       url: 'https://assets2.lottiefiles.com/packages/lf20_4fET62.json',
     })
-    .addState({
+    .addStateMachine({
       state: {
         descriptor: {
           id: 'state_segments',
@@ -367,21 +426,19 @@ async function createSingles() {
       id: 'segments_on_hover',
       url: 'https://assets9.lottiefiles.com/packages/lf20_gr2cHM.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_segments_on_hover',
-          initial: 'loopState',
-        },
-        states: {
-          animationId: 'segments_on_hover',
-          loopState: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              hover: true,
-              segments: [45, 60],
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'state_segments_on_hover',
+        initial: 'loopState',
+      },
+      states: {
+        animationId: 'segments_on_hover',
+        loopState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            hover: true,
+            segments: [45, 60],
           },
         },
       },
@@ -404,20 +461,18 @@ async function createSingles() {
       id: 'animation_on_hover',
       url: 'https://assets8.lottiefiles.com/packages/lf20_zwath9pn.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_animation_on_hover',
-          initial: 'loopState',
-        },
-        states: {
-          loopState: {
-            animationId: 'animation_on_hover',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              hover: true,
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'state_animation_on_hover',
+        initial: 'loopState',
+      },
+      states: {
+        loopState: {
+          animationId: 'animation_on_hover',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            hover: true,
           },
         },
       },
@@ -440,50 +495,48 @@ async function createSingles() {
       id: 'toggle',
       url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_toggle',
-          initial: 'startIdle',
+    .addStateMachine({
+      descriptor: {
+        id: 'state_toggle',
+        initial: 'startIdle',
+      },
+      states: {
+        startIdle: {
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onClick: {
+            state: 'playSun',
+          },
         },
-        states: {
-          startIdle: {
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onClick: {
-              state: 'playSun',
-            },
+        playSun: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            segments: [0, 30],
           },
-          playSun: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              segments: [0, 30],
-            },
-            onComplete: {
-              state: 'endIdle',
-            },
+          onComplete: {
+            state: 'endIdle',
           },
-          endIdle: {
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onClick: {
-              state: 'playReverse',
-            },
+        },
+        endIdle: {
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
           },
-          playReverse: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              segments: [30, 0],
-            },
-            onComplete: {
-              state: 'startIdle',
-            },
+          onClick: {
+            state: 'playReverse',
+          },
+        },
+        playReverse: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            segments: [30, 0],
+          },
+          onComplete: {
+            state: 'startIdle',
           },
         },
       },
@@ -506,49 +559,47 @@ async function createSingles() {
       id: 'toggle',
       url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_toggle',
-          initial: 'startIdle',
-        },
-        states: {
-          startIdle: {
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onClick: {
-              state: 'playSun',
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'state_toggle',
+        initial: 'startIdle',
+      },
+      states: {
+        startIdle: {
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
           },
-          playSun: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              segments: [0, 30],
-            },
+          onClick: {
+            state: 'playSun',
           },
-          // endIdle: {
-          //   statePlaybackSettings: {
-          //     autoplay: false,
-          //     loop: false,
-          //   },
-          //   onClick: {
-          //     state: 'playReverse',
-          //   },
-          // },
-          // playReverse: {
-          //   statePlaybackSettings: {
-          //     autoplay: true,
-          //     loop: false,
-          //     segments: [30, 0],
-          //   },
-          //   onComplete: {
-          //     state: 'startIdle',
-          //   },
-          // },
         },
+        playSun: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            segments: [0, 30],
+          },
+        },
+        // endIdle: {
+        //   statePlaybackSettings: {
+        //     autoplay: false,
+        //     loop: false,
+        //   },
+        //   onClick: {
+        //     state: 'playReverse',
+        //   },
+        // },
+        // playReverse: {
+        //   statePlaybackSettings: {
+        //     autoplay: true,
+        //     loop: false,
+        //     segments: [30, 0],
+        //   },
+        //   onComplete: {
+        //     state: 'startIdle',
+        //   },
+        // },
       },
     })
     .build()
@@ -569,43 +620,41 @@ async function createSingles() {
       id: 'mouseEnterMouseLeave',
       url: 'https://assets8.lottiefiles.com/private_files/lf30_tnblylie.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'mouseEnterMouseLeave',
-          initial: 'startIdle',
+    .addStateMachine({
+      descriptor: {
+        id: 'mouseEnterMouseLeave',
+        initial: 'startIdle',
+      },
+      states: {
+        startIdle: {
+          animationId: 'mouseEnterMouseLeave',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onMouseEnter: {
+            state: 'playSun',
+          },
         },
-        states: {
-          startIdle: {
-            animationId: 'mouseEnterMouseLeave',
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onMouseEnter: {
-              state: 'playSun',
-            },
+        playSun: {
+          animationId: 'mouseEnterMouseLeave',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
           },
-          playSun: {
-            animationId: 'mouseEnterMouseLeave',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-            },
-            onMouseLeave: {
-              state: 'playReverse',
-            },
+          onMouseLeave: {
+            state: 'playReverse',
           },
-          playReverse: {
-            animationId: 'mouseEnterMouseLeave',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: -1,
-            },
-            onComplete: {
-              state: 'startIdle',
-            },
+        },
+        playReverse: {
+          animationId: 'mouseEnterMouseLeave',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: -1,
+          },
+          onComplete: {
+            state: 'startIdle',
           },
         },
       },
@@ -628,48 +677,46 @@ async function createSingles() {
       id: 'pigeon',
       url: 'https://assets4.lottiefiles.com/packages/lf20_zyquagfl.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'exploding_pigeon',
-          initial: 'running',
+    .addStateMachine({
+      descriptor: {
+        id: 'exploding_pigeon',
+        initial: 'running',
+      },
+      states: {
+        running: {
+          animationId: 'pigeon',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            direction: 1,
+            segments: 'bird',
+          },
+          onClick: {
+            state: 'exploding',
+          },
         },
-        states: {
-          running: {
-            animationId: 'pigeon',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              direction: 1,
-              segments: 'bird',
-            },
-            onClick: {
-              state: 'exploding',
-            },
+        exploding: {
+          animationId: 'pigeon',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: 1,
+            direction: 1,
+            segments: 'explosion',
           },
-          exploding: {
-            animationId: 'pigeon',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: 1,
-              direction: 1,
-              segments: 'explosion',
-            },
-            onComplete: {
-              state: 'feathers',
-            },
+          onComplete: {
+            state: 'feathers',
           },
-          feathers: {
-            animationId: 'pigeon',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-              segments: 'feathers',
-            },
-            onComplete: {
-              state: 'running',
-            },
+        },
+        feathers: {
+          animationId: 'pigeon',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+            segments: 'feathers',
+          },
+          onComplete: {
+            state: 'running',
           },
         },
       },
@@ -697,33 +744,31 @@ async function createSingles() {
       id: 'repeat_second_animation',
       url: 'https://assets2.lottiefiles.com/packages/lf20_2m1smtya.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_repeat',
-          initial: 'repeat_3_times',
-        },
-        states: {
-          repeat_3_times: {
-            animationId: 'repeat',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: 3,
-            },
-            onComplete: {
-              state: 'success',
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'state_repeat',
+        initial: 'repeat_3_times',
+      },
+      states: {
+        repeat_3_times: {
+          animationId: 'repeat',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: 3,
           },
-          success: {
-            animationId: 'repeat_second_animation',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'repeat_3_times',
-            },
+          onComplete: {
+            state: 'success',
+          },
+        },
+        success: {
+          animationId: 'repeat_second_animation',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+          },
+          onComplete: {
+            state: 'repeat_3_times',
           },
         },
       },
@@ -754,56 +799,54 @@ async function createSingles() {
       id: 'well_done',
       url: 'https://assets9.lottiefiles.com/packages/lf20_pKiaUR.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'state_load_in_queue_1',
-          initial: 'bullseye_idle',
+    .addStateMachine({
+      descriptor: {
+        id: 'state_load_in_queue_1',
+        initial: 'bullseye_idle',
+      },
+      states: {
+        bullseye_idle: {
+          animationId: 'bullseye',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+            direction: 1,
+          },
+          onClick: {
+            state: 'bullseye_hit',
+          },
         },
-        states: {
-          bullseye_idle: {
-            animationId: 'bullseye',
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-              direction: 1,
-            },
-            onClick: {
-              state: 'bullseye_hit',
-            },
+        bullseye_hit: {
+          animationId: 'bullseye',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
           },
-          bullseye_hit: {
-            animationId: 'bullseye',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'state_load_in_queue_2',
-            },
+          onComplete: {
+            state: 'state_load_in_queue_2',
           },
-          state_load_in_queue_2: {
-            animationId: 'confetti',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'state_load_in_queue_3',
-            },
+        },
+        state_load_in_queue_2: {
+          animationId: 'confetti',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
           },
-          state_load_in_queue_3: {
-            animationId: 'well_done',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'bullseye_idle',
-            },
+          onComplete: {
+            state: 'state_load_in_queue_3',
+          },
+        },
+        state_load_in_queue_3: {
+          animationId: 'well_done',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+          },
+          onComplete: {
+            state: 'bullseye_idle',
           },
         },
       },
@@ -834,51 +877,49 @@ async function createSingles() {
       id: 'confetti',
       url: 'https://assets6.lottiefiles.com/packages/lf20_opn6z1qt.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'onAfter',
-          initial: 'wait',
+    .addStateMachine({
+      descriptor: {
+        id: 'onAfter',
+        initial: 'wait',
+      },
+      states: {
+        wait: {
+          animationId: 'onAfter',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            intermission: 500,
+          },
+          onAfter: {
+            ms: 3000,
+            state: 'after3000',
+          },
         },
-        states: {
-          wait: {
-            animationId: 'onAfter',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              intermission: 500,
-            },
-            onAfter: {
-              ms: 3000,
-              state: 'after3000',
-            },
+        after3000: {
+          animationId: 'well_done',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 1.5,
+            direction: -1,
           },
-          after3000: {
-            animationId: 'well_done',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              speed: 1.5,
-              direction: -1,
-            },
-            onAfter: {
-              ms: 5000,
-              state: 'after5000',
-            },
+          onAfter: {
+            ms: 5000,
+            state: 'after5000',
           },
-          after5000: {
-            animationId: 'confetti',
-            statePlaybackSettings: {
-              autoplay: true,
-              speed: 2,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'wait',
-            },
-            onClick: {
-              state: 'wait',
-            },
+        },
+        after5000: {
+          animationId: 'confetti',
+          statePlaybackSettings: {
+            autoplay: true,
+            speed: 2,
+            direction: 1,
+          },
+          onComplete: {
+            state: 'wait',
+          },
+          onClick: {
+            state: 'wait',
           },
         },
       },
@@ -905,32 +946,30 @@ async function createSingles() {
       id: 'confetti',
       url: 'https://assets6.lottiefiles.com/packages/lf20_opn6z1qt.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'onComplete',
-          initial: 'startState',
-        },
-        states: {
-          startState: {
-            animationId: 'well_done',
-            statePlaybackSettings: {
-              autoplay: true,
-              speed: 0.5,
-              direction: 1,
-            },
-            onComplete: {
-              state: 'afterOnComplete',
-            },
+    .addStateMachine({
+      descriptor: {
+        id: 'onComplete',
+        initial: 'startState',
+      },
+      states: {
+        startState: {
+          animationId: 'well_done',
+          statePlaybackSettings: {
+            autoplay: true,
+            speed: 0.5,
+            direction: 1,
           },
-          afterOnComplete: {
-            animationId: 'confetti',
-            statePlaybackSettings: {
-              autoplay: true,
-            },
-            onComplete: {
-              state: 'startState',
-            },
+          onComplete: {
+            state: 'afterOnComplete',
+          },
+        },
+        afterOnComplete: {
+          animationId: 'confetti',
+          statePlaybackSettings: {
+            autoplay: true,
+          },
+          onComplete: {
+            state: 'startState',
           },
         },
       },
@@ -953,52 +992,50 @@ async function createSingles() {
       id: 'car',
       url: 'https://lottie.host/82f9aac1-c166-4124-9143-002bf32e235f/p1fb9yQ3lu.json',
     })
-    .addState({
-      state: {
-        descriptor: {
-          id: 'start',
-          initial: 'firstGear',
+    .addStateMachine({
+      descriptor: {
+        id: 'start',
+        initial: 'firstGear',
+      },
+      states: {
+        firstGear: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 0.5,
+          },
+          onClick: {
+            state: 'secondGear',
+          },
         },
-        states: {
-          firstGear: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              speed: 0.5,
-            },
-            onClick: {
-              state: 'secondGear',
-            },
+        secondGear: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 1,
           },
-          secondGear: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              speed: 1,
-            },
-            onClick: {
-              state: 'thirdGear',
-            },
+          onClick: {
+            state: 'thirdGear',
           },
-          thirdGear: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              speed: 2,
-            },
-            onClick: {
-              state: 'fourthGear',
-            },
+        },
+        thirdGear: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 2,
           },
-          fourthGear: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              speed: 4,
-            },
-            onClick: {
-              state: 'firstGear',
-            },
+          onClick: {
+            state: 'fourthGear',
+          },
+        },
+        fourthGear: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 4,
+          },
+          onClick: {
+            state: 'firstGear',
           },
         },
       },
@@ -1032,4 +1069,4 @@ async function createSingles() {
 }
 
 createDotLottie();
-createSingles();
+// createSingles();

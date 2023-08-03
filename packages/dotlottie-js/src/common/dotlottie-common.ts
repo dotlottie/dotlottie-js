@@ -8,9 +8,8 @@ import type { ZipOptions } from 'fflate';
 import pkg from '../../package.json';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
-import type { DotLottieState } from './dotlottie-state';
-import type { StateOptions } from './dotlottie-state-common';
-import { DotLottieStateCommon } from './dotlottie-state-common';
+import type { DotLottieStateMachineCommonOptions } from './dotlottie-state-machine-common';
+import { DotLottieStateMachineCommon } from './dotlottie-state-machine-common';
 import type { ThemeOptions } from './dotlottie-theme-common';
 import { LottieThemeCommon } from './dotlottie-theme-common';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
@@ -27,7 +26,6 @@ export interface DotLottieOptions {
   keywords?: string;
   plugins?: DotLottiePlugin[];
   revision?: number;
-  state?: Map<string, DotLottieState>;
   version?: string;
 }
 
@@ -46,7 +44,7 @@ export class DotLottieCommon {
 
   protected readonly _themesMap: Map<string, LottieThemeCommon> = new Map();
 
-  protected readonly _stateMap: Map<string, DotLottieStateCommon> = new Map();
+  protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
 
   protected _author?: string;
 
@@ -157,8 +155,8 @@ export class DotLottieCommon {
     return Array.from(this._themesMap.values());
   }
 
-  public get states(): DotLottieStateCommon[] {
-    return Array.from(this._stateMap.values());
+  public get states(): DotLottieStateMachineCommon[] {
+    return Array.from(this._stateMachinesMap.values());
   }
 
   public setCustomData(customData: Record<string, unknown> | undefined): DotLottieCommon {
@@ -374,7 +372,7 @@ export class DotLottieCommon {
   protected _buildManifest(): Manifest {
     const animationsList = Array.from(this._animationsMap.values());
     const themesList = Array.from(this._themesMap.values());
-    const statesList = Array.from(this._stateMap.keys());
+    const statesList = Array.from(this._stateMachinesMap.keys());
     const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
@@ -531,11 +529,12 @@ export class DotLottieCommon {
 
       dotlottie.states.forEach((state) => {
         const stateOption = {
-          state: state.state,
+          states: state.states,
+          descriptor: { id: state.id, initial: state.initial },
           zipOptions: state.zipOptions,
         };
 
-        mergedDotlottie.addState(stateOption);
+        mergedDotlottie.addStateMachine(stateOption);
       });
     }
 
@@ -601,20 +600,20 @@ export class DotLottieCommon {
     return this;
   }
 
-  public addState(state: StateOptions): DotLottieCommon {
-    const newState = new DotLottieStateCommon(state);
+  public addStateMachine(state: DotLottieStateMachineCommonOptions): DotLottieCommon {
+    const newState = new DotLottieStateMachineCommon(state);
 
-    this._stateMap.set(state.state.descriptor.id, newState);
+    this._stateMachinesMap.set(state.descriptor.id, newState);
 
     return this;
   }
 
-  public getState(stateId: string): DotLottieStateCommon | undefined {
-    return this._stateMap.get(stateId);
+  public getStateMachine(stateId: string): DotLottieStateMachineCommon | undefined {
+    return this._stateMachinesMap.get(stateId);
   }
 
   public removeState(stateId: string): DotLottieCommon {
-    this._stateMap.delete(stateId);
+    this._stateMachinesMap.delete(stateId);
 
     return this;
   }

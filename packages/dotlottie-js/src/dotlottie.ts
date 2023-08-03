@@ -274,9 +274,9 @@ export class DotLottie extends DotLottieCommon {
 
               manifest.states?.forEach((state) => {
                 if (state === stateId) {
-                  dotlottie.addState({
-                    state: JSON.parse(decodedStr),
-                  });
+                  const decodedStateMachine = JSON.parse(decodedStr);
+
+                  dotlottie.addStateMachine(decodedStateMachine);
                 }
               });
             }
