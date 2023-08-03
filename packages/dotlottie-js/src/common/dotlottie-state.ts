@@ -64,14 +64,8 @@ export interface StateSettings extends StateTransitionEvents {
   statePlaybackSettings: StateAnimationSettings;
 }
 
-export interface State {
+export interface DotLottieStates {
   [key: string]: StateSettings;
-}
-
-export interface DotLottieState {
-  descriptor: StateInfo;
-
-  states: State;
 }
 
 export interface XStateTargetEvent {

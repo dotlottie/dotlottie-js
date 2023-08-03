@@ -7,5 +7,4 @@ export * from './lottie-animation';
 export * from './lottie-image';
 export * from './lottie-theme';
 export * from './common';
-export * from './lottie-state';
-export * from './common/manifest';
+export * from './lottie-state-machine';

@@ -2,9 +2,11 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable no-new */
+
 import type { AnimationData } from '../common';
 import { DotLottie } from '../dotlottie';
-import { LottieState } from '../lottie-state';
+import { LottieStateMachine } from '../lottie-state-machine';
 
 import animationData from './__fixtures__/simple/animation/animations/pigeon.json';
 import smileyAnimationData from './__fixtures__/simple/animation/animations/smiley.json';
@@ -15,23 +17,18 @@ describe('LottieState', () => {
   it('throws an error if it receives an invalid id when constructed', () => {
     expect(() => {
       // act
-      // eslint-disable-next-line no-new
-      new LottieState({
-        state: {
-          descriptor: { id: '', initial: '' },
-          states: {},
-        },
+      new LottieStateMachine({
+        descriptor: { id: '', initial: '' },
+        states: {},
       });
       // assert
     }).toThrowError('[dotlottie-js]: Invalid id.');
   });
 
   it('gets and sets the zipOptions', () => {
-    const theme = new LottieState({
-      state: {
-        descriptor: { id: 'test', initial: '' },
-        states: {},
-      },
+    const theme = new LottieStateMachine({
+      descriptor: { id: 'test', initial: '' },
+      states: {},
       zipOptions: {
         level: 9,
         mem: 1,
@@ -54,11 +51,9 @@ describe('LottieState', () => {
 
   it('gets and sets the id', () => {
     // arrange
-    const state = new LottieState({
-      state: {
-        descriptor: { id: 'test', initial: '' },
-        states: {},
-      },
+    const state = new LottieStateMachine({
+      descriptor: { id: 'test', initial: '' },
+      states: {},
     });
 
     expect(state.id).toEqual('test');
@@ -72,14 +67,17 @@ describe('LottieState', () => {
 
   it('gets and sets the data', async () => {
     // arrange
-    const pigeonState = new LottieState({ state: PigeonState });
+    const pigeonState = new LottieStateMachine({
+      descriptor: PigeonState.descriptor,
+      states: PigeonState.states,
+    });
 
     // assert
     expect(pigeonState.id).toEqual(PigeonState.descriptor.id);
 
-    expect(pigeonState.state.descriptor.initial).toEqual(PigeonState.descriptor.initial);
+    expect(pigeonState.initial).toEqual(PigeonState.descriptor.initial);
 
-    expect(pigeonState.state.states).toEqual(PigeonState.states);
+    expect(pigeonState.states).toEqual(PigeonState.states);
 
     const dotlottie = new DotLottie();
 
@@ -88,8 +86,9 @@ describe('LottieState', () => {
         id: 'pigeon',
         data: animationData as unknown as AnimationData,
       })
-      .addState({
-        state: PigeonState,
+      .addStateMachine({
+        descriptor: PigeonState.descriptor,
+        states: PigeonState.states,
       })
       .addAnimation({
         id: 'wifi',
@@ -99,8 +98,9 @@ describe('LottieState', () => {
         id: 'smiley',
         data: smileyAnimationData as unknown as AnimationData,
       })
-      .addState({
-        state: SmileyWifi,
+      .addStateMachine({
+        descriptor: SmileyWifi.descriptor,
+        states: SmileyWifi.states,
       });
 
     await dotlottie.build();
@@ -111,9 +111,13 @@ describe('LottieState', () => {
 
     expect(dotlottie.states[1]?.id).toEqual(SmileyWifi.descriptor.id);
 
-    expect(dotlottie.states[0]?.state).toEqual(PigeonState);
+    expect(dotlottie.states[0]?.id).toEqual(PigeonState.descriptor.id);
+    expect(dotlottie.states[0]?.initial).toEqual(PigeonState.descriptor.initial);
+    expect(dotlottie.states[0]?.states).toEqual(PigeonState.states);
 
-    expect(dotlottie.states[1]?.state).toEqual(SmileyWifi);
+    expect(dotlottie.states[1]?.id).toEqual(SmileyWifi.descriptor.id);
+    expect(dotlottie.states[1]?.initial).toEqual(SmileyWifi.descriptor.initial);
+    expect(dotlottie.states[1]?.states).toEqual(SmileyWifi.states);
 
     // Remove a state and check
     dotlottie.removeState(PigeonState.descriptor.id);
@@ -134,8 +138,9 @@ describe('LottieState', () => {
         id: 'pigeon',
         data: animationData as unknown as AnimationData,
       })
-      .addState({
-        state: PigeonState,
+      .addStateMachine({
+        descriptor: PigeonState.descriptor,
+        states: PigeonState.states,
       })
       .addAnimation({
         id: 'wifi',
@@ -145,8 +150,9 @@ describe('LottieState', () => {
         id: 'smiley',
         data: smileyAnimationData as unknown as AnimationData,
       })
-      .addState({
-        state: SmileyWifi,
+      .addStateMachine({
+        descriptor: SmileyWifi.descriptor,
+        states: SmileyWifi.states,
       });
 
     await dotlottie.build();
