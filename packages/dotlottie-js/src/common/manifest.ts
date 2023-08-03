@@ -2,75 +2,42 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-export enum PlayMode {
-  Bounce = 'bounce',
-  Normal = 'normal',
-}
+import { z } from 'zod';
 
-export interface ManifestAnimation {
-  autoplay?: boolean;
+export const PlayModeSchema = z.union([z.literal('bounce'), z.literal('normal')]);
 
-  // default theme id
-  defaultTheme?: string;
+export type PlayMode = z.infer<typeof PlayModeSchema>;
 
-  // Define playback direction 1 forward, -1 backward
-  direction?: number;
+export const ManifestAnimationSchema = z.object({
+  autoplay: z.boolean().optional(),
+  defaultTheme: z.string().optional(),
+  direction: z.number().optional(),
+  hover: z.boolean().optional(),
+  id: z.string(),
+  intermission: z.number().optional(),
+  loop: z.union([z.boolean(), z.number()]).optional(),
+  playMode: PlayModeSchema.optional(),
+  speed: z.number().optional(),
+  themeColor: z.string().optional(),
+});
+export type ManifestAnimation = z.infer<typeof ManifestAnimationSchema>;
 
-  // Play on hover
-  hover?: boolean;
+export const ManifestThemeSchema = z.object({
+  animations: z.array(z.string()),
+  id: z.string(),
+});
+export type ManifestTheme = z.infer<typeof ManifestThemeSchema>;
 
-  id: string;
-
-  // Time to wait between loops in milliseconds
-  intermission?: number;
-
-  loop?: boolean | number;
-
-  // Choice between 'bounce' and 'normal'
-  playMode?: PlayMode;
-
-  // Desired playback speed, default 1.0
-  speed?: number;
-
-  // Theme color
-  themeColor?: string;
-}
-
-export interface ManifestTheme {
-  // scoped animations ids
-  animations: string[];
-
-  id: string;
-}
-
-export interface Manifest {
-  // Default animation to play
-  activeAnimationId?: string;
-
-  // List of animations
-  animations: ManifestAnimation[];
-
-  // Name of the author
-  author?: string | undefined;
-
-  // Custom data to be made available to the player and animations
-  custom?: Record<string, unknown>;
-
-  // Description of the animation
-  description?: string | undefined;
-
-  // Name and version of the software that created the dotLottie
-  generator?: string | undefined;
-
-  // Description of the animation
-  keywords?: string | undefined;
-
-  // Revision version number of the dotLottie
-  revision?: number | undefined;
-
-  // List of themes
-  themes?: ManifestTheme[];
-
-  // Target dotLottie version
-  version?: string | undefined;
-}
+export const ManifestSchema = z.object({
+  activeAnimationId: z.string().optional(),
+  animations: z.array(ManifestAnimationSchema),
+  author: z.string().optional(),
+  custom: z.record(z.unknown()).optional(),
+  description: z.string().optional(),
+  generator: z.string().optional(),
+  keywords: z.string().optional(),
+  revision: z.number().optional(),
+  themes: z.array(ManifestThemeSchema).optional(),
+  version: z.string().optional(),
+});
+export type Manifest = z.infer<typeof ManifestSchema>;

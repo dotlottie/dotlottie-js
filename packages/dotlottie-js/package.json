@@ -60,7 +60,8 @@
     "fflate": "0.7.4",
     "filenamify": "6.0.0",
     "sharp": "0.32.0",
-    "sharp-phash": "2.1.0"
+    "sharp-phash": "2.1.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/jasmine": "4.3.2",
