@@ -90,6 +90,31 @@ export async function unzipDotLottie(
   return unzipped;
 }
 
+/**
+ * Unzips a specific file from a `.lottie` archive.
+ *
+ * @remarks
+ * This function accepts a `.lottie` file as a `Uint8Array`, a path string representing the
+ * target file to extract, and an optional filter function to further refine the extraction.
+ * It returns a `Promise` that resolves to the unzipped `Uint8Array` of the target file.
+ *
+ * @param dotLottie - The `.lottie` file content as a `Uint8Array`.
+ * @param path - The path of the target file within the `.lottie` archive to extract.
+ * @param filter - An optional filter function to apply on the unzipping process.
+ *                 Accepts a file object and returns a boolean indicating whether the file should be included.
+ * @returns A `Promise` that resolves to the `Uint8Array` of the unzipped target file.
+ *
+ * @throws {@link DotLottieError} if the input is not a valid `.lottie` file or if the target file is not found.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const targetPath = 'assets/image.png';
+ * const unzippedFile = await unzipDotLottieFile(dotLottie, targetPath);
+ * ```
+ *
+ * @public
+ */
 export async function unzipDotLottieFile(
   dotLottie: Uint8Array,
   path: string,
