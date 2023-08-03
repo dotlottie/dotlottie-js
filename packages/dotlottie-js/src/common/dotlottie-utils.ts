@@ -6,23 +6,52 @@
 
 import type { Animation as AnimationData, Asset } from '@lottiefiles/lottie-types';
 import type { UnzipFileFilter, Unzipped } from 'fflate';
-import { unzip, strFromU8 } from 'fflate';
+import { unzip as fflateUnzip, strFromU8 } from 'fflate';
+
+import { getExtensionTypeFromBase64 } from '../utils';
 
 import type { Manifest } from './manifest';
 import { ManifestSchema } from './manifest';
 import { isValidURL } from './utils';
 
+export enum ErrorCodes {
+  ASSET_NOT_FOUND = 'ASSET_NOT_FOUND',
+  INVALID_DOTLOTTIE = 'INVALID_DOTLOTTIE',
+  INVALID_URL = 'INVALID_URL',
+}
+
+class DotLottieError extends Error {
+  public code: ErrorCodes;
+
+  public constructor(message: string, code: ErrorCodes) {
+    super(message);
+    this.name = 'DotLottieError';
+    this.code = code;
+  }
+}
+
 /**
- * Create a data URL from Uint8Array.
- * @param byte - The Uint8Array byte.
- * @param mimetype - The mimetype of the data.
+ * Create a data URL from Uint8Array or ArrayBuffer.
+ * @param byte - The Uint8Array or ArrayBuffer byte.
+ * @param mimeType - The mimeType of the data.
  * @returns The data URL string.
  */
-export function dataUrlFromU8(byte: Uint8Array, mimetype: string): string {
-  const base64 =
-    typeof window === 'undefined' ? Buffer.from(byte).toString('base64') : window.btoa(new TextDecoder().decode(byte));
+export function dataUrlFromU8(uint8Data: Uint8Array): string {
+  let base64: string;
 
-  return `data:${mimetype};base64,${base64}`;
+  if (typeof window === 'undefined') {
+    // Using Node.js Buffer for non-browser environments
+    base64 = Buffer.from(uint8Data).toString('base64');
+  } else {
+    // Using window.btoa for browser environments
+    const binaryString = strFromU8(uint8Data, false);
+
+    base64 = window.btoa(binaryString);
+  }
+
+  const mimeType = `image/${getExtensionTypeFromBase64(base64)}`;
+
+  return `data:${mimeType};base64,${base64}`;
 }
 
 /**
@@ -34,318 +63,333 @@ export function isImageAsset(asset: Asset.Value): asset is Asset.Image {
   return 'w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset;
 }
 
-export class DotLottieUtils {
-  private _dotLottie: Uint8Array | undefined;
-
-  /**
-   * Get the dotLottie data.
-   * @returns The dotLottie data.
-   */
-  public get dotLottie(): Uint8Array | undefined {
-    return this._dotLottie;
+/**
+ * Unzip the .lottie file.
+ * @param dotLottie - The .lottie data as a Uint8Array.
+ * @param filter - The filter function to apply to the files. Defaults to a function that always returns true.
+ * @returns Promise that resolves with the unzipped data.
+ * @throws Error if the .lottie data is not provided.
+ */
+export async function unzipDotLottie(
+  dotLottie: Uint8Array | undefined,
+  filter: UnzipFileFilter = (): boolean => true,
+): Promise<Unzipped> {
+  if (!(dotLottie instanceof Uint8Array)) {
+    throw new DotLottieError('DotLottie not found', ErrorCodes.INVALID_DOTLOTTIE);
   }
 
-  /**
-   * Set the dotLottie data.
-   * @param dotLottie - The dotLottie data to set.
-   */
-  public set dotLottie(dotLottie: Uint8Array | undefined) {
-    this._dotLottie = dotLottie;
-  }
-
-  /**
-   * Load .lottie file from URL.
-   * @param src - The URL source.
-   * @returns Promise that resolves with an instance of DotLottieUtils.
-   */
-  public static async loadFromURL(src: string): Promise<DotLottieUtils> {
-    if (!isValidURL(src)) {
-      throw new Error('Invalid URL provided');
-    }
-
-    const response = await fetch(src);
-
-    const data = await response.arrayBuffer();
-
-    const contentType = response.headers.get('content-type');
-
-    if (!contentType?.includes('application/zip')) {
-      throw new Error('Invalid animation data, only .lottie files are supported.');
-    }
-
-    const instance = new DotLottieUtils();
-
-    instance.dotLottie = new Uint8Array(data);
-
-    if (!(await instance.isValidDotLottie())) {
-      throw new Error('Invalid dotLottie');
-    }
-
-    return instance;
-  }
-
-  /**
-   * Load .lottie file from ArrayBuffer.
-   * @param arrayBuffer - The ArrayBuffer.
-   * @returns Promise that resolves with an instance of DotLottieUtils.
-   */
-  public static async loadFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieUtils> {
-    const instance = new DotLottieUtils();
-
-    instance.dotLottie = new Uint8Array(arrayBuffer);
-
-    const { error, success } = await instance.validateDotLottie();
-
-    if (!success) {
-      throw new Error(error);
-    }
-
-    return instance;
-  }
-
-  /**
-   * Unzip the .lottie file.
-   * @param filter - The filter function to apply to the files.
-   * @returns Promise that resolves with the unzipped data.
-   */
-  public async unzip(filter: UnzipFileFilter = (): boolean => true): Promise<Unzipped> {
-    const unzippedFile = await new Promise<Unzipped>((resolve, reject) => {
-      if (typeof this._dotLottie === 'undefined') {
-        reject(new Error('.lottie is not loaded.'));
-
-        return;
+  const unzipped = await new Promise<Unzipped>((resolve, reject) => {
+    fflateUnzip(dotLottie, { filter }, (err, data) => {
+      if (err) {
+        reject(err);
       }
-
-      unzip(this._dotLottie, { filter }, (err, data) => {
-        if (err) {
-          reject(err);
-        }
-
-        resolve(data);
-      });
+      resolve(data);
     });
+  });
 
-    return unzippedFile;
+  return unzipped;
+}
+
+export async function unzipDotLottieFile(
+  dotLottie: Uint8Array,
+  path: string,
+  filter?: UnzipFileFilter,
+): Promise<Uint8Array> {
+  if (!(dotLottie instanceof Uint8Array)) {
+    throw new DotLottieError('DotLottie not found', ErrorCodes.INVALID_DOTLOTTIE);
   }
 
-  /**
-   * Unzip a specific file from the .lottie file.
-   * @param filepath - The filepath to unzip.
-   * @returns Promise that resolves with the unzipped data.
-   */
-  private async _unzipFile(filepath: string): Promise<Uint8Array> {
-    const unzipped = await this.unzip((file) => file.name === filepath);
+  const unzipped = await unzipDotLottie(dotLottie, (file) => file.name === path && (!filter || filter(file)));
 
-    const data = unzipped[filepath];
+  const unzippedFile = unzipped[path];
 
-    if (!(data instanceof Uint8Array)) {
-      throw new Error(`${filepath} not found.`);
+  if (!(unzippedFile instanceof Uint8Array)) {
+    throw new DotLottieError(`File not found: ${path}`, ErrorCodes.ASSET_NOT_FOUND);
+  }
+
+  return unzippedFile;
+}
+
+/**
+ * Get the manifest data from the .lottie file.
+ * @param dotLottie - The dotLottie data.
+ * @returns Promise that resolves with the manifest data.
+ */
+export async function getManifest(dotLottie: Uint8Array): Promise<Manifest> {
+  const manifestFileName = 'manifest.json';
+
+  const unzipped = await unzipDotLottie(dotLottie, (file) => file.name === manifestFileName);
+
+  const unzippedManifest = unzipped[manifestFileName];
+
+  if (!(unzippedManifest instanceof Uint8Array)) {
+    throw new DotLottieError('Manifest not found', ErrorCodes.INVALID_DOTLOTTIE);
+  }
+
+  return JSON.parse(strFromU8(unzippedManifest, false)) as Manifest;
+}
+
+/**
+ * Validates the provided dotLottie data.
+ * @param dotLottie - The dotLottie data as Uint8Array.
+ * @returns An object containing a success boolean and an optional error string.
+ */
+export async function validateDotLottie(dotLottie: Uint8Array): Promise<{ error?: string; success: boolean }> {
+  if (!(dotLottie instanceof Uint8Array)) {
+    return { success: false, error: 'DotLottie not found' };
+  }
+
+  const manifest = await getManifest(dotLottie);
+
+  const manifestValidationResult = ManifestSchema.safeParse(manifest);
+
+  if (!manifestValidationResult.success) {
+    const error = manifestValidationResult.error.toString();
+
+    return { success: false, error };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Load .lottie file from ArrayBuffer.
+ * @param arrayBuffer - The ArrayBuffer.
+ * @returns dotLottie data as Uint8Array.
+ */
+export async function loadFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<Uint8Array> {
+  const dotLottie = new Uint8Array(arrayBuffer);
+
+  const validationResult = await validateDotLottie(dotLottie);
+
+  if (!validationResult.success) {
+    throw new DotLottieError(validationResult.error ?? 'Invalid .lottie file', ErrorCodes.INVALID_DOTLOTTIE);
+  }
+
+  return dotLottie;
+}
+
+/**
+ * Load .lottie file from URL.
+ * @param src - The URL source.
+ * @returns Promise that resolves with the dotLottie data as Uint8Array.
+ */
+export async function loadFromURL(src: string): Promise<Uint8Array> {
+  if (!isValidURL(src)) {
+    throw new DotLottieError('Invalid URL provided', ErrorCodes.INVALID_URL);
+  }
+
+  const response = await fetch(src);
+
+  const arrayBuffer = await response.arrayBuffer();
+
+  const contentType = response.headers.get('content-type');
+
+  if (!contentType?.includes('application/zip')) {
+    throw new DotLottieError(
+      'Invalid content type provided for .lottie file, expected application/zip',
+      ErrorCodes.INVALID_DOTLOTTIE,
+    );
+  }
+
+  const dotLottie = await loadFromArrayBuffer(arrayBuffer);
+
+  return dotLottie;
+}
+
+/**
+ * Get an image from the .lottie file.
+ * @param dotLottie - The Uint8Array of dotLottie data.
+ * @param filename - The filename of the image to get.
+ * @returns Promise that resolves with the image data.
+ */
+export async function getImage(dotLottie: Uint8Array, filename: string, filter?: UnzipFileFilter): Promise<string> {
+  const imageFilename = `images/${filename}`;
+
+  const unzipped = await unzipDotLottieFile(dotLottie, imageFilename, filter);
+
+  return dataUrlFromU8(unzipped);
+}
+
+export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
+  const unzippedImages = await unzipDotLottie(
+    dotLottie,
+    (file) => file.name.startsWith('images/') && (!filter || filter(file)),
+  );
+
+  const images: Record<string, string> = {};
+
+  for (const imagePath in unzippedImages) {
+    const unzippedImage = unzippedImages[imagePath];
+
+    if (unzippedImage instanceof Uint8Array) {
+      const imageId = imagePath.replace('images/', '');
+
+      images[imageId] = dataUrlFromU8(unzippedImage);
     }
-
-    return data;
   }
 
-  public async validateDotLottie(): Promise<{ error?: string; success: boolean }> {
-    if (!this._dotLottie) {
-      return { success: false, error: 'DotLottie not found' };
-    }
+  return images;
+}
 
-    const manifest = this.getManifest();
+/**
+ * Inlines image assets for the given animations within a DotLottie object.
+ * This function identifies the images used in the animations and replaces their references with the actual image data.
+ *
+ * @param dotLottie - The DotLottie object containing the animations.
+ * @param animations - A record containing the animations to process.
+ * @returns A Promise that resolves when the operation is complete, returning nothing.
+ */
+export async function inlineImageAssets(
+  dotLottie: Uint8Array,
+  animations: Record<string, AnimationData>,
+): Promise<void> {
+  const imagesMap = new Map<string, Set<string>>();
 
-    const manifestValidationResult = ManifestSchema.safeParse(manifest);
+  for (const [animationId, animationData] of Object.entries(animations)) {
+    for (const asset of animationData.assets || []) {
+      if (isImageAsset(asset)) {
+        const imageId = asset.p;
 
-    if (!manifestValidationResult.success) {
-      const error = manifestValidationResult.error.toString();
-
-      return { success: false, error };
-    }
-
-    return { success: true };
-  }
-
-  /**
-   * Get the manifest data from the .lottie file.
-   * @returns Promise that resolves with the manifest data.
-   */
-  public async getManifest(): Promise<Manifest> {
-    const manifestFileName = 'manifest.json';
-
-    const unzippedManifest = await this._unzipFile(manifestFileName);
-
-    return JSON.parse(strFromU8(unzippedManifest, false)) as Manifest;
-  }
-
-  /**
-   * Get an image from the .lottie file.
-   * @param filename - The filename of the image to get.
-   * @returns Promise that resolves with the image data.
-   */
-  public async getImage(filename: string): Promise<string> {
-    const imageFileName = `images/${filename}`;
-
-    const unzippedImage = await this._unzipFile(imageFileName);
-
-    return strFromU8(unzippedImage, false);
-  }
-
-  /**
-   * Get all images from the .lottie file.
-   * @param filter - The filter function to apply to the files.
-   * @returns Promise that resolves with the images data.
-   */
-  public async getImages(filter: UnzipFileFilter = (): boolean => true): Promise<Record<string, string>> {
-    const unzippedImages = await this.unzip((file) => file.name.startsWith('images/') && filter(file));
-
-    const images: Record<string, string> = {};
-
-    for (const imagePath in unzippedImages) {
-      const data = unzippedImages[imagePath];
-
-      if (data instanceof Uint8Array) {
-        const imageId = imagePath.replace('images/', '');
-
-        const imageExtension = imagePath.split('.').pop() || 'png';
-
-        images[imageId] = dataUrlFromU8(data, `image/${imageExtension}`);
+        if (!imagesMap.has(imageId)) {
+          imagesMap.set(imageId, new Set());
+        }
+        imagesMap.get(imageId)?.add(animationId);
       }
     }
-
-    return images;
   }
 
-  /**
-   * Get an animation from the .lottie file.
-   * @param animationId - The animation ID to get.
-   * @param inlineAssets - Options for inlining assets.
-   * @returns Promise that resolves with the animation data.
-   */
-  public async getAnimation(
-    animationId: string,
-    { inlineAssets }: { inlineAssets?: boolean } = {},
-  ): Promise<AnimationData> {
-    const animationFilename = `animations/${animationId}.json`;
+  const unzippedImages = await getImages(dotLottie, (file) => imagesMap.has(file.name));
 
-    const unzippedAnimation = await this._unzipFile(animationFilename);
+  for (const [imageId, animationIdsSet] of imagesMap) {
+    const imageDataURL = unzippedImages[`images/${imageId}`];
 
-    const animationData = JSON.parse(strFromU8(unzippedAnimation, false)) as AnimationData;
+    if (imageDataURL) {
+      for (const animationId of animationIdsSet) {
+        const animationData = animations[animationId];
 
-    if (!inlineAssets) {
-      return animationData;
+        for (const asset of animationData?.assets || []) {
+          if (isImageAsset(asset) && asset.p === imageId) {
+            asset.p = imageDataURL;
+            asset.u = '';
+            asset.e = 1;
+          }
+        }
+      }
     }
+  }
+}
 
-    await this.inlineImageAssets({ animationId: animationData });
+/**
+ * Get an animation from the .lottie file.
+ * @param dotLottie - The Uint8Array of dotLottie data.
+ * @param animationId - The animation ID to get.
+ * @param options - An object containing an optional `inlineAssets` boolean.
+ * @returns Promise that resolves with the animation data.
+ */
+export async function getAnimation(
+  dotLottie: Uint8Array,
+  animationId: string,
+  { inlineAssets }: { inlineAssets?: boolean } = {},
+): Promise<AnimationData> {
+  const animationFilename = `animations/${animationId}.json`;
 
+  const unzippedAnimation = await unzipDotLottieFile(dotLottie, animationFilename);
+
+  const animationData = JSON.parse(strFromU8(unzippedAnimation, false)) as AnimationData;
+
+  if (!inlineAssets) {
     return animationData;
   }
 
-  /**
-   * Gets multiple animations from the .lottie file, optionally filtered by a provided function.
-   * Allows for optionally inlining assets within the animations.
-   *
-   * @param filter - Optional filter function to apply when retrieving animations
-   * @param options - An object containing an optional `inlineAssets` boolean. If true, assets are inlined within the animations
-   * @returns A record containing the animations data, keyed by animation ID
-   */
-  public async getAnimations(
-    filter: UnzipFileFilter = (): boolean => true,
-    { inlineAssets }: { inlineAssets?: boolean } = {},
-  ): Promise<Record<string, AnimationData>> {
-    const animationsMap: Record<string, AnimationData> = {};
+  const animationsMap = {
+    animationId: animationData,
+  };
 
-    const unzippedAnimations = await this.unzip((file) => file.name.startsWith('animations/') && filter(file));
+  await inlineImageAssets(dotLottie, animationsMap);
 
-    for (const animationPath in unzippedAnimations) {
-      const data = unzippedAnimations[animationPath];
+  return animationData;
+}
 
-      if (data instanceof Uint8Array) {
-        const animationId = animationPath.replace('animations/', '').replace('.json', '');
+/**
+ * Retrieves the animations from the given DotLottie object, with an optional filter and inlineAssets option.
+ *
+ * @param dotLottie - The DotLottie object containing the animations.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @param inlineAssets - An optional object that specifies whether or not to inline the assets.
+ * @returns A Promise that resolves to a record containing the animation data mapped by their ID.
+ */
+export async function getAnimations(
+  dotLottie: Uint8Array,
+  { inlineAssets }: { inlineAssets?: boolean } = {},
+  filter?: UnzipFileFilter,
+): Promise<Record<string, AnimationData>> {
+  const animationsMap: Record<string, AnimationData> = {};
+  const unzippedAnimations = await unzipDotLottie(
+    dotLottie,
+    (file) => file.name.startsWith('animations/') && (!filter || filter(file)),
+  );
 
-        const animationData = JSON.parse(strFromU8(data, false)) as AnimationData;
+  for (const animationPath in unzippedAnimations) {
+    const data = unzippedAnimations[animationPath];
 
-        animationsMap[animationId] = animationData;
-      }
+    if (data instanceof Uint8Array) {
+      const animationId = animationPath.replace('animations/', '').replace('.json', '');
+      const animationData = JSON.parse(strFromU8(data, false)) as AnimationData;
+
+      animationsMap[animationId] = animationData;
     }
+  }
 
-    if (!inlineAssets) {
-      return animationsMap;
-    }
-
-    await this.inlineImageAssets(animationsMap);
-
+  if (!inlineAssets) {
     return animationsMap;
   }
 
-  /**
-   * Gets a specific theme from the .lottie file by its ID
-   * @param themeId - The ID of the theme to get
-   * @returns The theme data as a string
-   */
-  public async getTheme(themeId: string): Promise<string> {
-    const themeFilename = `themes/${themeId}.lss`;
+  await inlineImageAssets(dotLottie, animationsMap);
 
-    const unzippedTheme = await this._unzipFile(themeFilename);
+  return animationsMap;
+}
 
-    return strFromU8(unzippedTheme, false);
-  }
+/**
+ * Retrieves the themes from the given DotLottie object, with an optional filter.
+ *
+ * @param dotLottie - The DotLottie object containing the themes.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to a record containing the themes mapped by their ID.
+ */
+export async function getThemes(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
+  const themesMap: Record<string, string> = {};
 
-  /**
-   * Gets multiple themes from the .lottie file, optionally filtered by a provided function
-   * @param filter - Optional filter function to apply when retrieving themes
-   * @returns A record containing the theme data, keyed by theme ID
-   */
-  public async getThemes(filter: UnzipFileFilter = (): boolean => true): Promise<Record<string, string>> {
-    const themesMap: Record<string, string> = {};
+  const unzippedThemes = await unzipDotLottie(
+    dotLottie,
+    (file) => file.name.startsWith('themes/') && (!filter || filter(file)),
+  );
 
-    const unzippedThemes = await this.unzip((file) => file.name.startsWith('themes/') && filter(file));
+  for (const themePath in unzippedThemes) {
+    const data = unzippedThemes[themePath];
 
-    for (const themePath in unzippedThemes) {
-      const data = unzippedThemes[themePath];
+    if (data instanceof Uint8Array) {
+      const themeId = themePath.replace('themes/', '').replace('.lss', '');
 
-      if (data instanceof Uint8Array) {
-        const themeId = themePath.replace('themes/', '').replace('.lss', '');
-
-        themesMap[themeId] = strFromU8(data, false);
-      }
-    }
-
-    return themesMap;
-  }
-
-  public async inlineImageAssets(animations: Record<string, AnimationData>): Promise<void> {
-    const imagesMap = new Map<string, Set<string>>();
-
-    for (const [animationId, animationData] of Object.entries(animations)) {
-      for (const asset of animationData.assets || []) {
-        if (isImageAsset(asset)) {
-          const imageId = asset.p;
-
-          if (!imagesMap.has(imageId)) {
-            imagesMap.set(imageId, new Set());
-          }
-
-          imagesMap.get(imageId)?.add(animationId);
-        }
-      }
-    }
-
-    const unzippedImages = await this.getImages((file) => imagesMap.has(file.name));
-
-    for (const [imageId, animationIdsSet] of imagesMap) {
-      const imageDataURL = unzippedImages[`images/${imageId}`];
-
-      if (imageDataURL) {
-        for (const animationId of animationIdsSet) {
-          const animationData = animations[animationId];
-
-          for (const asset of animationData?.assets || []) {
-            if (isImageAsset(asset) && asset.p === imageId) {
-              asset.p = imageDataURL;
-              asset.u = '';
-              asset.e = 1;
-            }
-          }
-        }
-      }
+      themesMap[themeId] = strFromU8(data, false);
     }
   }
+
+  return themesMap;
+}
+
+/**
+ * Retrieves a specific theme by ID from the given DotLottie object, with an optional filter.
+ *
+ * @param dotLottie - The DotLottie object containing the theme.
+ * @param themeId - The ID of the theme to retrieve.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to the theme as a string.
+ */
+export async function getTheme(dotLottie: Uint8Array, themeId: string, filter?: UnzipFileFilter): Promise<string> {
+  const themeFilename = `themes/${themeId}.lss`;
+
+  const unzippedTheme = await unzipDotLottieFile(dotLottie, themeFilename, filter);
+
+  return strFromU8(unzippedTheme, false);
 }

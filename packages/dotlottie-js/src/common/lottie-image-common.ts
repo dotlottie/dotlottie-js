@@ -4,7 +4,8 @@
 
 import type { ZipOptions } from 'fflate';
 
-import type { LottieAnimationCommon } from './lottie-animation-common.js';
+import { dataUrlFromU8 } from './dotlottie-utils';
+import type { LottieAnimationCommon } from './lottie-animation-common';
 import { createError } from './utils';
 
 export type ImageData = string | ArrayBuffer | Blob;
@@ -135,7 +136,11 @@ export class LottieImageCommon {
   }
 
   public async toDataURL(): Promise<string> {
-    throw createError('toDataUrl(): Proimse<string> not implemented in concrete class!');
+    if (this._data && this._isDataURL(this._data)) return this.data as string;
+
+    const arrayBuffer = await this.toArrayBuffer();
+
+    return dataUrlFromU8(new Uint8Array(arrayBuffer));
   }
 
   /**

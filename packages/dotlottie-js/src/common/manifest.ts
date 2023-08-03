@@ -4,9 +4,12 @@
 
 import { z } from 'zod';
 
-export const PlayModeSchema = z.union([z.literal('bounce'), z.literal('normal')]);
+export enum PlayMode {
+  Bounce = 'bounce',
+  Normal = 'normal',
+}
 
-export type PlayMode = z.infer<typeof PlayModeSchema>;
+export const PlayModeSchema = z.nativeEnum(PlayMode);
 
 export const ManifestAnimationSchema = z.object({
   autoplay: z.boolean().optional(),
