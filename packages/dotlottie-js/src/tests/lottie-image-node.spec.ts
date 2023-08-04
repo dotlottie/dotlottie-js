@@ -118,7 +118,7 @@ describe('LottieImage', () => {
       });
   });
 
-  fit('Adds an animation with lots of duplicate images.', async () => {
+  it('Adds an animation with lots of duplicate images.', async () => {
     const dotLottie = await new DotLottie({ enableDuplicateImageOptimization: true })
       .addAnimation({
         id: 'animation_1',

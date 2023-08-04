@@ -19,13 +19,35 @@ import {
   getTheme,
   getThemes,
   loadFromURL,
-} from '..';
+  createError,
+  isValidURL,
+} from '../node';
 
 import dotLottieAnimation from './__fixtures__/simple/animation.lottie';
 import dotLottieLottie1 from './__fixtures__/simple/animation/animations/lottie1.json';
 import dotLottieManifest from './__fixtures__/simple/animation/manifest.json';
 import dotLottieTheme from './__fixtures__/simple/animation/themes/theme1.lss';
 import dotLottieAnimationWithImages from './__fixtures__/simple/big-merged-dotlottie.lottie';
+
+describe('createError', () => {
+  it('returns an instance of Error with the correct message', () => {
+    const errorMessage = 'This is an error';
+    const error = createError(errorMessage);
+
+    expect(error).toBeInstanceOf(Error);
+    expect(error.message).toBe(`[dotlottie-js]: ${errorMessage}`);
+  });
+});
+
+describe('isValidURL', () => {
+  it('returns true for a valid URL', () => {
+    expect(isValidURL('https://www.valid.com')).toBe(true);
+  });
+
+  it('returns false for an invalid URL', () => {
+    expect(isValidURL('invalid')).toBe(false);
+  });
+});
 
 describe('loadFromUrl', () => {
   it('throws when url is not valid', async () => {
