@@ -30,8 +30,7 @@ export const MIME_TYPES: MimeTypes = {
 
 export const MIME_CODES: MimeCodes = {
   jpeg: [0xff, 0xd8, 0xff],
-  jpeg2: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
-  png: [0x89, 0x50, 0x4e],
+  png: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
   gif: [0x47, 0x49, 0x46],
   bmp: [0x42, 0x4d],
   webp: [0x52, 0x49, 0x46, 0x46, 0x57, 0x45, 0x42, 0x50],
@@ -51,19 +50,54 @@ export const MIME_TO_EXTENSION: MimeToExtension = {
   'image/webp': 'webp',
 };
 
+/**
+ * Converts a base64 string into a Uint8Array.
+ *
+ * @remarks
+ * This function accepts a base64 string and returns a Uint8Array containing the decoded bytes.
+ *
+ * @param base64String - The base64-encoded string to decode.
+ * @returns A Uint8Array containing the decoded bytes.
+ *
+ * @example
+ * ```typescript
+ * const base64 = 'SGVsbG8gd29ybGQ=';
+ * const array = base64ToUint8Array(base64);
+ * ```
+ *
+ * @public
+ */
 export const base64ToUint8Array = (base64String: string): Uint8Array => {
-  // Decode the base64 string into a binary string
   const withoutMeta = base64String.substring(base64String.indexOf(',') + 1);
-
   const binaryString =
     typeof window === 'undefined' ? Buffer.from(withoutMeta, 'base64').toString('binary') : atob(withoutMeta);
 
-  // Create an Uint8Array from the binary string
-  const uint8Array = Uint8Array.from(binaryString, (char): number => char.charCodeAt(0));
+  const uint8Array = new Uint8Array(binaryString.length);
+
+  for (let i = 0; i < binaryString.length; i += 1) {
+    uint8Array[i] = binaryString.charCodeAt(i);
+  }
 
   return uint8Array;
 };
 
+/**
+ * Determines the MIME type from a base64-encoded string.
+ *
+ * @remarks
+ * This function accepts a base64-encoded string and determines its MIME type by looking at the first few bytes.
+ *
+ * @param base64 - The base64-encoded string to analyze.
+ * @returns The MIME type as a string, or null if the type cannot be determined.
+ *
+ * @example
+ * ```typescript
+ * const base64 = 'data:image/jpeg;base64,...';
+ * const mimeType = getMimeTypeFromBase64(base64);
+ * ```
+ *
+ * @public
+ */
 export const getMimeTypeFromBase64 = (base64: string): string | null | undefined => {
   let data: string | null = null;
   let bytes: number[] = [];
@@ -84,7 +118,6 @@ export const getMimeTypeFromBase64 = (base64: string): string | null | undefined
     bufData[i] = data.charCodeAt(i);
   }
 
-  // to get the first 8 bytes
   bytes = Array.from(bufData.subarray(0, 8));
   for (const mimeType in MIME_CODES) {
     const dataArr = MIME_CODES[mimeType];
@@ -97,6 +130,23 @@ export const getMimeTypeFromBase64 = (base64: string): string | null | undefined
   return null;
 };
 
+/**
+ * Determines the file extension from a base64-encoded string.
+ *
+ * @remarks
+ * This function accepts a base64-encoded string and determines its file extension by examining the MIME type.
+ *
+ * @param base64 - The base64-encoded string to analyze.
+ * @returns The file extension as a string, or 'png' if the extension cannot be determined.
+ *
+ * @example
+ * ```typescript
+ * const base64 = 'data:image/jpeg;base64,...';
+ * const extension = getExtensionTypeFromBase64(base64);
+ * ```
+ *
+ * @public
+ */
 export const getExtensionTypeFromBase64 = (base64: string): string | null => {
   const mimeType = getMimeTypeFromBase64(base64);
 
