@@ -122,21 +122,34 @@ describe('getManifest', () => {
 
     expect(manifest).toEqual(dotLottieManifest as Manifest);
   });
+
+  it('returns undefined if manifest is not found', async () => {
+    const data: Record<string, Uint8Array> = {};
+
+    // convert the lottie to uint8array
+    data['animations/lottie1.json'] = new TextEncoder().encode(JSON.stringify(dotLottieLottie1));
+
+    const dotLottieWithNoManifest = zipSync(data);
+
+    const manifest = await getManifest(dotLottieWithNoManifest);
+
+    expect(manifest).toBeUndefined();
+  });
 });
 
 describe('getImage', () => {
-  it('throws error if image not found', async () => {
-    await expectAsync(getImage(dotLottieAnimationWithImages, 'invalid.png')).toBeRejectedWith(
-      new DotLottieError('File not found: images/invalid.png', ErrorCodes.ASSET_NOT_FOUND),
-    );
+  it('returns undefined if image is not found', async () => {
+    const image = await getImage(dotLottieAnimation, 'invalid_image');
+
+    expect(image).toBeUndefined();
   });
 });
 
 describe('getAnimation', () => {
-  it('throws error if animation not found', async () => {
-    await expectAsync(getAnimation(dotLottieAnimationWithImages, 'animation_id')).toBeRejectedWith(
-      new DotLottieError('File not found: animations/animation_id.json', ErrorCodes.ASSET_NOT_FOUND),
-    );
+  it('returns undefined if animation not found', async () => {
+    const animation = await getAnimation(dotLottieAnimation, 'invalid_animation');
+
+    expect(animation).toBeUndefined();
   });
 
   it('get animation by id', async () => {
@@ -147,10 +160,10 @@ describe('getAnimation', () => {
 });
 
 describe('getTheme', () => {
-  it('throws error if animation not found', async () => {
-    await expectAsync(getTheme(dotLottieAnimationWithImages, 'theme_id')).toBeRejectedWith(
-      new DotLottieError('File not found: themes/theme_id.lss', ErrorCodes.ASSET_NOT_FOUND),
-    );
+  it('returns undefined if theme not found', async () => {
+    const theme = await getTheme(dotLottieAnimation, 'invalid_theme');
+
+    expect(theme).toBeUndefined();
   });
 
   it('gets theme by id', async () => {
