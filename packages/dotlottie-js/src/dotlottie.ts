@@ -14,7 +14,7 @@ import type {
   Manifest,
   ConversionOptions,
 } from './common';
-import { DotLottieCommon, createError , base64ToUint8Array, getExtensionTypeFromBase64 } from './common';
+import { DotLottieCommon, createError, base64ToUint8Array, getExtensionTypeFromBase64 } from './common';
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
 import { LottieImage } from './lottie-image';
