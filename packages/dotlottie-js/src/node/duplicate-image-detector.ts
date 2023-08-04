@@ -4,9 +4,8 @@
 
 import phash from 'sharp-phash';
 
-import { DuplicateImageDetectorCommon } from '../common/duplicate-image-detector-common';
-import type { LottieImageCommon } from '../common/lottie-image-common';
-import { createError } from '../common/utils';
+import { createError, DuplicateImageDetectorCommon } from '../common';
+import type { LottieImageCommon } from '../common';
 
 export class DuplicateImageDetector extends DuplicateImageDetectorCommon {
   public override distanceTo(imageHash: string, targetImageHash: string): number {

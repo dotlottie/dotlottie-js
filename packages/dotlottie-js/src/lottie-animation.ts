@@ -5,9 +5,8 @@
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
 import type { AnimationOptions } from './common';
-import { LottieAnimationCommon, createError } from './common';
+import { LottieAnimationCommon, createError, getExtensionTypeFromBase64 } from './common';
 import { LottieImage } from './lottie-image';
-import { getExtensionTypeFromBase64 } from './utils';
 
 export class LottieAnimation extends LottieAnimationCommon {
   public constructor(options: AnimationOptions) {

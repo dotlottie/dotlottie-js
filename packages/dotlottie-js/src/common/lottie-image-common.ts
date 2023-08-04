@@ -139,9 +139,7 @@ export class LottieImageCommon {
 
     const arrayBuffer = await this.toArrayBuffer();
 
-    const imageExtension = this.fileName.split('.').pop() || 'jpeg';
-
-    return dataUrlFromU8(new Uint8Array(arrayBuffer), imageExtension);
+    return dataUrlFromU8(new Uint8Array(arrayBuffer));
   }
 
   /**
