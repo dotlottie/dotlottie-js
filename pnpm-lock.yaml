@@ -162,7 +162,6 @@ importers:
       tsup: 6.1.3
       typescript: 4.7.4
       valibot: ^0.9.0
-      zod: ^3.21.4
     dependencies:
       '@lottiefiles/lottie-types': 1.1.0
       browser-image-hash: 0.0.5
@@ -171,7 +170,6 @@ importers:
       sharp: 0.32.0
       sharp-phash: 2.1.0_sharp@0.32.0
       valibot: 0.9.0
-      zod: 3.21.4
     devDependencies:
       '@types/jasmine': 4.3.2
       '@types/node': 18.0.6
@@ -17656,10 +17654,6 @@ packages:
   /zod/3.13.4:
     resolution: {integrity: sha512-LZRucWt4j/ru5azOkJxCfpR87IyFDn8h2UODdqvXzZLb3K7bb9chUrUIGTy3BPsr8XnbQYfQ5Md5Hu2OYIo1mg==}
     dev: true
-
-  /zod/3.21.4:
-    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
-    dev: false
 
   /zwitch/2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
