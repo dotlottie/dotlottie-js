@@ -2,45 +2,46 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { z } from 'zod';
+import { object, type Output, string, array, boolean, number, union, optional, record, any, nativeEnum } from 'valibot';
 
 export enum PlayMode {
   Bounce = 'bounce',
   Normal = 'normal',
 }
 
-export const PlayModeSchema = z.nativeEnum(PlayMode);
+export const PlayModeSchema = nativeEnum(PlayMode);
 
-export const ManifestAnimationSchema = z.object({
-  autoplay: z.boolean().optional(),
-  defaultTheme: z.string().optional(),
-  direction: z.number().optional(),
-  hover: z.boolean().optional(),
-  id: z.string(),
-  intermission: z.number().optional(),
-  loop: z.union([z.boolean(), z.number()]).optional(),
-  playMode: PlayModeSchema.optional(),
-  speed: z.number().optional(),
-  themeColor: z.string().optional(),
+export const ManifestAnimationSchema = object({
+  autoplay: optional(boolean()),
+  defaultTheme: optional(string()),
+  direction: optional(number()),
+  hover: optional(boolean()),
+  id: string(),
+  intermission: optional(number()),
+  loop: optional(union([boolean(), number()])),
+  playMode: optional(PlayModeSchema),
+  speed: optional(number()),
+  themeColor: optional(string()),
 });
-export type ManifestAnimation = z.infer<typeof ManifestAnimationSchema>;
+export type ManifestAnimation = Output<typeof ManifestAnimationSchema>;
 
-export const ManifestThemeSchema = z.object({
-  animations: z.array(z.string()),
-  id: z.string(),
+export const ManifestThemeSchema = object({
+  animations: array(string()),
+  id: string(),
 });
-export type ManifestTheme = z.infer<typeof ManifestThemeSchema>;
+export type ManifestTheme = Output<typeof ManifestThemeSchema>;
 
-export const ManifestSchema = z.object({
-  activeAnimationId: z.string().optional(),
-  animations: z.array(ManifestAnimationSchema),
-  author: z.string().optional(),
-  custom: z.record(z.unknown()).optional(),
-  description: z.string().optional(),
-  generator: z.string().optional(),
-  keywords: z.string().optional(),
-  revision: z.number().optional(),
-  themes: z.array(ManifestThemeSchema).optional(),
-  version: z.string().optional(),
+export const ManifestSchema = object({
+  activeAnimationId: optional(string()),
+  animations: array(ManifestAnimationSchema),
+  author: optional(string()),
+  custom: optional(record(string(), any())),
+  description: optional(string()),
+  generator: optional(string()),
+  keywords: optional(string()),
+  revision: optional(number()),
+  themes: optional(array(ManifestThemeSchema)),
+  version: optional(string()),
 });
-export type Manifest = z.infer<typeof ManifestSchema>;
+
+export type Manifest = Output<typeof ManifestSchema>;
