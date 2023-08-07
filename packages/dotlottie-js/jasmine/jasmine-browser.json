@@ -3,8 +3,8 @@
   "specDir": "src/tests",
   "specFiles": ["**/*.spec.mjs"],
   "env": {
-    "stopSpecOnExpectationFailure": true,
-    "stopOnSpecFailure": true
+    "stopSpecOnExpectationFailure": false,
+    "stopOnSpecFailure": false
   },
   "browser": {
     "name": "headlessChrome"

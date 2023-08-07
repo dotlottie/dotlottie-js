@@ -19,7 +19,7 @@ describe('LottieImage', () => {
   it('gets and sets the zipOptions', () => {
     const theme = new LottieImage({
       id: 'image_1',
-      fileName: 'image_1.jpeg',
+      fileName: 'image_1.png',
       zipOptions: {
         level: 9,
         mem: 1,
@@ -61,11 +61,11 @@ describe('LottieImage', () => {
 
         expect(uniqueImages.length).toBe(5);
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
-          'image_1.jpeg',
-          'image_2.jpeg',
-          'image_3.jpeg',
-          'image_4.jpeg',
-          'image_5.jpeg',
+          'image_1.png',
+          'image_2.png',
+          'image_3.png',
+          'image_4.png',
+          'image_5.png',
         ]);
         expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_3', 'image_4', 'image_5']);
       });
@@ -109,40 +109,39 @@ describe('LottieImage', () => {
         expect(uniqueImages.length).toBe(5);
         expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_3', 'image_4', 'image_5']);
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
-          'image_1.jpeg',
-          'image_2.jpeg',
-          'image_3.jpeg',
-          'image_4.jpeg',
-          'image_5.jpeg',
+          'image_1.png',
+          'image_2.png',
+          'image_3.png',
+          'image_4.png',
+          'image_5.png',
         ]);
       });
   });
 
   it('Adds an animation with lots of duplicate images.', async () => {
-    await new DotLottie({ enableDuplicateImageOptimization: true })
+    const dotLottie = await new DotLottie({ enableDuplicateImageOptimization: true })
       .addAnimation({
         id: 'animation_1',
         data: structuredClone(DUPES_DATA) as unknown as AnimationType,
       })
-      .build()
-      .then(async (value: DotLottie) => {
-        const images = value.getImages();
+      .build();
 
-        // filter out unique images
-        const uniqueImages = images.filter(
-          (image, index, self) => self.findIndex((compareImage) => compareImage.fileName === image.fileName) === index,
-        );
+    const images = dotLottie.getImages();
 
-        expect(uniqueImages.length).toBe(4);
+    // filter out unique images
+    const uniqueImages = images.filter(
+      (image, index, self) => self.findIndex((compareImage) => compareImage.fileName === image.fileName) === index,
+    );
 
-        expect(uniqueImages.map((image) => image.fileName)).toEqual([
-          'image_0.png',
-          'image_1.png',
-          'image_3.jpeg',
-          'image_4.jpeg',
-        ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_3', 'image_4']);
-      });
+    expect(uniqueImages.length).toBe(4);
+
+    expect(uniqueImages.map((image) => image.fileName)).toEqual([
+      'image_0.png',
+      'image_1.png',
+      'image_3.png',
+      'image_4.png',
+    ]);
+    expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_3', 'image_4']);
   });
 
   it('Adds an animation with lots of duplicate images but disables image duplicate detection.', async () => {
@@ -166,8 +165,8 @@ describe('LottieImage', () => {
           'image_0.png',
           'image_1.png',
           'image_2.png',
-          'image_3.jpeg',
-          'image_4.jpeg',
+          'image_3.png',
+          'image_4.png',
         ]);
         expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_2', 'image_3', 'image_4']);
       });
@@ -213,9 +212,9 @@ describe('LottieImage', () => {
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
           'image_1.png',
           'image_2.png',
-          'image_4.jpeg',
-          'image_5.jpeg',
-          'image_9.jpeg',
+          'image_4.png',
+          'image_5.png',
+          'image_9.png',
         ]);
         expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_4', 'image_5', 'image_9']);
       });

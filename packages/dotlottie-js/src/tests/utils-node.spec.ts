@@ -21,7 +21,7 @@ import {
   loadFromURL,
   createError,
   isValidURL,
-} from '..';
+} from '../node';
 
 import dotLottieAnimation from './__fixtures__/simple/animation.lottie';
 import dotLottieLottie1 from './__fixtures__/simple/animation/animations/lottie1.json';
