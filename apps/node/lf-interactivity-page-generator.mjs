@@ -121,7 +121,7 @@ async function createDotLottie() {
           },
           onClick: {
             state: 'playState',
-          }
+          },
         },
         playState: {
           statePlaybackSettings: {
@@ -130,11 +130,11 @@ async function createDotLottie() {
           },
           onEnter: {
             count: 5,
-            state: 'successState'
+            state: 'successState',
           },
           onComplete: {
-            state: 'startState'
-          }
+            state: 'startState',
+          },
         },
         successState: {
           animationId: 'confetti',
@@ -143,9 +143,9 @@ async function createDotLottie() {
             loop: false,
           },
           onComplete: {
-            state: 'startState'
-          }
-        }
+            state: 'startState',
+          },
+        },
       },
     })
     .addAnimation({
