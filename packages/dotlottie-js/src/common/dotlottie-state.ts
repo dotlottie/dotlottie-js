@@ -73,17 +73,17 @@ export interface XStateTargetEvent {
 }
 
 export interface XState {
-  actions: Record<string, unknown>;
   after: Record<number, XStateTargetEvent>;
-  context: Record<string, unknown>;
   entry?: () => void;
   exit?: () => void;
-  guards: Record<string, unknown>;
   meta: StateAnimationSettings;
   on: Record<keyof EventMap, XStateTargetEvent>;
 }
 
 export interface XStateMachine {
+  actions: Record<string, unknown>;
+  context: Record<string, unknown>;
+  guards: Record<string, unknown>;
   id: string;
   initial: string;
   states: Record<string, XState>;
