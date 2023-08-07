@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.18
+
+### Patch Changes
+
+- context types
+
 ## 0.4.0-beta.17
 
 ### Patch Changes
