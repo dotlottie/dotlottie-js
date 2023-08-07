@@ -78,6 +78,7 @@ export interface XState {
   context: Record<string, unknown>;
   entry?: () => void;
   exit?: () => void;
+  guards: Record<string, unknown>;
   meta: StateAnimationSettings;
   on: Record<keyof EventMap, XStateTargetEvent>;
 }

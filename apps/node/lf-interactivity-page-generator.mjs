@@ -104,6 +104,51 @@ async function createDotLottie() {
       },
     })
     .addAnimation({
+      id: 'on_enter_test',
+      url: 'https://lottie.host/fbfc80fb-5505-4445-a4af-d1171f077038/jB5EtesVh1.json',
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'on_enter_test',
+        initial: 'startState',
+      },
+      states: {
+        startState: {
+          animationId: 'on_enter_test',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onClick: {
+            state: 'playState',
+          }
+        },
+        playState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+          },
+          onEnter: {
+            count: 5,
+            state: 'successState'
+          },
+          onComplete: {
+            state: 'startState'
+          }
+        },
+        successState: {
+          animationId: 'confetti',
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+          },
+          onComplete: {
+            state: 'startState'
+          }
+        }
+      },
+    })
+    .addAnimation({
       id: 'play_on_hold',
       url: 'https://assets10.lottiefiles.com/packages/lf20_dmd1gncl.json',
     })
