@@ -5,6 +5,7 @@
     "@dotlottie/dotlottie-js": "0.3.0"
   },
   "changesets": [
+    "chilly-bags-cough",
     "four-plums-obey",
     "friendly-windows-rush",
     "great-actors-arrive",
