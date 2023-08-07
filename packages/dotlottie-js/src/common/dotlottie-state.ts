@@ -90,7 +90,7 @@ export interface XStateMachineAction {
 
 export interface XStateMachine {
   actions: XStateMachineAction;
-  context: Record<string, any> | undefined;
+  context: XStateMachine | undefined;
   guards: Record<string, unknown>;
   id: string;
   initial: string;
