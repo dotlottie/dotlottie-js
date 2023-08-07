@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0
+
+### Minor Changes
+
+- aec10fc: feat: 🎸 DotLottie utils
+
 ## 0.3.2
 
 ### Patch Changes
