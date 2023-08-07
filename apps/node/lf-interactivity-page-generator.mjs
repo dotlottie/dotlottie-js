@@ -56,9 +56,19 @@ async function createDotLottie() {
     .addStateMachine({
       descriptor: {
         id: 'state_segments_on_hover',
-        initial: 'loopState',
+        initial: 'idleState',
       },
       states: {
+        idleState: {
+          animationId: 'segments_on_hover',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onMouseEnter: {
+            state: 'loopState',
+          },
+        },
         loopState: {
           animationId: 'segments_on_hover',
           statePlaybackSettings: {
@@ -66,6 +76,9 @@ async function createDotLottie() {
             loop: true,
             hover: true,
             segments: [45, 60],
+          },
+          onMouseLeave: {
+            state: 'idleState',
           },
         },
       },
