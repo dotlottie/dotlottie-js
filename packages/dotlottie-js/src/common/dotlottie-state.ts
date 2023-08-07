@@ -81,7 +81,7 @@ export interface XState {
 }
 
 export interface XStateMachineContext {
-  counter: number;
+  [key: string]: number;
 }
 
 export interface XStateMachineAction {
