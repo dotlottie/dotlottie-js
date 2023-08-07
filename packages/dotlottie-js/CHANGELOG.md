@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.21
+
+### Patch Changes
+
+- reverted changes
+
 ## 0.4.0-beta.20
 
 ### Patch Changes
