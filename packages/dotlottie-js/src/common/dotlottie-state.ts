@@ -80,17 +80,17 @@ export interface XState {
   on: Record<keyof EventMap, XStateTargetEvent>;
 }
 
-export interface XStateMachineContext {
-  [key: string]: number;
-}
+// export interface XStateMachineContext {
+//   [key: string]: number;
+// }
 
 export interface XStateMachineAction {
-  incrementCounter: (context: XStateMachineContext) => void;
+  incrementCounter: (context: Record<string, any> | undefined) => void;
 }
 
 export interface XStateMachine {
   actions: XStateMachineAction;
-  context: XStateMachineContext;
+  context: Record<string, any> | undefined;
   guards: Record<string, unknown>;
   id: string;
   initial: string;
