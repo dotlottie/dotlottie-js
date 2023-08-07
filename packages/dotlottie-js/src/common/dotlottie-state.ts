@@ -73,6 +73,7 @@ export interface XStateTargetEvent {
 }
 
 export interface XState {
+  actions: Record<string, unknown>;
   after: Record<number, XStateTargetEvent>;
   context: Record<string, unknown>;
   entry?: () => void;
@@ -82,7 +83,6 @@ export interface XState {
 }
 
 export interface XStateMachine {
-  actions: Record<string, unknown>;
   id: string;
   initial: string;
   states: Record<string, XState>;

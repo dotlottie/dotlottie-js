@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.13
+
+### Patch Changes
+
+- added actions to XState class
+
 ## 0.4.0-beta.12
 
 ### Patch Changes
