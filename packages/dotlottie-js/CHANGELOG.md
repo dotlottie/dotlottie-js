@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.11
+
+### Patch Changes
+
+- renamed node LottieState class
+
 ## 0.4.0-beta.10
 
 ### Patch Changes

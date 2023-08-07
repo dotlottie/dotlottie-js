@@ -7,7 +7,7 @@ import { DotLottieStateMachineCommon } from '../common/dotlottie-state-machine-c
 
 export type { DotLottieStateMachineCommonOptions };
 
-export class LottieState extends DotLottieStateMachineCommon {
+export class LottieStateMachine extends DotLottieStateMachineCommon {
   public constructor(options: DotLottieStateMachineCommonOptions) {
     super(options);
   }
