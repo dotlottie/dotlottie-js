@@ -30,6 +30,12 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.16
+
+### Patch Changes
+
+- added context and action types
+
 ## 0.4.0-beta.15
 
 ### Patch Changes

@@ -80,9 +80,17 @@ export interface XState {
   on: Record<keyof EventMap, XStateTargetEvent>;
 }
 
+export interface XStateMachineContext {
+  counter: number;
+}
+
+export interface XStateMachineAction {
+  incrementCounter: (context: XStateMachineContext) => void;
+}
+
 export interface XStateMachine {
-  actions: Record<string, unknown>;
-  context: Record<string, unknown>;
+  actions: XStateMachineAction;
+  context: XStateMachineContext;
   guards: Record<string, unknown>;
   id: string;
   initial: string;
