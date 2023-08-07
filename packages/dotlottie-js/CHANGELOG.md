@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.14
+
+### Patch Changes
+
+- added guards to XState type
+
 ## 0.4.0-beta.13
 
 ### Patch Changes
