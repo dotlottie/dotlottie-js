@@ -20,8 +20,8 @@ async function createDotLottie() {
   // Sync animation with cursor position
   // Sync animation with cursor horizontal movement
   // Play animation when visible
-  // Play animation on hold
-  // Pausehold animation
+  // Play animation on hold -> done
+  // Pausehold animation -> done
   // Clicking X amount of times (onEnter)
   // Hovering X amount of times (onEnter)
   // Can't change to a different animation
@@ -98,39 +98,40 @@ async function createDotLottie() {
       descriptor: {
         id: 'play_on_hold',
         initial: 'idleState',
-        states: {
-          idleState: {
-            animationId: 'play_on_hold',
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onMouseEnter: {
-              state: 'playState',
-            },
+      },
+      states: {
+        idleState: {
+          animationId: 'play_on_hold',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+            direction: 1,
           },
-          playState: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onMouseLeave: {
-              state: 'reversePlayState',
-            },
+          onMouseEnter: {
+            state: 'playState',
           },
-          reversePlayState: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: -1,
-            },
-            onMouseEnter: {
-              state: 'playState',
-            },
-            onComplete: {
-              state: 'idleState',
-            },
+        },
+        playState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+          },
+          onMouseLeave: {
+            state: 'reversePlayState',
+          },
+        },
+        reversePlayState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: -1,
+          },
+          onMouseEnter: {
+            state: 'playState',
+          },
+          onComplete: {
+            state: 'idleState',
           },
         },
       },
@@ -139,26 +140,26 @@ async function createDotLottie() {
       descriptor: {
         id: 'play_on_hold_pause',
         initial: 'idleState',
-        states: {
-          idleState: {
-            animationId: 'play_on_hold',
-            statePlaybackSettings: {
-              autoplay: false,
-              loop: false,
-            },
-            onMouseEnter: {
-              state: 'playState',
-            },
+      },
+      states: {
+        idleState: {
+          animationId: 'play_on_hold',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
           },
-          playState: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: false,
-              direction: 1,
-            },
-            onMouseLeave: {
-              state: 'idleState',
-            },
+          onMouseEnter: {
+            state: 'playState',
+          },
+        },
+        playState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            direction: 1,
+          },
+          onMouseLeave: {
+            state: 'idleState',
           },
         },
       },
