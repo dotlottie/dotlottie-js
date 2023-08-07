@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.12
+
+### Patch Changes
+
+- added actions and context to types
+
 ## 0.4.0-beta.11
 
 ### Patch Changes
