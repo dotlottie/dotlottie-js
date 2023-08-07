@@ -84,14 +84,14 @@ export interface XState {
 //   [key: string]: number;
 // }
 
-export interface XStateMachineAction {
-  incrementCounter: (context: Record<string, any> | undefined) => void;
-}
+// export interface XStateMachineAction {
+//   incrementCounter: (context: Record<string, any> | undefined) => void;
+// }
 
 export interface XStateMachine {
-  actions: XStateMachineAction;
-  context: XStateMachine | undefined;
-  guards: Record<string, unknown>;
+  actions: { incrementCounter: (context: unknown) => void };
+  context: { counter: number };
+  guards: { checkCounter: (context: unknown) => boolean };
   id: string;
   initial: string;
   states: Record<string, XState>;

@@ -30,6 +30,12 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.20
+
+### Patch Changes
+
+- context type
+
 ## 0.4.0-beta.19
 
 ### Patch Changes
