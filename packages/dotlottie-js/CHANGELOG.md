@@ -30,6 +30,12 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+## 0.4.0-beta.22
+
+### Minor Changes
+
+- added scroll and play on show types for state
+
 ## 0.4.0-beta.21
 
 ### Patch Changes

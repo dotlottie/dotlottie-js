@@ -9,7 +9,6 @@ import { createError } from './utils';
 
 export interface DotLottieStateMachineCommonOptions {
   descriptor: StateInfo;
-  // state: DotLottieState;
   states: DotLottieStates;
   zipOptions?: ZipOptions;
 }
