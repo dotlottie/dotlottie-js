@@ -2,7 +2,20 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { object, type Output, string, array, boolean, number, union, optional, record, any, nativeEnum } from 'valibot';
+import {
+  object,
+  type Output,
+  string,
+  array,
+  boolean,
+  number,
+  union,
+  optional,
+  record,
+  any,
+  nativeEnum,
+  literal,
+} from 'valibot';
 
 export enum PlayMode {
   Bounce = 'bounce',
@@ -14,7 +27,7 @@ export const PlayModeSchema = nativeEnum(PlayMode);
 export const ManifestAnimationSchema = object({
   autoplay: optional(boolean()),
   defaultTheme: optional(string()),
-  direction: optional(number()),
+  direction: optional(union([literal(1), literal(-1)])),
   hover: optional(boolean()),
   id: string(),
   intermission: optional(number()),
