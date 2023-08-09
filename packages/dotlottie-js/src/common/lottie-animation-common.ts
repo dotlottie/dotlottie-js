@@ -31,7 +31,7 @@ export class LottieAnimationCommon {
 
   protected _url?: string;
 
-  private _direction: number;
+  private _direction: ManifestAnimation['direction'];
 
   private _speed: number;
 
@@ -148,11 +148,11 @@ export class LottieAnimationCommon {
     this._url = url;
   }
 
-  public get direction(): number {
+  public get direction(): ManifestAnimation['direction'] {
     return this._direction;
   }
 
-  public set direction(direction: number) {
+  public set direction(direction: ManifestAnimation['direction']) {
     this._direction = direction;
   }
 
