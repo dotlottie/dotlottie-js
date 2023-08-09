@@ -7,6 +7,8 @@ import type { ManifestAnimation } from './manifest';
 export type PlaybackOptions = Omit<ManifestAnimation, 'id'>;
 
 export interface StateAnimationSettings extends PlaybackOptions {
+  // Scroll takes a visbility threshold between 0 and 1.
+  playOnScroll?: [number, number];
   segments?: [number, number] | string;
 }
 
@@ -30,6 +32,8 @@ export interface StateTransitionOnMouseLeave extends Transitionable {}
 
 export interface StateTransitionOnComplete extends Transitionable {}
 
+export interface StateTransitionOnShow extends Transitionable {}
+
 export interface StateInfo {
   id: string;
   initial: string;
@@ -42,6 +46,7 @@ export const EVENT_MAP = {
   complete: 'onComplete',
   after: 'onAfter',
   enter: 'onEnter',
+  show: 'onShow',
 };
 
 export const DotLottieStateEvents = Object.values(EVENT_MAP);
@@ -57,6 +62,7 @@ export interface StateTransitionEvents {
   onEnter?: StateTransitionOnEnter;
   onMouseEnter?: StateTransitionOnMouseEnter;
   onMouseLeave?: StateTransitionOnMouseLeave;
+  onShow?: StateTransitionOnShow;
 }
 
 export interface StateSettings extends StateTransitionEvents {

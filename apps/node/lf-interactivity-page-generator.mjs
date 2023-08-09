@@ -450,19 +450,17 @@ async function createSingles() {
       url: 'https://assets2.lottiefiles.com/packages/lf20_4fET62.json',
     })
     .addStateMachine({
-      state: {
-        descriptor: {
-          id: 'state_segments',
-          initial: 'loopState',
-        },
-        states: {
-          animationId: 'segments',
-          loopState: {
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              segments: [70, 500],
-            },
+      descriptor: {
+        id: 'state_segments',
+        initial: 'loopState',
+      },
+      states: {
+        animationId: 'segments',
+        loopState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            segments: [70, 500],
           },
         },
       },
@@ -1044,7 +1042,7 @@ async function createSingles() {
       fs.writeFileSync(filename, Buffer.from(value));
     });
 
-  const inheritAttributes = await new DotLottie();
+  const inheritAttributes = new DotLottie();
 
   await inheritAttributes
     .addAnimation({
@@ -1110,6 +1108,66 @@ async function createSingles() {
       fs.writeFileSync(filename, Buffer.from(value));
     });
 
+  const lighthouseOnScroll = new DotLottie();
+
+  await lighthouseOnScroll
+    .addAnimation({
+      id: 'lighthouse',
+      url: 'https://lottie.host/3bc6c6e9-36f0-4e1b-9a22-beb871207737/5pVAM4rz72.json',
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollZero',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          statePlaybackSettings: {
+            playOnScroll: [0, 1.0],
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollOne',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          statePlaybackSettings: {
+            playOnScroll: [0.5, 1],
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollTwo',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          statePlaybackSettings: {
+            playOnScroll: [0, 1],
+            segments: [0, 100],
+          },
+        },
+      },
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then(async (value) => {
+      const filename = 'lighthouseOnScroll.lottie';
+
+      console.log('> Writing to file: ' + filename);
+      fs.writeFileSync(filename, Buffer.from(value));
+    });
   // const errorDotLottie = await new DotLottie().fromURL(
   //   'https://lottie.host/d76e204a-35eb-4258-ab86-1473a6966765/WUvJ2K6yO0.lottie',
   // );
@@ -1127,5 +1185,5 @@ async function createSingles() {
   // );
 }
 
-createDotLottie();
-// createSingles();
+// createDotLottie();
+createSingles();
