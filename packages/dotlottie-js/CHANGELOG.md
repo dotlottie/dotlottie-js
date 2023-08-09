@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.0-beta.23
+
+### Patch Changes
+
+- added threshold to onShow transition
+
 ## 0.4.0-beta.22
 
 ### Minor Changes
