@@ -32,7 +32,9 @@ export interface StateTransitionOnMouseLeave extends Transitionable {}
 
 export interface StateTransitionOnComplete extends Transitionable {}
 
-export interface StateTransitionOnShow extends Transitionable {}
+export interface StateTransitionOnShow extends Transitionable {
+  threshold?: number[];
+}
 
 export interface StateInfo {
   id: string;
