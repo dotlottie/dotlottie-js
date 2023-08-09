@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.1
+
+### Patch Changes
+
+- 85eb000: fix: 🐛 direction type in ManifestAnimation
+
 ## 0.4.0
 
 ### Minor Changes
