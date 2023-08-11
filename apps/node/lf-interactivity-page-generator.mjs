@@ -5,6 +5,7 @@
 import fs from 'fs';
 
 import { DotLottie } from '@dotlottie/dotlottie-js/node';
+import { getStateMachine } from '@dotlottie/dotlottie-js/node';
 
 async function createDotLottie() {
   const dotLottie = new DotLottie();
@@ -26,7 +27,7 @@ async function createDotLottie() {
   // Hovering X amount of times (onEnter)
   // Can't change to a different animation
   // TODO: MACROS!! START_FRAME / END_FRAME
-  await dotLottie
+  const dl = await dotLottie
     .setAuthor('Sam!')
     .setVersion('1.0')
     .addAnimation({
@@ -430,12 +431,13 @@ async function createDotLottie() {
     .then(async (value) => {
       const filename = 'lf_interactivity_page.lottie';
 
+      const stateMachine = await getStateMachine(new Uint8Array(value), 'state_segments');
+
+      console.log('Machine');
+      console.log(stateMachine);
+
       console.log('> Writing to file: ', filename);
-      fs.writeFileSync(filename, Buffer.from(value));
-
-      let test = new DotLottie();
-
-      test = await test.fromArrayBuffer(value);
+      // fs.writeFileSync(filename, Buffer.from(value));
     });
 }
 
@@ -1117,7 +1119,7 @@ async function createSingles() {
     })
     .addAnimation({
       id: 'timeline',
-      url: 'https://lottie.host/fd2ec8b2-d8c3-4750-995f-ed07e2719eb2/h4dpZu5Vm0.json'
+      url: 'https://lottie.host/fd2ec8b2-d8c3-4750-995f-ed07e2719eb2/h4dpZu5Vm0.json',
     })
     .addStateMachine({
       descriptor: {
@@ -1176,7 +1178,7 @@ async function createSingles() {
             speed: 3,
             autoplay: true,
             loop: true,
-            direction: -1
+            direction: -1,
           },
         },
       },
@@ -1194,7 +1196,7 @@ async function createSingles() {
             loop: false,
           },
           onShow: {
-            state: 'playState'
+            state: 'playState',
           },
         },
         playState: {
@@ -1204,9 +1206,9 @@ async function createSingles() {
             speed: 4,
           },
           onComplete: {
-            state: 'initialState'
-          }
-        }
+            state: 'initialState',
+          },
+        },
       },
     })
     .addStateMachine({
@@ -1222,7 +1224,7 @@ async function createSingles() {
             loop: false,
           },
           onShow: {
-            state: 'playState'
+            state: 'playState',
           },
         },
         playState: {
@@ -1232,9 +1234,9 @@ async function createSingles() {
             speed: 2,
           },
           onComplete: {
-            state: 'initialState'
-          }
-        }
+            state: 'initialState',
+          },
+        },
       },
     })
     .addStateMachine({
@@ -1250,7 +1252,7 @@ async function createSingles() {
             loop: false,
           },
           onShow: {
-            state: 'playState'
+            state: 'playState',
           },
         },
         playState: {
@@ -1260,21 +1262,21 @@ async function createSingles() {
             speed: 2,
           },
           onComplete: {
-            state: 'lightHouseState'
-          }
+            state: 'lightHouseState',
+          },
         },
         lightHouseState: {
           animationId: 'lighthouse',
           statePlaybackSettings: {
-            playOnScroll: [0, 1]
+            playOnScroll: [0, 1],
           },
           onComplete: {
-            state: 'initialState'
+            state: 'initialState',
           },
           onClick: {
-            state: 'initialState'
-          }
-        }
+            state: 'initialState',
+          },
+        },
       },
     })
     .build()
@@ -1305,4 +1307,4 @@ async function createSingles() {
 }
 
 createDotLottie();
-createSingles();
+// createSingles();
