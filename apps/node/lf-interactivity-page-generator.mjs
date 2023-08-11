@@ -1304,5 +1304,5 @@ async function createSingles() {
   // );
 }
 
-// createDotLottie();
+createDotLottie();
 createSingles();

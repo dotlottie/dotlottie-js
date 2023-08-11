@@ -6,6 +6,37 @@
 
 - da46709: refactor: 💡 improve manifest schema validation error
 - 2fac1b7: fix: 🐛 utils/getAnimation handling of inlined assets
+## 0.4.0
+
+### Minor Changes
+
+- 28d0edc: added scroll and play on show types for state
+- 95f2acb: added state exporting
+
+### Patch Changes
+
+- 2f8e0a5: added guards to XState type
+- d931786: moved actions,context and guards
+- b80f29e: renamed node LottieState class
+- 90124c8: more exports for state types
+- e4269cc: added manifest export
+- 6f02bd3: fixed fromArrayBuffer and states
+- 50ef8b3: context type
+- 07649de: added context and action types
+- 8b41442: context type
+- 81f058e: added after and enter state
+- 231a342: export state common class
+- 1bfa6c9: context types
+- d216293: added threshold to onShow transition
+- 0d9c084: reverted hover to playbackoptions
+- 49e7ad1: added dotlottiestatecommon export
+- 6a39ffa: refactored state machine definition
+- 736b6b1: added actions to XState class
+- e2d0a17: removed hover from stateplaybacksettings
+- 114419c: reverted changes
+- 128dd80: added actions and context to types
+- a40a74f: changed context type
+- edbb450: removed extra id outside of descriptor
 
 ## 0.4.1
 
@@ -30,6 +61,7 @@
 ### Patch Changes
 
 - 76cbfee: fix: 🐛 export all types
+
 ## 0.4.0-beta.23
 
 ### Patch Changes
