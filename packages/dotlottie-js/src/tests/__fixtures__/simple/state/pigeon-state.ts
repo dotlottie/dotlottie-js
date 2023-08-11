@@ -5,6 +5,7 @@ export const PigeonState = {
   },
   states: {
     running: {
+      animationId:"pigeon",
       statePlaybackSettings: {
         autoplay: true,
         loop: true,
@@ -16,6 +17,7 @@ export const PigeonState = {
       },
     },
     exploding: {
+      animationId:"pigeon",
       statePlaybackSettings: {
         autoplay: true,
         loop: 3,
@@ -27,6 +29,7 @@ export const PigeonState = {
       },
     },
     feathers: {
+      animationId:"pigeon",
       statePlaybackSettings: {
         autoplay: true,
         loop: false,

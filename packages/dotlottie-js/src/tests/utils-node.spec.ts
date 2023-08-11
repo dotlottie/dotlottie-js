@@ -32,6 +32,8 @@ import dotLottieManifest from './__fixtures__/simple/animation/manifest.json';
 import dotLottieTheme from './__fixtures__/simple/animation/themes/theme1.lss';
 import dotLottieAnimationWithImages from './__fixtures__/simple/big-merged-dotlottie.lottie';
 import bullAnimation from './__fixtures__/simple/bull.lottie';
+import { PigeonState } from './__fixtures__/simple/state/pigeon-state';
+import { SegmentsState } from './__fixtures__/simple/state/segments-state';
 import stateAnimation from './__fixtures__/simple/states.lottie';
 
 describe('createError', () => {
@@ -228,24 +230,7 @@ describe('getStateMachine', () => {
   it('gets state machine by id', async () => {
     const stateMachine = await getStateMachine(stateAnimation, 'state_segments');
 
-    expect(stateMachine).toEqual(
-      JSON.stringify({
-        descriptor: {
-          id: 'state_segments',
-          initial: 'loopState',
-        },
-        states: {
-          loopState: {
-            animationId: 'segments',
-            statePlaybackSettings: {
-              autoplay: true,
-              loop: true,
-              segments: [70, 500],
-            },
-          },
-        },
-      }),
-    );
+    expect(stateMachine).toEqual(JSON.stringify(SegmentsState));
   });
 });
 
@@ -280,11 +265,9 @@ describe('getStateMachines', () => {
     const stateMachines = await getStateMachines(stateAnimation);
 
     // Not all states are being checked
-    const stateSegments = `{"descriptor":{"id":"state_segments","initial":"loopState"},"states":{"loopState":{"animationId":"segments","statePlaybackSettings":{"autoplay":true,"loop":true,"segments":[70,500]}}}}`;
-    const explodingPigeon = `{"descriptor":{"id":"exploding_pigeon","initial":"running"},"states":{"running":{"animationId":"pigeon","statePlaybackSettings":{"autoplay":true,"loop":true,"direction":1,"segments":"bird"},"onClick":{"state":"exploding"}},"exploding":{"animationId":"pigeon","statePlaybackSettings":{"autoplay":true,"loop":3,"direction":1,"segments":"explosion"},"onComplete":{"state":"feathers"}},"feathers":{"animationId":"pigeon","statePlaybackSettings":{"autoplay":true,"loop":false,"direction":1,"segments":"feathers"},"onComplete":{"state":"running"}}}}`;
 
-    expect(stateMachines['state_segments']).toEqual(stateSegments);
-    expect(stateMachines['exploding_pigeon']).toEqual(explodingPigeon);
+    expect(stateMachines['state_segments']).toEqual(JSON.stringify(SegmentsState));
+    expect(stateMachines['exploding_pigeon']).toEqual(JSON.stringify(PigeonState));
   });
 
   it('returns a map of themes with filter', async () => {

@@ -86,10 +86,7 @@ describe('LottieState', () => {
         id: 'pigeon',
         data: animationData as unknown as AnimationData,
       })
-      .addStateMachine({
-        descriptor: PigeonState.descriptor,
-        states: PigeonState.states,
-      })
+      .addStateMachine(PigeonState)
       .addAnimation({
         id: 'wifi',
         data: wifiAnimationData as unknown as AnimationData,
@@ -98,10 +95,7 @@ describe('LottieState', () => {
         id: 'smiley',
         data: smileyAnimationData as unknown as AnimationData,
       })
-      .addStateMachine({
-        descriptor: SmileyWifi.descriptor,
-        states: SmileyWifi.states,
-      });
+      .addStateMachine(SmileyWifi);
 
     await dotlottie.build();
 
@@ -138,10 +132,7 @@ describe('LottieState', () => {
         id: 'pigeon',
         data: animationData as unknown as AnimationData,
       })
-      .addStateMachine({
-        descriptor: PigeonState.descriptor,
-        states: PigeonState.states,
-      })
+      .addStateMachine(PigeonState)
       .addAnimation({
         id: 'wifi',
         data: wifiAnimationData as unknown as AnimationData,
@@ -150,10 +141,7 @@ describe('LottieState', () => {
         id: 'smiley',
         data: smileyAnimationData as unknown as AnimationData,
       })
-      .addStateMachine({
-        descriptor: SmileyWifi.descriptor,
-        states: SmileyWifi.states,
-      });
+      .addStateMachine(SmileyWifi);
 
     await dotlottie.build();
 
