@@ -635,10 +635,16 @@ export async function inlineImageAssets(
     }
   }
 
-  const unzippedImages = await getImages(dotLottie, (file) => imagesMap.has(file.name));
+  const unzippedImages = await getImages(dotLottie, (file) => {
+    // Images inside the .lottie stored as 'images/[image_name]'
+    // Images inside the map are stored as '[image_name]' so we need to remove the 'images/' prefix
+    const fileName = file.name.replace('images/', '');
+
+    return imagesMap.has(fileName);
+  });
 
   for (const [imageId, animationIdsSet] of imagesMap) {
-    const imageDataURL = unzippedImages[`images/${imageId}`];
+    const imageDataURL = unzippedImages[`${imageId}`];
 
     if (imageDataURL) {
       for (const animationId of animationIdsSet) {
@@ -699,7 +705,7 @@ export async function getAnimation(
   }
 
   const animationsMap = {
-    animationId: animationData,
+    [animationId]: animationData,
   };
 
   await inlineImageAssets(dotLottie, animationsMap);
