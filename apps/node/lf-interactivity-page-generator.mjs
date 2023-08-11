@@ -1115,6 +1115,10 @@ async function createSingles() {
       id: 'lighthouse',
       url: 'https://lottie.host/3bc6c6e9-36f0-4e1b-9a22-beb871207737/5pVAM4rz72.json',
     })
+    .addAnimation({
+      id: 'timeline',
+      url: 'https://lottie.host/fd2ec8b2-d8c3-4750-995f-ed07e2719eb2/h4dpZu5Vm0.json'
+    })
     .addStateMachine({
       descriptor: {
         id: 'onScrollZero',
@@ -1156,6 +1160,121 @@ async function createSingles() {
             segments: [0, 100],
           },
         },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollThree',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          statePlaybackSettings: {
+            playOnScroll: [0, 1],
+            segments: [0, 100],
+            speed: 3,
+            autoplay: true,
+            loop: true,
+            direction: -1
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onShowZero',
+        initial: 'initialState',
+      },
+      states: {
+        initialState: {
+          animationId: 'lighthouse',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onShow: {
+            state: 'playState'
+          },
+        },
+        playState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 4,
+          },
+          onComplete: {
+            state: 'initialState'
+          }
+        }
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onShowOne',
+        initial: 'initialState',
+      },
+      states: {
+        initialState: {
+          animationId: 'timeline',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onShow: {
+            state: 'playState'
+          },
+        },
+        playState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 2,
+          },
+          onComplete: {
+            state: 'initialState'
+          }
+        }
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onShowTwo',
+        initial: 'initialState',
+      },
+      states: {
+        initialState: {
+          animationId: 'timeline',
+          statePlaybackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onShow: {
+            state: 'playState'
+          },
+        },
+        playState: {
+          statePlaybackSettings: {
+            autoplay: true,
+            loop: false,
+            speed: 2,
+          },
+          onComplete: {
+            state: 'lightHouseState'
+          }
+        },
+        lightHouseState: {
+          animationId: 'lighthouse',
+          statePlaybackSettings: {
+            playOnScroll: [0, 1]
+          },
+          onComplete: {
+            state: 'initialState'
+          },
+          onClick: {
+            state: 'initialState'
+          }
+        }
       },
     })
     .build()
