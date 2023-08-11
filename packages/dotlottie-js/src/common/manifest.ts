@@ -44,6 +44,9 @@ export const ManifestThemeSchema = object({
 });
 export type ManifestTheme = Output<typeof ManifestThemeSchema>;
 
+export const StateMachineSchema = array(string());
+export type ManifestState = Output<typeof StateMachineSchema>;
+
 export const ManifestSchema = object({
   activeAnimationId: optional(string()),
   animations: array(ManifestAnimationSchema),
@@ -54,6 +57,7 @@ export const ManifestSchema = object({
   keywords: optional(string()),
   revision: optional(number()),
   themes: optional(array(ManifestThemeSchema)),
+  states: optional(StateMachineSchema),
   version: optional(string()),
 });
 
