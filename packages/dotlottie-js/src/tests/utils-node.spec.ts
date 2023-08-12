@@ -114,7 +114,8 @@ describe('loadFromUrl', () => {
       JSON.stringify({
         version: '1.0',
         revision: 1,
-        keywords: 'dotLottie',
+        // invalid keywords type
+        keywords: 1,
         author: 'LottieFiles',
         generator: 'dotLottie-js_v2.0',
         // animations array is missing
@@ -130,9 +131,16 @@ describe('loadFromUrl', () => {
 
     const dotLottieURL = 'https://lottiefiles.fake/animation/animation.lottie';
 
-    await expectAsync(loadFromURL(dotLottieURL)).toBeRejectedWithError(
-      /invalid .lottie file, manifest.json structure is invalid/iu,
-    );
+    const error = `Invalid .lottie file, manifest.json structure is invalid, ${JSON.stringify(
+      {
+        animations: ['Invalid type'],
+        keywords: ['Invalid type'],
+      },
+      null,
+      2,
+    )}`;
+
+    await expectAsync(loadFromURL(dotLottieURL)).toBeRejectedWithError(error);
 
     expect(fetchSpy).toHaveBeenCalledWith(dotLottieURL);
   });
