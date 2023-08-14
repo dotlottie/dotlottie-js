@@ -2,4 +2,4 @@
 "@dotlottie/dotlottie-js": patch
 ---
 
-fix for utils/getAnimation with inlined assets
+fix: 🐛 utils/getAnimation handling of inlined assets
