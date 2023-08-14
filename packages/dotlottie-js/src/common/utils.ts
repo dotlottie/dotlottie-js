@@ -575,10 +575,11 @@ export async function getImage(
  * @public
  */
 export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
-  const unzippedImages = await unzipDotLottie(
-    dotLottie,
-    (file) => file.name.startsWith('images/') && (!filter || filter(file)),
-  );
+  const unzippedImages = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('images/', '');
+
+    return file.name.startsWith('images/') && (!filter || filter({ ...file, name }));
+  });
 
   const images: Record<string, string> = {};
 
@@ -635,16 +636,10 @@ export async function inlineImageAssets(
     }
   }
 
-  const unzippedImages = await getImages(dotLottie, (file) => {
-    // Images inside the .lottie stored as 'images/[image_name]'
-    // Images inside the map are stored as '[image_name]' so we need to remove the 'images/' prefix
-    const fileName = file.name.replace('images/', '');
-
-    return imagesMap.has(fileName);
-  });
+  const unzippedImages = await getImages(dotLottie, (file) => imagesMap.has(file.name));
 
   for (const [imageId, animationIdsSet] of imagesMap) {
-    const imageDataURL = unzippedImages[`${imageId}`];
+    const imageDataURL = unzippedImages[imageId];
 
     if (imageDataURL) {
       for (const animationId of animationIdsSet) {
@@ -739,10 +734,11 @@ export async function getAnimations(
   filter?: UnzipFileFilter,
 ): Promise<Record<string, AnimationData>> {
   const animationsMap: Record<string, AnimationData> = {};
-  const unzippedAnimations = await unzipDotLottie(
-    dotLottie,
-    (file) => file.name.startsWith('animations/') && (!filter || filter(file)),
-  );
+  const unzippedAnimations = await unzipDotLottie(dotLottie, (file) => {
+    const filename = file.name.replace('animations/', '').replace('.json', '');
+
+    return file.name.startsWith('animations/') && (!filter || filter({ ...file, name: filename }));
+  });
 
   for (const animationPath in unzippedAnimations) {
     const data = unzippedAnimations[animationPath];
@@ -784,10 +780,11 @@ export async function getAnimations(
 export async function getThemes(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
   const themesMap: Record<string, string> = {};
 
-  const unzippedThemes = await unzipDotLottie(
-    dotLottie,
-    (file) => file.name.startsWith('themes/') && (!filter || filter(file)),
-  );
+  const unzippedThemes = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('themes/', '').replace('.lss', '');
+
+    return file.name.startsWith('themes/') && (!filter || filter({ ...file, name }));
+  });
 
   for (const themePath in unzippedThemes) {
     const data = unzippedThemes[themePath];

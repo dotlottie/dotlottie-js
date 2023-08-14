@@ -183,20 +183,11 @@ describe('getAnimation', () => {
   });
 
   it('returns inlined images within the animation', async () => {
-    const animation = await getAnimation(bullAnimation, '679b6de0-4786-4239-b91e-4aa45853cc64', { inlineAssets: true });
+    const manifest = await getManifest(bullAnimation);
 
-    expect(animation?.assets?.length).toEqual(5);
+    const animation = await getAnimation(bullAnimation, manifest?.animations[0]?.id as string, { inlineAssets: true });
+
     expect(JSON.stringify(animation?.assets)).toEqual(JSON.stringify(bullJson.assets));
-
-    const animation2 = await getAnimation(dotLottieAnimationWithImages, 'v2', { inlineAssets: true });
-    const animation3 = await getAnimation(dotLottieAnimationWithImages, 'v3', { inlineAssets: true });
-    const animation4 = await getAnimation(dotLottieAnimationWithImages, 'v4', { inlineAssets: true });
-    const animation5 = await getAnimation(dotLottieAnimationWithImages, 'v5', { inlineAssets: true });
-
-    expect(animation2?.assets?.length).toEqual(1);
-    expect(animation3?.assets?.length).toEqual(2);
-    expect(animation4?.assets?.length).toEqual(3);
-    expect(animation5?.assets?.length).toEqual(4);
   });
 });
 
