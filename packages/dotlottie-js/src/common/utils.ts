@@ -7,7 +7,7 @@
 import type { Animation as AnimationData, Asset } from '@lottiefiles/lottie-types';
 import type { UnzipFileFilter, Unzipped } from 'fflate';
 import { unzip as fflateUnzip, strFromU8 } from 'fflate';
-import { safeParse } from 'valibot';
+import { flatten, safeParse } from 'valibot';
 
 import type { Manifest } from './manifest';
 import { ManifestSchema } from './manifest';
@@ -437,7 +437,11 @@ export async function validateDotLottie(dotLottie: Uint8Array): Promise<{ error?
   const manifestValidationResult = safeParse(ManifestSchema, manifest);
 
   if (!manifestValidationResult.success) {
-    const error = `Invalid .lottie file, manifest.json structure is invalid, ${manifestValidationResult.error.toString()}`;
+    const error = `Invalid .lottie file, manifest.json structure is invalid, ${JSON.stringify(
+      flatten(manifestValidationResult.error).nested,
+      null,
+      2,
+    )}`;
 
     return { success: false, error };
   }
