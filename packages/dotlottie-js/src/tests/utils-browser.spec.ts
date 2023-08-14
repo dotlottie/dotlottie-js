@@ -185,7 +185,9 @@ describe('getAnimation', () => {
   it('returns inlined images within the animation', async () => {
     const manifest = await getManifest(bullAnimation);
 
-    const animation = await getAnimation(bullAnimation, manifest?.animations[0]?.id as string, { inlineAssets: true });
+    const animationId = manifest?.animations[0]?.id || '';
+
+    const animation = await getAnimation(bullAnimation, animationId, { inlineAssets: true });
 
     expect(JSON.stringify(animation?.assets)).toEqual(JSON.stringify(bullJson.assets));
   });
