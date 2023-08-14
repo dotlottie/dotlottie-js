@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 0.4.2
+
+### Patch Changes
+
+- da46709: refactor: 💡 improve manifest schema validation error
+- 2fac1b7: fix: 🐛 utils/getAnimation handling of inlined assets
+
 ## 0.4.1
 
 ### Patch Changes
