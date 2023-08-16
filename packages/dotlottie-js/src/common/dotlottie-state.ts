@@ -2,94 +2,103 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { ManifestAnimation } from './manifest';
+import type { Output } from 'valibot';
+import {
+  merge,
+  number,
+  object,
+  optional,
+  string,
+  union,
+  omit,
+  record,
+  tuple,
+  maxValue,
+  minValue,
+  array,
+} from 'valibot';
 
-export type PlaybackOptions = Omit<ManifestAnimation, 'id'>;
+import { ManifestAnimationSchema } from './manifest';
 
-export interface StateAnimationSettings extends PlaybackOptions {
-  // Scroll takes a visbility threshold between 0 and 1.
-  playOnScroll?: [number, number];
-  segments?: [number, number] | string;
-}
+export const PlaybackOptionsSchema = omit(ManifestAnimationSchema, ['id']);
 
-export interface Transitionable {
-  state: string;
-}
+export type PlaybackOptions = Output<typeof PlaybackOptionsSchema>;
 
-export interface StateTransitionOnClick extends Transitionable {}
+export const StateAnimationSettingsSchema = merge([
+  PlaybackOptionsSchema,
+  object({
+    playOnScroll: optional(tuple([number([minValue(0), maxValue(1)]), number([minValue(0), maxValue(1)])])),
+    segments: optional(union([array(number()), string()])),
+  }),
+]);
 
-export interface StateTransitionOnAfter extends Transitionable {
-  ms: number;
-}
+export type StateAnimationSettings = Output<typeof StateAnimationSettingsSchema>;
 
-export interface StateTransitionOnEnter extends Transitionable {
-  count: number;
-}
+export const TransitionableSchema = object({
+  state: string(),
+});
+export type Transitionable = Output<typeof TransitionableSchema>;
 
-export interface StateTransitionOnMouseEnter extends Transitionable {}
+export const StateTransitionOnClickSchema = TransitionableSchema;
 
-export interface StateTransitionOnMouseLeave extends Transitionable {}
+export type StateTransitionOnClick = Output<typeof StateTransitionOnClickSchema>;
 
-export interface StateTransitionOnComplete extends Transitionable {}
+export const StateTransitionOnAfterSchema = merge([TransitionableSchema, object({ ms: number() })]);
 
-export interface StateTransitionOnShow extends Transitionable {
-  threshold?: number[];
-}
+export type StateTransitionOnAfter = Output<typeof StateTransitionOnAfterSchema>;
 
-export interface StateInfo {
-  id: string;
-  initial: string;
-}
+export const StateTransitionOnEnterSchema = merge([TransitionableSchema, object({ count: number() })]);
 
-export const EVENT_MAP = {
-  click: 'onClick',
-  mouseenter: 'onMouseEnter',
-  mouseleave: 'onMouseLeave',
-  complete: 'onComplete',
-  after: 'onAfter',
-  enter: 'onEnter',
-  show: 'onShow',
-};
+export type StateTransitionOnEnter = Output<typeof StateTransitionOnEnterSchema>;
 
-export const DotLottieStateEvents = Object.values(EVENT_MAP);
+export const StateTransitionOnMouseEnterSchema = TransitionableSchema;
 
-export const XStateEvents = Object.keys(EVENT_MAP);
+export type StateTransitionOnMouseEnter = Output<typeof StateTransitionOnMouseEnterSchema>;
 
-export type EventMap = typeof EVENT_MAP;
+export const StateTransitionOnMouseLeaveSchema = TransitionableSchema;
 
-export interface StateTransitionEvents {
-  onAfter?: StateTransitionOnAfter;
-  onClick?: StateTransitionOnClick;
-  onComplete?: StateTransitionOnComplete;
-  onEnter?: StateTransitionOnEnter;
-  onMouseEnter?: StateTransitionOnMouseEnter;
-  onMouseLeave?: StateTransitionOnMouseLeave;
-  onShow?: StateTransitionOnShow;
-}
+export type StateTransitionOnMouseLeave = Output<typeof StateTransitionOnMouseLeaveSchema>;
 
-export interface StateSettings extends StateTransitionEvents {
-  animationId?: string;
-  playbackSettings: StateAnimationSettings;
-}
+export const StateTransitionOnCompleteSchema = TransitionableSchema;
 
-export interface DotLottieStates {
-  [key: string]: StateSettings;
-}
+export type StateTransitionOnComplete = Output<typeof StateTransitionOnCompleteSchema>;
 
-export interface XStateTargetEvent {
-  target: string;
-}
+export const StateTransitionOnShowSchema = merge([
+  TransitionableSchema,
+  object({ threshold: optional(array(number([minValue(0), maxValue(1)]))) }),
+]);
 
-export interface XState {
-  after: Record<number, XStateTargetEvent>;
-  entry?: () => void;
-  exit?: () => void;
-  meta: StateAnimationSettings;
-  on: Record<keyof EventMap, XStateTargetEvent>;
-}
+export type StateTransitionOnShow = Output<typeof StateTransitionOnShowSchema>;
 
-export interface XStateMachine {
-  id: string;
-  initial: string;
-  states: Record<string, XState>;
-}
+export const StateInfoSchema = object({
+  id: string(),
+  initial: string(),
+});
+
+export type StateInfo = Output<typeof StateInfoSchema>;
+
+export const StateTransitionEventsSchema = object({
+  onAfter: optional(StateTransitionOnAfterSchema),
+  onClick: optional(StateTransitionOnClickSchema),
+  onComplete: optional(StateTransitionOnCompleteSchema),
+  onEnter: optional(StateTransitionOnEnterSchema),
+  onMouseEnter: optional(StateTransitionOnMouseEnterSchema),
+  onMouseLeave: optional(StateTransitionOnMouseLeaveSchema),
+  onShow: optional(StateTransitionOnShowSchema),
+});
+
+export type StateTransitionEvents = Output<typeof StateTransitionEventsSchema>;
+
+export const StateSettingsSchema = merge([
+  StateTransitionEventsSchema,
+  object({
+    animationId: optional(string()),
+    playbackSettings: StateAnimationSettingsSchema,
+  }),
+]);
+
+export type StateSettings = Output<typeof StateSettingsSchema>;
+
+export const DotLottieStatesSchema = record(string(), StateSettingsSchema);
+
+export type DotLottieStates = Output<typeof DotLottieStatesSchema>;

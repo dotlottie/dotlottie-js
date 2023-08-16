@@ -6,7 +6,7 @@ export const SegmentsState = {
   states: {
     loopState: {
       animationId: "segments",
-      statePlaybackSettings: {
+      playbackSettings: {
         autoplay: true,
         loop: true,
         segments: [

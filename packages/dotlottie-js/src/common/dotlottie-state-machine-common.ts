@@ -3,9 +3,10 @@
  */
 
 import type { ZipOptions } from 'fflate';
+import { safeParse, flatten } from 'valibot';
 
-import type { DotLottieStates, StateInfo } from './dotlottie-state';
-import { createError } from './utils';
+import { DotLottieStatesSchema, type DotLottieStates, type StateInfo, StateInfoSchema } from './dotlottie-state';
+import { DotLottieError, ErrorCodes, createError } from './utils';
 
 export interface DotLottieStateMachineCommonOptions {
   descriptor: StateInfo;
@@ -22,6 +23,8 @@ export class DotLottieStateMachineCommon {
 
   public constructor(options: DotLottieStateMachineCommonOptions) {
     this._requireValidId(options.descriptor.id);
+    this._requireValidStates(options.states);
+    this._requireValidDescriptor(options.descriptor);
 
     this._descriptor = options.descriptor;
 
@@ -82,6 +85,26 @@ export class DotLottieStateMachineCommon {
   protected _requireValidId(id: string | undefined): void {
     if (!id) {
       throw createError('Invalid id.');
+    }
+  }
+
+  protected _requireValidDescriptor(descriptor: StateInfo): void {
+    const result = safeParse(StateInfoSchema, descriptor);
+
+    if (!result.success) {
+      const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.error).nested, null, 2)}`;
+
+      throw new DotLottieError(`Invalid descriptor: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+    }
+  }
+
+  protected _requireValidStates(states: DotLottieStates): void {
+    const result = safeParse(DotLottieStatesSchema, states);
+
+    if (!result.success) {
+      const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.error).nested, null, 2)}`;
+
+      throw new DotLottieError(`Invalid states: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 }

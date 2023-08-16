@@ -6,10 +6,10 @@ export const PigeonState = {
   states: {
     running: {
       animationId:"pigeon",
-      statePlaybackSettings: {
+      playbackSettings: {
         autoplay: true,
         loop: true,
-        direction: 1,
+        direction: 1 as 1,
         segments: 'bird',
       },
       onClick: {
@@ -18,10 +18,10 @@ export const PigeonState = {
     },
     exploding: {
       animationId:"pigeon",
-      statePlaybackSettings: {
+      playbackSettings: {
         autoplay: true,
         loop: 3,
-        direction: 1,
+        direction: 1 as 1,
         segments: 'explosion',
       },
       onComplete: {
@@ -30,10 +30,10 @@ export const PigeonState = {
     },
     feathers: {
       animationId:"pigeon",
-      statePlaybackSettings: {
+      playbackSettings: {
         autoplay: true,
         loop: false,
-        direction: 1,
+        direction: 1 as 1,
         segments: 'feathers',
       },
       onComplete: {
@@ -52,10 +52,10 @@ export const SmileyWifi = {
     states: {
       smileyState: {
         animationId: 'smiley',
-        statePlaybackSettings: {
+        playbackSettings: {
           autoplay: true,
           loop: true,
-          direction: -1,
+          direction: -1 as -1,
           speed: 2,
           defaultTheme: 'bounce-dark',
         },
@@ -65,10 +65,10 @@ export const SmileyWifi = {
       },
       wifiState: {
         animationId: 'wifi',
-        statePlaybackSettings: {
+        playbackSettings: {
           autoplay: true,
           loop: true,
-          direction: 1,
+          direction: 1 as 1,
           defaultTheme: 'wifi-dark',
         },
         onMouseLeave: {

@@ -42,7 +42,7 @@ async function createDotLottie() {
       states: {
         loopState: {
           animationId: 'segments',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             segments: [70, 500],
@@ -62,7 +62,7 @@ async function createDotLottie() {
       states: {
         idleState: {
           animationId: 'segments_on_hover',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -72,7 +72,7 @@ async function createDotLottie() {
         },
         loopState: {
           animationId: 'segments_on_hover',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             hover: true,
@@ -96,7 +96,7 @@ async function createDotLottie() {
       states: {
         loopState: {
           animationId: 'animation_on_hover',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             hover: true,
@@ -116,7 +116,7 @@ async function createDotLottie() {
       states: {
         startState: {
           animationId: 'on_enter_test',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -125,7 +125,7 @@ async function createDotLottie() {
           },
         },
         playState: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
           },
@@ -139,7 +139,7 @@ async function createDotLottie() {
         },
         successState: {
           animationId: 'confetti',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
           },
@@ -161,7 +161,7 @@ async function createDotLottie() {
       states: {
         idleState: {
           animationId: 'play_on_hold',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
             direction: 1,
@@ -171,7 +171,7 @@ async function createDotLottie() {
           },
         },
         playState: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -181,7 +181,7 @@ async function createDotLottie() {
           },
         },
         reversePlayState: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: -1,
@@ -203,7 +203,7 @@ async function createDotLottie() {
       states: {
         idleState: {
           animationId: 'play_on_hold',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -212,7 +212,7 @@ async function createDotLottie() {
           },
         },
         playState: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -235,7 +235,7 @@ async function createDotLottie() {
       states: {
         startIdle: {
           animationId: 'toggle',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -244,7 +244,7 @@ async function createDotLottie() {
           },
         },
         playSun: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             segments: [0, 30],
@@ -254,7 +254,7 @@ async function createDotLottie() {
           },
         },
         endIdle: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -263,7 +263,7 @@ async function createDotLottie() {
           },
         },
         playReverse: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             segments: [30, 0],
@@ -286,7 +286,7 @@ async function createDotLottie() {
       states: {
         running: {
           animationId: 'pigeon',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             direction: 1,
@@ -298,7 +298,7 @@ async function createDotLottie() {
         },
         exploding: {
           animationId: 'pigeon',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: 3,
             direction: 1,
@@ -310,7 +310,7 @@ async function createDotLottie() {
         },
         feathers: {
           animationId: 'pigeon',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -338,7 +338,7 @@ async function createDotLottie() {
       states: {
         repeat_3_times: {
           animationId: 'repeat',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: 3,
             direction: 1,
@@ -349,7 +349,7 @@ async function createDotLottie() {
         },
         success: {
           animationId: 'repeat_second_animation',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -380,7 +380,7 @@ async function createDotLottie() {
       states: {
         bullseye_idle: {
           animationId: 'bullseye',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
             direction: 1,
@@ -391,7 +391,7 @@ async function createDotLottie() {
         },
         bullseye_hit: {
           animationId: 'bullseye',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -402,7 +402,7 @@ async function createDotLottie() {
         },
         state_load_in_queue_2: {
           animationId: 'confetti',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -413,13 +413,179 @@ async function createDotLottie() {
         },
         state_load_in_queue_3: {
           animationId: 'well_done',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
           },
           onComplete: {
             state: 'bullseye_idle',
+          },
+        },
+      },
+    })
+    .addAnimation({
+      id: 'lighthouse',
+      url: 'https://lottie.host/3bc6c6e9-36f0-4e1b-9a22-beb871207737/5pVAM4rz72.json',
+    })
+    .addAnimation({
+      id: 'timeline',
+      url: 'https://lottie.host/fd2ec8b2-d8c3-4750-995f-ed07e2719eb2/h4dpZu5Vm0.json',
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollZero',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          playbackSettings: {
+            playOnScroll: [0, 1.0],
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollOne',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          playbackSettings: {
+            playOnScroll: [0.5, 1],
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollTwo',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          playbackSettings: {
+            playOnScroll: [0, 1],
+            segments: [0, 100],
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onScrollThree',
+        initial: 'onScrollState',
+      },
+      states: {
+        onScrollState: {
+          animationId: 'lighthouse',
+          playbackSettings: {
+            playOnScroll: [0, 1],
+            segments: [0, 100],
+            speed: 3,
+            autoplay: true,
+            loop: true,
+            direction: -1,
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onShowZero',
+        initial: 'initialState',
+      },
+      states: {
+        initialState: {
+          animationId: 'lighthouse',
+          playbackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onShow: {
+            state: 'playState',
+          },
+        },
+        playState: {
+          playbackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 4,
+          },
+          onComplete: {
+            state: 'initialState',
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onShowOne',
+        initial: 'initialState',
+      },
+      states: {
+        initialState: {
+          animationId: 'timeline',
+          playbackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onShow: {
+            state: 'playState',
+          },
+        },
+        playState: {
+          playbackSettings: {
+            autoplay: true,
+            loop: true,
+            speed: 2,
+          },
+          onComplete: {
+            state: 'initialState',
+          },
+        },
+      },
+    })
+    .addStateMachine({
+      descriptor: {
+        id: 'onShowTwo',
+        initial: 'initialState',
+      },
+      states: {
+        initialState: {
+          animationId: 'timeline',
+          playbackSettings: {
+            autoplay: false,
+            loop: false,
+          },
+          onShow: {
+            state: 'playState',
+          },
+        },
+        playState: {
+          playbackSettings: {
+            autoplay: true,
+            loop: false,
+            speed: 2,
+          },
+          onComplete: {
+            state: 'lightHouseState',
+          },
+        },
+        lightHouseState: {
+          animationId: 'lighthouse',
+          playbackSettings: {
+            playOnScroll: [0, 1],
+          },
+          onComplete: {
+            state: 'initialState',
+          },
+          onClick: {
+            state: 'initialState',
           },
         },
       },
@@ -433,11 +599,8 @@ async function createDotLottie() {
 
       const stateMachine = await getStateMachine(new Uint8Array(value), 'state_segments');
 
-      console.log('Machine');
-      console.log(stateMachine);
-
       console.log('> Writing to file: ', filename);
-      // fs.writeFileSync(filename, Buffer.from(value));
+      fs.writeFileSync(filename, Buffer.from(value));
     });
 }
 
@@ -457,9 +620,9 @@ async function createSingles() {
         initial: 'loopState',
       },
       states: {
-        animationId: 'segments',
         loopState: {
-          statePlaybackSettings: {
+          animationId: 'segments',
+          playbackSettings: {
             autoplay: true,
             loop: true,
             segments: [70, 500],
@@ -491,9 +654,9 @@ async function createSingles() {
         initial: 'loopState',
       },
       states: {
-        animationId: 'segments_on_hover',
         loopState: {
-          statePlaybackSettings: {
+          animationId: 'segments_on_hover',
+          playbackSettings: {
             autoplay: true,
             loop: true,
             hover: true,
@@ -528,7 +691,7 @@ async function createSingles() {
       states: {
         loopState: {
           animationId: 'animation_on_hover',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             hover: true,
@@ -561,7 +724,7 @@ async function createSingles() {
       },
       states: {
         startIdle: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -570,7 +733,7 @@ async function createSingles() {
           },
         },
         playSun: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             segments: [0, 30],
@@ -580,7 +743,7 @@ async function createSingles() {
           },
         },
         endIdle: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -589,7 +752,7 @@ async function createSingles() {
           },
         },
         playReverse: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             segments: [30, 0],
@@ -625,7 +788,7 @@ async function createSingles() {
       },
       states: {
         startIdle: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -634,14 +797,14 @@ async function createSingles() {
           },
         },
         playSun: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             segments: [0, 30],
           },
         },
         // endIdle: {
-        //   statePlaybackSettings: {
+        //   playbackSettings: {
         //     autoplay: false,
         //     loop: false,
         //   },
@@ -650,7 +813,7 @@ async function createSingles() {
         //   },
         // },
         // playReverse: {
-        //   statePlaybackSettings: {
+        //   playbackSettings: {
         //     autoplay: true,
         //     loop: false,
         //     segments: [30, 0],
@@ -687,7 +850,7 @@ async function createSingles() {
       states: {
         startIdle: {
           animationId: 'mouseEnterMouseLeave',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -697,7 +860,7 @@ async function createSingles() {
         },
         playSun: {
           animationId: 'mouseEnterMouseLeave',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
           },
@@ -707,7 +870,7 @@ async function createSingles() {
         },
         playReverse: {
           animationId: 'mouseEnterMouseLeave',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: -1,
@@ -744,7 +907,7 @@ async function createSingles() {
       states: {
         running: {
           animationId: 'pigeon',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             direction: 1,
@@ -756,7 +919,7 @@ async function createSingles() {
         },
         exploding: {
           animationId: 'pigeon',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: 1,
             direction: 1,
@@ -768,7 +931,7 @@ async function createSingles() {
         },
         feathers: {
           animationId: 'pigeon',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -811,7 +974,7 @@ async function createSingles() {
       states: {
         repeat_3_times: {
           animationId: 'repeat',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: 3,
           },
@@ -821,7 +984,7 @@ async function createSingles() {
         },
         success: {
           animationId: 'repeat_second_animation',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -866,7 +1029,7 @@ async function createSingles() {
       states: {
         bullseye_idle: {
           animationId: 'bullseye',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
             direction: 1,
@@ -877,7 +1040,7 @@ async function createSingles() {
         },
         bullseye_hit: {
           animationId: 'bullseye',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -888,7 +1051,7 @@ async function createSingles() {
         },
         state_load_in_queue_2: {
           animationId: 'confetti',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -899,7 +1062,7 @@ async function createSingles() {
         },
         state_load_in_queue_3: {
           animationId: 'well_done',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             direction: 1,
@@ -944,7 +1107,7 @@ async function createSingles() {
       states: {
         wait: {
           animationId: 'onAfter',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             intermission: 500,
@@ -956,7 +1119,7 @@ async function createSingles() {
         },
         after3000: {
           animationId: 'well_done',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             speed: 1.5,
@@ -969,7 +1132,7 @@ async function createSingles() {
         },
         after5000: {
           animationId: 'confetti',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             speed: 2,
             direction: 1,
@@ -1013,7 +1176,7 @@ async function createSingles() {
       states: {
         startState: {
           animationId: 'well_done',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             speed: 0.5,
             direction: 1,
@@ -1024,7 +1187,7 @@ async function createSingles() {
         },
         afterOnComplete: {
           animationId: 'confetti',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
           },
           onComplete: {
@@ -1058,7 +1221,7 @@ async function createSingles() {
       },
       states: {
         firstGear: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             speed: 0.5,
@@ -1068,7 +1231,7 @@ async function createSingles() {
           },
         },
         secondGear: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             speed: 1,
@@ -1078,7 +1241,7 @@ async function createSingles() {
           },
         },
         thirdGear: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             speed: 2,
@@ -1088,7 +1251,7 @@ async function createSingles() {
           },
         },
         fourthGear: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             speed: 4,
@@ -1129,7 +1292,7 @@ async function createSingles() {
       states: {
         onScrollState: {
           animationId: 'lighthouse',
-          statePlaybackSettings: {
+          playbackSettings: {
             playOnScroll: [0, 1.0],
           },
         },
@@ -1143,7 +1306,7 @@ async function createSingles() {
       states: {
         onScrollState: {
           animationId: 'lighthouse',
-          statePlaybackSettings: {
+          playbackSettings: {
             playOnScroll: [0.5, 1],
           },
         },
@@ -1157,7 +1320,7 @@ async function createSingles() {
       states: {
         onScrollState: {
           animationId: 'lighthouse',
-          statePlaybackSettings: {
+          playbackSettings: {
             playOnScroll: [0, 1],
             segments: [0, 100],
           },
@@ -1172,7 +1335,7 @@ async function createSingles() {
       states: {
         onScrollState: {
           animationId: 'lighthouse',
-          statePlaybackSettings: {
+          playbackSettings: {
             playOnScroll: [0, 1],
             segments: [0, 100],
             speed: 3,
@@ -1191,7 +1354,7 @@ async function createSingles() {
       states: {
         initialState: {
           animationId: 'lighthouse',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -1200,7 +1363,7 @@ async function createSingles() {
           },
         },
         playState: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             speed: 4,
@@ -1219,16 +1382,17 @@ async function createSingles() {
       states: {
         initialState: {
           animationId: 'timeline',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
           onShow: {
             state: 'playState',
+            threshold: [0.9, 1],
           },
         },
         playState: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: true,
             speed: 2,
@@ -1247,7 +1411,7 @@ async function createSingles() {
       states: {
         initialState: {
           animationId: 'timeline',
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: false,
             loop: false,
           },
@@ -1256,7 +1420,7 @@ async function createSingles() {
           },
         },
         playState: {
-          statePlaybackSettings: {
+          playbackSettings: {
             autoplay: true,
             loop: false,
             speed: 2,
@@ -1267,7 +1431,7 @@ async function createSingles() {
         },
         lightHouseState: {
           animationId: 'lighthouse',
-          statePlaybackSettings: {
+          playbackSettings: {
             playOnScroll: [0, 1],
           },
           onComplete: {
@@ -1307,4 +1471,4 @@ async function createSingles() {
 }
 
 createDotLottie();
-// createSingles();
+createSingles();

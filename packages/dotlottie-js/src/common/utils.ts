@@ -169,6 +169,7 @@ export const getExtensionTypeFromBase64 = (base64: string): string | null => {
 export enum ErrorCodes {
   ASSET_NOT_FOUND = 'ASSET_NOT_FOUND',
   INVALID_DOTLOTTIE = 'INVALID_DOTLOTTIE',
+  INVALID_STATEMACHINE = 'INVALID_STATEMACHINE',
   INVALID_URL = 'INVALID_URL',
 }
 

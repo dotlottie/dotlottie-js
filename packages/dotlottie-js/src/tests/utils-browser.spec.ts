@@ -222,7 +222,7 @@ describe('getStateMachine', () => {
   it('gets state machine by id', async () => {
     const stateMachine = await getStateMachine(stateAnimation, 'state_segments');
 
-    expect(stateMachine).toEqual(SegmentsState);
+    expect(stateMachine?.states).toEqual(SegmentsState.states);
   });
 });
 

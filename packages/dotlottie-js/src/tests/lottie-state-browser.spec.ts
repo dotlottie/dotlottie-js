@@ -19,7 +19,7 @@ describe('LottieState', () => {
       // act
       new LottieStateMachine({
         descriptor: { id: '', initial: '' },
-        states: {},
+        states: PigeonState.states,
       });
       // assert
     }).toThrowError('[dotlottie-js]: Invalid id.');
@@ -28,7 +28,7 @@ describe('LottieState', () => {
   it('gets and sets the zipOptions', () => {
     const theme = new LottieStateMachine({
       descriptor: { id: 'test', initial: '' },
-      states: {},
+      states: PigeonState.states,
       zipOptions: {
         level: 9,
         mem: 1,
@@ -53,7 +53,14 @@ describe('LottieState', () => {
     // arrange
     const state = new LottieStateMachine({
       descriptor: { id: 'test', initial: '' },
-      states: {},
+      states: {
+        test: {
+          playbackSettings: {
+            direction: 1,
+            autoplay: true,
+          },
+        },
+      },
     });
 
     expect(state.id).toEqual('test');
