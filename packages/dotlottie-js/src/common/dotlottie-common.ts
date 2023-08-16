@@ -155,7 +155,7 @@ export class DotLottieCommon {
     return Array.from(this._themesMap.values());
   }
 
-  public get states(): DotLottieStateMachineCommon[] {
+  public get stateMachines(): DotLottieStateMachineCommon[] {
     return Array.from(this._stateMachinesMap.values());
   }
 
@@ -372,7 +372,7 @@ export class DotLottieCommon {
   protected _buildManifest(): Manifest {
     const animationsList = Array.from(this._animationsMap.values());
     const themesList = Array.from(this._themesMap.values());
-    const statesList = Array.from(this._stateMachinesMap.keys());
+    const stateMachinesList = Array.from(this._stateMachinesMap.keys());
     const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
@@ -404,8 +404,8 @@ export class DotLottieCommon {
       }));
     }
 
-    if (statesList.length > 0) {
-      manifest.states = statesList;
+    if (stateMachinesList.length > 0) {
+      manifest.states = stateMachinesList;
     }
 
     return manifest;
@@ -527,11 +527,11 @@ export class DotLottieCommon {
         });
       });
 
-      dotlottie.states.forEach((state) => {
+      dotlottie.stateMachines.forEach((stateMachine) => {
         const stateOption = {
-          states: state.states,
-          descriptor: { id: state.id, initial: state.initial },
-          zipOptions: state.zipOptions,
+          states: stateMachine.states,
+          descriptor: { id: stateMachine.id, initial: stateMachine.initial },
+          zipOptions: stateMachine.zipOptions,
         };
 
         mergedDotlottie.addStateMachine(stateOption);
@@ -600,10 +600,10 @@ export class DotLottieCommon {
     return this;
   }
 
-  public addStateMachine(state: DotLottieStateMachineCommonOptions): DotLottieCommon {
-    const newState = new DotLottieStateMachineCommon(state);
+  public addStateMachine(stateMachineOptions: DotLottieStateMachineCommonOptions): DotLottieCommon {
+    const newState = new DotLottieStateMachineCommon(stateMachineOptions);
 
-    this._stateMachinesMap.set(state.descriptor.id, newState);
+    this._stateMachinesMap.set(stateMachineOptions.descriptor.id, newState);
 
     return this;
   }
@@ -612,8 +612,8 @@ export class DotLottieCommon {
     return this._stateMachinesMap.get(stateId);
   }
 
-  public removeState(stateId: string): DotLottieCommon {
-    this._stateMachinesMap.delete(stateId);
+  public removeStateMachine(stateMachineId: string): DotLottieCommon {
+    this._stateMachinesMap.delete(stateMachineId);
 
     return this;
   }

@@ -69,7 +69,7 @@ export interface StateTransitionEvents {
 
 export interface StateSettings extends StateTransitionEvents {
   animationId?: string;
-  statePlaybackSettings: StateAnimationSettings;
+  playbackSettings: StateAnimationSettings;
 }
 
 export interface DotLottieStates {

@@ -14,9 +14,7 @@ export interface DotLottieStateMachineCommonOptions {
 }
 
 export class DotLottieStateMachineCommon {
-  protected _id: string;
-
-  protected _initial: string;
+  protected _descriptor: StateInfo;
 
   protected _zipOptions: ZipOptions;
 
@@ -25,9 +23,7 @@ export class DotLottieStateMachineCommon {
   public constructor(options: DotLottieStateMachineCommonOptions) {
     this._requireValidId(options.descriptor.id);
 
-    this._id = options.descriptor.id;
-
-    this._initial = options.descriptor.initial;
+    this._descriptor = options.descriptor;
 
     this._zipOptions = options.zipOptions ?? {};
 
@@ -43,13 +39,13 @@ export class DotLottieStateMachineCommon {
   }
 
   public get id(): string {
-    return this._id;
+    return this._descriptor.id;
   }
 
   public set id(id: string) {
     this._requireValidId(id);
 
-    this._id = id;
+    this._descriptor.id = id;
   }
 
   public get states(): DotLottieStates {
@@ -61,19 +57,24 @@ export class DotLottieStateMachineCommon {
   }
 
   public get initial(): string {
-    return this._initial;
+    return this._descriptor.initial;
   }
 
   public set initial(initial: string) {
-    this._initial = initial;
+    this._descriptor.initial = initial;
+  }
+
+  public get descriptor(): StateInfo {
+    return this._descriptor;
+  }
+
+  public set descriptor(descriptor: StateInfo) {
+    this._descriptor = descriptor;
   }
 
   public toString(): string {
     return JSON.stringify({
-      descriptor: {
-        id: this._id,
-        initial: this._initial,
-      },
+      descriptor: this._descriptor,
       states: this._states,
     });
   }

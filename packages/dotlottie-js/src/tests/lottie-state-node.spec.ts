@@ -99,26 +99,26 @@ describe('LottieState', () => {
 
     await dotlottie.build();
 
-    expect(dotlottie.states.length).toEqual(2);
+    expect(dotlottie.stateMachines.length).toEqual(2);
 
-    expect(dotlottie.states[0]?.id).toEqual(PigeonState.descriptor.id);
+    expect(dotlottie.stateMachines[0]?.id).toEqual(PigeonState.descriptor.id);
 
-    expect(dotlottie.states[1]?.id).toEqual(SmileyWifi.descriptor.id);
+    expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.descriptor.id);
 
-    expect(dotlottie.states[0]?.id).toEqual(PigeonState.descriptor.id);
-    expect(dotlottie.states[0]?.initial).toEqual(PigeonState.descriptor.initial);
-    expect(dotlottie.states[0]?.states).toEqual(PigeonState.states);
+    expect(dotlottie.stateMachines[0]?.id).toEqual(PigeonState.descriptor.id);
+    expect(dotlottie.stateMachines[0]?.initial).toEqual(PigeonState.descriptor.initial);
+    expect(dotlottie.stateMachines[0]?.states).toEqual(PigeonState.states);
 
-    expect(dotlottie.states[1]?.id).toEqual(SmileyWifi.descriptor.id);
-    expect(dotlottie.states[1]?.initial).toEqual(SmileyWifi.descriptor.initial);
-    expect(dotlottie.states[1]?.states).toEqual(SmileyWifi.states);
+    expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.descriptor.id);
+    expect(dotlottie.stateMachines[1]?.initial).toEqual(SmileyWifi.descriptor.initial);
+    expect(dotlottie.stateMachines[1]?.states).toEqual(SmileyWifi.states);
 
     // Remove a state and check
-    dotlottie.removeState(PigeonState.descriptor.id);
+    dotlottie.removeStateMachine(PigeonState.descriptor.id);
 
-    expect(dotlottie.states.length).toEqual(1);
+    expect(dotlottie.stateMachines.length).toEqual(1);
 
-    expect(dotlottie.states[0]?.id).toEqual(SmileyWifi.descriptor.id);
+    expect(dotlottie.stateMachines[0]?.id).toEqual(SmileyWifi.descriptor.id);
 
     // dotlottie.download('test_02_with_states.lottie');
   });
@@ -147,16 +147,20 @@ describe('LottieState', () => {
 
     expect(dotlottie.manifest.states?.length).toEqual(2);
 
-    const values = [PigeonState.descriptor.id, SmileyWifi.descriptor.id];
+    // const values = [PigeonState.descriptor.id, SmileyWifi.descriptor.id];
 
-    if (dotlottie.manifest.states) {
-      dotlottie.manifest.states.forEach((value, index) => {
-        const val = values.at(index);
+    const expectedStates = [PigeonState.descriptor.id, SmileyWifi.descriptor.id];
 
-        if (val) return expect(value).toEqual(val);
+    expect(expectedStates).toEqual(dotlottie.manifest.states ?? []);
 
-        return false;
-      });
-    }
+    // if (dotlottie.manifest.states) {
+    //   dotlottie.manifest.states.forEach((value, index) => {
+    //     const val = values.at(index);
+
+    //     if (val) return expect(value).toEqual(val);
+
+    //     return false;
+    //   });
+    // }
   });
 });

@@ -106,7 +106,7 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`themes/${theme.id}.lss`] = [strToU8(lss), theme.zipOptions];
     }
 
-    for (const state of this.states) {
+    for (const state of this.stateMachines) {
       const stateData = state.toString();
 
       dotlottie[`states/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
@@ -295,7 +295,7 @@ export class DotLottie extends DotLottieCommon {
         // throw error as it's invalid buffer
         throw createError('Invalid buffer');
       }
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof Error) {
         throw createError(err.message);
       }

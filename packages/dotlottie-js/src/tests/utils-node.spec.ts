@@ -230,7 +230,7 @@ describe('getStateMachine', () => {
   it('gets state machine by id', async () => {
     const stateMachine = await getStateMachine(stateAnimation, 'state_segments');
 
-    expect(stateMachine).toEqual(JSON.stringify(SegmentsState));
+    expect(stateMachine).toEqual(SegmentsState);
   });
 });
 

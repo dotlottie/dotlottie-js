@@ -9,6 +9,8 @@ import type { UnzipFileFilter, Unzipped } from 'fflate';
 import { unzip as fflateUnzip, strFromU8 } from 'fflate';
 import { flatten, safeParse } from 'valibot';
 
+import type { LottieStateMachine } from '../lottie-state-machine';
+
 import type { Manifest } from './manifest';
 import { ManifestSchema } from './manifest';
 
@@ -861,10 +863,11 @@ export async function getStateMachines(
 ): Promise<Record<string, string>> {
   const statesMap: Record<string, string> = {};
 
-  const unzippedStates = await unzipDotLottie(
-    dotLottie,
-    (file) => file.name.startsWith('states/') && (!filter || filter(file)),
-  );
+  const unzippedStates = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('states/', '').replace('.json', '');
+
+    return file.name.startsWith('states/') && (!filter || filter({ ...file, name }));
+  });
 
   for (const statePath in unzippedStates) {
     const data = unzippedStates[statePath];
@@ -902,7 +905,7 @@ export async function getStateMachine(
   dotLottie: Uint8Array,
   stateMachineId: string,
   filter?: UnzipFileFilter,
-): Promise<string | undefined> {
+): Promise<LottieStateMachine | undefined> {
   const stateMachineFilename = `states/${stateMachineId}.json`;
 
   const unzippedStateMachine = await unzipDotLottieFile(dotLottie, stateMachineFilename, filter);
@@ -911,5 +914,7 @@ export async function getStateMachine(
     return undefined;
   }
 
-  return strFromU8(unzippedStateMachine, false);
+  const stateMachine = JSON.parse(strFromU8(unzippedStateMachine, false)) as LottieStateMachine;
+
+  return stateMachine;
 }

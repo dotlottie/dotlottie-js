@@ -118,7 +118,7 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`themes/${theme.id}.lss`] = [strToU8(lss), theme.zipOptions];
     }
 
-    for (const state of this.states) {
+    for (const state of this.stateMachines) {
       const stateData = state.toString();
 
       dotlottie[`states/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
