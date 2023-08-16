@@ -8,6 +8,8 @@ import type { ZipOptions } from 'fflate';
 import pkg from '../../package.json';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
+import type { DotLottieStateMachineCommonOptions } from './dotlottie-state-machine-common';
+import { DotLottieStateMachineCommon } from './dotlottie-state-machine-common';
 import type { ThemeOptions } from './dotlottie-theme-common';
 import { LottieThemeCommon } from './dotlottie-theme-common';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
@@ -41,6 +43,8 @@ export class DotLottieCommon {
   protected readonly _plugins: DotLottiePlugin[] = [];
 
   protected readonly _themesMap: Map<string, LottieThemeCommon> = new Map();
+
+  protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
 
   protected _author?: string;
 
@@ -149,6 +153,10 @@ export class DotLottieCommon {
 
   public get themes(): LottieThemeCommon[] {
     return Array.from(this._themesMap.values());
+  }
+
+  public get stateMachines(): DotLottieStateMachineCommon[] {
+    return Array.from(this._stateMachinesMap.values());
   }
 
   public setCustomData(customData: Record<string, unknown> | undefined): DotLottieCommon {
@@ -364,6 +372,7 @@ export class DotLottieCommon {
   protected _buildManifest(): Manifest {
     const animationsList = Array.from(this._animationsMap.values());
     const themesList = Array.from(this._themesMap.values());
+    const stateMachinesList = Array.from(this._stateMachinesMap.keys());
     const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
@@ -393,6 +402,10 @@ export class DotLottieCommon {
         id: theme.id,
         animations: theme.animations.map((animation) => animation.id),
       }));
+    }
+
+    if (stateMachinesList.length > 0) {
+      manifest.states = stateMachinesList;
     }
 
     return manifest;
@@ -513,6 +526,16 @@ export class DotLottieCommon {
           });
         });
       });
+
+      dotlottie.stateMachines.forEach((stateMachine) => {
+        const stateOption = {
+          states: stateMachine.states,
+          descriptor: { id: stateMachine.id, initial: stateMachine.initial },
+          zipOptions: stateMachine.zipOptions,
+        };
+
+        mergedDotlottie.addStateMachine(stateOption);
+      });
     }
 
     return mergedDotlottie;
@@ -573,6 +596,24 @@ export class DotLottieCommon {
     theme.removeAnimation(animation.id);
 
     animation.removeTheme(theme.id);
+
+    return this;
+  }
+
+  public addStateMachine(stateMachineOptions: DotLottieStateMachineCommonOptions): DotLottieCommon {
+    const newState = new DotLottieStateMachineCommon(stateMachineOptions);
+
+    this._stateMachinesMap.set(stateMachineOptions.descriptor.id, newState);
+
+    return this;
+  }
+
+  public getStateMachine(stateId: string): DotLottieStateMachineCommon | undefined {
+    return this._stateMachinesMap.get(stateId);
+  }
+
+  public removeStateMachine(stateMachineId: string): DotLottieCommon {
+    this._stateMachinesMap.delete(stateMachineId);
 
     return this;
   }

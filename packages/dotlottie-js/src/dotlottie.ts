@@ -118,6 +118,12 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`themes/${theme.id}.lss`] = [strToU8(lss), theme.zipOptions];
     }
 
+    for (const state of this.stateMachines) {
+      const stateData = state.toString();
+
+      dotlottie[`states/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
+    }
+
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
       zip(dotlottie, options?.zipOptions || {}, (err, data) => {
         if (err) {
@@ -255,6 +261,21 @@ export class DotLottie extends DotLottieCommon {
                       themeId,
                     });
                   });
+                }
+              });
+            } else if (key.startsWith('states/') && key.endsWith('.json')) {
+              // extract stateId from key as the key = `states/${stateId}.json`
+              const stateId = /states\/(.+)\.json/u.exec(key)?.[1];
+
+              if (!stateId) {
+                throw createError('Invalid theme id');
+              }
+
+              manifest.states?.forEach((state) => {
+                if (state === stateId) {
+                  const decodedStateMachine = JSON.parse(decodedStr);
+
+                  dotlottie.addStateMachine(decodedStateMachine);
                 }
               });
             }

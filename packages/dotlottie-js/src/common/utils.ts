@@ -9,6 +9,8 @@ import type { UnzipFileFilter, Unzipped } from 'fflate';
 import { unzip as fflateUnzip, strFromU8 } from 'fflate';
 import { flatten, safeParse } from 'valibot';
 
+import type { LottieStateMachine } from '../lottie-state-machine';
+
 import type { Manifest } from './manifest';
 import { ManifestSchema } from './manifest';
 
@@ -167,6 +169,7 @@ export const getExtensionTypeFromBase64 = (base64: string): string | null => {
 export enum ErrorCodes {
   ASSET_NOT_FOUND = 'ASSET_NOT_FOUND',
   INVALID_DOTLOTTIE = 'INVALID_DOTLOTTIE',
+  INVALID_STATEMACHINE = 'INVALID_STATEMACHINE',
   INVALID_URL = 'INVALID_URL',
 }
 
@@ -836,4 +839,83 @@ export async function getTheme(
   }
 
   return strFromU8(unzippedTheme, false);
+}
+
+/**
+ * Retrieves the state machines from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array and an optional filter function to refine the extraction of state machines.
+ * It returns a Promise that resolves to a record containing the state machines mapped by their ID.
+ *
+ * @param dotLottie - The DotLottie object containing the state machines.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to a record containing the state machines mapped by their ID.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const machines = await getStateMachines(dotLottie);
+ * ```
+ */
+export async function getStateMachines(
+  dotLottie: Uint8Array,
+  filter?: UnzipFileFilter,
+): Promise<Record<string, string>> {
+  const statesMap: Record<string, string> = {};
+
+  const unzippedStates = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('states/', '').replace('.json', '');
+
+    return file.name.startsWith('states/') && (!filter || filter({ ...file, name }));
+  });
+
+  for (const statePath in unzippedStates) {
+    const data = unzippedStates[statePath];
+
+    if (data instanceof Uint8Array) {
+      const themeId = statePath.replace('states/', '').replace('.json', '');
+
+      statesMap[themeId] = strFromU8(data, false);
+    }
+  }
+
+  return statesMap;
+}
+
+/**
+ * Retrieves a specific state machine by ID from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array, the state ID to retrieve, and an optional filter function.
+ * It returns a Promise that resolves to the state machine as a string or `undefined` if not found.
+ *
+ * @param dotLottie - The DotLottie object containing the theme.
+ * @param stateMachineId - The ID of the state machine to retrieve.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to the state machine as a string or `undefined` if not found.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const stateMachineId = 'walk';
+ * const stateMachine = await getState(dotLottie, stateMachineId);
+ * ```
+ */
+export async function getStateMachine(
+  dotLottie: Uint8Array,
+  stateMachineId: string,
+  filter?: UnzipFileFilter,
+): Promise<LottieStateMachine | undefined> {
+  const stateMachineFilename = `states/${stateMachineId}.json`;
+
+  const unzippedStateMachine = await unzipDotLottieFile(dotLottie, stateMachineFilename, filter);
+
+  if (typeof unzippedStateMachine === 'undefined') {
+    return undefined;
+  }
+
+  const stateMachine = JSON.parse(strFromU8(unzippedStateMachine, false)) as LottieStateMachine;
+
+  return stateMachine;
 }
