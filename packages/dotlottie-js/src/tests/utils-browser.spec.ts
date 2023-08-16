@@ -31,9 +31,9 @@ import dotLottieLottie1 from './__fixtures__/simple/animation/animations/lottie1
 import dotLottieManifest from './__fixtures__/simple/animation/manifest.json';
 import dotLottieTheme from './__fixtures__/simple/animation/themes/theme1.lss';
 import dotLottieAnimationWithImages from './__fixtures__/simple/big-merged-dotlottie.lottie';
+import bullAnimation from './__fixtures__/simple/bull.lottie';
 import { PigeonState } from './__fixtures__/simple/state/pigeon-state';
 import { SegmentsState } from './__fixtures__/simple/state/segments-state';
-import bullAnimation from './__fixtures__/simple/bull.lottie';
 import stateAnimation from './__fixtures__/simple/states.lottie';
 
 describe('createError', () => {
