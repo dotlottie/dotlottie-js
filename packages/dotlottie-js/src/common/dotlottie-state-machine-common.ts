@@ -5,7 +5,6 @@
 import type { ZipOptions } from 'fflate';
 import { safeParse, flatten } from 'valibot';
 
-import type { DotLottieStateMachine } from './dotlottie-state';
 import {
   DotLottieStatesSchema,
   type DotLottieStates,
@@ -15,8 +14,8 @@ import {
 import { DotLottieError, ErrorCodes, createError } from './utils';
 
 export interface DotLottieStateMachineCommonOptions {
-  descriptor: DotLottieStateMachine['descriptor'];
-  states: DotLottieStateMachine['states'];
+  descriptor: DotLottieStateMachineDescriptor;
+  states: DotLottieStates;
   zipOptions?: ZipOptions;
 }
 
