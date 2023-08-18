@@ -1,4 +1,6 @@
-export const SegmentsState = {
+import { DotLottieStateMachine } from "../../../../common";
+
+export const SegmentsState: DotLottieStateMachine = {
   descriptor: {
     id: "state_segments",
     initial: "loopState"

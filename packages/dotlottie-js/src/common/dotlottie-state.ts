@@ -70,13 +70,6 @@ export const StateTransitionOnShowSchema = merge([
 
 export type StateTransitionOnShow = Output<typeof StateTransitionOnShowSchema>;
 
-export const StateInfoSchema = object({
-  id: string(),
-  initial: string(),
-});
-
-export type StateInfo = Output<typeof StateInfoSchema>;
-
 export const StateTransitionEventsSchema = object({
   onAfter: optional(StateTransitionOnAfterSchema),
   onClick: optional(StateTransitionOnClickSchema),
@@ -97,8 +90,22 @@ export const StateSettingsSchema = merge([
   }),
 ]);
 
+export const StateDescriptorSchema = object({
+  id: string(),
+  initial: string(),
+});
+
+export type StateDescriptor = Output<typeof StateDescriptorSchema>;
+
 export type StateSettings = Output<typeof StateSettingsSchema>;
 
 export const DotLottieStatesSchema = record(string(), StateSettingsSchema);
 
 export type DotLottieStates = Output<typeof DotLottieStatesSchema>;
+
+export const DotLottieStateMachineSchema = object({
+  descriptor: StateDescriptorSchema,
+  states: DotLottieStatesSchema,
+});
+
+export type DotLottieStateMachine = Output<typeof DotLottieStateMachineSchema>;

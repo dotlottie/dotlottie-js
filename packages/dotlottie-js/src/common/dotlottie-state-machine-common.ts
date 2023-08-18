@@ -5,17 +5,23 @@
 import type { ZipOptions } from 'fflate';
 import { safeParse, flatten } from 'valibot';
 
-import { DotLottieStatesSchema, type DotLottieStates, type StateInfo, StateInfoSchema } from './dotlottie-state';
+import type { DotLottieStateMachine } from './dotlottie-state';
+import {
+  DotLottieStatesSchema,
+  type DotLottieStates,
+  type StateDescriptor,
+  StateDescriptorSchema,
+} from './dotlottie-state';
 import { DotLottieError, ErrorCodes, createError } from './utils';
 
 export interface DotLottieStateMachineCommonOptions {
-  descriptor: StateInfo;
-  states: DotLottieStates;
+  descriptor: DotLottieStateMachine['descriptor'];
+  states: DotLottieStateMachine['states'];
   zipOptions?: ZipOptions;
 }
 
 export class DotLottieStateMachineCommon {
-  protected _descriptor: StateInfo;
+  protected _descriptor: StateDescriptor;
 
   protected _zipOptions: ZipOptions;
 
@@ -67,11 +73,11 @@ export class DotLottieStateMachineCommon {
     this._descriptor.initial = initial;
   }
 
-  public get descriptor(): StateInfo {
+  public get descriptor(): StateDescriptor {
     return this._descriptor;
   }
 
-  public set descriptor(descriptor: StateInfo) {
+  public set descriptor(descriptor: StateDescriptor) {
     this._descriptor = descriptor;
   }
 
@@ -88,8 +94,8 @@ export class DotLottieStateMachineCommon {
     }
   }
 
-  protected _requireValidDescriptor(descriptor: StateInfo): void {
-    const result = safeParse(StateInfoSchema, descriptor);
+  protected _requireValidDescriptor(descriptor: StateDescriptor): void {
+    const result = safeParse(StateDescriptorSchema, descriptor);
 
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.error).nested, null, 2)}`;
