@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.5.2
+
+### Patch Changes
+
+- 9da84dd: changed segment type to tuple
+
 ## 0.5.1
 
 ### Patch Changes
