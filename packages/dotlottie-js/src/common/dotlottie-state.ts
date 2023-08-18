@@ -24,16 +24,6 @@ export const PlaybackOptionsSchema = omit(ManifestAnimationSchema, ['id']);
 
 export type PlaybackOptions = Output<typeof PlaybackOptionsSchema>;
 
-export const StateAnimationSettingsSchema = merge([
-  PlaybackOptionsSchema,
-  object({
-    playOnScroll: optional(tuple([number([minValue(0), maxValue(1)]), number([minValue(0), maxValue(1)])])),
-    segments: optional(union([array(number()), string()])),
-  }),
-]);
-
-export type StateAnimationSettings = Output<typeof StateAnimationSettingsSchema>;
-
 export const TransitionableSchema = object({
   state: string(),
 });
@@ -67,17 +57,9 @@ export const StateTransitionOnShowSchema = merge([
   TransitionableSchema,
   object({ threshold: optional(array(number([minValue(0), maxValue(1)]))) }),
 ]);
-
 export type StateTransitionOnShow = Output<typeof StateTransitionOnShowSchema>;
 
-export const StateInfoSchema = object({
-  id: string(),
-  initial: string(),
-});
-
-export type StateInfo = Output<typeof StateInfoSchema>;
-
-export const StateTransitionEventsSchema = object({
+export const DotLottieStateTransitionEventsSchema = object({
   onAfter: optional(StateTransitionOnAfterSchema),
   onClick: optional(StateTransitionOnClickSchema),
   onComplete: optional(StateTransitionOnCompleteSchema),
@@ -86,19 +68,37 @@ export const StateTransitionEventsSchema = object({
   onMouseLeave: optional(StateTransitionOnMouseLeaveSchema),
   onShow: optional(StateTransitionOnShowSchema),
 });
+export type DotLottieStateTransitionEvents = Output<typeof DotLottieStateTransitionEventsSchema>;
 
-export type StateTransitionEvents = Output<typeof StateTransitionEventsSchema>;
-
-export const StateSettingsSchema = merge([
-  StateTransitionEventsSchema,
+export const DotLottieStatePlaybackSettingsSchema = merge([
+  PlaybackOptionsSchema,
   object({
-    animationId: optional(string()),
-    playbackSettings: StateAnimationSettingsSchema,
+    playOnScroll: optional(tuple([number([minValue(0), maxValue(1)]), number([minValue(0), maxValue(1)])])),
+    segments: optional(union([array(number()), string()])),
   }),
 ]);
+export type DotLottieStatePlaybackSettings = Output<typeof DotLottieStatePlaybackSettingsSchema>;
 
-export type StateSettings = Output<typeof StateSettingsSchema>;
+export const DotLottieStateSchema = merge([
+  DotLottieStateTransitionEventsSchema,
+  object({
+    animationId: optional(string()),
+    playbackSettings: DotLottieStatePlaybackSettingsSchema,
+  }),
+]);
+export type DotLottieState = Output<typeof DotLottieStateSchema>;
 
-export const DotLottieStatesSchema = record(string(), StateSettingsSchema);
-
+export const DotLottieStatesSchema = record(string(), DotLottieStateSchema);
 export type DotLottieStates = Output<typeof DotLottieStatesSchema>;
+
+export const DotLottieStateMachineDescriptorSchema = object({
+  id: string(),
+  initial: string(),
+});
+export type DotLottieStateMachineDescriptor = Output<typeof DotLottieStateMachineDescriptorSchema>;
+
+export const DotLottieStateMachineSchema = object({
+  descriptor: DotLottieStateMachineDescriptorSchema,
+  states: DotLottieStatesSchema,
+});
+export type DotLottieStateMachine = Output<typeof DotLottieStateMachineSchema>;

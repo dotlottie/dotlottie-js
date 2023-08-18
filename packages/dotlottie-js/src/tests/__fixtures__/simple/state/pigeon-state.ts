@@ -1,4 +1,6 @@
-export const PigeonState = {
+import { DotLottieStateMachine } from "../../../../common"
+
+export const PigeonState: DotLottieStateMachine = {
   descriptor: {
     id: 'exploding_pigeon',
     initial: 'running',
@@ -9,7 +11,7 @@ export const PigeonState = {
       playbackSettings: {
         autoplay: true,
         loop: true,
-        direction: 1 as 1,
+        direction: 1 ,
         segments: 'bird',
       },
       onClick: {
@@ -21,7 +23,7 @@ export const PigeonState = {
       playbackSettings: {
         autoplay: true,
         loop: 3,
-        direction: 1 as 1,
+        direction: 1 ,
         segments: 'explosion',
       },
       onComplete: {
@@ -33,7 +35,7 @@ export const PigeonState = {
       playbackSettings: {
         autoplay: true,
         loop: false,
-        direction: 1 as 1,
+        direction: 1 ,
         segments: 'feathers',
       },
       onComplete: {
@@ -44,7 +46,7 @@ export const PigeonState = {
 }
 
 
-export const SmileyWifi = {
+export const SmileyWifi: DotLottieStateMachine = {
     descriptor: {
       id: 'simple_click_to_next_prev',
       initial: 'bounceState',
@@ -55,7 +57,7 @@ export const SmileyWifi = {
         playbackSettings: {
           autoplay: true,
           loop: true,
-          direction: -1 as -1,
+          direction: -1 ,
           speed: 2,
           defaultTheme: 'bounce-dark',
         },
@@ -68,7 +70,7 @@ export const SmileyWifi = {
         playbackSettings: {
           autoplay: true,
           loop: true,
-          direction: 1 as 1,
+          direction: 1 ,
           defaultTheme: 'wifi-dark',
         },
         onMouseLeave: {
