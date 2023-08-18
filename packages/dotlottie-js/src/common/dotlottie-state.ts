@@ -74,7 +74,7 @@ export const DotLottieStatePlaybackSettingsSchema = merge([
   PlaybackOptionsSchema,
   object({
     playOnScroll: optional(tuple([number([minValue(0), maxValue(1)]), number([minValue(0), maxValue(1)])])),
-    segments: optional(union([array(number()), string()])),
+    segments: optional(union([tuple([number(), number()]), string()])),
   }),
 ]);
 export type DotLottieStatePlaybackSettings = Output<typeof DotLottieStatePlaybackSettingsSchema>;
