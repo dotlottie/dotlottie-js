@@ -48,6 +48,11 @@ jobs:
       - name: 🛡️ Test
         run: pnpm test
 
+      - name: 📏 Report bundle size
+        uses: andresz1/size-limit-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
   release:
     needs: validate
     runs-on: ubuntu-latest
