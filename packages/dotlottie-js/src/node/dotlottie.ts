@@ -69,8 +69,6 @@ export class DotLottie extends DotLottieCommon {
   }
 
   public override addAnimation(animationOptions: AnimationOptions): DotLottieCommon {
-    console.log(`adding animation ${animationOptions.id}`);
-
     const animation = new LottieAnimation(animationOptions);
 
     if (this._animationsMap.get(animationOptions.id)) {
@@ -219,8 +217,6 @@ export class DotLottie extends DotLottieCommon {
                 throw createError('Animation not found inside manifest');
               }
 
-              console.log('Adding animation...');
-
               dotlottie.addAnimation({
                 data: animation,
                 ...animationSettings,
@@ -251,8 +247,6 @@ export class DotLottie extends DotLottieCommon {
               // Do audio extraction
               // extract audioID from key as the key = `audio/${audioID}.${ext}`
               const audioId = /audio\/(.+)\./u.exec(key)?.[1];
-
-              console.log('Adding audio...');
 
               if (!audioId) {
                 throw new DotLottieError('Invalid image id');
@@ -333,9 +327,6 @@ export class DotLottie extends DotLottieCommon {
             }
           }
 
-          // console.log('//TMP AUDIO');
-          // console.log(tmpAudio);
-
           // Go through the audio and find to which animation they belong
           for (const audio of tmpAudio) {
             for (const parentAnimation of dotlottie.animations) {
@@ -344,20 +335,10 @@ export class DotLottie extends DotLottieCommon {
 
                 if (animationAssets) {
                   for (const asset of animationAssets) {
-                    console.log(`>>>> ${audio.id}`);
-
-                    console.log(asset);
-
                     if (isAudioAsset(asset)) {
-                      console.log('Before push');
-                      console.log(`>> ${asset.p}`);
                       if (asset.p.includes(audio.id)) {
-                        console.log('Pushing audio asset..');
-
                         audio.parentAnimations.push(parentAnimation);
                         parentAnimation.audioAssets.push(audio);
-                      } else {
-                        console.log('Doesnt include');
                       }
                     }
                   }

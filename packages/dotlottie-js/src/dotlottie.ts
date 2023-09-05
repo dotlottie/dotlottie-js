@@ -45,8 +45,6 @@ export class DotLottie extends DotLottieCommon {
   }
 
   public override addAnimation(animationOptions: AnimationOptions): DotLottie {
-    console.log(`adding animation ${animationOptions.id}`);
-
     const animation = new LottieAnimation(animationOptions);
 
     if (this._animationsMap.get(animationOptions.id)) {

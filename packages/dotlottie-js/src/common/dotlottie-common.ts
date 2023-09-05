@@ -13,7 +13,7 @@ import { DotLottieStateMachineCommon } from './dotlottie-state-machine-common';
 import type { ThemeOptions } from './dotlottie-theme-common';
 import { LottieThemeCommon } from './dotlottie-theme-common';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
-import { LottieAudioCommon } from './lottie-audio-common';
+import type { LottieAudioCommon } from './lottie-audio-common';
 import type { LottieImageCommon } from './lottie-image-common';
 import type { Manifest } from './manifest';
 import { DotLottieError, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
