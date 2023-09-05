@@ -313,10 +313,10 @@ describe('getAllAudio', () => {
     expect(audio).toEqual(expectedAudio);
   });
 
-  it('returns a map of images with filter', async () => {
-    const images = await getAllAudio(dotLottieAnimationWithImages, (file) => file.name.startsWith('audio/invalid'));
+  it('returns a map of audio with filter', async () => {
+    const audio = await getAllAudio(dotLottieAnimationWithAudio, (file) => file.name.startsWith('audio/invalid'));
 
-    expect(images).toEqual({});
+    expect(audio).toEqual({});
   });
 });
 

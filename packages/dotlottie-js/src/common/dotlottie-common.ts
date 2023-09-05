@@ -380,27 +380,6 @@ export class DotLottieCommon {
     return animation;
   }
 
-  // private async _findAudioAssetAndInline(animation: LottieAnimationCommon): Promise<LottieAnimationCommon> {
-  //   const animationAssets = animation.data?.assets as AnimationType['assets'];
-
-  //   if (!animationAssets) throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
-
-  //   for (const asset of animationAssets) {
-  //     if (isAudioAsset(asset)) {
-  //       for (const audio of audios) {
-  //         if (audio.fileName === asset.p) {
-  //           // encoded is true
-  //           asset.e = 1;
-  //           asset.u = '';
-  //           asset.p = await audio.toDataURL();
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   return animation;
-  // }
-
   /**
    * Returns the desired animation
    * @param animationId - desired animation id
