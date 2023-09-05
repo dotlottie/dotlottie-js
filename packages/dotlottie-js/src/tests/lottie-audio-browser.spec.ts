@@ -52,12 +52,12 @@ describe('LottieAudio', () => {
 
         expect(audio.length).toBe(6);
         expect(audio.map((aud) => aud.fileName)).toEqual([
-          'audio_1.mpeg',
-          'audio_2.mpeg',
-          'audio_3.mpeg',
-          'audio_4.mpeg',
-          'audio_5.mpeg',
-          'audio_6.mpeg',
+          'audio_1.mp3',
+          'audio_2.mp3',
+          'audio_3.mp3',
+          'audio_4.mp3',
+          'audio_5.mp3',
+          'audio_6.mp3',
         ]);
       });
   });
@@ -78,12 +78,12 @@ describe('LottieAudio', () => {
 
         expect(audio.length).toBe(6);
         expect(audio.map((aud) => aud.fileName)).toEqual([
-          'audio_1.mpeg',
-          'audio_2.mpeg',
-          'audio_3.mpeg',
-          'audio_4.mpeg',
-          'audio_5.mpeg',
-          'audio_6.mpeg',
+          'audio_1.mp3',
+          'audio_2.mp3',
+          'audio_3.mp3',
+          'audio_4.mp3',
+          'audio_5.mp3',
+          'audio_6.mp3',
         ]);
       });
   });
