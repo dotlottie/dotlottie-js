@@ -5,8 +5,9 @@
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
 import type { AnimationOptions } from '../common';
-import { LottieAnimationCommon, createError, getExtensionTypeFromBase64 } from '../common';
+import { DotLottieError, LottieAnimationCommon, getExtensionTypeFromBase64 } from '../common';
 
+import { LottieAudio } from './lottie-audio';
 import { LottieImage } from './lottie-image';
 
 export class LottieAnimation extends LottieAnimationCommon {
@@ -29,18 +30,17 @@ export class LottieAnimation extends LottieAnimationCommon {
   }
 
   /**
-   * to do : Support more than image assets (fonts...)
    *
    * Extract image assets from the animation.
    *
    * @returns boolean - true on error otherwise false on success
    */
   protected override async _extractImageAssets(): Promise<boolean> {
-    if (!this._data) throw createError('Asset extraction failed.');
+    if (!this._data) throw new DotLottieError('Asset extraction failed.');
 
     const animationAssets = this._data.assets as AnimationType['assets'];
 
-    if (!animationAssets) throw createError('Asset extraction failed.');
+    if (!animationAssets) throw new DotLottieError('Asset extraction failed.');
 
     for (const asset of animationAssets) {
       if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
@@ -69,6 +69,53 @@ export class LottieAnimation extends LottieAnimationCommon {
 
         asset.p = fileName;
         asset.u = '/images/';
+        asset.e = 0;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   *
+   * Extract audio assets from the animation.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
+  protected override async _extractAudioAssets(): Promise<boolean> {
+    if (!this._data) throw new DotLottieError('Asset extraction failed.');
+
+    const animationAssets = this._data.assets as AnimationType['assets'];
+
+    if (!animationAssets) throw new DotLottieError('Asset extraction failed.');
+
+    for (const asset of animationAssets) {
+      if (!('h' in asset) && !('w' in asset) && 'p' in asset && 'e' in asset && 'u' in asset) {
+        const audioData = asset.p.split(',');
+
+        // Image data is invalid
+        if (!audioData.length || !audioData[0] || !audioData[1]) {
+          break;
+        }
+
+        let extType = null;
+        const fileType = getExtensionTypeFromBase64(asset.p);
+
+        extType = fileType;
+
+        const fileName = `${asset.id}.${extType}`;
+
+        this._audioAssets.push(
+          new LottieAudio({
+            data: asset.p,
+            id: asset.id,
+            fileName,
+            parentAnimations: [this],
+          }),
+        );
+
+        asset.p = fileName;
+        asset.u = '/audio/';
         asset.e = 0;
       }
     }
