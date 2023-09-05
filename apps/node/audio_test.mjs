@@ -12,7 +12,7 @@
 import fs from 'fs';
 
 import { DotLottie } from '@dotlottie/dotlottie-js/node';
-import { getAnimation } from '@dotlottie/dotlottie-js/node';
+import { getAnimation, getAudio, getAllAudio } from '@dotlottie/dotlottie-js/node';
 
 // const dotLottie = new DotLottie();
 
@@ -94,6 +94,12 @@ const doubleAnimation = await double
 
         fs.writeFileSync(filename, Buffer.from(value));
 
+        const audio = await getAudio(new Uint8Array(value), 'audio_1.mpeg');
+        const allAudio = await getAllAudio(new Uint8Array(value));
+        console.log("Received audio:");
+        console.log(audio);
+
+        // console.log(allAudio)
 
         // let ad = new DotLottie();
 

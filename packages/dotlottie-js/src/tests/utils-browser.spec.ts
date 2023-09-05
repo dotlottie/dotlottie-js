@@ -179,7 +179,7 @@ describe('getImage', () => {
 
 describe('getAudio', () => {
   it('returns the audio', async () => {
-    const audio = await getAudio(dotLottieAnimationWithAudio, 'audio_1');
+    const audio = await getAudio(dotLottieAnimationWithAudio, 'audio_1.mpeg');
 
     expect(audio?.length).toBeGreaterThan(0);
   });
