@@ -269,7 +269,7 @@ export class DotLottie extends DotLottieCommon {
 
               const ext = getExtensionTypeFromBase64(decodedAudio);
 
-              // Push the images in to a temporary array
+              // Push the audio in to a temporary array
               decodedAudio = `data:audio/${ext};base64,${decodedAudio}`;
               tmpAudio.push(
                 new LottieAudio({
@@ -339,7 +339,7 @@ export class DotLottie extends DotLottieCommon {
             }
           }
 
-          // Go through the images and find to which animation they belong
+          // Go through the audio and find to which animation they belong
           for (const audio of tmpAudio) {
             for (const parentAnimation of dotlottie.animations) {
               if (parentAnimation.data) {

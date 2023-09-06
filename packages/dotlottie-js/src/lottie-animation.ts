@@ -5,7 +5,7 @@
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
 import type { AnimationOptions } from './common';
-import { DotLottieError, LottieAnimationCommon, createError, getExtensionTypeFromBase64 } from './common';
+import { DotLottieError, LottieAnimationCommon, createError, getExtensionTypeFromBase64, isAudioAsset } from './common';
 import { LottieImage } from './lottie-image';
 import { LottieAudio } from './node/lottie-audio';
 
@@ -93,7 +93,7 @@ export class LottieAnimation extends LottieAnimationCommon {
     if (!animationAssets) throw new DotLottieError('Asset extraction failed.');
 
     for (const asset of animationAssets) {
-      if (!('h' in asset) && !('w' in asset) && 'p' in asset && 'e' in asset && 'u' in asset) {
+      if (isAudioAsset(asset)) {
         const audioData = asset.p.split(',');
 
         // Image data is invalid

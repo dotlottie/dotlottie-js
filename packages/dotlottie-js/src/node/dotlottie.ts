@@ -249,7 +249,7 @@ export class DotLottie extends DotLottieCommon {
               const audioId = /audio\/(.+)\./u.exec(key)?.[1];
 
               if (!audioId) {
-                throw new DotLottieError('Invalid image id');
+                throw new DotLottieError('Invalid audio id');
               }
 
               const base64 = Buffer.from(decompressedFile).toString('base64');

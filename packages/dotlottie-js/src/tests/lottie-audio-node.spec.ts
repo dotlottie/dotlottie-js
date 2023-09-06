@@ -4,7 +4,7 @@
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
-import { DotLottie, LottieAudio } from '..';
+import { DotLottie, LottieAudio, isAudioAsset } from '..';
 
 // eslint-disable-next-line @lottiefiles/import-filename-format
 import AUDIO_ANIMATION_1_DATA from './__fixtures__/audio/instruments_1.json';
@@ -51,14 +51,26 @@ describe('LottieAudio', () => {
         const audio = value.getAudio();
 
         expect(audio.length).toBe(6);
-        expect(audio.map((aud) => aud.fileName)).toEqual([
-          'audio_1.mp3',
-          'audio_2.mp3',
-          'audio_3.mp3',
-          'audio_4.mp3',
-          'audio_5.mp3',
-          'audio_6.mp3',
-        ]);
+
+        const expectedData: string[] = [];
+
+        // eslint-disable-next-line array-callback-return
+        structuredClone(AUDIO_ANIMATION_1_DATA).assets.map((asset: any): void => {
+          if (isAudioAsset(asset)) {
+            expectedData.push(asset.p);
+          }
+        });
+
+        // eslint-disable-next-line array-callback-return
+        structuredClone(AUDIO_ANIMATION_2_DATA).assets.map((asset: any): void => {
+          if (isAudioAsset(asset)) {
+            expectedData.push(asset.p);
+          }
+        });
+
+        for (let i = 0; i < audio.length; i += 1) {
+          expect(await audio[i]?.toDataURL()).toEqual(expectedData[i]);
+        }
       });
   });
 
@@ -77,14 +89,19 @@ describe('LottieAudio', () => {
         const audio = value.getAudio();
 
         expect(audio.length).toBe(6);
-        expect(audio.map((aud) => aud.fileName)).toEqual([
-          'audio_1.mp3',
-          'audio_2.mp3',
-          'audio_3.mp3',
-          'audio_4.mp3',
-          'audio_5.mp3',
-          'audio_6.mp3',
-        ]);
+
+        const expectedData: string[] = [];
+
+        // eslint-disable-next-line array-callback-return
+        structuredClone(AUDIO_ANIMATION_1_DATA).assets.map((asset: any): void => {
+          if (isAudioAsset(asset)) {
+            expectedData.push(asset.p);
+          }
+        });
+
+        for (let i = 0; i < audio.length; i += 1) {
+          expect(await audio[i]?.toDataURL()).toEqual(expectedData[i % 3]);
+        }
       });
   });
 });

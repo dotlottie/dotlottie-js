@@ -5,7 +5,7 @@
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
 import type { AnimationOptions } from '../common';
-import { DotLottieError, LottieAnimationCommon, getExtensionTypeFromBase64 } from '../common';
+import { DotLottieError, LottieAnimationCommon, getExtensionTypeFromBase64, isAudioAsset } from '../common';
 
 import { LottieAudio } from './lottie-audio';
 import { LottieImage } from './lottie-image';
@@ -36,11 +36,11 @@ export class LottieAnimation extends LottieAnimationCommon {
    * @returns boolean - true on error otherwise false on success
    */
   protected override async _extractImageAssets(): Promise<boolean> {
-    if (!this._data) throw new DotLottieError('Asset extraction failed.');
+    if (!this._data) throw new DotLottieError('Failed to extract image assets: Animation data does not exist');
 
     const animationAssets = this._data.assets as AnimationType['assets'];
 
-    if (!animationAssets) throw new DotLottieError('Asset extraction failed.');
+    if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
 
     for (const asset of animationAssets) {
       if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
@@ -83,17 +83,17 @@ export class LottieAnimation extends LottieAnimationCommon {
    * @returns boolean - true on error otherwise false on success
    */
   protected override async _extractAudioAssets(): Promise<boolean> {
-    if (!this._data) throw new DotLottieError('Asset extraction failed.');
+    if (!this._data) throw new DotLottieError('Failed to extract audio assets: Animation data does not exist');
 
     const animationAssets = this._data.assets as AnimationType['assets'];
 
-    if (!animationAssets) throw new DotLottieError('Asset extraction failed.');
+    if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
 
     for (const asset of animationAssets) {
-      if (!('h' in asset) && !('w' in asset) && 'p' in asset && 'e' in asset && 'u' in asset) {
+      if (isAudioAsset(asset)) {
         const audioData = asset.p.split(',');
 
-        // Image data is invalid
+        // Audio data is invalid
         if (!audioData.length || !audioData[0] || !audioData[1]) {
           break;
         }
