@@ -12,3 +12,4 @@ export * from './manifest';
 export * from './dotlottie-theme-common';
 export * from './dotlottie-state-machine-common';
 export * from './dotlottie-state';
+export * from './lottie-audio-common';

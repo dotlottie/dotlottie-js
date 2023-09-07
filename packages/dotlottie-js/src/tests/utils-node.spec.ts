@@ -23,8 +23,11 @@ import {
   isValidURL,
   getStateMachine,
   getStateMachines,
+  getAudio,
+  getAllAudio,
 } from '../node';
 
+import dotLottieAnimationWithAudio from './__fixtures__/audio/2_instrument_animations.lottie';
 import dotLottieAnimation from './__fixtures__/simple/animation.lottie';
 import bullJson from './__fixtures__/simple/animation/animations/bull.json';
 import dotLottieLottie1 from './__fixtures__/simple/animation/animations/lottie1.json';
@@ -182,6 +185,20 @@ describe('getImage', () => {
   });
 });
 
+describe('getAudio', () => {
+  it('returns the audio', async () => {
+    const audio = await getAudio(dotLottieAnimationWithAudio, 'audio_1.mpeg');
+
+    expect(audio?.length).toBeGreaterThan(0);
+  });
+
+  it('returns undefined if audio is not found', async () => {
+    const audio = await getAudio(dotLottieAnimationWithAudio, 'invalid_audio');
+
+    expect(audio).toBeUndefined();
+  });
+});
+
 describe('getAnimation', () => {
   it('returns undefined if animation not found', async () => {
     const animation = await getAnimation(dotLottieAnimation, 'invalid_animation');
@@ -274,6 +291,32 @@ describe('getStateMachines', () => {
     const states = await getThemes(dotLottieAnimation, (file) => file.name.startsWith('states/invalid'));
 
     expect(states).toEqual({});
+  });
+});
+
+describe('getAllAudio', () => {
+  it('returns a map of all the audio files', async () => {
+    const audio = await getAllAudio(dotLottieAnimationWithAudio);
+
+    const unzippedDotLottie = unzipSync(dotLottieAnimationWithAudio);
+    const expectedAudio: Record<string, string> = {};
+
+    // eslint-disable-next-line guard-for-in
+    for (const key in unzippedDotLottie) {
+      const data = unzippedDotLottie[key];
+
+      if (key.startsWith('audio/') && data) {
+        expectedAudio[key.replace('audio/', '')] = dataUrlFromU8(data);
+      }
+    }
+
+    expect(audio).toEqual(expectedAudio);
+  });
+
+  it('returns a map of audio with filter', async () => {
+    const audio = await getAllAudio(dotLottieAnimationWithAudio, (file) => file.name.startsWith('audio/invalid'));
+
+    expect(audio).toEqual({});
   });
 });
 

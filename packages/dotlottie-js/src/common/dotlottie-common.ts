@@ -13,9 +13,10 @@ import { DotLottieStateMachineCommon } from './dotlottie-state-machine-common';
 import type { ThemeOptions } from './dotlottie-theme-common';
 import { LottieThemeCommon } from './dotlottie-theme-common';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
+import type { LottieAudioCommon } from './lottie-audio-common';
 import type { LottieImageCommon } from './lottie-image-common';
 import type { Manifest } from './manifest';
-import { createError, isValidURL } from './utils';
+import { DotLottieError, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
 
 export interface DotLottieOptions {
   author?: string;
@@ -273,6 +274,64 @@ export class DotLottieCommon {
     }
   }
 
+  /**
+   * Renames the underlying LottieAudio, as well as updating the audio asset path inside the animation data.
+   * @param newName - desired id and fileName,
+   * @param audioId - The id of the LottieAudio to rename
+   */
+  private _renameAudio(animation: LottieAnimationCommon, newName: string, audioId: string): void {
+    animation.audioAssets.forEach((audioAsset) => {
+      if (audioAsset.id === audioId) {
+        // Rename the LottieImage
+        audioAsset.renameAudio(newName);
+
+        if (!animation.data) throw new DotLottieError('No animation data available.');
+
+        const animationAssets = animation.data.assets as AnimationType['assets'];
+
+        if (!animationAssets) throw new DotLottieError('No audio assets to rename.');
+
+        // Find the audio asset inside the animation data and rename its path
+        for (const asset of animationAssets) {
+          if (isAudioAsset(asset)) {
+            if (asset.id === audioId) {
+              asset.p = audioAsset.fileName;
+            }
+          }
+        }
+      }
+    });
+  }
+
+  private _renameAudioAssets(): void {
+    const audio: Map<string, LottieAudioCommon[]> = new Map();
+
+    this.animations.forEach((animation) => {
+      audio.set(animation.id, animation.audioAssets);
+    });
+
+    let size = 0;
+
+    audio.forEach((value) => {
+      size += value.length;
+    });
+
+    for (let i = this.animations.length - 1; i >= 0; i -= 1) {
+      const animation = this.animations.at(i);
+
+      if (animation) {
+        for (let j = animation.audioAssets.length - 1; j >= 0; j -= 1) {
+          const audioAsset = animation.audioAssets.at(j);
+
+          if (audioAsset) {
+            this._renameAudio(animation, `audio_${size}`, audioAsset.id);
+            size -= 1;
+          }
+        }
+      }
+    }
+  }
+
   protected _addLottieAnimation(animation: LottieAnimationCommon): DotLottieCommon {
     if (this._animationsMap.get(animation.id)) {
       throw createError('Duplicate animation id detected, aborting.');
@@ -288,21 +347,31 @@ export class DotLottieCommon {
    * @param animation - Animation whose asset are to be inlined
    * @returns LottieAnimationCommon with inlined assets
    */
-  private async _findImageAssetAndInline(animation: LottieAnimationCommon): Promise<LottieAnimationCommon> {
+  private async _findAssetsAndInline(animation: LottieAnimationCommon): Promise<LottieAnimationCommon> {
     const animationAssets = animation.data?.assets as AnimationType['assets'];
 
-    if (!animationAssets) throw createError("Failed to inline assets, the animation's assets are undefined.");
+    if (!animationAssets) throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
 
     const images = this.getImages();
+    const audios = this.getAudio();
 
     for (const asset of animationAssets) {
-      if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+      if (isImageAsset(asset)) {
         for (const image of images) {
           if (image.fileName === asset.p) {
             // encoded is true
             asset.e = 1;
             asset.u = '';
             asset.p = await image.toDataURL();
+          }
+        }
+      } else if (isAudioAsset(asset)) {
+        for (const audio of audios) {
+          if (audio.fileName === asset.p) {
+            // encoded is true
+            asset.e = 1;
+            asset.u = '';
+            asset.p = await audio.toDataURL();
           }
         }
       }
@@ -325,9 +394,9 @@ export class DotLottieCommon {
 
     let dataWithInlinedImages = this._animationsMap.get(animationId);
 
-    if (!dataWithInlinedImages) throw createError('Failed to find animation.');
+    if (!dataWithInlinedImages) throw new DotLottieError('Failed to find animation.');
 
-    dataWithInlinedImages = await this._findImageAssetAndInline(dataWithInlinedImages);
+    dataWithInlinedImages = await this._findAssetsAndInline(dataWithInlinedImages);
 
     return dataWithInlinedImages;
   }
@@ -363,6 +432,16 @@ export class DotLottieCommon {
     });
 
     return images;
+  }
+
+  public getAudio(): LottieAudioCommon[] {
+    const audio: LottieAudioCommon[] = [];
+
+    this.animations.map((animation) => {
+      return audio.push(...animation.audioAssets);
+    });
+
+    return audio;
   }
 
   public getTheme(themeId: string): LottieThemeCommon | undefined {
@@ -431,6 +510,7 @@ export class DotLottieCommon {
     if (this.animations.length > 1) {
       // Rename assets incrementally if there are multiple animations
       this._renameImageAssets();
+      this._renameAudioAssets();
     }
 
     const parallelPlugins = [];

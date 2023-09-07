@@ -14,10 +14,18 @@ import type {
   Manifest,
   ConversionOptions,
 } from './common';
-import { DotLottieCommon, createError, base64ToUint8Array, getExtensionTypeFromBase64 } from './common';
+import {
+  DotLottieCommon,
+  createError,
+  base64ToUint8Array,
+  getExtensionTypeFromBase64,
+  DotLottieError,
+  isAudioAsset,
+} from './common';
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
 import { LottieImage } from './lottie-image';
+import { LottieAudio } from './node/lottie-audio';
 
 export class DotLottie extends DotLottieCommon {
   public constructor(options?: DotLottieOptions) {
@@ -103,12 +111,20 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`animations/${animation.id}.json`] = [strToU8(JSON.stringify(json)), animation.zipOptions];
 
       const imageAssets = animation.imageAssets;
+      const audioAssets = animation.audioAssets;
 
       for (const asset of imageAssets) {
         // Assure we have a base64 encoded version of the image
         const dataAsString = await asset.toDataURL();
 
         dotlottie[`images/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
+      }
+
+      for (const asset of audioAssets) {
+        // Assure we have a base64 encoded version of the audio
+        const dataAsString = await asset.toDataURL();
+
+        dotlottie[`audio/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
       }
     }
 
@@ -160,6 +176,7 @@ export class DotLottie extends DotLottieCommon {
       });
 
       const tmpImages = [];
+      const tmpAudio = [];
 
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         // valid buffer
@@ -240,6 +257,27 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
+            } else if (key.startsWith('audio/')) {
+              // extract audioId from key as the key = `audio/${audioId}.${ext}`
+              const audioId = /audio\/(.+)\./u.exec(key)?.[1];
+
+              if (!audioId) {
+                throw new DotLottieError('Invalid image id');
+              }
+
+              let decodedAudio = btoa(decodedStr);
+
+              const ext = getExtensionTypeFromBase64(decodedAudio);
+
+              // Push the audio in to a temporary array
+              decodedAudio = `data:audio/${ext};base64,${decodedAudio}`;
+              tmpAudio.push(
+                new LottieAudio({
+                  id: audioId,
+                  data: decodedAudio,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
             } else if (key.startsWith('themes/') && key.endsWith('.lss')) {
               // extract themeId from key as the key = `themes/${themeId}.lss`
               const themeId = /themes\/(.+)\.lss/u.exec(key)?.[1];
@@ -293,6 +331,26 @@ export class DotLottie extends DotLottieCommon {
                       if (asset.p.includes(image.id)) {
                         image.parentAnimations.push(parentAnimation);
                         parentAnimation.imageAssets.push(image);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Go through the audio and find to which animation they belong
+          for (const audio of tmpAudio) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const animationAssets = parentAnimation.data.assets as AnimationType['assets'];
+
+                if (animationAssets) {
+                  for (const asset of animationAssets) {
+                    if (isAudioAsset(asset)) {
+                      if (asset.p.includes(audio.id)) {
+                        audio.parentAnimations.push(parentAnimation);
+                        parentAnimation.audioAssets.push(audio);
                       }
                     }
                   }

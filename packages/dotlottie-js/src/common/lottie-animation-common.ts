@@ -6,10 +6,11 @@ import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import type { ZipOptions } from 'fflate';
 
 import type { LottieThemeCommon } from './dotlottie-theme-common';
+import type { LottieAudioCommon } from './lottie-audio-common';
 import type { LottieImageCommon } from './lottie-image-common';
 import type { ManifestAnimation } from './manifest';
 import { PlayMode } from './manifest';
-import { createError } from './utils';
+import { DotLottieError, createError, isAudioAsset } from './utils';
 
 export type AnimationData = AnimationType;
 
@@ -52,6 +53,8 @@ export class LottieAnimationCommon {
   protected _defaultActiveAnimation: boolean;
 
   protected _imageAssets: LottieImageCommon[] = [];
+
+  protected _audioAssets: LottieAudioCommon[] = [];
 
   protected _themesMap: Map<string, LottieThemeCommon> = new Map();
 
@@ -126,6 +129,14 @@ export class LottieAnimationCommon {
 
   public set imageAssets(imageAssets: LottieImageCommon[]) {
     this._imageAssets = imageAssets;
+  }
+
+  public get audioAssets(): LottieAudioCommon[] {
+    return this._audioAssets;
+  }
+
+  public set audioAssets(audioAssets: LottieAudioCommon[]) {
+    this._audioAssets = audioAssets;
   }
 
   public get data(): AnimationData | undefined {
@@ -236,7 +247,11 @@ export class LottieAnimationCommon {
   }
 
   protected async _extractImageAssets(): Promise<boolean> {
-    throw createError('_extractImageAssets(): Promise<boolean> method not implemented in concrete class');
+    throw new DotLottieError('_extractImageAssets(): Promise<boolean> method not implemented in concrete class');
+  }
+
+  protected async _extractAudioAssets(): Promise<boolean> {
+    throw new DotLottieError('_extractAudioAssets(): Promise<boolean> method not implemented in concrete class');
   }
 
   /**
@@ -269,13 +284,16 @@ export class LottieAnimationCommon {
     if (this._data.assets?.length) {
       // Even if the user wants to inline the assets, we still need to extract them
       await this._extractImageAssets();
+      await this._extractAudioAssets();
 
       if (options.inlineAssets) {
         const animationAssets = this.data?.assets as AnimationType['assets'];
 
-        if (!animationAssets) throw createError("Failed to inline assets, the animation's assets are undefined.");
+        if (!animationAssets)
+          throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
 
         const images = this.imageAssets;
+        const audios = this.audioAssets;
 
         for (const asset of animationAssets) {
           if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
@@ -285,6 +303,16 @@ export class LottieAnimationCommon {
                 asset.e = 1;
                 asset.u = '';
                 asset.p = await image.toDataURL();
+              }
+            }
+          } else if (isAudioAsset(asset)) {
+            // Audio asset
+            for (const audio of audios) {
+              if (audio.fileName === asset.p) {
+                // encoded is true
+                asset.e = 1;
+                asset.u = '';
+                asset.p = await audio.toDataURL();
               }
             }
           }

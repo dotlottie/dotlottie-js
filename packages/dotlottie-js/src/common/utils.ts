@@ -29,6 +29,8 @@ export const MIME_TYPES: MimeTypes = {
   bmp: 'image/bmp',
   svg: 'image/svg+xml',
   webp: 'image/webp',
+  mpeg: 'audio/mpeg',
+  mp3: 'audio/mp3',
 };
 
 export const MIME_CODES: MimeCodes = {
@@ -38,6 +40,8 @@ export const MIME_CODES: MimeCodes = {
   bmp: [0x42, 0x4d],
   webp: [0x52, 0x49, 0x46, 0x46, 0x57, 0x45, 0x42, 0x50],
   svg: [0x3c, 0x3f, 0x78],
+  mp3: [0x49, 0x44, 0x33, 0x3, 0x00, 0x00, 0x00, 0x00],
+  mpeg: [0x49, 0x44, 0x33, 0x3, 0x00, 0x00, 0x00, 0x00],
 };
 
 export interface MimeToExtension {
@@ -51,6 +55,8 @@ export const MIME_TO_EXTENSION: MimeToExtension = {
   'image/bmp': 'bmp',
   'image/svg+xml': 'svg',
   'image/webp': 'webp',
+  'audio/mpeg': 'mpeg',
+  'audio/mp3': 'mp3',
 };
 
 /**
@@ -297,6 +303,28 @@ export function isImageAsset(asset: Asset.Value): asset is Asset.Image {
 }
 
 /**
+ * Checks if an asset is an audio asset.
+ *
+ * @remarks
+ * This function accepts an asset object and determines whether it represents an audio asset.
+ * It returns `true` if it's an audio asset, `false` otherwise.
+ *
+ * @param asset - The asset object to check.
+ * @returns `true` if it's an audio asset, `false` otherwise.
+ *
+ * @example
+ * ```typescript
+ * const asset = { e: 0, u: 'music/', p: 'audio.mp3' };
+ * const isAudio = isAudioAsset(asset); // true
+ * ```
+ *
+ * @public
+ */
+export function isAudioAsset(asset: Asset.Value): asset is Asset.Image {
+  return !('h' in asset) && !('w' in asset) && 'p' in asset && 'e' in asset && 'u' in asset && 'id' in asset;
+}
+
+/**
  * Unzips the .lottie file.
  *
  * @remarks
@@ -526,6 +554,145 @@ export async function loadFromURL(src: string): Promise<Uint8Array> {
 }
 
 /**
+ * Retrieves an audio from the given DotLottie object by its filename.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array, the filename of the audio to retrieve, and an optional filter function.
+ * It returns a Promise that resolves to the audio data URL or `undefined` if not found.
+ *
+ * @param dotLottie - The Uint8Array of DotLottie data.
+ * @param filename - The filename of the image to get.
+ * @param filter - An optional filter function to apply on the unzipping process.
+ * @returns A Promise that resolves with the audio data URL or `undefined` if not found.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const filename = 'alarm.mp3';
+ * const imageData = await getAudio(dotLottie, filename);
+ * ```
+ *
+ * @public
+ */
+export async function getAudio(
+  dotLottie: Uint8Array,
+  filename: string,
+  filter?: UnzipFileFilter,
+): Promise<string | undefined> {
+  const audioFilename = `audio/${filename}`;
+
+  const unzipped = await unzipDotLottieFile(dotLottie, audioFilename, filter);
+
+  if (typeof unzipped === 'undefined') {
+    return undefined;
+  }
+
+  return dataUrlFromU8(unzipped);
+}
+
+/**
+ * Retrieves all audio files from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array and an optional filter function to further refine the extraction.
+ * It returns a Promise that resolves to a record containing the audio data URLs mapped by their ID.
+ *
+ * @param dotLottie - The Uint8Array of DotLottie data.
+ * @param filter - An optional filter function to apply on the unzipping process.
+ * @returns A Promise that resolves to a record containing the audio data URLs mapped by their ID.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const allAudio = await getAllAudio(dotLottie);
+ * ```
+ *
+ * @public
+ */
+export async function getAllAudio(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
+  const unzippedAudio = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('audio/', '');
+
+    return file.name.startsWith('audio/') && (!filter || filter({ ...file, name }));
+  });
+
+  const audio: Record<string, string> = {};
+
+  for (const audioPath in unzippedAudio) {
+    const unzippedSingleAudio = unzippedAudio[audioPath];
+
+    if (unzippedSingleAudio instanceof Uint8Array) {
+      const audioId = audioPath.replace('audio/', '');
+
+      audio[audioId] = dataUrlFromU8(unzippedSingleAudio);
+    }
+  }
+
+  return audio;
+}
+
+/**
+ * Inlines audio assets for the given animations within a DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array and a record containing the animations to process.
+ * It identifies the audio used in the animations and replaces their references with the actual audio data.
+ * This operation is performed asynchronously, and the function returns a Promise that resolves when the operation is complete.
+ *
+ * @param dotLottie - The DotLottie object containing the animations.
+ * @param animations - A record containing the animations to process.
+ * @returns A Promise that resolves when the operation is complete, returning nothing.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const animations = { animation1: {...}, animation2: {...} };
+ * await inlineAudioAssets(dotLottie, animations);
+ * ```
+ *
+ * @public
+ */
+export async function inlineAudioAssets(
+  dotLottie: Uint8Array,
+  animations: Record<string, AnimationData>,
+): Promise<void> {
+  const audioMap = new Map<string, Set<string>>();
+
+  for (const [animationId, animationData] of Object.entries(animations)) {
+    for (const asset of animationData.assets || []) {
+      if (isAudioAsset(asset)) {
+        const audioId = asset.p;
+
+        if (!audioMap.has(audioId)) {
+          audioMap.set(audioId, new Set());
+        }
+        audioMap.get(audioId)?.add(animationId);
+      }
+    }
+  }
+
+  const unzippedAudio = await getAllAudio(dotLottie, (file) => audioMap.has(file.name));
+
+  for (const [audioId, animationIdsSet] of audioMap) {
+    const audioDataURL = unzippedAudio[audioId];
+
+    if (audioDataURL) {
+      for (const animationId of animationIdsSet) {
+        const animationData = animations[animationId];
+
+        for (const asset of animationData?.assets || []) {
+          if (isAudioAsset(asset) && asset.p === audioId) {
+            asset.p = audioDataURL;
+            asset.u = '';
+            asset.e = 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
  * Retrieves an image from the given DotLottie object by its filename.
  *
  * @remarks
@@ -711,6 +878,8 @@ export async function getAnimation(
   };
 
   await inlineImageAssets(dotLottie, animationsMap);
+
+  await inlineAudioAssets(dotLottie, animationsMap);
 
   return animationData;
 }

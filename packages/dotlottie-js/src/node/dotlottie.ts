@@ -15,10 +15,18 @@ import type {
   Manifest,
   ConversionOptions,
 } from '../common';
-import { createError, DotLottieCommon, base64ToUint8Array, getExtensionTypeFromBase64 } from '../common';
+import {
+  createError,
+  DotLottieCommon,
+  base64ToUint8Array,
+  getExtensionTypeFromBase64,
+  DotLottieError,
+  isAudioAsset,
+} from '../common';
 
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
+import { LottieAudio } from './lottie-audio';
 import { LottieImage } from './lottie-image';
 
 export class DotLottie extends DotLottieCommon {
@@ -91,12 +99,19 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`animations/${animation.id}.json`] = [strToU8(JSON.stringify(json)), animation.zipOptions];
 
       const imageAssets = animation.imageAssets;
+      const audioAssets = animation.audioAssets;
 
       for (const asset of imageAssets) {
         // Assure we have a base64 encoded version of the image
         const dataAsString = await asset.toDataURL();
 
         dotlottie[`images/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
+      }
+      for (const asset of audioAssets) {
+        // Assure we have a base64 encoded version of the audio
+        const dataAsString = await asset.toDataURL();
+
+        dotlottie[`audio/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
       }
     }
 
@@ -148,6 +163,7 @@ export class DotLottie extends DotLottieCommon {
       });
 
       const tmpImages = [];
+      const tmpAudio = [];
 
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         try {
@@ -227,6 +243,29 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
+            } else if (key.startsWith('audio/')) {
+              // Do audio extraction
+              // extract audioID from key as the key = `audio/${audioID}.${ext}`
+              const audioId = /audio\/(.+)\./u.exec(key)?.[1];
+
+              if (!audioId) {
+                throw new DotLottieError('Invalid audio id');
+              }
+
+              const base64 = Buffer.from(decompressedFile).toString('base64');
+
+              const ext = getExtensionTypeFromBase64(base64);
+
+              // Push the images in to a temporary array
+              const audioDataURL = `data:audio/${ext};base64,${base64}`;
+
+              tmpAudio.push(
+                new LottieAudio({
+                  id: audioId,
+                  data: audioDataURL,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
             } else if (key.startsWith('themes/') && key.endsWith('.lss')) {
               // extract themeId from key as the key = `themes/${themeId}.lss`
               const themeId = /themes\/(.+)\.lss/u.exec(key)?.[1];
@@ -287,17 +326,37 @@ export class DotLottie extends DotLottieCommon {
               }
             }
           }
+
+          // Go through the audio and find to which animation they belong
+          for (const audio of tmpAudio) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const animationAssets = parentAnimation.data.assets as AnimationType['assets'];
+
+                if (animationAssets) {
+                  for (const asset of animationAssets) {
+                    if (isAudioAsset(asset)) {
+                      if (asset.p.includes(audio.id)) {
+                        audio.parentAnimations.push(parentAnimation);
+                        parentAnimation.audioAssets.push(audio);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         } catch (err: any) {
           // throw error as it's invalid json
-          throw createError(`Invalid manifest inside buffer! ${err.message}`);
+          throw new DotLottieError(`Invalid manifest inside buffer! ${err.message}`);
         }
       } else {
         // throw error as it's invalid buffer
-        throw createError('Invalid buffer');
+        throw new DotLottieError('Invalid buffer');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof Error) {
-        throw createError(err.message);
+        throw new DotLottieError(err.message);
       }
     }
 
