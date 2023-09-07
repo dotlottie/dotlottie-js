@@ -1,5 +1,15 @@
 # @dotlottie/dotlottie-js
 
+## 0.6.0
+
+### Minor Changes
+
+- fcbe995: adds audio asset support
+
+### Patch Changes
+
+- 84d03bf: chore: 🤖 upgrade packages
+
 ## 0.5.2
 
 ### Patch Changes
