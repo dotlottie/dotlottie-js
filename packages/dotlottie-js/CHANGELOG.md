@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.6.1
+
+### Patch Changes
+
+- 1e74b26: removed url fetching for images
+
 ## 0.6.0
 
 ### Minor Changes
