@@ -82,7 +82,8 @@ export class LottieImageCommon {
   }
 
   public set fileName(fileName: string) {
-    if (!fileName) throw new DotLottieError('Invalid image file name');
+    this._requireValidFileName(fileName);
+
     this._fileName = fileName;
   }
 
@@ -91,7 +92,8 @@ export class LottieImageCommon {
   }
 
   public set id(id: string) {
-    if (!id) throw new DotLottieError('Invalid image id');
+    this._requireValidId(id);
+
     this._id = id;
   }
 
