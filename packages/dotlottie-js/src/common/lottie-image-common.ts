@@ -5,7 +5,7 @@
 import type { ZipOptions } from 'fflate';
 
 import type { LottieAnimationCommon } from './lottie-animation-common';
-import { dataUrlFromU8, createError } from './utils';
+import { dataUrlFromU8, DotLottieError } from './utils';
 
 export type ImageData = string | ArrayBuffer | Blob;
 
@@ -14,7 +14,6 @@ export interface ImageOptions {
   fileName: string;
   id: string;
   parentAnimations?: LottieAnimationCommon[];
-  url?: string;
   zipOptions?: ZipOptions;
 }
 
@@ -22,8 +21,6 @@ export class LottieImageCommon {
   protected _data?: ImageData;
 
   protected _id: string = '';
-
-  protected _url?: string;
 
   protected _fileName: string = '';
 
@@ -43,10 +40,6 @@ export class LottieImageCommon {
 
     if (options.id) {
       this._id = options.id;
-    }
-
-    if (options.url) {
-      this._url = options.url;
     }
 
     if (options.fileName) {
@@ -71,7 +64,7 @@ export class LottieImageCommon {
    * @throws Error - if the id is not a valid string.
    */
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (!id) throw createError('Invalid image id');
+    if (!id) throw new DotLottieError('Invalid image id');
   }
 
   /**
@@ -81,7 +74,7 @@ export class LottieImageCommon {
    * @throws Error - if the fileName is not a valid string.
    */
   private _requireValidFileName(fileName: string | undefined): asserts fileName is string {
-    if (!fileName) throw createError('Invalid image fileName');
+    if (!fileName) throw new DotLottieError('Invalid image fileName');
   }
 
   public get fileName(): string {
@@ -89,7 +82,8 @@ export class LottieImageCommon {
   }
 
   public set fileName(fileName: string) {
-    if (!fileName) throw createError('Invalid image file name');
+    this._requireValidFileName(fileName);
+
     this._fileName = fileName;
   }
 
@@ -98,7 +92,8 @@ export class LottieImageCommon {
   }
 
   public set id(id: string) {
-    if (!id) throw createError('Invalid image id');
+    this._requireValidId(id);
+
     this._id = id;
   }
 
@@ -108,22 +103,10 @@ export class LottieImageCommon {
 
   public set data(data: ImageData | undefined) {
     if (!data) {
-      throw createError('Invalid data');
+      throw new DotLottieError('Invalid data');
     }
 
     this._data = data;
-  }
-
-  public get url(): string | undefined {
-    return this._url;
-  }
-
-  public set url(url: string | undefined) {
-    if (!url) {
-      throw new Error('Invalid url');
-    }
-
-    this._url = url;
   }
 
   public get parentAnimations(): LottieAnimationCommon[] {
@@ -167,12 +150,8 @@ export class LottieImageCommon {
   }
 
   public async toBlob(): Promise<Blob> {
-    if (!this._data && this._url) {
-      this._data = await this._fromUrlToBlob(this._url);
-    }
-
     if (!this._data) {
-      throw new Error('Invalid data');
+      throw new DotLottieError('Invalid image data.');
     }
 
     if (this._isDataURL(this._data)) {
@@ -186,7 +165,7 @@ export class LottieImageCommon {
       }
 
       if (!header || !base64) {
-        throw new Error('Invalid data');
+        throw new DotLottieError('Invalid image data.');
       }
 
       // eslint-disable-next-line require-unicode-regexp
@@ -203,7 +182,7 @@ export class LottieImageCommon {
       return this._data as Blob;
     }
 
-    throw new Error('Invalid data');
+    throw new DotLottieError('Invalid image data.');
   }
 
   protected async _fromUrlToBlob(url: string): Promise<Blob> {
