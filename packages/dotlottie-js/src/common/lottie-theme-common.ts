@@ -7,15 +7,17 @@ import type { ZipOptions } from 'fflate';
 import type { LottieAnimationCommon } from './lottie-animation-common';
 import { createError, isValidURL } from './utils';
 
+type LSS = Record<string, string>;
+
 export interface ThemeOptions {
-  data?: string;
+  data?: LSS;
   id: string;
   url?: string;
   zipOptions?: ZipOptions;
 }
 
 export class LottieThemeCommon {
-  protected _data?: string;
+  protected _data?: LSS;
 
   protected _id: string = '';
 
@@ -70,11 +72,11 @@ export class LottieThemeCommon {
     this._url = url;
   }
 
-  public get data(): string | undefined {
+  public get data(): LSS | undefined {
     return this._data;
   }
 
-  public set data(data: string | undefined) {
+  public set data(data: LSS | undefined) {
     this._requireValidData(data);
 
     this._data = data;
@@ -85,6 +87,10 @@ export class LottieThemeCommon {
   }
 
   public async toString(): Promise<string> {
+    return JSON.stringify(this.toJSON());
+  }
+
+  public async toJSON(): Promise<LSS> {
     if (!this._data && this._url) {
       await this._loadDataFromUrl(this._url);
     }
@@ -110,17 +116,15 @@ export class LottieThemeCommon {
     if (!url || !isValidURL(url)) throw createError('Invalid theme url');
   }
 
-  private _requireValidData(data: string | undefined): asserts data is string {
-    // eslint-disable-next-line no-warning-comments
-    // TODO: validate lottie style sheets using lottie-styler
-    if (typeof data !== 'string' || !data) throw createError('Invalid theme data');
+  private _requireValidData(data: LSS | undefined): asserts data is LSS {
+    if (!data || typeof data !== 'object') throw createError('Invalid theme data');
   }
 
   private async _loadDataFromUrl(url: string): Promise<void> {
     try {
       const response = await fetch(url);
 
-      const data = await response.text();
+      const data = await response.json();
 
       this._data = data;
     } catch (error) {

@@ -10,11 +10,11 @@ import pkg from '../../package.json';
 import type { DotLottiePlugin } from './dotlottie-plugin';
 import type { DotLottieStateMachineCommonOptions } from './dotlottie-state-machine-common';
 import { DotLottieStateMachineCommon } from './dotlottie-state-machine-common';
-import type { ThemeOptions } from './dotlottie-theme-common';
-import { LottieThemeCommon } from './dotlottie-theme-common';
 import type { AnimationOptions, LottieAnimationCommon } from './lottie-animation-common';
 import type { LottieAudioCommon } from './lottie-audio-common';
 import type { LottieImageCommon } from './lottie-image-common';
+import { LottieThemeCommon } from './lottie-theme-common';
+import type { ThemeOptions } from './lottie-theme-common';
 import type { Manifest } from './manifest';
 import { DotLottieError, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
 

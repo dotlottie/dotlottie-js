@@ -9,7 +9,7 @@ export * from './dotlottie-plugin';
 export * from './duplicate-image-detector-common';
 export * from './utils';
 export * from './manifest';
-export * from './dotlottie-theme-common';
+export * from './lottie-theme-common';
 export * from './dotlottie-state-machine-common';
 export * from './dotlottie-state';
 export * from './lottie-audio-common';

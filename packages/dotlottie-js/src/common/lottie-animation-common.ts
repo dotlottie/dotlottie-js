@@ -5,9 +5,9 @@
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import type { ZipOptions } from 'fflate';
 
-import type { LottieThemeCommon } from './dotlottie-theme-common';
 import type { LottieAudioCommon } from './lottie-audio-common';
 import type { LottieImageCommon } from './lottie-image-common';
+import type { LottieThemeCommon } from './lottie-theme-common';
 import type { ManifestAnimation } from './manifest';
 import { PlayMode } from './manifest';
 import { DotLottieError, createError, isAudioAsset } from './utils';
