@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.6.2
+
+### Patch Changes
+
+- 00fe1b3: chore: 🤖 upgrade dependencies
+
 ## 0.6.1
 
 ### Patch Changes
