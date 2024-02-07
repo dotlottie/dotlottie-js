@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.7.0
+
+### Minor Changes
+
+- 63a0769: feat: 🎸 represent themes data as json (lottie slots)
+
 ## 0.6.2
 
 ### Patch Changes
