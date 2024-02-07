@@ -32,7 +32,7 @@ import dotLottieAnimation from './__fixtures__/simple/animation.lottie';
 import bullJson from './__fixtures__/simple/animation/animations/bull.json';
 import dotLottieLottie1 from './__fixtures__/simple/animation/animations/lottie1.json';
 import dotLottieManifest from './__fixtures__/simple/animation/manifest.json';
-import dotLottieTheme from './__fixtures__/simple/animation/themes/theme1.lss';
+import dotLottieTheme from './__fixtures__/simple/animation/themes/theme1.json';
 import dotLottieAnimationWithImages from './__fixtures__/simple/big-merged-dotlottie.lottie';
 import bullAnimation from './__fixtures__/simple/bull.lottie';
 import { PigeonState } from './__fixtures__/simple/state/pigeon-state';

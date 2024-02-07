@@ -1,1 +1,27 @@
-{"version":"1.0","revision":1,"keywords":"dotLottie","author":"LottieFiles","generator":"dotLottie-js_v2.0","animations":[{"id":"lottie1","direction":1,"speed":1,"playMode":"normal","loop":false,"autoplay":false,"hover":false,"intermission":0}],"themes":[{"id":"theme1","animations":["lottie1"]}]}
+{
+  "version": "1.0",
+  "revision": 1,
+  "keywords": "dotLottie",
+  "author": "LottieFiles",
+  "generator": "@dotlottie/dotlottie-js/node@0.6.2",
+  "animations": [
+    {
+      "id": "lottie1",
+      "direction": 1,
+      "speed": 1,
+      "playMode": "normal",
+      "loop": false,
+      "autoplay": false,
+      "hover": false,
+      "intermission": 0
+    }
+  ],
+  "themes": [
+    {
+      "id": "theme1",
+      "animations": [
+        "lottie1"
+      ]
+    }
+  ]
+}

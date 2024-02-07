@@ -10,7 +10,7 @@ import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import { LottieTheme, LottieAnimation } from '..';
 
 import animationData from './__fixtures__/simple/animation/animations/lottie1.json';
-import themeData from './__fixtures__/simple/animation/themes/theme1.lss';
+import themeData from './__fixtures__/simple/animation/themes/theme1.json';
 
 describe('LottieTheme', () => {
   it('throws an error if it receives an invalid id when constructed', () => {
@@ -33,9 +33,9 @@ describe('LottieTheme', () => {
     }).toThrowError('[dotlottie-js]: Invalid theme url');
   });
 
-  it('throws an error if it receives an invalid lottie data when constructed', () => {
+  it('throws an error if it receives an invalid theme data when constructed', () => {
     // arrange
-    const invalidData = {} as string;
+    const invalidData = 'invalid' as unknown as Record<string, unknown>;
 
     expect(() => {
       // act
@@ -180,7 +180,7 @@ describe('LottieTheme', () => {
   it('resolves theme data from a url', async () => {
     // arrange
     const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
-      Promise.resolve(new Response(themeData)),
+      Promise.resolve(new Response(JSON.stringify(themeData))),
     );
 
     const theme = new LottieTheme({ id: 'theme1', url: 'https://example.com' });
@@ -191,7 +191,7 @@ describe('LottieTheme', () => {
     const content = await theme.toString();
 
     // assert
-    expect(content).toEqual(themeData);
+    expect(content).toEqual(JSON.stringify(themeData));
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith('https://example.com');
