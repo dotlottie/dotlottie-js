@@ -960,7 +960,7 @@ export async function getThemes(
   const themesMap: Record<string, Record<string, unknown>> = {};
 
   const unzippedThemes = await unzipDotLottie(dotLottie, (file) => {
-    const name = file.name.replace('themes/', '').replace('.lss', '');
+    const name = file.name.replace('themes/', '').replace('.json', '');
 
     return file.name.startsWith('themes/') && (!filter || filter({ ...file, name }));
   });
@@ -969,7 +969,7 @@ export async function getThemes(
     const data = unzippedThemes[themePath];
 
     if (data instanceof Uint8Array) {
-      const themeId = themePath.replace('themes/', '').replace('.lss', '');
+      const themeId = themePath.replace('themes/', '').replace('.json', '');
 
       themesMap[themeId] = JSON.parse(strFromU8(data, false));
     }
@@ -1002,7 +1002,7 @@ export async function getTheme(
   themeId: string,
   filter?: UnzipFileFilter,
 ): Promise<Record<string, unknown> | undefined> {
-  const themeFilename = `themes/${themeId}.lss`;
+  const themeFilename = `themes/${themeId}.json`;
 
   const unzippedTheme = await unzipDotLottieFile(dotLottie, themeFilename, filter);
 

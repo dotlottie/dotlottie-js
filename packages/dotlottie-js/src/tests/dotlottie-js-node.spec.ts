@@ -1122,7 +1122,7 @@ describe('DotLottie', () => {
 
         const theme2 = {
           id: 'theme_2',
-          url: 'https://fake.lottiefiles.com/theme.lss',
+          url: 'https://fake.lottiefiles.com/theme.json',
         };
 
         // act
@@ -1189,7 +1189,7 @@ describe('DotLottie', () => {
 
         const theme2 = {
           id: 'theme_2',
-          url: 'https://fake.lottiefiles.com/theme.lss',
+          url: 'https://fake.lottiefiles.com/theme.json',
         };
 
         // act

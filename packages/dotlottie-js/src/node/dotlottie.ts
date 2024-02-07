@@ -116,9 +116,9 @@ export class DotLottie extends DotLottieCommon {
     }
 
     for (const theme of this.themes) {
-      const lss = await theme.toString();
+      const themeData = await theme.toString();
 
-      dotlottie[`themes/${theme.id}.lss`] = [strToU8(lss), theme.zipOptions];
+      dotlottie[`themes/${theme.id}.json`] = [strToU8(themeData), theme.zipOptions];
     }
 
     for (const state of this.stateMachines) {
@@ -266,9 +266,9 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
-            } else if (key.startsWith('themes/') && key.endsWith('.lss')) {
-              // extract themeId from key as the key = `themes/${themeId}.lss`
-              const themeId = /themes\/(.+)\.lss/u.exec(key)?.[1];
+            } else if (key.startsWith('themes/') && key.endsWith('.json')) {
+              // extract themeId from key as the key = `themes/${themeId}.json`
+              const themeId = /themes\/(.+)\.json/u.exec(key)?.[1];
 
               if (!themeId) {
                 throw createError('Invalid theme id');

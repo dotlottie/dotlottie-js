@@ -3,7 +3,7 @@
   "revision": 1,
   "keywords": "dotLottie",
   "author": "LottieFiles",
-  "generator": "dotLottie-js_v2.0",
+  "generator": "@dotlottie/dotlottie-js/node@0.6.2",
   "animations": [
     {
       "id": "lottie1",

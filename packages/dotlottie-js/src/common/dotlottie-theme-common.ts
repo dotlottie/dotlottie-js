@@ -113,8 +113,6 @@ export class LottieThemeCommon {
   }
 
   private _requireValidData(data: Data | undefined): asserts data is Data {
-    // eslint-disable-next-line no-warning-comments
-    // TODO: validate lottie style sheets using lottie-styler
     if (typeof data !== 'object') throw createError('Invalid theme data');
   }
 

@@ -33,9 +33,9 @@ describe('LottieTheme', () => {
     }).toThrowError('[dotlottie-js]: Invalid theme url');
   });
 
-  it('throws an error if it receives an invalid lottie data when constructed', () => {
+  it('throws an error if it receives an invalid theme data when constructed', () => {
     // arrange
-    const invalidData = '' as unknown as Record<string, unknown>;
+    const invalidData = 'invalid' as unknown as Record<string, unknown>;
 
     expect(() => {
       // act

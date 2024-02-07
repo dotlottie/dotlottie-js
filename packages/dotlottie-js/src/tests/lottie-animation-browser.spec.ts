@@ -110,7 +110,7 @@ describe('LottieAnimation', () => {
 
     expect(animation.themes).toEqual([]);
 
-    const theme = new LottieTheme({ id: 'theme1', url: 'http://fake.lottiefiles.com/theme.lss' });
+    const theme = new LottieTheme({ id: 'theme1', url: 'http://fake.lottiefiles.com/theme.json' });
 
     animation.addTheme(theme);
 
