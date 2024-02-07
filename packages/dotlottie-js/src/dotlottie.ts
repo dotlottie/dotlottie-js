@@ -290,7 +290,7 @@ export class DotLottie extends DotLottieCommon {
                 if (theme.id === themeId) {
                   dotlottie.addTheme({
                     id: theme.id,
-                    data: decodedStr,
+                    data: JSON.parse(decodedStr),
                   });
 
                   theme.animations.forEach((animationId) => {

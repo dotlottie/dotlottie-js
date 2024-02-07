@@ -23,7 +23,7 @@ import SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simp
 import dotlottieAnimation from './__fixtures__/simple/animation.lottie';
 import animationData from './__fixtures__/simple/animation/animations/lottie1.json';
 import manifest from './__fixtures__/simple/animation/manifest.json';
-import themeData from './__fixtures__/simple/animation/themes/theme1.lss';
+import themeData from './__fixtures__/simple/animation/themes/theme1.json';
 import bigMergedDotLottie from './__fixtures__/simple/big-merged-dotlottie.lottie';
 import editedDotlottieAnimation from './__fixtures__/simple/edited-settings.lottie';
 import editedAnimationData from './__fixtures__/simple/edited-settings/animations/lottie01.json';
@@ -1069,7 +1069,15 @@ describe('DotLottie', () => {
 
         const theme = {
           id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
+          data: {
+            ['face_color']: {
+              p: {
+                a: 0,
+                k: [1, 0, 0, 1],
+                ix: 4,
+              },
+            },
+          },
         };
 
         // act
@@ -1085,12 +1093,20 @@ describe('DotLottie', () => {
 
         const theme1 = {
           id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
+          data: {
+            ['face_color']: {
+              p: {
+                a: 0,
+                k: [1, 0, 0, 1],
+                ix: 4,
+              },
+            },
+          },
         };
 
         const theme2 = {
           id: 'theme_2',
-          url: 'https://fake.lottiefiles.com/theme.lss',
+          url: 'https://fake.lottiefiles.com/theme.json',
         };
 
         // act
@@ -1120,7 +1136,15 @@ describe('DotLottie', () => {
 
         const theme = {
           id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
+          data: {
+            ['face_color']: {
+              p: {
+                a: 0,
+                k: [1, 0, 0, 1],
+                ix: 4,
+              },
+            },
+          },
         };
 
         // act
@@ -1136,12 +1160,20 @@ describe('DotLottie', () => {
 
         const theme1 = {
           id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
+          data: {
+            ['face_color']: {
+              p: {
+                a: 0,
+                k: [1, 0, 0, 1],
+                ix: 4,
+              },
+            },
+          },
         };
 
         const theme2 = {
           id: 'theme_2',
-          url: 'https://fake.lottiefiles.com/theme.lss',
+          url: 'https://fake.lottiefiles.com/theme.json',
         };
 
         // act
@@ -1160,7 +1192,15 @@ describe('DotLottie', () => {
 
         const theme = {
           id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
+          data: {
+            ['face_color']: {
+              p: {
+                a: 0,
+                k: [1, 0, 0, 1],
+                ix: 4,
+              },
+            },
+          },
         };
 
         dotLottie.addTheme(theme);
@@ -1199,7 +1239,15 @@ describe('DotLottie', () => {
           })
           .addTheme({
             id: 'theme_1',
-            data: `FillShape { fill-color: red; }`,
+            data: {
+              ['face_color']: {
+                p: {
+                  a: 0,
+                  k: [1, 0, 0, 1],
+                  ix: 4,
+                },
+              },
+            },
           })
           .assignTheme({
             themeId: 'theme_1',
@@ -1216,7 +1264,15 @@ describe('DotLottie', () => {
 
         const theme = {
           id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
+          data: {
+            ['face_color']: {
+              p: {
+                a: 0,
+                k: [1, 0, 0, 1],
+                ix: 4,
+              },
+            },
+          },
         };
 
         const animation = {
@@ -1240,7 +1296,15 @@ describe('DotLottie', () => {
 
         const theme = {
           id: 'theme_1',
-          data: `FillShape { fill-color: red; }`,
+          data: {
+            ['face_color']: {
+              p: {
+                a: 0,
+                k: [1, 0, 0, 1],
+                ix: 4,
+              },
+            },
+          },
         };
 
         const animation = {
@@ -1270,7 +1334,15 @@ describe('DotLottie', () => {
           })
           .addTheme({
             id: 'theme_1',
-            data: `FillShape { fill-color: red; }`,
+            data: {
+              ['face_color']: {
+                p: {
+                  a: 0,
+                  k: [1, 0, 0, 1],
+                  ix: 4,
+                },
+              },
+            },
           })
           .assignTheme({
             themeId: 'theme_1',

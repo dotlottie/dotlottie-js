@@ -953,8 +953,11 @@ export async function getAnimations(
  * const themes = await getThemes(dotLottie);
  * ```
  */
-export async function getThemes(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
-  const themesMap: Record<string, string> = {};
+export async function getThemes(
+  dotLottie: Uint8Array,
+  filter?: UnzipFileFilter,
+): Promise<Record<string, Record<string, unknown>>> {
+  const themesMap: Record<string, Record<string, unknown>> = {};
 
   const unzippedThemes = await unzipDotLottie(dotLottie, (file) => {
     const name = file.name.replace('themes/', '').replace('.lss', '');
@@ -968,7 +971,7 @@ export async function getThemes(dotLottie: Uint8Array, filter?: UnzipFileFilter)
     if (data instanceof Uint8Array) {
       const themeId = themePath.replace('themes/', '').replace('.lss', '');
 
-      themesMap[themeId] = strFromU8(data, false);
+      themesMap[themeId] = JSON.parse(strFromU8(data, false));
     }
   }
 
@@ -998,7 +1001,7 @@ export async function getTheme(
   dotLottie: Uint8Array,
   themeId: string,
   filter?: UnzipFileFilter,
-): Promise<string | undefined> {
+): Promise<Record<string, unknown> | undefined> {
   const themeFilename = `themes/${themeId}.lss`;
 
   const unzippedTheme = await unzipDotLottieFile(dotLottie, themeFilename, filter);
@@ -1007,7 +1010,7 @@ export async function getTheme(
     return undefined;
   }
 
-  return strFromU8(unzippedTheme, false);
+  return JSON.parse(strFromU8(unzippedTheme, false));
 }
 
 /**
