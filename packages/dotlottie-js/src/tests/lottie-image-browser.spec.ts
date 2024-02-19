@@ -14,6 +14,7 @@ import IMAGE_ANIMATION_3_DATA from './__fixtures__/image-asset-optimization/imag
 import IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2.json';
 import DUPES_DATA from './__fixtures__/image-asset-optimization/lots-of-dupes.json';
 import SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
+import OPTIMIZED_DOTLOTTIE from './__fixtures__/simple/webp-optimized.lottie';
 
 describe('LottieImage', () => {
   it('gets and sets the zipOptions', () => {
@@ -136,8 +137,8 @@ describe('LottieImage', () => {
         expect(uniqueImages.length).toBe(4);
 
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
-          'image_0.png',
-          'image_1.png',
+          'image_0.jpeg',
+          'image_1.jpeg',
           'image_3.png',
           'image_4.png',
         ]);
@@ -163,9 +164,9 @@ describe('LottieImage', () => {
         expect(uniqueImages.length).toBe(5);
 
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
-          'image_0.png',
-          'image_1.png',
-          'image_2.png',
+          'image_0.jpeg',
+          'image_1.jpeg',
+          'image_2.jpeg',
           'image_3.png',
           'image_4.png',
         ]);
@@ -211,13 +212,33 @@ describe('LottieImage', () => {
         expect(uniqueImages.length).toBe(5);
 
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
-          'image_1.png',
-          'image_2.png',
+          'image_1.jpeg',
+          'image_2.jpeg',
           'image_4.png',
           'image_5.png',
           'image_9.png',
         ]);
         expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_4', 'image_5', 'image_9']);
       });
+  });
+
+  it('Properly detects webp mimetype of images.', async () => {
+    let dotlottie = new DotLottie();
+
+    dotlottie = await dotlottie.fromArrayBuffer(OPTIMIZED_DOTLOTTIE);
+
+    const animations = dotlottie.getAnimations();
+
+    if (animations) {
+      animations.map(async (animation) => {
+        const anim = await animation[1].toJSON({
+          inlineAssets: true,
+        });
+
+        expect(JSON.stringify(anim).includes('image/webp'));
+        expect(!JSON.stringify(anim).includes('image/png'));
+        expect(!JSON.stringify(anim).includes('image/jpeg'));
+      });
+    }
   });
 });

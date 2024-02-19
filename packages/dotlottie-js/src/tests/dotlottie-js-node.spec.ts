@@ -821,7 +821,7 @@ describe('DotLottie', () => {
         unzippedBigMergedDotLottie[`images/${animation1?.imageAssets[0]?.fileName}`] as Uint8Array,
       ).toString('base64');
 
-      const expectedDataURL = `data:image/png;base64,${base64}`;
+      const expectedDataURL = `data:image/jpeg;base64,${base64}`;
 
       expect(await animation1?.imageAssets[0]?.toDataURL()).toEqual(expectedDataURL);
     });
