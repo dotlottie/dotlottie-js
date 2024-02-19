@@ -14,6 +14,8 @@ import IMAGE_ANIMATION_3_DATA from './__fixtures__/image-asset-optimization/imag
 import IMAGE_ANIMATION_2_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-2.json';
 import DUPES_DATA from './__fixtures__/image-asset-optimization/lots-of-dupes.json';
 import SIMPLE_IMAGE_ANIMATION from './__fixtures__/image-asset-optimization/simple-image-animation.json';
+import SVG_IMAGE_DOTLOTTIE from './__fixtures__/simple/svg-image.lottie';
+import VIDEO_DOTLOTTIE from './__fixtures__/simple/video-embedded.lottie';
 import OPTIMIZED_DOTLOTTIE from './__fixtures__/simple/webp-optimized.lottie';
 
 describe('LottieImage', () => {
@@ -221,7 +223,7 @@ describe('LottieImage', () => {
       });
   });
 
-  it('Properly detects webp mimetype of images.', async () => {
+  it('Properly detects mimetype of images.', async () => {
     let dotlottie = new DotLottie();
 
     dotlottie = await dotlottie.fromArrayBuffer(OPTIMIZED_DOTLOTTIE);
@@ -238,6 +240,43 @@ describe('LottieImage', () => {
         expect(!JSON.stringify(anim).includes('image/png'));
         expect(!JSON.stringify(anim).includes('image/jpeg'));
       });
+    }
+
+    let bullWithSvg = new DotLottie();
+
+    bullWithSvg = await bullWithSvg.fromArrayBuffer(SVG_IMAGE_DOTLOTTIE);
+
+    const bullAnimations = bullWithSvg.getAnimations();
+
+    if (bullAnimations) {
+      bullAnimations.map(async (animation) => {
+        const anim = await animation[1].toJSON({
+          inlineAssets: true,
+        });
+
+        expect(JSON.stringify(anim).includes('image/webp'));
+        expect(JSON.stringify(anim).includes('image/svg'));
+        expect(!JSON.stringify(anim).includes('image/png'));
+        expect(!JSON.stringify(anim).includes('image/jpeg'));
+      });
+    }
+
+    try {
+      let videoDotLottie = new DotLottie();
+
+      videoDotLottie = await videoDotLottie.fromArrayBuffer(VIDEO_DOTLOTTIE);
+
+      const videoAnimation = videoDotLottie.getAnimations();
+
+      if (videoAnimation) {
+        videoAnimation.map(async (animation) => {
+          await animation[1].toJSON({
+            inlineAssets: true,
+          });
+        });
+      }
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
     }
   });
 });
