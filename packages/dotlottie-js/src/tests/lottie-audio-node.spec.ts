@@ -4,7 +4,7 @@
 
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 
-import { DotLottie, LottieAudio, getMimeTypeFromBase64, isAudioAsset } from '..';
+import { DotLottie, LottieAudio, isAudioAsset } from '..';
 
 // eslint-disable-next-line @lottiefiles/import-filename-format
 import AUDIO_ANIMATION_1_DATA from './__fixtures__/audio/instruments_1.json';
