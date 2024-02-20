@@ -28,8 +28,8 @@ export const MIME_TYPES: MimeTypes = {
   gif: 'image/gif',
   bmp: 'image/bmp',
   svg: 'image/svg+xml',
+  svgxml: 'image/svg+xml',
   webp: 'image/webp',
-  mpeg: 'audio/mpeg',
   mp3: 'audio/mp3',
 };
 
@@ -38,10 +38,12 @@ export const MIME_CODES: MimeCodes = {
   png: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
   gif: [0x47, 0x49, 0x46],
   bmp: [0x42, 0x4d],
-  webp: [0x52, 0x49, 0x46, 0x46, 0x57, 0x45, 0x42, 0x50],
-  svg: [0x3c, 0x3f, 0x78],
-  mp3: [0x49, 0x44, 0x33, 0x3, 0x00, 0x00, 0x00, 0x00],
-  mpeg: [0x49, 0x44, 0x33, 0x3, 0x00, 0x00, 0x00, 0x00],
+  webp: [0x52, 0x49, 0x46, 0x46, 0x3f, 0x3f, 0x3f, 0x3f, 0x57, 0x45, 0x42, 0x50],
+  // This covers <svg..
+  svg: [0x3c, 0x73, 0x76, 0x67],
+  // This covers <?xml..
+  svgxml: [0x3c, 0x3f, 0x78, 0x6d, 0x6c],
+  mp3: [0x49, 0x44, 0x33],
 };
 
 export interface MimeToExtension {
@@ -57,6 +59,49 @@ export const MIME_TO_EXTENSION: MimeToExtension = {
   'image/webp': 'webp',
   'audio/mpeg': 'mpeg',
   'audio/mp3': 'mp3',
+};
+
+export enum ErrorCodes {
+  ASSET_NOT_FOUND = 'ASSET_NOT_FOUND',
+  INVALID_DOTLOTTIE = 'INVALID_DOTLOTTIE',
+  INVALID_STATEMACHINE = 'INVALID_STATEMACHINE',
+  INVALID_URL = 'INVALID_URL',
+}
+
+export class DotLottieError extends Error {
+  public code: ErrorCodes | undefined;
+
+  public constructor(message: string, code?: ErrorCodes) {
+    super(message);
+    this.name = '[dotlottie-js]';
+    this.code = code;
+  }
+}
+
+/**
+ * Creates an Error object with the specified message.
+ *
+ * @remarks
+ * This function accepts a message string and constructs a new Error object prefixed with "[dotlottie-js]: ".
+ *
+ * @deprecated
+ * This function has been deprecated in favor of using the {@link DotLottieError} class directly.
+ *
+ * @param message - The error message to include in the Error object.
+ * @returns An Error object with the specified message, prefixed with "[dotlottie-js]: ".
+ *
+ * @example
+ * ```typescript
+ * const message = 'DotLottie not found';
+ * const error = createError(message);
+ * ```
+ *
+ * @public
+ */
+export const createError = (message: string): Error => {
+  const error = new Error(`[dotlottie-js]: ${message}`);
+
+  return error;
 };
 
 /**
@@ -107,11 +152,16 @@ export const base64ToUint8Array = (base64String: string): Uint8Array => {
  *
  * @public
  */
-export const getMimeTypeFromBase64 = (base64: string): string | null | undefined => {
+export const getMimeTypeFromBase64 = (base64: string): string | undefined => {
   let data: string | null = null;
   let bytes: number[] = [];
 
-  if (!base64) return null;
+  if (!base64) {
+    throw new DotLottieError(
+      'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotlottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3',
+      ErrorCodes.INVALID_DOTLOTTIE,
+    );
+  }
 
   const withoutMeta = base64.substring(base64.indexOf(',') + 1);
 
@@ -127,16 +177,32 @@ export const getMimeTypeFromBase64 = (base64: string): string | null | undefined
     bufData[i] = data.charCodeAt(i);
   }
 
-  bytes = Array.from(bufData.subarray(0, 8));
   for (const mimeType in MIME_CODES) {
     const dataArr = MIME_CODES[mimeType];
 
-    if (dataArr && bytes.every((byte, index) => byte === dataArr[index])) {
-      return MIME_TYPES[mimeType];
+    if (mimeType === 'webp' && dataArr && bufData.length > dataArr.length) {
+      const riffHeader = Array.from(bufData.subarray(0, 4));
+      const webpFormatMarker = Array.from(bufData.subarray(8, 12));
+
+      if (
+        riffHeader.every((byte, index) => byte === dataArr[index]) &&
+        webpFormatMarker.every((byte, index) => byte === dataArr[index + 8])
+      ) {
+        return MIME_TYPES[mimeType];
+      }
+    } else {
+      bytes = Array.from(bufData.subarray(0, dataArr?.length));
+
+      if (dataArr && bytes.every((byte, index) => byte === dataArr[index])) {
+        return MIME_TYPES[mimeType];
+      }
     }
   }
 
-  return null;
+  throw new DotLottieError(
+    'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotlottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3',
+    ErrorCodes.INVALID_DOTLOTTIE,
+  );
 };
 
 /**
@@ -163,56 +229,13 @@ export const getExtensionTypeFromBase64 = (base64: string): string | null => {
     const ext = base64.split(';')[0]?.split('/')[1];
 
     if (ext) {
-      return MIME_TO_EXTENSION[ext] || 'png';
+      return MIME_TO_EXTENSION[ext] || null;
     }
 
-    return 'png';
+    return null;
   }
 
-  return MIME_TO_EXTENSION[mimeType] || 'png';
-};
-
-export enum ErrorCodes {
-  ASSET_NOT_FOUND = 'ASSET_NOT_FOUND',
-  INVALID_DOTLOTTIE = 'INVALID_DOTLOTTIE',
-  INVALID_STATEMACHINE = 'INVALID_STATEMACHINE',
-  INVALID_URL = 'INVALID_URL',
-}
-
-export class DotLottieError extends Error {
-  public code: ErrorCodes | undefined;
-
-  public constructor(message: string, code?: ErrorCodes) {
-    super(message);
-    this.name = '[dotlottie-js]';
-    this.code = code;
-  }
-}
-
-/**
- * Creates an Error object with the specified message.
- *
- * @remarks
- * This function accepts a message string and constructs a new Error object prefixed with "[dotlottie-js]: ".
- *
- * @deprecated
- * This function has been deprecated in favor of using the {@link DotLottieError} class directly.
- *
- * @param message - The error message to include in the Error object.
- * @returns An Error object with the specified message, prefixed with "[dotlottie-js]: ".
- *
- * @example
- * ```typescript
- * const message = 'DotLottie not found';
- * const error = createError(message);
- * ```
- *
- * @public
- */
-export const createError = (message: string): Error => {
-  const error = new Error(`[dotlottie-js]: ${message}`);
-
-  return error;
+  return MIME_TO_EXTENSION[mimeType] || null;
 };
 
 /**
