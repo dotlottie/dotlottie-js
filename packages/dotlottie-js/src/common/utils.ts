@@ -28,8 +28,8 @@ export const MIME_TYPES: MimeTypes = {
   gif: 'image/gif',
   bmp: 'image/bmp',
   svg: 'image/svg+xml',
+  svgxml: 'image/svg+xml',
   webp: 'image/webp',
-  mpeg: 'audio/mpeg',
   mp3: 'audio/mp3',
 };
 
@@ -38,10 +38,12 @@ export const MIME_CODES: MimeCodes = {
   png: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
   gif: [0x47, 0x49, 0x46],
   bmp: [0x42, 0x4d],
-  webp: [0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50],
-  svg: [0x3c, 0x3f, 0x78],
+  webp: [0x52, 0x49, 0x46, 0x46, 0x3f, 0x3f, 0x3f, 0x3f, 0x57, 0x45, 0x42, 0x50],
+  // This covers <svg..
+  svg: [0x3c, 0x73, 0x76, 0x67],
+  // This covers <?xml..
+  svgxml: [0x3c, 0x3f, 0x78, 0x6d, 0x6c],
   mp3: [0x49, 0x44, 0x33],
-  mpeg: [0x66, 0x74, 0x79, 0x70, 0x4d, 0x53, 0x4e, 0x56],
 };
 
 export interface MimeToExtension {
@@ -156,7 +158,7 @@ export const getMimeTypeFromBase64 = (base64: string): string | undefined => {
 
   if (!base64) {
     throw new DotLottieError(
-      'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotlottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3, mpeg',
+      'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotlottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3',
       ErrorCodes.INVALID_DOTLOTTIE,
     );
   }
@@ -179,12 +181,12 @@ export const getMimeTypeFromBase64 = (base64: string): string | undefined => {
     const dataArr = MIME_CODES[mimeType];
 
     if (mimeType === 'webp' && dataArr && bufData.length > dataArr.length) {
-      const riff = Array.from(bufData.subarray(0, 4));
-      const webpCheck = Array.from(bufData.subarray(8, 12));
+      const riffHeader = Array.from(bufData.subarray(0, 4));
+      const webpFormatMarker = Array.from(bufData.subarray(8, 12));
 
       if (
-        riff.every((byte, index) => byte === dataArr[index]) &&
-        webpCheck.every((byte, index) => byte === dataArr[index + 8])
+        riffHeader.every((byte, index) => byte === dataArr[index]) &&
+        webpFormatMarker.every((byte, index) => byte === dataArr[index + 8])
       ) {
         return MIME_TYPES[mimeType];
       }
@@ -198,7 +200,7 @@ export const getMimeTypeFromBase64 = (base64: string): string | undefined => {
   }
 
   throw new DotLottieError(
-    'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotlottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3, mpeg',
+    'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotlottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3',
     ErrorCodes.INVALID_DOTLOTTIE,
   );
 };

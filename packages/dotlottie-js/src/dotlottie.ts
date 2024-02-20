@@ -358,9 +358,10 @@ export class DotLottie extends DotLottieCommon {
               }
             }
           }
-        } catch (err: any) {
-          // throw error as it's invalid json
-          throw new DotLottieError(`Invalid manifest inside buffer! ${err.message}`);
+        } catch (err) {
+          if (err instanceof Error) {
+            throw new DotLottieError(`Invalid manifest inside buffer! ${err.message}`);
+          }
         }
       } else {
         // throw error as it's invalid buffer
