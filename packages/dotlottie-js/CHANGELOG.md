@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.7.1
+
+### Patch Changes
+
+- 94a9a93: fixes webp detection
+
 ## 0.7.0
 
 ### Minor Changes
