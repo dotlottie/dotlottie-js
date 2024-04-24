@@ -81,6 +81,21 @@ describe('loadFromUrl', () => {
     );
   });
 
+  it('loads a dotlottie from a url with content-type application/octet-stream', async () => {
+    const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
+      Promise.resolve(new Response(dotLottieAnimation, { headers: { 'content-type': 'application/octet-stream' } })),
+    );
+
+    const dotLottieURL = 'https://lottiefiles.fake/animation/animation.lottie';
+
+    const dotLottie = await loadFromURL(dotLottieURL);
+
+    expect(dotLottie).toBeDefined();
+    expect(dotLottie).toBeInstanceOf(Uint8Array);
+
+    expect(fetchSpy).toHaveBeenCalledWith(dotLottieURL);
+  });
+
   it('loads a dotlottie from a url', async () => {
     const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
       Promise.resolve(new Response(dotLottieAnimation, { headers: { 'content-type': 'application/zip' } })),

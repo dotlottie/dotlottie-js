@@ -564,9 +564,9 @@ export async function loadFromURL(src: string): Promise<Uint8Array> {
 
   const contentType = response.headers.get('content-type');
 
-  if (!contentType?.includes('application/zip')) {
+  if (!['application/zip', 'application/octet-stream'].includes(contentType || '')) {
     throw new DotLottieError(
-      'Invalid content type provided for .lottie file, expected application/zip',
+      'Invalid content type provided for .lottie file, expected application/zip or application/octet-stream',
       ErrorCodes.INVALID_DOTLOTTIE,
     );
   }
