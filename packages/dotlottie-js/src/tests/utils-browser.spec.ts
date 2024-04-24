@@ -75,7 +75,7 @@ describe('loadFromUrl', () => {
 
     await expectAsync(loadFromURL(dotLottieURL)).toBeRejectedWith(
       new DotLottieError(
-        'Invalid content type provided for .lottie file, expected application/zip',
+        'Invalid content type for .lottie file, expected application/zip or application/octet-stream, received text/html',
         ErrorCodes.INVALID_DOTLOTTIE,
       ),
     );
