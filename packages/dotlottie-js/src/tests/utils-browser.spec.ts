@@ -75,10 +75,25 @@ describe('loadFromUrl', () => {
 
     await expectAsync(loadFromURL(dotLottieURL)).toBeRejectedWith(
       new DotLottieError(
-        'Invalid content type provided for .lottie file, expected application/zip',
+        'Invalid content type for .lottie file, expected application/zip or application/octet-stream, received text/html',
         ErrorCodes.INVALID_DOTLOTTIE,
       ),
     );
+  });
+
+  it('loads a dotlottie from a url with content-type application/octet-stream', async () => {
+    const fetchSpy = spyOn(typeof window === 'undefined' ? global : window, 'fetch').and.returnValue(
+      Promise.resolve(new Response(dotLottieAnimation, { headers: { 'content-type': 'application/octet-stream' } })),
+    );
+
+    const dotLottieURL = 'https://lottiefiles.fake/animation/animation.lottie';
+
+    const dotLottie = await loadFromURL(dotLottieURL);
+
+    expect(dotLottie).toBeDefined();
+    expect(dotLottie).toBeInstanceOf(Uint8Array);
+
+    expect(fetchSpy).toHaveBeenCalledWith(dotLottieURL);
   });
 
   it('loads a dotlottie from a url', async () => {
