@@ -157,7 +157,7 @@ describe('DotLottie', () => {
     it('has proper generator when no input provided', () => {
       const dotLottie = new DotLottie();
 
-      expect(dotLottie.generator).toBe(`${pkg.name}@${pkg.version}`);
+      expect(dotLottie.generator).toBe(`${pkg.name}/node@${pkg.version}`);
     });
 
     it('accepts empty string', () => {
