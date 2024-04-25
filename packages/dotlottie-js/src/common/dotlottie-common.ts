@@ -167,31 +167,31 @@ export class DotLottieCommon {
   }
 
   public setAuthor(author: string | undefined): DotLottieCommon {
-    this._author = author ?? 'LottieFiles';
+    this._author = typeof author === 'string' ? author : 'LottieFiles';
 
     return this;
   }
 
   public setDescription(description: string | undefined): DotLottieCommon {
-    this._description = description ?? '';
+    this._description = typeof description === 'string' ? description : '';
 
     return this;
   }
 
   public setGenerator(generator: string | undefined): DotLottieCommon {
-    this._generator = generator ?? `${pkg.name}@${pkg.version}`;
+    this._generator = typeof generator === 'string' ? generator : `${pkg.name}@${pkg.version}`;
 
     return this;
   }
 
   public setKeywords(keywords: string | undefined): DotLottieCommon {
-    this._keywords = keywords ?? 'dotLottie';
+    this._keywords = typeof keywords === 'string' ? keywords : 'dotLottie';
 
     return this;
   }
 
   public setVersion(version: string | undefined): DotLottieCommon {
-    this._version = version ?? '1.0';
+    this._version = typeof version === 'string' ? version : '1.0';
 
     return this;
   }
@@ -699,23 +699,23 @@ export class DotLottieCommon {
   }
 
   protected _requireValidAuthor(author: string | undefined): asserts author is string {
-    if (!author) throw createError('Invalid author');
+    if (typeof author !== 'string') throw createError('Invalid author');
   }
 
   protected _requireValidDescription(description: string | undefined): asserts description is string {
-    if (!description) throw createError('Invalid description');
+    if (typeof description !== 'string') throw createError('Invalid description');
   }
 
   protected _requireValidGenerator(generator: string | undefined): asserts generator is string {
-    if (!generator) throw createError('Invalid generator');
+    if (typeof generator !== 'string') throw createError('Invalid generator');
   }
 
   protected _requireValidKeywords(keywords: string | undefined): asserts keywords is string {
-    if (!keywords) throw createError('Invalid keywords');
+    if (typeof keywords !== 'string') throw createError('Invalid keywords');
   }
 
   protected _requireValidVersion(version: string | undefined): asserts version is string {
-    if (!version) throw createError('Invalid version');
+    if (typeof version !== 'string') throw createError('Invalid version');
   }
 
   protected _requireValidCustomData(
