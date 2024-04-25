@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 0.7.2
+
+### Patch Changes
+
+- a641781: fix: 🐛 loadFromURL for application/octet-stream Content-Type
+- 340d9aa: fix: 🐛 allow empty str author,generator,keywords in manifest
+
 ## 0.7.1
 
 ### Patch Changes
