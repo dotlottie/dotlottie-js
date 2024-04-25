@@ -53,6 +53,14 @@ describe('DotLottie', () => {
 
       expect(dotlottie.version).toBe(version);
     });
+
+    it('accepts empty string', () => {
+      const dotlottie = new DotLottie();
+
+      dotlottie.setVersion('');
+
+      expect(dotlottie.version).toBe('');
+    });
   });
 
   describe('setAuthor', () => {
@@ -70,6 +78,14 @@ describe('DotLottie', () => {
       dotlottie.setAuthor('Design Barn');
 
       expect(dotlottie.author).toBe('Design Barn');
+    });
+
+    it('accepts empty string', () => {
+      const dotlottie = new DotLottie();
+
+      dotlottie.setAuthor('');
+
+      expect(dotlottie.author).toBe('');
     });
   });
 
@@ -109,6 +125,14 @@ describe('DotLottie', () => {
 
       expect(dotlottie.description).toBe('A description');
     });
+
+    it('accepts empty string', () => {
+      const dotlottie = new DotLottie();
+
+      dotlottie.setDescription('');
+
+      expect(dotlottie.description).toBe('');
+    });
   });
 
   describe('setGenerator', () => {
@@ -133,7 +157,15 @@ describe('DotLottie', () => {
     it('has proper generator when no input provided', () => {
       const dotLottie = new DotLottie();
 
-      expect(dotLottie.generator).toBe(`${pkg.name}/node@${pkg.version}`);
+      expect(dotLottie.generator).toBe(`${pkg.name}@${pkg.version}`);
+    });
+
+    it('accepts empty string', () => {
+      const dotlottie = new DotLottie();
+
+      dotlottie.setGenerator('');
+
+      expect(dotlottie.generator).toBe('');
     });
   });
 
@@ -174,6 +206,14 @@ describe('DotLottie', () => {
       dotlottie.setKeywords(keywords);
 
       expect(dotlottie.keywords).toBe(keywords);
+    });
+
+    it('accepts empty string', () => {
+      const dotlottie = new DotLottie();
+
+      dotlottie.setKeywords('');
+
+      expect(dotlottie.keywords).toBe('');
     });
   });
 
