@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable @typescript-eslint/naming-convention */
+
 import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
 import type { ZipOptions } from 'fflate';
 
@@ -611,6 +613,9 @@ export class DotLottieCommon {
         const stateOption = {
           states: stateMachine.states,
           descriptor: { id: stateMachine.id, initial: stateMachine.initial },
+          transitions: stateMachine.transitions,
+          listeners: stateMachine.listeners,
+          context_variables: stateMachine.contextVariables,
           zipOptions: stateMachine.zipOptions,
         };
 

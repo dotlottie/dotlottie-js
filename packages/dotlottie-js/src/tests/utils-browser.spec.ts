@@ -35,9 +35,9 @@ import dotLottieManifest from './__fixtures__/simple/animation/manifest.json';
 import dotLottieTheme from './__fixtures__/simple/animation/themes/theme1.json';
 import dotLottieAnimationWithImages from './__fixtures__/simple/big-merged-dotlottie.lottie';
 import bullAnimation from './__fixtures__/simple/bull.lottie';
+import stateAnimation from './__fixtures__/simple/exploding-pigeons-test-file.lottie';
 import { PigeonState } from './__fixtures__/simple/state/pigeon-state';
-import { SegmentsState } from './__fixtures__/simple/state/segments-state';
-import stateAnimation from './__fixtures__/simple/states.lottie';
+import { PigeonWithoutExplosion } from './__fixtures__/simple/state/segments-state';
 
 describe('createError', () => {
   it('returns an instance of Error with the correct message', () => {
@@ -252,9 +252,9 @@ describe('getStateMachine', () => {
   });
 
   it('gets state machine by id', async () => {
-    const stateMachine = await getStateMachine(stateAnimation, 'state_segments');
+    const stateMachine = await getStateMachine(stateAnimation, 'pigeon_without_explosion');
 
-    expect(stateMachine?.states).toEqual(SegmentsState.states);
+    expect(stateMachine?.states).toEqual(PigeonWithoutExplosion.states);
   });
 });
 
@@ -332,11 +332,7 @@ describe('getStateMachines', () => {
   it('returns a map of state machines', async () => {
     const stateMachines = await getStateMachines(stateAnimation);
 
-    // Not all states are being checked
-    // const stateSegments = `{"descriptor":{"id":"state_segments","initial":"loopState"},"states":{"loopState":{"animationId":"segments","statePlaybackSettings":{"autoplay":true,"loop":true,"segments":[70,500]}}}}`;
-    // const explodingPigeon = `{"descriptor":{"id":"exploding_pigeon","initial":"running"},"states":{"running":{"animationId":"pigeon","statePlaybackSettings":{"autoplay":true,"loop":true,"direction":1,"segments":"bird"},"onClick":{"state":"exploding"}},"exploding":{"animationId":"pigeon","statePlaybackSettings":{"autoplay":true,"loop":3,"direction":1,"segments":"explosion"},"onComplete":{"state":"feathers"}},"feathers":{"animationId":"pigeon","statePlaybackSettings":{"autoplay":true,"loop":false,"direction":1,"segments":"feathers"},"onComplete":{"state":"running"}}}}`;
-
-    expect(stateMachines['state_segments']).toEqual(JSON.stringify(SegmentsState));
+    expect(stateMachines['pigeon_without_explosion']).toEqual(JSON.stringify(PigeonWithoutExplosion));
     expect(stateMachines['exploding_pigeon']).toEqual(JSON.stringify(PigeonState));
   });
 
