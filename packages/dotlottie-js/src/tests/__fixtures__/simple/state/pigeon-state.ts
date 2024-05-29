@@ -3,79 +3,89 @@ import { DotLottieStateMachine } from "../../../../common"
 export const PigeonState: DotLottieStateMachine = {
   descriptor: {
     id: 'exploding_pigeon',
-    initial: 'running',
+    initial: 0,
   },
-  states: {
-    running: {
-      animationId:"pigeon",
-      playbackSettings: {
-        autoplay: true,
-        loop: true,
-        direction: 1 ,
-        segments: 'bird',
-      },
-      onClick: {
-        state: 'exploding',
-      },
+  states: [
+    {
+      animation_id: "pigeon",
+      type: "PlaybackState",
+      autoplay: true,
+      loop: false,
+      marker: "bird"
     },
-    exploding: {
-      animationId:"pigeon",
-      playbackSettings: {
-        autoplay: true,
-        loop: 3,
-        direction: 1 ,
-        segments: 'explosion',
-      },
-      onComplete: {
-        state: 'feathers',
-      },
+
+    {
+      animation_id: "pigeon",
+      type: "PlaybackState",
+      autoplay: true,
+      speed: 0.8,
+      loop: false,
+      marker: 'explosion',
     },
-    feathers: {
-      animationId:"pigeon",
-      playbackSettings: {
-        autoplay: true,
-        loop: false,
-        direction: 1 ,
-        segments: 'feathers',
-      },
-      onComplete: {
-        state: 'running',
-      },
+    {
+      animation_id: "pigeon",
+      type: "PlaybackState",
+      autoplay: true,
+      speed: 0.8,
+      loop: false,
+      marker: 'feathers',
+    }
+  ],
+  transitions: [
+    {
+      type: "Transition",
+      from_state: 0,
+      to_state: 1,
+      on_complete_event: {},
     },
-  },
+    {
+      type: "Transition",
+      from_state: 1,
+      to_state: 2,
+      on_complete_event: {},
+    },
+    {
+      type: "Transition",
+      from_state: 2,
+      to_state: 0,
+      on_complete_event: {},
+    },
+  ],
+  context_variables: [],
+  listeners: []
 }
 
 
 export const SmileyWifi: DotLottieStateMachine = {
-    descriptor: {
-      id: 'simple_click_to_next_prev',
-      initial: 'bounceState',
+  descriptor: {
+    id: 'simple_click_to_next_prev',
+    initial: 0,
+  },
+  states: [
+    {
+      type: "PlaybackState",
+      animation_id: 'smiley',
+      autoplay: true,
+      loop: true,
+      mode: "Reverse",
+      speed: 2,
     },
-    states: {
-      smileyState: {
-        animationId: 'smiley',
-        playbackSettings: {
-          autoplay: true,
-          loop: true,
-          direction: -1 ,
-          speed: 2,
-          defaultTheme: 'bounce-dark',
-        },
-        onMouseEnter: {
-          state: 'wifiState',
-        },
-      },
-      wifiState: {
-        animationId: 'wifi',
-        playbackSettings: {
-          autoplay: true,
-          loop: true,
-          direction: 1 ,
-          defaultTheme: 'wifi-dark',
-        },
-        onMouseLeave: {
-          state: 'smileyState',
-        },
-      },
+    {
+      type: "PlaybackState",
+      animation_id: 'wifi',
+      autoplay: true,
+      loop: true,
+      mode: "Forward",
     },
-  }
+  ],
+  transitions: [
+    {
+      type: "Transition",
+      from_state: 0,
+      to_state: 1,
+      string_event: { value: 'click' },
+    }
+  ],
+  listeners: [],
+  context_variables: []
+};

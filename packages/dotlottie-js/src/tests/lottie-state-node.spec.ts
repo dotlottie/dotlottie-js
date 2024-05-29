@@ -3,6 +3,7 @@
  */
 
 /* eslint-disable no-new */
+/* eslint-disable @typescript-eslint/naming-convention */
 
 import type { AnimationData } from '../common';
 import { DotLottie } from '../dotlottie';
@@ -18,17 +19,23 @@ describe('LottieState', () => {
     expect(() => {
       // act
       new LottieStateMachine({
-        descriptor: { id: '', initial: '' },
-        states: {},
+        descriptor: { id: '', initial: 0 },
+        states: [],
+        transitions: [],
+        listeners: [],
+        context_variables: [],
       });
       // assert
-    }).toThrowError('[dotlottie-js]: Invalid id.');
+    }).toThrowError('Invalid id.');
   });
 
   it('gets and sets the zipOptions', () => {
     const theme = new LottieStateMachine({
-      descriptor: { id: 'test', initial: '' },
-      states: {},
+      descriptor: { id: 'test', initial: 0 },
+      states: [],
+      transitions: [],
+      listeners: [],
+      context_variables: [],
       zipOptions: {
         level: 9,
         mem: 1,
@@ -52,8 +59,11 @@ describe('LottieState', () => {
   it('gets and sets the id', () => {
     // arrange
     const state = new LottieStateMachine({
-      descriptor: { id: 'test', initial: '' },
-      states: {},
+      descriptor: { id: 'test', initial: 0 },
+      states: [],
+      transitions: [],
+      listeners: [],
+      context_variables: [],
     });
 
     expect(state.id).toEqual('test');
@@ -70,6 +80,9 @@ describe('LottieState', () => {
     const pigeonState = new LottieStateMachine({
       descriptor: PigeonState.descriptor,
       states: PigeonState.states,
+      transitions: PigeonState.transitions,
+      listeners: PigeonState.listeners,
+      context_variables: PigeonState.context_variables,
     });
 
     // assert
