@@ -8,6 +8,7 @@ export const PigeonWithoutExplosion: DotLottieStateMachine =
     },
     states: [
       {
+        name: "pigeon",
         animation_id: "pigeon",
         type: "PlaybackState",
         autoplay: true,
@@ -15,6 +16,7 @@ export const PigeonWithoutExplosion: DotLottieStateMachine =
         marker: "bird"
       },
       {
+        name: "feathers",
         animation_id: "pigeon",
         type: "PlaybackState",
         autoplay: true,
