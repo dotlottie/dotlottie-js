@@ -1,6 +1,6 @@
 {
   "name": "@dotlottie/dotlottie-js",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "type": "module",
   "description": "This library helps in creating and modifying .lottie files.",
   "repository": {

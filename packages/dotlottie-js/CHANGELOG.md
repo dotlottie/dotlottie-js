@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.8.0
+
+### Minor Changes
+
+- ba21d35: New dotLottie state machine format
+
 ## 0.7.2
 
 ### Patch Changes
