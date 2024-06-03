@@ -7,14 +7,15 @@ export const PigeonState: DotLottieStateMachine = {
   },
   states: [
     {
+      name: "pigeon",
       animation_id: "pigeon",
       type: "PlaybackState",
       autoplay: true,
       loop: false,
       marker: "bird"
     },
-
     {
+      name: "explosion",
       animation_id: "pigeon",
       type: "PlaybackState",
       autoplay: true,
@@ -23,6 +24,7 @@ export const PigeonState: DotLottieStateMachine = {
       marker: 'explosion',
     },
     {
+      name: "feathers",
       animation_id: "pigeon",
       type: "PlaybackState",
       autoplay: true,
@@ -63,6 +65,7 @@ export const SmileyWifi: DotLottieStateMachine = {
   },
   states: [
     {
+      name: "smiley",
       type: "PlaybackState",
       animation_id: 'smiley',
       autoplay: true,
@@ -71,6 +74,7 @@ export const SmileyWifi: DotLottieStateMachine = {
       speed: 2,
     },
     {
+      name: "wifi",
       type: "PlaybackState",
       animation_id: 'wifi',
       autoplay: true,

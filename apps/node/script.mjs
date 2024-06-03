@@ -23,6 +23,7 @@ async function createDotLottieForTests() {
       },
       states: [
         {
+          name: "pigeon",
           animation_id: "pigeon",
           type: "PlaybackState",
           autoplay: true,
@@ -30,6 +31,7 @@ async function createDotLottieForTests() {
           marker: "bird"
         },
         {
+          name: "explosion",
           animation_id: "pigeon",
           type: "PlaybackState",
           autoplay: true,
@@ -38,6 +40,7 @@ async function createDotLottieForTests() {
           marker: 'explosion',
         },
         {
+          name: "feathers",
           animation_id: "pigeon",
           type: "PlaybackState",
           autoplay: true,
@@ -76,6 +79,7 @@ async function createDotLottieForTests() {
       },
       states: [
         {
+          name: "pigeon",
           animation_id: "pigeon",
           type: "PlaybackState",
           autoplay: true,
@@ -83,6 +87,7 @@ async function createDotLottieForTests() {
           marker: "bird"
         },
         {
+          name: "feathers",
           animation_id: "pigeon",
           type: "PlaybackState",
           autoplay: true,

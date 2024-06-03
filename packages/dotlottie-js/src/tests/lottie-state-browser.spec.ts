@@ -62,6 +62,7 @@ describe('LottieState', () => {
       descriptor: { id: 'test', initial: 0 },
       states: [
         {
+          name: 'test',
           type: 'PlaybackState',
           mode: 'Forward',
           autoplay: true,

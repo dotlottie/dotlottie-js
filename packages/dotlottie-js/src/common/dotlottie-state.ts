@@ -58,6 +58,7 @@ const Modes = union([string('Forward'), string('Reverse'), string('Bounce'), str
 const StateType = union([string('PlaybackState'), string('FinalState'), string('SyncState'), string('GobalState')]);
 
 export const PlaybackStateSchema = object({
+  name: string(),
   type: StateType,
   animation_id: optional(string()),
   loop: optional(boolean()),
