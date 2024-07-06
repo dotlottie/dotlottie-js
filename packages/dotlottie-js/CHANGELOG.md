@@ -1,5 +1,16 @@
 # @dotlottie/dotlottie-js
 
+## 0.8.0
+
+### Minor Changes
+
+- ba21d35: New dotLottie state machine format
+
+### Patch Changes
+
+- ddb1786: move @lottiefiles/lottie-types from devDependencies to dependencies to resolve import errors during
+  typechecking when the package is used from typescript
+
 ## 0.7.2
 
 ### Patch Changes
