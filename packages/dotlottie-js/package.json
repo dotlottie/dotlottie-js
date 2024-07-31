@@ -1,6 +1,6 @@
 {
   "name": "@dotlottie/dotlottie-js",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "type": "module",
   "description": "This library helps in creating and modifying .lottie files.",
   "repository": {
@@ -55,6 +55,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@lottiefiles/lottie-types": "^1.2.1",
     "browser-image-hash": "^0.0.5",
     "fflate": "^0.8.1",
     "sharp": "^0.33.2",
@@ -62,7 +63,6 @@
     "valibot": "^0.13.1"
   },
   "devDependencies": {
-    "@lottiefiles/lottie-types": "^1.2.1",
     "@types/jasmine": "4.3.5",
     "@types/node": "18.0.6",
     "@types/sharp": "0.31.1",
