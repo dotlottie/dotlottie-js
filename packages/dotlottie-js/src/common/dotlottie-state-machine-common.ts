@@ -178,7 +178,7 @@ export class DotLottieStateMachineCommon {
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
-      throw new DotLottieError(`Invalid states: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+      throw new DotLottieError(`Invalid context variables: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 
@@ -188,7 +188,7 @@ export class DotLottieStateMachineCommon {
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
-      throw new DotLottieError(`Invalid states: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+      throw new DotLottieError(`Invalid listeners: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 
@@ -198,7 +198,7 @@ export class DotLottieStateMachineCommon {
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
-      throw new DotLottieError(`Invalid states: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+      throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 }

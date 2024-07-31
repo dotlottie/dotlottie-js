@@ -66,6 +66,7 @@ export const PlaybackStateSchema = object({
   mode: optional(Modes),
   speed: optional(number()),
   marker: optional(string()),
+  background_color: optional(number()),
   segment: optional(optional(tuple([number(), number()]))),
   use_frame_interpolation: optional(boolean()),
   reset_context: optional(string()),
@@ -74,24 +75,29 @@ export const PlaybackStateSchema = object({
 });
 
 export const SyncStateSchema = object({
-  type: string(),
+  name: string(),
+  type: StateType,
   animation_id: optional(string()),
   frame_context_key: string(),
-  reset_context: string(),
+  background_color: optional(number()),
+  segment: optional(optional(tuple([number(), number()]))),
+  reset_context: optional(string()),
   entry_actions: optional(array(ActionSchema)),
   exit_actions: optional(array(ActionSchema)),
 });
 
 export const FinalStateSchema = object({
-  type: string(),
-  reset_context: string(),
+  name: string(),
+  type: StateType,
+  reset_context: optional(string()),
   entry_actions: optional(array(ActionSchema)),
   exit_actions: optional(array(ActionSchema)),
 });
 
 export const GlobalStateSchema = object({
-  type: string(),
-  reset_context: string(),
+  name: string(),
+  type: StateType,
+  reset_context: optional(string()),
   entry_actions: optional(array(ActionSchema)),
   exit_actions: optional(array(ActionSchema)),
 });
@@ -103,9 +109,9 @@ export const StatesSchema = array(StateSchema);
 export const ListenerSchema = object({
   type: string(),
   target: optional(string()),
-  action: string(),
-  value: union([string(), boolean(), number()]),
-  context_key: string(),
+  action: optional(string()),
+  value: optional(union([string(), boolean(), number()])),
+  context_key: optional(string()),
 });
 
 export const ListenersSchemas = array(ListenerSchema);
