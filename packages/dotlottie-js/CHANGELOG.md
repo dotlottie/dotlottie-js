@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 0.8.1
+
+### Patch Changes
+
+- d36acf1: updated syncState schema
+- 6df03bc: chore(lottie-types): replace deprecated definitions from LottieFiles to OSS lottie-animation-communiy
+
 ## 0.8.0
 
 ### Minor Changes
