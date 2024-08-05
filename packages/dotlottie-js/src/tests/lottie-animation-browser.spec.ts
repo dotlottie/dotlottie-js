@@ -4,7 +4,7 @@
 
 /* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable no-new */
-import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import { Base64 } from 'js-base64';
 
 import { LottieAnimation, LottieTheme } from '..';

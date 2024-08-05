@@ -2,7 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
 import { LottieImage } from '../lottie-image';
 

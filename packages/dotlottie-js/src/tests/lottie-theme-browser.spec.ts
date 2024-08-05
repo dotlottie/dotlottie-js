@@ -5,7 +5,7 @@
 /* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable no-new */
 
-import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
 import { LottieTheme, LottieAnimation } from '..';
 
