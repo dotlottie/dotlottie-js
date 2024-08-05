@@ -4,7 +4,7 @@
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
 import pkg from '../../package.json';

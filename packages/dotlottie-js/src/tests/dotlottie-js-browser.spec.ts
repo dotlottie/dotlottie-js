@@ -5,7 +5,7 @@
 /* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable max-classes-per-file */
 
-import type { Animation as AnimationType } from '@lottiefiles/lottie-types';
+import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import { Base64 } from 'js-base64';
 
 import { DotLottie, LottieAnimation } from '..';

@@ -4,7 +4,7 @@
 
 /* eslint-disable guard-for-in */
 
-import type { Animation as AnimationData, Asset } from '@lottiefiles/lottie-types';
+import type { Animation as AnimationData, Asset } from '@lottie-animation-community/lottie-types';
 import type { UnzipFileFilter, Unzipped } from 'fflate';
 import { unzip as fflateUnzip, strFromU8 } from 'fflate';
 import { flatten, safeParse } from 'valibot';
