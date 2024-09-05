@@ -55,7 +55,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@lottie-animation-community/lottie-types": "^1.1.0",
+    "@lottie-animation-community/lottie-types": "^1.2.0",
     "browser-image-hash": "^0.0.5",
     "fflate": "^0.8.1",
     "sharp": "^0.33.2",
