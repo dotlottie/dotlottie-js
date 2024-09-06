@@ -204,8 +204,8 @@ importers:
   packages/dotlottie-js:
     dependencies:
       '@lottie-animation-community/lottie-types':
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.2.0
+        version: 1.2.0
       browser-image-hash:
         specifier: ^0.0.5
         version: 0.0.5
@@ -2103,8 +2103,8 @@ packages:
       '@lit-labs/ssr-dom-shim': 1.1.0
     dev: false
 
-  /@lottie-animation-community/lottie-types@1.1.0:
-    resolution: {integrity: sha512-xMPpJWnBKHrC8WMmL4DImXOIlJArNqL0eWKAHDw8UGGgiQfrlJp+YdKkV8p4Zr4EqWE1YqxB2iFI0GrTkGz3jA==}
+  /@lottie-animation-community/lottie-types@1.2.0:
+    resolution: {integrity: sha512-/TKbYhDbjneATE++7yxuBJU1PsiSvXFFZgjB4SyOehTrkUmIaSFSb1mHj/Em9YIWpF5TRkxzqRwJZIh5/g0cSA==}
     dev: false
 
   /@lottiefiles/commitlint-config@2.0.0(@commitlint/cli@17.0.3):
