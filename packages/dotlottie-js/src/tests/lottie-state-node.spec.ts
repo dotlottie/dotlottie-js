@@ -3,7 +3,6 @@
  */
 
 /* eslint-disable no-new */
-/* eslint-disable @typescript-eslint/naming-convention */
 
 import type { AnimationData } from '../common';
 import { DotLottie } from '../dotlottie';
