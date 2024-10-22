@@ -134,63 +134,197 @@ async function createExplodingPigeon() {
     })
     .addStateMachine({
       descriptor: {
-        id: 'pigeon_fsm',
-        initial: 0, // The index of the state to start at
+        id: "explodingPigeon",
+        initial: "pigeonRunning"
       },
       states: [
         {
-          name: "pigeon",
           type: "PlaybackState",
-          mode: "Forward",
-          speed: 1,
-          use_frame_interpolation: true,
-          autoplay: true,
+          name: "pigeonRunning",
+          animationId: "",
           loop: true,
-          marker: "bird"
+          autoplay: true,
+          segment: "bird",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "explosion",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "explode"
+                }
+              ]
+            }
+          ]
         },
         {
+          type: "PlaybackState",
           name: "explosion",
-          type: "PlaybackState",
-          mode: "Forward",
-          autoplay: true,
-          speed: 0.5,
+          animationId: "",
           loop: false,
-          marker: 'explosion',
+          autoplay: true,
+          segment: "explosion",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "feathersFalling",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "rainFeathers"
+                }
+              ]
+            }
+          ]
         },
         {
-          name: "feathers",
           type: "PlaybackState",
-          autoplay: true,
-          speed: 1,
+          name: "feathersFalling",
+          animationId: "",
           loop: false,
-          marker: 'feathers',
+          autoplay: true,
+          segment: "feathers",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "pigeonRunning",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "restart"
+                }
+              ]
+            }
+          ]
         }
       ],
-      transitions: [
+      listeners: [
         {
-          type: "Transition",
-          from_state: 0,
-          to_state: 1,
-          string_event: {
-            value: "explosion"
-          },
-          // on_pointer_down_event: {},
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "explode"
+            }
+          ]
         },
         {
-          type: "Transition",
-          from_state: 1,
-          to_state: 2,
-          on_complete_event: {},
+          type: "OnComplete",
+          stateName: "explosion",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "rainFeathers"
+            }
+          ]
         },
         {
-          type: "Transition",
-          from_state: 2,
-          to_state: 0,
-          on_complete_event: {},
-        },
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "restart"
+            }
+          ]
+        }
       ],
-      listeners: [],
-      context_variables: []
+      triggers: [
+        {
+          type: "Event",
+          name: "explode"
+        },
+        {
+          type: "Event",
+          name: "rainFeathers"
+        },
+        {
+          type: "Event",
+          name: "restart"
+        }
+      ]
+    })
+    .addStateMachine({
+      descriptor: {
+        id: "pigeonWithoutExplosion",
+        initial: "pigeonRunning"
+      },
+      states: [
+        {
+          type: "PlaybackState",
+          name: "pigeonRunning",
+          animationId: "",
+          loop: true,
+          autoplay: true,
+          segment: "bird",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "feathersFalling",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "explode"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          type: "PlaybackState",
+          name: "feathersFalling",
+          animationId: "",
+          loop: false,
+          autoplay: true,
+          segment: "feathers",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "pigeonRunning",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "restart"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      listeners: [
+        {
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "explode"
+            }
+          ]
+        },
+        {
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "restart"
+            }
+          ]
+        }
+      ],
+      triggers: [
+        {
+          type: "Event",
+          name: "explode"
+        },
+        {
+          type: "Event",
+          name: "rainFeathers"
+        },
+        {
+          type: "Event",
+          name: "restart"
+        }
+      ]
     })
     .build()
     .then((value) => {
@@ -1115,7 +1249,7 @@ async function debugScenario() {
 
 // debugScenario();
 
-// createExplodingPigeon();
+createExplodingPigeon();
 // createListenersAnimation();
 // create_pigeon_fsm_eq_guard();
 // create_pigeon_gt_gte_guard();
@@ -1124,9 +1258,9 @@ async function debugScenario() {
 
 
 /** Sun moon toggle button */
-create_toggle_button();
+// create_toggle_button();
 
 /** Coffee drinker sync to scroll. Recreate the animation on the Interactivity homepage */
 /* lottiefiles.com/interactivity */
-create_sync_animation();
+// create_sync_animation();
 

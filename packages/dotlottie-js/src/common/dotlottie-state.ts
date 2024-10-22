@@ -5,8 +5,6 @@
 import type { Output } from 'valibot';
 import { boolean, number, object, optional, string, array, union } from 'valibot';
 
-const NumericStringBooleanType = union([string('Numeric'), string('String'), string('Boolean')]);
-
 export const NumericGuardSchema = object({
   type: string('Numeric'),
   triggerName: string(),
@@ -25,8 +23,12 @@ export const BooleanGuardSchema = object({
   conditionType: string(),
   compareTo: union([string(), boolean()]),
 });
+export const EventGuardSchema = object({
+  type: string('Event'),
+  triggerName: string(),
+});
 
-export const GuardSchema = union([NumericGuardSchema, StringGuardSchema, BooleanGuardSchema]);
+export const GuardSchema = union([NumericGuardSchema, StringGuardSchema, BooleanGuardSchema, EventGuardSchema]);
 
 // Event Schemas
 const NumericEventSchema = object({ value: number() });
@@ -40,7 +42,6 @@ const TransitionType = string('Transition');
 // Transition Schema
 export const TransitionSchema = object({
   type: TransitionType,
-  fromState: string(),
   toState: string(),
   guards: optional(array(GuardSchema)),
 });
@@ -141,7 +142,7 @@ const StateType = union([string('PlaybackState'), string('GlobalState')]);
 export const PlaybackStateSchema = object({
   name: string(),
   type: StateType,
-  animationId: optional(string()),
+  animationId: string(),
   loop: optional(boolean()),
   autoplay: optional(boolean()),
   mode: optional(Modes),
@@ -151,6 +152,7 @@ export const PlaybackStateSchema = object({
   useFrameInterpolation: optional(boolean()),
   entryActions: optional(array(ActionSchema)),
   exitActions: optional(array(ActionSchema)),
+  transitions: optional(TransitionsSchema),
 });
 
 export const GlobalStateSchema = object({
@@ -158,6 +160,7 @@ export const GlobalStateSchema = object({
   type: StateType,
   entryActions: optional(array(ActionSchema)),
   exitActions: optional(array(ActionSchema)),
+  transitions: optional(TransitionsSchema),
 });
 
 export const StateSchema = union([PlaybackStateSchema, GlobalStateSchema]);
@@ -209,12 +212,35 @@ export const ListenerSchema = union([
 ]);
 export const ListenersSchema = array(ListenerSchema);
 
-// Context Variable Schema
-export const TriggerSchema = object({
-  type: NumericStringBooleanType,
+export const NumericTriggerSchema = object({
+  type: string('Numeric'),
   name: string(),
-  value: union([number(), string(), boolean()]),
+  value: number(),
 });
+
+export const StringTriggerSchema = object({
+  type: string('String'),
+  name: string(),
+  value: string(),
+});
+
+export const BooleanTriggerSchema = object({
+  type: string('String'),
+  name: string(),
+  value: boolean(),
+});
+
+export const EventTriggerSchema = object({
+  type: string('Event'),
+  name: string(),
+});
+
+export const TriggerSchema = union([
+  NumericTriggerSchema,
+  StringTriggerSchema,
+  BooleanTriggerSchema,
+  EventTriggerSchema,
+]);
 
 export const TriggersSchema = array(TriggerSchema);
 
@@ -233,7 +259,8 @@ export type DotLottieBooleanEvent = Output<typeof BooleanEventSchema>;
 export type DotLottieStringEvent = Output<typeof StringEventSchema>;
 export type DotLottiePointerEvent = Output<typeof PointerEventSchema>;
 export type DotLottieGuard = Output<typeof GuardSchema>;
-export type DotLottieContextVariables = Output<typeof TriggersSchema>;
+export type DotLottieTrigger = Output<typeof TriggerSchema>;
+export type DotLottieTriggers = Output<typeof TriggersSchema>;
 export type DotLottieListener = Output<typeof ListenerSchema>;
 export type DotLottieListeners = Output<typeof ListenersSchema>;
 export type DotLottieTransition = Output<typeof TransitionSchema>;
@@ -243,7 +270,6 @@ export type DotLottieTransitions = Output<typeof TransitionsSchema>;
 export const DotLottieStateMachineSchema = object({
   descriptor: DescriptorSchema,
   states: StatesSchema,
-  transitions: TransitionsSchema,
   listeners: optional(ListenersSchema),
   triggers: optional(TriggersSchema),
 });
