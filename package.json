@@ -4,9 +4,6 @@
   "homepage": "https://github.com/dotlottie/dotlottie-js#readme",
   "license": "MIT",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "keywords": [
     "dotLottie",
     "Lottie",

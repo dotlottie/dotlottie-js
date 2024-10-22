@@ -4,7 +4,7 @@
 
 import fs from 'fs';
 
-import { DotLottie } from '@dotlottie/dotlottie-js/node';
+import { DotLottie } from '@dotlottie/dotlottie-js/v1/node';
 
 async function createDotLottieForTests() {
   const dotLottie = new DotLottie();

@@ -2,7 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { DotLottie } from '@dotlottie/dotlottie-js/node';
+import { DotLottie } from '@dotlottie/dotlottie-js/v1/node';
 
 import styles from '@/styles/Home.module.css';
 

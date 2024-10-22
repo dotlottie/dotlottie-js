@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { DotLottie } from '@dotlottie/dotlottie-js';
+import { DotLottie } from '@dotlottie/dotlottie-js/v1';
 
 defineProps<{ msg: string }>();
 

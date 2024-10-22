@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { DotLottie } from '@dotlottie/dotlottie-js';
+import { DotLottie } from '@dotlottie/dotlottie-js/v1';
 
 export default {
   props: ['animationData'],

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import '@dotlottie/player-component';
 import './App.css';
-import { DotLottie } from '@dotlottie/dotlottie-js';
+import { DotLottie } from '@dotlottie/dotlottie-js/v1';
 
 declare global {
   namespace JSX {
