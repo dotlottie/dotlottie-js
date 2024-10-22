@@ -1,6 +1,6 @@
 {
-  "srcDir": "src",
-  "specDir": "src/tests",
+  "srcDir": "src/v1",
+  "specDir": "src/v1/tests",
   "specFiles": ["**/*.spec.mjs"],
   "env": {
     "stopSpecOnExpectationFailure": false,

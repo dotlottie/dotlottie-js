@@ -7,10 +7,10 @@ import { defineConfig } from 'tsup';
 export default defineConfig(({ platform }) => {
   const config = {
     clean: true,
-    entry: platform === 'browser' ? ['src/tests/**/*-browser.spec.ts'] : ['src/tests/**/*-node.spec.ts'],
+    entry: platform === 'browser' ? ['src/v1/tests/**/*-browser.spec.ts'] : ['src/v1/tests/**/*-node.spec.ts'],
     format: ['esm'],
     treeshake: true,
-    outDir: 'src/tests/dist',
+    outDir: 'src/v1/tests/dist',
     platform,
     target: ['esnext'],
     tsconfig: 'tsconfig.build.json',

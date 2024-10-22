@@ -21,16 +21,18 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "main": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./node": "./dist/node/index.js"
+    ".": "./dist/v2/index.js",
+    "./v1": "./dist/v1/index.js"
   },
-  "types": "./dist/index.d.ts",
+  "types": "./dist/v2/index.d.ts",
   "typesVersions": {
     "*": {
-      "node": [
-        "./dist/node"
+      "v1": [
+        "./dist/v1"
+      ],
+      "v2": [
+        "./dist/v2"
       ]
     }
   },

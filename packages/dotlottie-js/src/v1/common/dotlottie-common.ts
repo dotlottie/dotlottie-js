@@ -7,7 +7,7 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
-import pkg from '../../package.json';
+import pkg from '../../../package.json';
 
 import type { DotLottiePlugin } from './dotlottie-plugin';
 import type { DotLottieStateMachineCommonOptions } from './dotlottie-state-machine-common';

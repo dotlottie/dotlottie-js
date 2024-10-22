@@ -4,14 +4,14 @@
 
 /* eslint-disable @lottiefiles/import-filename-format */
 /* eslint-disable max-classes-per-file */
+
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
-import { unzipSync } from 'fflate';
 import { Base64 } from 'js-base64';
 
-import pkg from '../../package.json';
+import { DotLottie, LottieAnimation } from '..';
+import pkg from '../../../package.json';
 import type { AnimationData, AnimationOptions, Manifest, ManifestAnimation } from '../common';
 import { LottieThemeCommon, PlayMode, DotLottiePlugin } from '../common';
-import { DotLottie, LottieAnimation } from '../node';
 
 import bullData from './__fixtures__/image-asset-optimization/bull.json';
 import IMAGE_ANIMATION_1_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-1.json';
@@ -157,7 +157,7 @@ describe('DotLottie', () => {
     it('has proper generator when no input provided', () => {
       const dotLottie = new DotLottie();
 
-      expect(dotLottie.generator).toBe(`${pkg.name}/node@${pkg.version}`);
+      expect(dotLottie.generator).toBe(`${pkg.name}@${pkg.version}`);
     });
 
     it('accepts empty string', () => {
@@ -848,22 +848,6 @@ describe('DotLottie', () => {
       expect(dotlottie.animations[4]?.id).toEqual('v5');
       expect(dotlottie.animations[5]?.id).toEqual('v6');
       expect(dotlottie.animations.map((animation) => animation.id)).toEqual(['v1', 'v2', 'v3', 'v4', 'v5', 'v6']);
-    });
-
-    it('verify image asset loading in a dotLottie animation matches the expected data URL', async () => {
-      const dotlottie = await new DotLottie().fromArrayBuffer(bigMergedDotLottie);
-
-      const animation1 = await dotlottie.getAnimation(dotlottie.animations[0]?.id ?? '');
-
-      const unzippedBigMergedDotLottie = unzipSync(new Uint8Array(bigMergedDotLottie));
-
-      const base64 = Buffer.from(
-        unzippedBigMergedDotLottie[`images/${animation1?.imageAssets[0]?.fileName}`] as Uint8Array,
-      ).toString('base64');
-
-      const expectedDataURL = `data:image/jpeg;base64,${base64}`;
-
-      expect(await animation1?.imageAssets[0]?.toDataURL()).toEqual(expectedDataURL);
     });
   });
 

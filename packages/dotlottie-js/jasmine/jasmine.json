@@ -2,6 +2,6 @@
   "env": {
     "stopSpecOnExpectationFailure": true
   },
-  "spec_dir": "src/tests",
+  "spec_dir": "src/v1/tests",
   "spec_files": ["**/*.spec.mjs"]
 }
