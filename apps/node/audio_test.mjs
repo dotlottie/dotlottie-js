@@ -11,8 +11,8 @@
 
 import fs from 'fs';
 
-import { DotLottie } from '@dotlottie/dotlottie-js/v1/node';
-import { getAnimation, getAudio, getAllAudio } from '@dotlottie/dotlottie-js/v1/node';
+import { DotLottie } from '@dotlottie/dotlottie-js/v1';
+import { getAnimation, getAudio, getAllAudio } from '@dotlottie/dotlottie-js/v1';
 
 // const dotLottie = new DotLottie();
 

@@ -4,7 +4,7 @@
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
-import { DotLottie, LottieImage, getMimeTypeFromBase64 } from '..';
+import { DotLottie, LottieImage, getMimeTypeFromBase64 } from '../browser';
 
 import BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
 import IMAGE_ANIMATION_1_DATA from './__fixtures__/image-asset-optimization/image-animation-layer-1.json';

@@ -5,9 +5,9 @@
 /* eslint-disable no-new */
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import type { AnimationData } from '../common';
-import { DotLottie } from '../dotlottie';
-import { LottieStateMachine } from '../lottie-state-machine';
+import type { AnimationData } from '../browser';
+import { DotLottie } from '../browser/dotlottie';
+import { LottieStateMachine } from '../browser/lottie-state-machine';
 
 import animationData from './__fixtures__/simple/animation/animations/pigeon.json';
 import smileyAnimationData from './__fixtures__/simple/animation/animations/smiley.json';

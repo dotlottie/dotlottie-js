@@ -9,7 +9,6 @@ import type { LottieThemeCommon } from './dotlottie-theme-common';
 import type { LottieAudioCommon } from './lottie-audio-common';
 import type { LottieImageCommon } from './lottie-image-common';
 import type { ManifestAnimation } from './manifest';
-import { PlayMode } from './manifest';
 import { DotLottieError, createError, isAudioAsset } from './utils';
 
 export type AnimationData = AnimationType;
@@ -31,20 +30,6 @@ export class LottieAnimationCommon {
   protected _id: string = '';
 
   protected _url?: string;
-
-  private _direction: ManifestAnimation['direction'];
-
-  private _speed: number;
-
-  private _playMode: PlayMode;
-
-  private _loop: boolean | number;
-
-  private _autoplay: boolean;
-
-  private _hover: boolean;
-
-  private _intermission: number;
 
   private _zipOptions: ZipOptions;
 
@@ -70,14 +55,7 @@ export class LottieAnimationCommon {
     if (options.data) this._data = options.data;
     if (options.url) this._url = options.url;
 
-    this._direction = options.direction ?? 1;
-    this._speed = options.speed ?? 1.0;
-    this._playMode = options.playMode ?? PlayMode.Normal;
-    this._loop = options.loop ?? false;
-    this._autoplay = options.autoplay ?? false;
     this._defaultActiveAnimation = options.defaultActiveAnimation ?? false;
-    this._hover = options.hover ?? false;
-    this._intermission = options.intermission ?? 0;
   }
 
   public async toBase64(): Promise<string> {
@@ -159,70 +137,12 @@ export class LottieAnimationCommon {
     this._url = url;
   }
 
-  public get direction(): ManifestAnimation['direction'] {
-    return this._direction;
-  }
-
-  public set direction(direction: ManifestAnimation['direction']) {
-    this._direction = direction;
-  }
-
-  public get speed(): number {
-    return this._speed;
-  }
-
-  public set speed(speed: number) {
-    this._speed = speed;
-  }
-
-  public get playMode(): PlayMode {
-    return this._playMode;
-  }
-
-  public set playMode(playMode: PlayMode) {
-    this._playMode = playMode;
-  }
-
-  public get loop(): boolean | number {
-    return this._loop;
-  }
-
-  public set loop(loop: boolean | number) {
-    this._requireValidLoop(loop);
-    this._loop = loop;
-  }
-
-  public get autoplay(): boolean {
-    return this._autoplay;
-  }
-
-  public set autoplay(autoplay: boolean) {
-    this._autoplay = autoplay;
-  }
-
   public get defaultActiveAnimation(): boolean {
     return this._defaultActiveAnimation;
   }
 
   public set defaultActiveAnimation(defaultActiveAnimation: boolean) {
     this._defaultActiveAnimation = defaultActiveAnimation;
-  }
-
-  public get hover(): boolean {
-    return this._hover;
-  }
-
-  public set hover(hover: boolean) {
-    this._hover = hover;
-  }
-
-  public get intermission(): number {
-    return this._intermission;
-  }
-
-  public set intermission(intermission: number) {
-    this._requireValidIntermission(intermission);
-    this._intermission = intermission;
   }
 
   public addTheme(theme: LottieThemeCommon): void {
@@ -396,41 +316,6 @@ export class LottieAnimationCommon {
   }
 
   /**
-   * Ensure that the provided url is a valid string.
-   * The url must be a non-empty string, otherwise an error will be thrown.
-   * @param url - The url to validate.
-   * @throws Error - if the url is not a valid string.
-   *
-   */
-  private _requireValidDirection(direction: number): asserts direction is number {
-    if (direction !== -1 && direction !== 1) {
-      throw createError('Direction can only be -1 (backwards) or 1 (forwards)');
-    }
-  }
-
-  /**
-   * Ensure that the provided intermission is a valid, positive number.
-   * @param intermission - The intermission to validate.
-   * @throws Error - if the intermission is not a valid number.
-   */
-  private _requireValidIntermission(intermission: number): asserts intermission is number {
-    if (intermission < 0 || !Number.isInteger(intermission)) {
-      throw createError('intermission must be a positive number');
-    }
-  }
-
-  /**
-   * Ensure that the provided loop is a valid, positive number or boolean.
-   * @param loop - The loop to validate.
-   * @throws Error - if the loop is not a valid number or boolean.
-   */
-  private _requireValidLoop(loop: number | boolean): asserts loop is number | boolean {
-    if (typeof loop === 'number' && (!Number.isInteger(loop) || loop < 0)) {
-      throw createError('loop must be a positive number or boolean');
-    }
-  }
-
-  /**
    * Ensure that the provided options object is a valid AnimationOptions object.
    * The options object must contain the following mandatory properties: id, data or url.
    * If the options object does not contain all mandatory properties, an error will be thrown.
@@ -454,18 +339,6 @@ export class LottieAnimationCommon {
 
     if (options.url) {
       this._requireValidUrl(options.url);
-    }
-
-    if (options.direction) {
-      this._requireValidDirection(options.direction);
-    }
-
-    if (options.intermission) {
-      this._requireValidIntermission(options.intermission);
-    }
-
-    if (options.loop) {
-      this._requireValidLoop(options.loop);
     }
   }
 }

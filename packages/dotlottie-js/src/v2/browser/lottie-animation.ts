@@ -4,10 +4,17 @@
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
-import type { AnimationOptions } from './common';
-import { DotLottieError, LottieAnimationCommon, createError, getExtensionTypeFromBase64, isAudioAsset } from './common';
+import type { AnimationOptions } from '../common';
+import {
+  DotLottieError,
+  LottieAnimationCommon,
+  createError,
+  getExtensionTypeFromBase64,
+  isAudioAsset,
+} from '../common';
+
+import { LottieAudio } from './lottie-audio';
 import { LottieImage } from './lottie-image';
-import { LottieAudio } from './node/lottie-audio';
 
 export class LottieAnimation extends LottieAnimationCommon {
   public constructor(options: AnimationOptions) {
@@ -71,7 +78,7 @@ export class LottieAnimation extends LottieAnimationCommon {
         );
 
         asset.p = fileName;
-        asset.u = '/images/';
+        asset.u = '/i/';
         asset.e = 0;
       }
     }
@@ -118,7 +125,7 @@ export class LottieAnimation extends LottieAnimationCommon {
         );
 
         asset.p = fileName;
-        asset.u = '/audio/';
+        asset.u = '/a/';
         asset.e = 0;
       }
     }

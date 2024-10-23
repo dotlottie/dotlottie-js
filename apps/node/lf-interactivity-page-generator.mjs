@@ -4,8 +4,8 @@
 
 import fs from 'fs';
 
-import { DotLottie } from '@dotlottie/dotlottie-js/v1/node';
-import { getStateMachine } from '@dotlottie/dotlottie-js/v1/node';
+import { DotLottie } from '@dotlottie/dotlottie-js/v1';
+import { getStateMachine } from '@dotlottie/dotlottie-js/v1';
 
 async function createDotLottie() {
   const dotLottie = new DotLottie();

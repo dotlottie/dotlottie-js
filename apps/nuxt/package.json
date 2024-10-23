@@ -1,18 +1,18 @@
 {
   "name": "nuxt-app",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "postinstall": "nuxt prepare",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@dotlottie/dotlottie-js": "workspace:^"
-  },
-  "devDependencies": {
-    "@types/node": "^18",
-    "nuxt": "^3.4.2"
+    "@dotlottie/dotlottie-js": "workspace:^",
+    "nuxt": "^3.13.2",
+    "vue": "latest",
+    "vue-router": "latest"
   }
 }

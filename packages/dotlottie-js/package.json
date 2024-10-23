@@ -21,26 +21,28 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "main": "./dist/v2/node/index.js",
   "exports": {
-    ".": "./dist/v2/browser/index.js",
-    "./v1": "./dist/v1/browser/index.js",
-    "./node": "./dist/v2/node/index.js",
-    "./v1/node": "./dist/v1/node/index.js"
+    ".": {
+      "node": "./dist/v2/node/index.js",
+      "default": "./dist/v2/browser/index.js",
+      "types": "./dist/v2/browser/index.d.ts"
+    },
+    "./v1": {
+      "node": "./dist/v1/node/index.js",
+      "default": "./dist/v1/browser/index.js",
+      "types": "./dist/v1/browser/index.d.ts"
+    }
   },
+  "browser": "./dist/v2/browser/index.js",
   "types": "./dist/v2/browser/index.d.ts",
   "typesVersions": {
-    "*": {
+    "*": {  
       "v1": [
-        "./dist/v1/browser"
+        "./dist/v1/browser/index.d.ts"
       ],
-      "v1/node": [
-        "./dist/v1/node"
-      ],
-      "v2": [
-        "./dist/v2/browser"
-      ],
-      "v2/node": [
-        "./dist/v2/node"
+      "*": [
+        "./dist/v2/browser/index.d.ts"
       ]
     }
   },

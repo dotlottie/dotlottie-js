@@ -68,7 +68,7 @@ export class LottieAnimation extends LottieAnimationCommon {
         );
 
         asset.p = fileName;
-        asset.u = '/images/';
+        asset.u = '/i/';
         asset.e = 0;
       }
     }
@@ -115,7 +115,7 @@ export class LottieAnimation extends LottieAnimationCommon {
         );
 
         asset.p = fileName;
-        asset.u = '/audio/';
+        asset.u = '/a/';
         asset.e = 0;
       }
     }

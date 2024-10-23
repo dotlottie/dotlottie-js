@@ -6,7 +6,7 @@
 
 import { zipSync, unzipSync } from 'fflate';
 
-import type { AnimationData, Manifest } from '..';
+import type { AnimationData, Manifest } from '../node';
 import {
   DotLottieError,
   ErrorCodes,

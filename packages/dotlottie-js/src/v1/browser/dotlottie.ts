@@ -13,7 +13,7 @@ import type {
   ManifestAnimation,
   Manifest,
   ConversionOptions,
-} from './common';
+} from '../common';
 import {
   DotLottieCommon,
   createError,
@@ -21,11 +21,12 @@ import {
   getExtensionTypeFromBase64,
   DotLottieError,
   isAudioAsset,
-} from './common';
+} from '../common';
+
 import { DuplicateImageDetector } from './duplicate-image-detector';
 import { LottieAnimation } from './lottie-animation';
+import { LottieAudio } from './lottie-audio';
 import { LottieImage } from './lottie-image';
-import { LottieAudio } from './node/lottie-audio';
 
 export class DotLottie extends DotLottieCommon {
   public constructor(options?: DotLottieOptions) {

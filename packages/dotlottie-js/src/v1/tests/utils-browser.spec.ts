@@ -6,7 +6,7 @@
 
 import { zipSync, unzipSync } from 'fflate';
 
-import type { AnimationData, Manifest } from '..';
+import type { AnimationData, Manifest } from '../browser';
 import {
   DotLottieError,
   ErrorCodes,
@@ -25,7 +25,7 @@ import {
   getStateMachines,
   getAudio,
   getAllAudio,
-} from '..';
+} from '../browser';
 
 import dotLottieAnimationWithAudio from './__fixtures__/audio/2_instrument_animations.lottie';
 import dotLottieAnimation from './__fixtures__/simple/animation.lottie';

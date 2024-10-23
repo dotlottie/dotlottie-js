@@ -4,7 +4,7 @@
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
-import { LottieImage } from '../lottie-image';
+import { LottieImage } from '../browser/lottie-image';
 
 import { DotLottiePlugin } from './dotlottie-plugin';
 import type { LottieAnimationCommon } from './lottie-animation-common';

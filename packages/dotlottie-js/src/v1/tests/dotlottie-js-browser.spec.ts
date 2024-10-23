@@ -8,8 +8,8 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import { Base64 } from 'js-base64';
 
-import { DotLottie, LottieAnimation } from '..';
 import pkg from '../../../package.json';
+import { DotLottie, LottieAnimation } from '../browser';
 import type { AnimationData, AnimationOptions, Manifest, ManifestAnimation } from '../common';
 import { LottieThemeCommon, PlayMode, DotLottiePlugin } from '../common';
 

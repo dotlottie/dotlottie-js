@@ -7,7 +7,7 @@
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
-import { LottieTheme, LottieAnimation } from '..';
+import { LottieTheme, LottieAnimation } from '../node';
 
 import animationData from './__fixtures__/simple/animation/animations/lottie1.json';
 import themeData from './__fixtures__/simple/animation/themes/theme1.json';

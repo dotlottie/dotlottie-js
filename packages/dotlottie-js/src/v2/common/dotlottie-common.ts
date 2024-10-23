@@ -21,14 +21,9 @@ import type { Manifest } from './manifest';
 import { DotLottieError, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
 
 export interface DotLottieOptions {
-  author?: string;
-  customData?: Record<string, string>;
-  description?: string;
   enableDuplicateImageOptimization?: boolean;
   generator?: string;
-  keywords?: string;
   plugins?: DotLottiePlugin[];
-  revision?: number;
   version?: string;
 }
 
@@ -67,19 +62,9 @@ export class DotLottieCommon {
   public enableDuplicateImageOptimization?: boolean;
 
   public constructor(options?: DotLottieOptions) {
-    this._author = options?.author ?? 'LottieFiles';
-
-    this._description = options?.description ?? '';
-
     this._generator = options?.generator ?? `${pkg.name}@${pkg.version}`;
 
-    this._keywords = options?.keywords ?? 'dotLottie';
-
-    this._version = options?.version ?? '1.0';
-
-    this._customData = options?.customData ?? {};
-
-    this._revision = options?.revision ?? 1;
+    this._version = '2.0';
 
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
@@ -458,19 +443,9 @@ export class DotLottieCommon {
 
     const manifest: Manifest = {
       version: this.version,
-      revision: this.revision,
-      keywords: this.keywords,
-      author: this.author,
       generator: this.generator,
       animations: animationsList.map((animation) => ({
         id: animation.id,
-        direction: animation.direction,
-        speed: animation.speed,
-        playMode: animation.playMode,
-        loop: animation.loop,
-        autoplay: animation.autoplay,
-        hover: animation.hover,
-        intermission: animation.intermission,
         ...(animation.defaultTheme ? { defaultTheme: animation.defaultTheme } : {}),
       })),
       ...(this.description && this.description.trim() !== '' ? { description: this.description } : {}),
@@ -479,10 +454,7 @@ export class DotLottieCommon {
     };
 
     if (themesList.length > 0) {
-      manifest.themes = themesList.map((theme) => ({
-        id: theme.id,
-        animations: theme.animations.map((animation) => animation.id),
-      }));
+      manifest.themes = themesList.map((theme) => theme.id);
     }
 
     if (stateMachinesList.length > 0) {

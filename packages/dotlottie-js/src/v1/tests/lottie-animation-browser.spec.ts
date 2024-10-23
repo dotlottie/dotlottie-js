@@ -7,7 +7,7 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import { Base64 } from 'js-base64';
 
-import { LottieAnimation, LottieTheme } from '..';
+import { LottieAnimation, LottieTheme } from '../browser';
 
 import BULL_DATA from './__fixtures__/image-asset-optimization/bull.json';
 import animationData from './__fixtures__/simple/animation/animations/lottie1.json';

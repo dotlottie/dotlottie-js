@@ -9,7 +9,7 @@ import type { UnzipFileFilter, Unzipped } from 'fflate';
 import { unzip as fflateUnzip, strFromU8 } from 'fflate';
 import { flatten, safeParse } from 'valibot';
 
-import type { LottieStateMachine } from '../lottie-state-machine';
+import type { LottieStateMachine } from '../browser/lottie-state-machine';
 
 import type { Manifest } from './manifest';
 import { ManifestSchema } from './manifest';
