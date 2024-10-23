@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "vue-tsc && vite build",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "run-build": "vue-tsc && vite build"
   },
   "dependencies": {
     "@lottiefiles/vue-lottie-player": "1.1.0",
