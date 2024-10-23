@@ -178,16 +178,11 @@ export class DotLottie extends DotLottieCommon {
         try {
           // Parse the manifest first so that we can pick up animation settings
           const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
-          const { generator, version } = manifest;
+          const { generator } = manifest;
 
           if (generator) {
             this._requireValidGenerator(generator);
             dotlottie.setGenerator(generator);
-          }
-
-          if (version) {
-            this._requireValidVersion(version);
-            dotlottie.setVersion(version);
           }
 
           for (const key of Object.keys(contentObj)) {

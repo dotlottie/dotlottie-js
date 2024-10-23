@@ -44,20 +44,9 @@ export class DotLottieCommon {
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
 
-  protected _author?: string;
-
-  protected _description?: string;
-
   protected _generator?: string;
 
-  protected _keywords?: string;
-
   protected _version?: string;
-
-  protected _revision?: number;
-
-  // Custom data for the dotLottie
-  protected _customData?: Record<string, unknown>;
 
   public enableDuplicateImageOptimization?: boolean;
 
@@ -107,22 +96,6 @@ export class DotLottieCommon {
     return this._version;
   }
 
-  public get revision(): number | undefined {
-    return this._revision;
-  }
-
-  public get author(): string | undefined {
-    return this._author;
-  }
-
-  public get description(): string | undefined {
-    return this._description;
-  }
-
-  public get keywords(): string | undefined {
-    return this._keywords;
-  }
-
   public get generator(): string | undefined {
     return this._generator;
   }
@@ -135,10 +108,6 @@ export class DotLottieCommon {
     return this._buildManifest();
   }
 
-  public get custom(): Record<string, unknown> | undefined {
-    return this._customData;
-  }
-
   public get themes(): LottieThemeCommon[] {
     return Array.from(this._themesMap.values());
   }
@@ -147,44 +116,8 @@ export class DotLottieCommon {
     return Array.from(this._stateMachinesMap.values());
   }
 
-  public setCustomData(customData: Record<string, unknown> | undefined): DotLottieCommon {
-    this._customData = customData ?? {};
-
-    return this;
-  }
-
-  public setAuthor(author: string | undefined): DotLottieCommon {
-    this._author = typeof author === 'string' ? author : 'LottieFiles';
-
-    return this;
-  }
-
-  public setDescription(description: string | undefined): DotLottieCommon {
-    this._description = typeof description === 'string' ? description : '';
-
-    return this;
-  }
-
   public setGenerator(generator: string | undefined): DotLottieCommon {
     this._generator = typeof generator === 'string' ? generator : `${pkg.name}@${pkg.version}`;
-
-    return this;
-  }
-
-  public setKeywords(keywords: string | undefined): DotLottieCommon {
-    this._keywords = typeof keywords === 'string' ? keywords : 'dotLottie';
-
-    return this;
-  }
-
-  public setVersion(version: string | undefined): DotLottieCommon {
-    this._version = typeof version === 'string' ? version : '1.0';
-
-    return this;
-  }
-
-  public setRevision(revision: number): DotLottieCommon {
-    this._revision = revision;
 
     return this;
   }
@@ -439,18 +372,14 @@ export class DotLottieCommon {
     const animationsList = Array.from(this._animationsMap.values());
     const themesList = Array.from(this._themesMap.values());
     const stateMachinesList = Array.from(this._stateMachinesMap.keys());
-    const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
       version: this.version,
       generator: this.generator,
       animations: animationsList.map((animation) => ({
         id: animation.id,
-        ...(animation.defaultTheme ? { defaultTheme: animation.defaultTheme } : {}),
+        initialTheme: animation.defaultTheme,
       })),
-      ...(this.description && this.description.trim() !== '' ? { description: this.description } : {}),
-      ...(activeAnimationId && activeAnimationId.trim() !== '' ? { activeAnimationId } : {}),
-      ...(this._customData && Object.keys(this._customData).length !== 0 ? { custom: this._customData } : {}),
     };
 
     if (themesList.length > 0) {

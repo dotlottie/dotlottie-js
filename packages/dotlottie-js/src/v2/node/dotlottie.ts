@@ -84,13 +84,7 @@ export class DotLottie extends DotLottieCommon {
     const manifest = this._buildManifest();
 
     const dotlottie: Zippable = {
-      'manifest.json': [
-        strToU8(JSON.stringify(manifest)),
-        {
-          // no compression for manifest
-          level: 0,
-        },
-      ],
+      'manifest.json': strToU8(JSON.stringify(manifest)),
     };
 
     for (const animation of this.animations) {
@@ -168,16 +162,11 @@ export class DotLottie extends DotLottieCommon {
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         try {
           const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
-          const { generator, version } = manifest;
+          const { generator } = manifest;
 
           if (generator) {
             this._requireValidGenerator(generator);
             dotlottie.setGenerator(generator);
-          }
-
-          if (version) {
-            this._requireValidVersion(version);
-            dotlottie.setVersion(version);
           }
 
           for (const key of Object.keys(contentObj)) {
