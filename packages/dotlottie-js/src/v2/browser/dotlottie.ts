@@ -21,6 +21,7 @@ import {
   getExtensionTypeFromBase64,
   DotLottieError,
   isAudioAsset,
+  isV2,
 } from '../common';
 
 import { DuplicateImageDetector } from './duplicate-image-detector';
@@ -157,6 +158,10 @@ export class DotLottie extends DotLottieCommon {
    * @throws Error
    */
   public override async fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottie> {
+    if (!(await isV2(arrayBuffer))) {
+      throw createError('Expected a dotLottie v2 file');
+    }
+
     const dotlottie = new DotLottie();
 
     try {
@@ -191,7 +196,7 @@ export class DotLottie extends DotLottieCommon {
 
             if (key.startsWith('a/') && key.endsWith('.json')) {
               // extract animationId from key as the key = `a/${animationId}.json`
-              const animationId = /animations\/(.+)\.json/u.exec(key)?.[1];
+              const animationId = /a\/(.+)\.json/u.exec(key)?.[1];
 
               if (!animationId) {
                 throw createError('Invalid animation id');
@@ -213,7 +218,7 @@ export class DotLottie extends DotLottieCommon {
               });
             } else if (key.startsWith('i/')) {
               // extract imageId from key as the key = `i/${imageId}.${ext}`
-              const imageId = /images\/(.+)\./u.exec(key)?.[1];
+              const imageId = /i\/(.+)\./u.exec(key)?.[1];
 
               if (!imageId) {
                 throw createError('Invalid image id');
@@ -232,12 +237,12 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
-            } else if (key.startsWith('a/')) {
-              // extract audioId from key as the key = `a/${audioId}.${ext}`
-              const audioId = /audio\/(.+)\./u.exec(key)?.[1];
+            } else if (key.startsWith('u/')) {
+              // extract audioId from key as the key = `u/${audioId}.${ext}`
+              const audioId = /u\/(.+)\./u.exec(key)?.[1];
 
               if (!audioId) {
-                throw new DotLottieError('Invalid image id');
+                throw createError('Invalid audio id');
               }
 
               let decodedAudio = btoa(decodedStr);
@@ -255,7 +260,7 @@ export class DotLottie extends DotLottieCommon {
               );
             } else if (key.startsWith('t/') && key.endsWith('.json')) {
               // extract themeId from key as the key = `t/${themeId}.json`
-              const themeId = /themes\/(.+)\.json/u.exec(key)?.[1];
+              const themeId = /t\/(.+)\.json/u.exec(key)?.[1];
 
               if (!themeId) {
                 throw createError('Invalid theme id');
@@ -270,15 +275,15 @@ export class DotLottie extends DotLottieCommon {
                 }
               });
             } else if (key.startsWith('s/') && key.endsWith('.json')) {
-              // extract stateId from key as the key = `s/${stateId}.json`
-              const stateId = /states\/(.+)\.json/u.exec(key)?.[1];
+              // extract state machine id from key as the key = `s/${stateMachineId}.json`
+              const stateMachineId = /s\/(.+)\.json/u.exec(key)?.[1];
 
-              if (!stateId) {
-                throw createError('Invalid theme id');
+              if (!stateMachineId) {
+                throw createError('Invalid state machine id');
               }
 
-              manifest.states?.forEach((state) => {
-                if (state === stateId) {
+              manifest.stateMachines?.forEach((givenStateMachineId) => {
+                if (givenStateMachineId === stateMachineId) {
                   const decodedStateMachine = JSON.parse(decodedStr);
 
                   dotlottie.addStateMachine(decodedStateMachine);

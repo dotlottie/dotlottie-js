@@ -1114,3 +1114,9 @@ export async function getStateMachine(
 
   return stateMachine;
 }
+
+export async function isV2(dotLottie: ArrayBuffer): Promise<boolean> {
+  const manifest = await getManifest(new Uint8Array(dotLottie));
+
+  return manifest?.version === '2.0.0';
+}

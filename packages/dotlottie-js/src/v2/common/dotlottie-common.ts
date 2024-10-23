@@ -44,9 +44,9 @@ export class DotLottieCommon {
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
 
-  protected _generator?: string;
+  protected _generator: string;
 
-  protected _version?: string;
+  protected _version: string;
 
   public enableDuplicateImageOptimization?: boolean;
 
@@ -92,11 +92,11 @@ export class DotLottieCommon {
     return this._plugins;
   }
 
-  public get version(): string | undefined {
+  public get version(): string {
     return this._version;
   }
 
-  public get generator(): string | undefined {
+  public get generator(): string {
     return this._generator;
   }
 
@@ -370,7 +370,7 @@ export class DotLottieCommon {
 
   protected _buildManifest(): Manifest {
     const animationsList = Array.from(this._animationsMap.values());
-    const themesList = Array.from(this._themesMap.values());
+    const themesList = Array.from(this._themesMap.keys());
     const stateMachinesList = Array.from(this._stateMachinesMap.keys());
 
     const manifest: Manifest = {
@@ -379,15 +379,17 @@ export class DotLottieCommon {
       animations: animationsList.map((animation) => ({
         id: animation.id,
         initialTheme: animation.defaultTheme,
+        // Add themes associated
+        // Add background
       })),
     };
 
     if (themesList.length > 0) {
-      manifest.themes = themesList.map((theme) => theme.id);
+      manifest.themes = themesList;
     }
 
     if (stateMachinesList.length > 0) {
-      manifest.states = stateMachinesList;
+      manifest.stateMachines = stateMachinesList;
     }
 
     return manifest;
