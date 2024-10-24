@@ -2,94 +2,241 @@ import { DotLottieStateMachine } from "../../../../common"
 
 export const PigeonState: DotLottieStateMachine = {
   descriptor: {
-    id: 'exploding_pigeon',
-    initial: 0,
+    id: "explodingPigeon",
+    initial: "pigeonRunning"
   },
   states: [
     {
-      name: "pigeon",
-      animation_id: "pigeon",
       type: "PlaybackState",
+      name: "pigeonRunning",
+      animationId: "",
+      loop: true,
       autoplay: true,
-      loop: false,
-      marker: "bird"
+      segment: "bird",
+      transitions: [
+        {
+          type: "Transition",
+          toState: "explosion",
+          guards: [
+            {
+              type: "Event",
+              triggerName: "explode"
+            }
+          ]
+        }
+      ]
     },
     {
+      type: "PlaybackState",
       name: "explosion",
-      animation_id: "pigeon",
-      type: "PlaybackState",
-      autoplay: true,
-      speed: 0.8,
+      animationId: "",
       loop: false,
-      marker: 'explosion',
+      autoplay: true,
+      segment: "explosion",
+      transitions: [
+        {
+          type: "Transition",
+          toState: "feathersFalling",
+          guards: [
+            {
+              type: "Event",
+              triggerName: "rainFeathers"
+            }
+          ]
+        }
+      ]
     },
     {
-      name: "feathers",
-      animation_id: "pigeon",
       type: "PlaybackState",
-      autoplay: true,
-      speed: 0.8,
+      name: "feathersFalling",
+      animationId: "",
       loop: false,
-      marker: 'feathers',
+      autoplay: true,
+      segment: "feathers",
+      transitions: [
+        {
+          type: "Transition",
+          toState: "pigeonRunning",
+          guards: [
+            {
+              type: "Event",
+              triggerName: "restart"
+            }
+          ]
+        }
+      ]
     }
   ],
-  transitions: [
+  listeners: [
     {
-      type: "Transition",
-      from_state: 0,
-      to_state: 1,
-      on_complete_event: {},
+      type: "PointerDown",
+      actions: [
+        {
+          type: "Fire",
+          triggerName: "explode"
+        }
+      ]
     },
     {
-      type: "Transition",
-      from_state: 1,
-      to_state: 2,
-      on_complete_event: {},
+      type: "OnComplete",
+      stateName: "explosion",
+      actions: [
+        {
+          type: "Fire",
+          triggerName: "rainFeathers"
+        }
+      ]
     },
     {
-      type: "Transition",
-      from_state: 2,
-      to_state: 0,
-      on_complete_event: {},
-    },
+      type: "PointerDown",
+      actions: [
+        {
+          type: "Fire",
+          triggerName: "restart"
+        }
+      ]
+    }
   ],
-  context_variables: [],
-  listeners: []
+  triggers: [
+    {
+      type: "Event",
+      name: "explode"
+    },
+    {
+      type: "Event",
+      name: "rainFeathers"
+    },
+    {
+      type: "Event",
+      name: "restart"
+    }
+  ]
 }
 
+
+export const PigeonWithoutExplosion: DotLottieStateMachine = 
+{
+  descriptor: {
+    id: "pigeonWithoutExplosion",
+    initial: "pigeonRunning"
+  },
+  states: [
+    {
+      type: "PlaybackState",
+      name: "pigeonRunning",
+      animationId: "",
+      loop: true,
+      autoplay: true,
+      segment: "bird",
+      transitions: [
+        {
+          type: "Transition",
+          toState: "feathersFalling",
+          guards: [
+            {
+              type: "Event",
+              triggerName: "explode"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      type: "PlaybackState",
+      name: "feathersFalling",
+      animationId: "",
+      loop: false,
+      autoplay: true,
+      segment: "feathers",
+      transitions: [
+        {
+          type: "Transition",
+          toState: "pigeonRunning",
+          guards: [
+            {
+              type: "Event",
+              triggerName: "restart"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  listeners: [
+    {
+      type: "PointerDown",
+      actions: [
+        {
+          type: "Fire",
+          triggerName: "explode"
+        }
+      ]
+    },
+    {
+      type: "PointerDown",
+      actions: [
+        {
+          type: "Fire",
+          triggerName: "restart"
+        }
+      ]
+    }
+  ],
+  triggers: [
+    {
+      type: "Event",
+      name: "explode"
+    },
+    {
+      type: "Event",
+      name: "rainFeathers"
+    },
+    {
+      type: "Event",
+      name: "restart"
+    }
+  ]
+}
 
 export const SmileyWifi: DotLottieStateMachine = {
   descriptor: {
     id: 'simple_click_to_next_prev',
-    initial: 0,
+    initial: "smiley",
   },
   states: [
     {
       name: "smiley",
       type: "PlaybackState",
-      animation_id: 'smiley',
+      animationId: 'smiley',
       autoplay: true,
       loop: true,
       mode: "Reverse",
       speed: 2,
+      transitions: [
+        {
+          type: "Transition",
+          toState: "wifi",
+          guards: [
+            {
+              type: "Event",
+              triggerName: "click"
+            }
+          ]
+        }
+      ]
     },
     {
       name: "wifi",
       type: "PlaybackState",
-      animation_id: 'wifi',
+      animationId: 'wifi',
       autoplay: true,
       loop: true,
       mode: "Forward",
     },
   ],
-  transitions: [
-    {
-      type: "Transition",
-      from_state: 0,
-      to_state: 1,
-      string_event: { value: 'click' },
-    }
-  ],
   listeners: [],
-  context_variables: []
+  triggers: [{
+    type: "Event",
+    name: "click"
+  }]
 };

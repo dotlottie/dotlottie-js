@@ -3,7 +3,6 @@
  */
 
 /* eslint-disable no-new */
-/* eslint-disable @typescript-eslint/naming-convention */
 
 import type { AnimationData } from '../common';
 import { DotLottie } from '../dotlottie';
@@ -19,11 +18,10 @@ describe('LottieState', () => {
     expect(() => {
       // act
       new LottieStateMachine({
-        descriptor: { id: '', initial: 0 },
+        descriptor: { id: '', initial: 'pigeon' },
         states: PigeonState.states,
-        listeners: PigeonState.listeners,
-        transitions: PigeonState.transitions,
-        context_variables: PigeonState.context_variables,
+        listeners: PigeonState.listeners ?? [],
+        triggers: PigeonState.triggers ?? [],
       });
       // assert
     }).toThrowError('Invalid id.');
@@ -31,11 +29,10 @@ describe('LottieState', () => {
 
   it('gets and sets the zipOptions', () => {
     const theme = new LottieStateMachine({
-      descriptor: { id: 'test', initial: 0 },
+      descriptor: PigeonState.descriptor,
       states: PigeonState.states,
-      listeners: PigeonState.listeners,
-      transitions: PigeonState.transitions,
-      context_variables: PigeonState.context_variables,
+      listeners: PigeonState.listeners ?? [],
+      triggers: PigeonState.triggers ?? [],
       zipOptions: {
         level: 9,
         mem: 1,
@@ -59,7 +56,7 @@ describe('LottieState', () => {
   it('gets and sets the id', () => {
     // arrange
     const state = new LottieStateMachine({
-      descriptor: { id: 'test', initial: 0 },
+      descriptor: { id: 'test', initial: 'test' },
       states: [
         {
           name: 'test',
@@ -68,9 +65,6 @@ describe('LottieState', () => {
           autoplay: true,
         },
       ],
-      listeners: [],
-      transitions: [],
-      context_variables: [],
     });
 
     expect(state.id).toEqual('test');

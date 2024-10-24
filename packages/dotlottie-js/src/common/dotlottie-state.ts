@@ -2,20 +2,33 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import type { Output } from 'valibot';
-import { boolean, number, object, optional, string, array, union, tuple } from 'valibot';
+import { boolean, number, object, optional, string, array, union } from 'valibot';
 
-const NumericStringBooleanType = union([string('Numeric'), string('String'), string('Boolean')]);
-
-// Guard Schema
-export const GuardSchema = object({
-  type: NumericStringBooleanType,
-  context_key: string(),
-  condition_type: string(),
-  compare_to: union([string(), number(), boolean()]),
+export const NumericGuardSchema = object({
+  type: string('Numeric'),
+  triggerName: string(),
+  conditionType: string(),
+  compareTo: union([string(), number(), boolean()]),
 });
+export const StringGuardSchema = object({
+  type: string('String'),
+  triggerName: string(),
+  conditionType: string(),
+  compareTo: union([string(), number(), boolean()]),
+});
+export const BooleanGuardSchema = object({
+  type: string('Numeric'),
+  triggerName: string(),
+  conditionType: string(),
+  compareTo: union([string(), boolean()]),
+});
+export const EventGuardSchema = object({
+  type: string('Event'),
+  triggerName: string(),
+});
+
+export const GuardSchema = union([NumericGuardSchema, StringGuardSchema, BooleanGuardSchema, EventGuardSchema]);
 
 // Event Schemas
 const NumericEventSchema = object({ value: number() });
@@ -29,106 +42,212 @@ const TransitionType = string('Transition');
 // Transition Schema
 export const TransitionSchema = object({
   type: TransitionType,
-  from_state: number(),
-  to_state: number(),
+  toState: string(),
   guards: optional(array(GuardSchema)),
-  numeric_event: optional(NumericEventSchema),
-  boolean_event: optional(BooleanEventSchema),
-  string_event: optional(StringEventSchema),
-  on_complete_event: optional(object({})),
-  on_pointer_down_event: optional(PointerEventSchema),
-  on_pointer_up_event: optional(PointerEventSchema),
-  on_pointer_enter_event: optional(PointerEventSchema),
-  on_pointer_exit_event: optional(PointerEventSchema),
-  on_pointer_move_event: optional(PointerEventSchema),
 });
 
 export const TransitionsSchema = array(TransitionSchema);
 
 // Entry/Exit Action Schema
-const URLActionSchema = object({ type: string(), url: string(), target: string() });
+const URLActionSchema = object({ type: string(), url: string() });
 const ThemeActionSchema = object({ type: string(), themeId: string() });
-const SoundActionSchema = object({ type: string(), soundId: string() });
-const LogActionSchema = object({ type: string(), message: string() });
+const IncrementSchema = object({
+  type: string(),
+  triggerName: string(),
+  value: optional(union([string(), number()])),
+});
+const DecrementSchema = object({
+  type: string(),
+  triggerName: string(),
+  value: optional(union([string(), number()])),
+});
+const ToggleSchema = object({
+  type: string(),
+  triggerName: string(),
+});
+const SetBooleanSchema = object({
+  type: string(),
+  triggerName: string(),
+  value: optional(boolean()),
+});
+const SetStringSchema = object({
+  type: string(),
+  triggerName: string(),
+  value: optional(string()),
+});
+const SetNumericSchema = object({
+  type: string(),
+  triggerName: string(),
+  value: optional(number()),
+});
+const FireSchema = object({
+  type: string(),
+  triggerName: string(),
+});
+const ResetSchema = object({
+  type: string(),
+  triggerName: string(),
+});
+const SetExpressionSchema = object({
+  type: string(),
+  layerName: string(),
+  propertyIndex: number(),
+  varName: string(),
+  value: number(),
+});
+const SetThemeSchema = object({
+  type: string(),
+  themeId: string(),
+});
+const SetFrameSchema = object({
+  type: string(),
+  value: union([string(), number()]),
+});
+const SetProgressSchema = object({
+  type: string(),
+  value: union([string(), number()]),
+});
+const SetSlotSchema = object({
+  type: string(),
+  value: string(),
+});
+const FireCustomEventSchema = object({
+  type: string(),
+  value: string(),
+});
 
-const ActionSchema = union([URLActionSchema, ThemeActionSchema, SoundActionSchema, LogActionSchema]);
+const ActionSchema = union([
+  URLActionSchema,
+  ThemeActionSchema,
+  IncrementSchema,
+  DecrementSchema,
+  ToggleSchema,
+  SetBooleanSchema,
+  SetStringSchema,
+  SetNumericSchema,
+  FireSchema,
+  ResetSchema,
+  SetExpressionSchema,
+  SetThemeSchema,
+  SetFrameSchema,
+  SetProgressSchema,
+  SetSlotSchema,
+  FireCustomEventSchema,
+]);
 
 const Modes = union([string('Forward'), string('Reverse'), string('Bounce'), string('ReverseBounce')]);
 
-const StateType = union([string('PlaybackState'), string('FinalState'), string('SyncState'), string('GobalState')]);
+const StateType = union([string('PlaybackState'), string('GlobalState')]);
 
 export const PlaybackStateSchema = object({
   name: string(),
   type: StateType,
-  animation_id: optional(string()),
+  animationId: string(),
   loop: optional(boolean()),
   autoplay: optional(boolean()),
   mode: optional(Modes),
   speed: optional(number()),
-  marker: optional(string()),
-  background_color: optional(number()),
-  segment: optional(optional(tuple([number(), number()]))),
-  use_frame_interpolation: optional(boolean()),
-  reset_context: optional(string()),
-  entry_actions: optional(array(ActionSchema)),
-  exit_actions: optional(array(ActionSchema)),
-});
-
-export const SyncStateSchema = object({
-  name: string(),
-  type: StateType,
-  animation_id: optional(string()),
-  frame_context_key: string(),
-  background_color: optional(number()),
-  segment: optional(optional(tuple([number(), number()]))),
-  reset_context: optional(string()),
-  entry_actions: optional(array(ActionSchema)),
-  exit_actions: optional(array(ActionSchema)),
-});
-
-export const FinalStateSchema = object({
-  name: string(),
-  type: StateType,
-  reset_context: optional(string()),
-  entry_actions: optional(array(ActionSchema)),
-  exit_actions: optional(array(ActionSchema)),
+  segment: optional(string()),
+  backgroundColor: optional(number()),
+  useFrameInterpolation: optional(boolean()),
+  entryActions: optional(array(ActionSchema)),
+  exitActions: optional(array(ActionSchema)),
+  transitions: optional(TransitionsSchema),
 });
 
 export const GlobalStateSchema = object({
   name: string(),
   type: StateType,
-  reset_context: optional(string()),
-  entry_actions: optional(array(ActionSchema)),
-  exit_actions: optional(array(ActionSchema)),
+  entryActions: optional(array(ActionSchema)),
+  exitActions: optional(array(ActionSchema)),
+  transitions: optional(TransitionsSchema),
 });
 
-export const StateSchema = union([PlaybackStateSchema, SyncStateSchema, FinalStateSchema, GlobalStateSchema]);
+export const StateSchema = union([PlaybackStateSchema, GlobalStateSchema]);
 export const StatesSchema = array(StateSchema);
 
-// Listener Schema
-export const ListenerSchema = object({
+export const PointerUpSchema = object({
   type: string(),
-  target: optional(string()),
-  action: optional(string()),
-  value: optional(union([string(), boolean(), number()])),
-  context_key: optional(string()),
+  layerName: optional(string()),
+  actions: array(ActionSchema),
 });
 
-export const ListenersSchemas = array(ListenerSchema);
-
-// Context Variable Schema
-export const ContextVariableSchema = object({
-  type: NumericStringBooleanType,
-  key: string(),
-  value: union([number(), string(), boolean()]),
+export const PointerDownSchema = object({
+  type: string(),
+  layerName: optional(string()),
+  actions: array(ActionSchema),
 });
 
-export const ContextVariablesSchema = array(ContextVariableSchema);
+export const PointerEnterSchema = object({
+  type: string(),
+  layerName: optional(string()),
+  actions: array(ActionSchema),
+});
+
+export const PointerMoveSchema = object({
+  type: string(),
+  layerName: optional(string()),
+  actions: array(ActionSchema),
+});
+
+export const PointerExitSchema = object({
+  type: string(),
+  layerName: optional(string()),
+  actions: array(ActionSchema),
+});
+
+export const OnCompleteSchema = object({
+  type: string(),
+  stateName: string(),
+  actions: array(ActionSchema),
+});
+
+export const ListenerSchema = union([
+  PointerUpSchema,
+  PointerDownSchema,
+  PointerEnterSchema,
+  PointerMoveSchema,
+  PointerExitSchema,
+  OnCompleteSchema,
+]);
+export const ListenersSchema = array(ListenerSchema);
+
+export const NumericTriggerSchema = object({
+  type: string('Numeric'),
+  name: string(),
+  value: number(),
+});
+
+export const StringTriggerSchema = object({
+  type: string('String'),
+  name: string(),
+  value: string(),
+});
+
+export const BooleanTriggerSchema = object({
+  type: string('String'),
+  name: string(),
+  value: boolean(),
+});
+
+export const EventTriggerSchema = object({
+  type: string('Event'),
+  name: string(),
+});
+
+export const TriggerSchema = union([
+  NumericTriggerSchema,
+  StringTriggerSchema,
+  BooleanTriggerSchema,
+  EventTriggerSchema,
+]);
+
+export const TriggersSchema = array(TriggerSchema);
 
 // Descriptor Schema
 export const DescriptorSchema = object({
   id: string(),
-  initial: number(),
+  initial: string(),
 });
 
 export type DotLottieStates = Output<typeof StatesSchema>;
@@ -140,9 +259,10 @@ export type DotLottieBooleanEvent = Output<typeof BooleanEventSchema>;
 export type DotLottieStringEvent = Output<typeof StringEventSchema>;
 export type DotLottiePointerEvent = Output<typeof PointerEventSchema>;
 export type DotLottieGuard = Output<typeof GuardSchema>;
-export type DotLottieContextVariables = Output<typeof ContextVariablesSchema>;
+export type DotLottieTrigger = Output<typeof TriggerSchema>;
+export type DotLottieTriggers = Output<typeof TriggersSchema>;
 export type DotLottieListener = Output<typeof ListenerSchema>;
-export type DotLottieListeners = Output<typeof ListenersSchemas>;
+export type DotLottieListeners = Output<typeof ListenersSchema>;
 export type DotLottieTransition = Output<typeof TransitionSchema>;
 export type DotLottieTransitions = Output<typeof TransitionsSchema>;
 
@@ -150,8 +270,7 @@ export type DotLottieTransitions = Output<typeof TransitionsSchema>;
 export const DotLottieStateMachineSchema = object({
   descriptor: DescriptorSchema,
   states: StatesSchema,
-  transitions: TransitionsSchema,
-  listeners: ListenersSchemas,
-  context_variables: ContextVariablesSchema,
+  listeners: optional(ListenersSchema),
+  triggers: optional(TriggersSchema),
 });
 export type DotLottieStateMachine = Output<typeof DotLottieStateMachineSchema>;

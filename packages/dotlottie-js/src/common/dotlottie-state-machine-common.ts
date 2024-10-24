@@ -2,35 +2,24 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import type { ZipOptions } from 'fflate';
 import { safeParse, flatten } from 'valibot';
 
 import type {
-  DotLottieContextVariables,
   DotLottieDescriptor,
-  DotLottieListener,
   DotLottieListeners,
   DotLottieStates,
-  DotLottieTransition,
   DotLottieTransitions,
+  DotLottieTriggers,
 } from './dotlottie-state';
-import {
-  ContextVariablesSchema,
-  DescriptorSchema,
-  ListenersSchemas,
-  StatesSchema,
-  TransitionsSchema,
-} from './dotlottie-state';
+import { DescriptorSchema, ListenersSchema, StatesSchema, TransitionsSchema, TriggersSchema } from './dotlottie-state';
 import { DotLottieError, ErrorCodes } from './utils';
 
 export interface DotLottieStateMachineCommonOptions {
-  context_variables: DotLottieContextVariables;
   descriptor: DotLottieDescriptor;
-  listeners: DotLottieListeners;
+  listeners?: DotLottieListeners | undefined;
   states: DotLottieStates;
-  transitions: DotLottieTransitions;
+  triggers?: DotLottieTriggers | undefined;
   zipOptions?: ZipOptions;
 }
 
@@ -41,16 +30,13 @@ export class DotLottieStateMachineCommon {
 
   protected _states: DotLottieStates;
 
-  protected _transitions: DotLottieTransition[];
+  protected _listeners: DotLottieListeners;
 
-  protected _listeners: DotLottieListener[];
-
-  protected _contextVariables: DotLottieContextVariables;
+  protected _triggers: DotLottieTriggers;
 
   public constructor(options: DotLottieStateMachineCommonOptions) {
-    this._requireValidContextVariables(options.context_variables);
-    this._requireValidListeners(options.listeners);
-    this._requireValidTransitions(options.transitions);
+    this._requireValidTriggers(options.triggers ?? []);
+    this._requireValidListeners(options.listeners ?? []);
     this._requireValidId(options.descriptor.id);
     this._requireValidStates(options.states);
     this._requireValidDescriptor(options.descriptor);
@@ -63,11 +49,9 @@ export class DotLottieStateMachineCommon {
 
     this._descriptor = options.descriptor;
 
-    this._listeners = options.listeners;
+    this._listeners = options.listeners ?? [];
 
-    this._transitions = options.transitions;
-
-    this._contextVariables = options.context_variables;
+    this._triggers = options.triggers ?? [];
   }
 
   public get zipOptions(): ZipOptions {
@@ -96,35 +80,27 @@ export class DotLottieStateMachineCommon {
     this._states = states;
   }
 
-  public get transitions(): DotLottieTransition[] {
-    return this._transitions;
-  }
-
-  public set transitions(transitions: DotLottieTransition[]) {
-    this._transitions = transitions;
-  }
-
-  public get listeners(): DotLottieListener[] {
+  public get listeners(): DotLottieListeners {
     return this._listeners;
   }
 
-  public set listeners(listeners: DotLottieListener[]) {
+  public set listeners(listeners: DotLottieListeners) {
     this._listeners = listeners;
   }
 
-  public get contextVariables(): DotLottieContextVariables {
-    return this._contextVariables;
+  public get triggers(): DotLottieTriggers {
+    return this._triggers;
   }
 
-  public set contextVariables(contextVariables: DotLottieContextVariables) {
-    this._contextVariables = contextVariables;
+  public set triggers(triggers: DotLottieTriggers) {
+    this._triggers = triggers;
   }
 
-  public get initial(): number {
+  public get initial(): string {
     return this._descriptor.initial;
   }
 
-  public set initial(initial: number) {
+  public set initial(initial: string) {
     this._descriptor.initial = initial;
   }
 
@@ -140,8 +116,7 @@ export class DotLottieStateMachineCommon {
     return JSON.stringify({
       descriptor: this._descriptor,
       states: this._states,
-      transitions: this._transitions,
-      context_variables: this._contextVariables,
+      triggers: this._triggers,
       listeners: this._listeners,
     });
   }
@@ -170,10 +145,17 @@ export class DotLottieStateMachineCommon {
 
       throw new DotLottieError(`Invalid states: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
+
+    // loop over every transition and validate it
+    for (const state of states) {
+      if (state.transitions) {
+        this._requireValidTransitions(state.transitions);
+      }
+    }
   }
 
-  protected _requireValidContextVariables(contextVariables: DotLottieContextVariables): void {
-    const result = safeParse(ContextVariablesSchema, contextVariables);
+  protected _requireValidTriggers(triggers: DotLottieTriggers): void {
+    const result = safeParse(TriggersSchema, triggers);
 
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
@@ -183,7 +165,7 @@ export class DotLottieStateMachineCommon {
   }
 
   protected _requireValidListeners(listeners: DotLottieListeners): void {
-    const result = safeParse(ListenersSchemas, listeners);
+    const result = safeParse(ListenersSchema, listeners);
 
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;

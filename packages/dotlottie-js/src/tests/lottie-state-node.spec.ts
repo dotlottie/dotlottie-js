@@ -3,7 +3,6 @@
  */
 
 /* eslint-disable no-new */
-/* eslint-disable @typescript-eslint/naming-convention */
 
 import type { AnimationData } from '../common';
 import { DotLottie } from '../dotlottie';
@@ -19,11 +18,10 @@ describe('LottieState', () => {
     expect(() => {
       // act
       new LottieStateMachine({
-        descriptor: { id: '', initial: 0 },
+        descriptor: { id: '', initial: 'pigeon' },
         states: [],
-        transitions: [],
         listeners: [],
-        context_variables: [],
+        triggers: [],
       });
       // assert
     }).toThrowError('Invalid id.');
@@ -31,11 +29,10 @@ describe('LottieState', () => {
 
   it('gets and sets the zipOptions', () => {
     const theme = new LottieStateMachine({
-      descriptor: { id: 'test', initial: 0 },
-      states: [],
-      transitions: [],
-      listeners: [],
-      context_variables: [],
+      descriptor: PigeonState.descriptor,
+      states: PigeonState.states,
+      listeners: PigeonState.listeners ?? [],
+      triggers: PigeonState.triggers ?? [],
       zipOptions: {
         level: 9,
         mem: 1,
@@ -59,11 +56,15 @@ describe('LottieState', () => {
   it('gets and sets the id', () => {
     // arrange
     const state = new LottieStateMachine({
-      descriptor: { id: 'test', initial: 0 },
-      states: [],
-      transitions: [],
-      listeners: [],
-      context_variables: [],
+      descriptor: { id: 'test', initial: 'test' },
+      states: [
+        {
+          name: 'test',
+          type: 'PlaybackState',
+          mode: 'Forward',
+          autoplay: true,
+        },
+      ],
     });
 
     expect(state.id).toEqual('test');
@@ -80,9 +81,8 @@ describe('LottieState', () => {
     const pigeonState = new LottieStateMachine({
       descriptor: PigeonState.descriptor,
       states: PigeonState.states,
-      transitions: PigeonState.transitions,
       listeners: PigeonState.listeners,
-      context_variables: PigeonState.context_variables,
+      triggers: PigeonState.triggers,
     });
 
     // assert
