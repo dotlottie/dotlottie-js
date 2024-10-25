@@ -19,15 +19,9 @@ import { LottieThemeCommon } from './theme';
 import { DotLottieError, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
 
 export interface DotLottieOptions {
-  author?: string;
-  customData?: Record<string, string>;
-  description?: string;
   enableDuplicateImageOptimization?: boolean;
   generator?: string;
-  keywords?: string;
   plugins?: DotLottiePlugin[];
-  revision?: number;
-  version?: string;
 }
 
 export interface GetAnimationOptions {
@@ -47,37 +41,14 @@ export class DotLottieCommon {
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
 
-  protected _author?: string;
-
-  protected _description?: string;
-
   protected _generator: string = `${pkg.name}@${pkg.version}`;
 
-  protected _keywords?: string;
-
   protected _version: string = '2.0.0';
-
-  protected _revision?: number;
-
-  // Custom data for the dotLottie
-  protected _customData?: Record<string, unknown>;
 
   public enableDuplicateImageOptimization?: boolean;
 
   public constructor(options?: DotLottieOptions) {
-    this._author = options?.author ?? 'LottieFiles';
-
-    this._description = options?.description ?? '';
-
     this._generator = options?.generator ?? `${pkg.name}@${pkg.version}`;
-
-    this._keywords = options?.keywords ?? 'dotLottie';
-
-    this._version = options?.version ?? '1.0';
-
-    this._customData = options?.customData ?? {};
-
-    this._revision = options?.revision ?? 1;
 
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }

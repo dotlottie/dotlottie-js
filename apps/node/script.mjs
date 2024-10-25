@@ -4,14 +4,12 @@
 
 import fs from 'fs';
 
-import { DotLottie } from '@dotlottie/dotlottie-js/node';
+import { DotLottie } from '@dotlottie/dotlottie-js';
 
 async function createDotLottieForTests() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Joe')
-    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -126,8 +124,6 @@ async function createExplodingPigeon() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Sam')
-    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -339,8 +335,6 @@ async function createListenersAnimation() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Joe')
-    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -441,8 +435,6 @@ async function createDotLottie() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Joe')
-    .setVersion('1.0')
     .addAnimation({
       id: 'animation_1',
       url: 'https://lottie.host/18b639d1-a200-4225-ba0e-3456d40f95a5/wlrsaqWa8r.json',
@@ -487,8 +479,6 @@ async function create_pigeon_fsm_eq_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Joe')
-    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -611,8 +601,6 @@ async function create_pigeon_gt_gte_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Joe')
-    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -735,8 +723,6 @@ async function create_pigeon_lt_lte_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Joe')
-    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -860,8 +846,6 @@ async function create_pigeon_ne_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Joe')
-    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -1172,8 +1156,6 @@ async function debugScenario() {
   const dotLottie = new DotLottie();
 
   await dotLottie
-    .setAuthor('Sam')
-    .setVersion('1.0')
     .addAnimation({
       id: 'folder',
       url: 'https://lottie.host/32e49c72-af7a-4a79-97e4-fb0d115eae3e/wIqFzTMKsk.json',
