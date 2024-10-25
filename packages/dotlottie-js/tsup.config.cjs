@@ -31,6 +31,6 @@ export default defineConfig([
     outDir: './dist',
     platform: 'browser',
     target: ['es2020'],
-    noExternal: ['browser-image-hash'],
+    noExternal: ['browser-image-hash', 'file-type'],
   },
 ]);

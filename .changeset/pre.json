@@ -2,7 +2,28 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@dotlottie/dotlottie-js": "0.8.1"
+    "@dotlottie/dotlottie-js": "0.8.1",
+    "next-example": "0.1.0",
+    "node-example": "1.0.0",
+    "react-example": "0.0.0",
+    "vue-example": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "angry-coats-check",
+    "chatty-cougars-fetch",
+    "early-worms-remain",
+    "eighty-hats-tease",
+    "gorgeous-worms-kneel",
+    "green-hairs-dream",
+    "heavy-windows-beg",
+    "loud-melons-lay",
+    "many-emus-cough",
+    "neat-carrots-judge",
+    "rare-dodos-travel",
+    "serious-queens-reply",
+    "serious-trains-brake",
+    "silly-pillows-share",
+    "wicked-insects-eat",
+    "wicked-points-flow"
+  ]
 }

@@ -4,8 +4,9 @@
 
 import phash from 'sharp-phash';
 
-import { createError, DuplicateImageDetectorCommon } from '../../common';
+import { DotLottieError } from '../../../utils';
 import type { LottieImageCommon } from '../../common';
+import { DuplicateImageDetectorCommon } from '../../common/plugins/duplicate-image-detector';
 
 export class DuplicateImageDetector extends DuplicateImageDetectorCommon {
   public override distanceTo(imageHash: string, targetImageHash: string): number {
@@ -22,7 +23,7 @@ export class DuplicateImageDetector extends DuplicateImageDetectorCommon {
 
   public override async generatePhash(image: LottieImageCommon): Promise<string> {
     if (!image.data) {
-      createError("Can't generate phash value.");
+      throw new DotLottieError("Can't generate phash value.");
     }
 
     const nBuf = await image.toArrayBuffer();

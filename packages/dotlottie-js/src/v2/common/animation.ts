@@ -5,30 +5,24 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
-import type { ManifestAnimation } from '../../schemas/v2/manifest';
+import type { AnimationData, ExportOptions } from '../../types';
+import { DotLottieError, isAudioAsset } from '../../utils';
 
 import type { LottieAudioCommon } from './audio';
 import type { LottieImageCommon } from './image';
+import type { ManifestAnimation } from './schemas';
 import type { LottieThemeCommon } from './theme';
-import { DotLottieError, createError, isAudioAsset } from './utils';
-
-export type AnimationData = AnimationType;
-
-export interface ExportOptions {
-  inlineAssets?: boolean;
-}
 
 export interface AnimationOptions extends ManifestAnimation {
-  background?: string | undefined;
   data?: AnimationData | undefined;
   defaultActiveAnimation?: boolean | undefined;
-  id: string;
-  initialTheme?: string | undefined;
   url?: string | undefined;
   zipOptions?: ZipOptions | undefined;
 }
 
 export class LottieAnimationCommon {
+  protected _name: string | undefined;
+
   protected _data?: AnimationData;
 
   protected _id: string = '';
@@ -37,7 +31,6 @@ export class LottieAnimationCommon {
 
   private _zipOptions: ZipOptions;
 
-  // Will be translated to 'activeAnimationId' inside of the manifest file
   // This indicates if the player should play this animation by default rather than the first in the list.
   protected _defaultActiveAnimation: boolean;
 
@@ -55,7 +48,7 @@ export class LottieAnimationCommon {
     this._requireValidOptions(options);
 
     this._id = options.id;
-
+    this._name = options.name;
     this._zipOptions = options.zipOptions ?? {};
 
     if (options.data) this._data = options.data;
@@ -68,7 +61,7 @@ export class LottieAnimationCommon {
   }
 
   public async toBase64(): Promise<string> {
-    throw createError('lottie animation controls tobase64 not implemented!');
+    throw new DotLottieError('lottie animation controls tobase64 not implemented!');
   }
 
   public get zipOptions(): ZipOptions {
@@ -87,6 +80,14 @@ export class LottieAnimationCommon {
     this._requireValidId(id);
 
     this._id = id;
+  }
+
+  public get name(): string | undefined {
+    return this._name;
+  }
+
+  public set name(name: string | undefined) {
+    this._name = name;
   }
 
   public get background(): string | null {
@@ -160,11 +161,11 @@ export class LottieAnimationCommon {
     this._defaultActiveAnimation = defaultActiveAnimation;
   }
 
-  public addTheme(theme: LottieThemeCommon): void {
+  public scopeTheme(theme: LottieThemeCommon): void {
     this._themesMap.set(theme.id, theme);
   }
 
-  public removeTheme(themeId: string): void {
+  public unscopeTheme(themeId: string): void {
     this._themesMap.delete(themeId);
   }
 
@@ -175,7 +176,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toArrayBuffer(options: ExportOptions = {}): Promise<ArrayBuffer> {
+  public async toArrayBuffer(options?: ExportOptions): Promise<ArrayBuffer> {
     const dataJson = await this.toJSON(options);
 
     return new TextEncoder().encode(JSON.stringify(dataJson)).buffer;
@@ -196,7 +197,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toBlob(options: ExportOptions = {}): Promise<Blob> {
+  public async toBlob(options?: ExportOptions): Promise<Blob> {
     const dataJson = await this.toJSON(options);
 
     return new Blob([JSON.stringify(dataJson)], { type: 'application/json' });
@@ -209,7 +210,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toJSON(options: ExportOptions = {}): Promise<AnimationType> {
+  public async toJSON(options?: ExportOptions): Promise<AnimationType> {
     if (this._url && !this._data) {
       this._data = await this._fromUrl(this._url);
     }
@@ -221,7 +222,7 @@ export class LottieAnimationCommon {
       await this._extractImageAssets();
       await this._extractAudioAssets();
 
-      if (options.inlineAssets) {
+      if (options?.inlineAssets) {
         const animationAssets = this.data?.assets as AnimationType['assets'];
 
         if (!animationAssets)
@@ -276,7 +277,7 @@ export class LottieAnimationCommon {
       json = JSON.parse(text);
     } catch (error) {
       if (error instanceof Error) {
-        throw createError(`${error.message}: Invalid json returned from url`);
+        throw new DotLottieError(`${error.message}: Invalid json returned from url`);
       }
     }
 
@@ -297,7 +298,7 @@ export class LottieAnimationCommon {
       // eslint-disable-next-line no-new
       new URL(url || '');
     } catch (_err) {
-      throw createError('Invalid animation url');
+      throw new DotLottieError('Invalid animation url');
     }
   }
 
@@ -316,7 +317,7 @@ export class LottieAnimationCommon {
     );
 
     if (!hasAllMandatoryProperties) {
-      throw createError('Received invalid Lottie data.');
+      throw new DotLottieError('Received invalid Lottie data.');
     }
   }
 
@@ -327,7 +328,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the id is not a valid string.
    */
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (!id) throw createError('Invalid animation id');
+    if (!id) throw new DotLottieError('Invalid animation id');
   }
 
   /**
@@ -345,7 +346,7 @@ export class LottieAnimationCommon {
     this._requireValidId(options.id);
 
     if (!options.data && !options.url) {
-      throw createError('No data or url provided.');
+      throw new DotLottieError('No data or url provided.');
     }
 
     if (options.data) {

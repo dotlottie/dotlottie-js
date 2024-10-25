@@ -4,8 +4,8 @@
 
 import { Hash, DifferenceHashBuilder } from 'browser-image-hash';
 
-import { DuplicateImageDetectorCommon } from '../../common';
 import type { LottieImageCommonV1 } from '../../common';
+import { DuplicateImageDetectorCommon } from '../../common/plugins/duplicate-image-detector';
 
 export class DuplicateImageDetector extends DuplicateImageDetectorCommon {
   public override async generatePhash(image: LottieImageCommonV1): Promise<string> {

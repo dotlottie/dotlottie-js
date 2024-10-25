@@ -2,47 +2,77 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
-import type { DotLottieV1Plugin, AnimationOptions, DotLottieV1Options, Manifest, ConversionOptions } from '../common';
+import type { ConversionOptions } from '../../types';
 import {
-  DotLottieCommonV1,
-  createError,
   base64ToUint8Array,
+  DotLottieError,
+  getDotLottieVersion,
   getExtensionTypeFromBase64,
-  DotLottieV1Error,
   isAudioAsset,
-} from '../common';
+} from '../../utils';
+import { DotLottie } from '../../v2/browser';
+import type { AnimationOptionsV1, DotLottieV1Options } from '../common';
+import { DotLottieCommonV1 } from '../common';
+import type { ManifestV1 } from '../common/schemas/manifest';
 
 import { LottieAnimationV1 } from './animation';
 import { LottieAudioV1 } from './audio';
 import { LottieImageV1 } from './image';
 import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
 
+export async function toDotLottieV1(arrayBuffer: ArrayBuffer): Promise<DotLottieV1> {
+  const version = await getDotLottieVersion(new Uint8Array(arrayBuffer));
+
+  if (version === '2') {
+    const dotLottieV1 = new DotLottieV1();
+
+    const dotLottieV2 = await new DotLottie().fromArrayBuffer(arrayBuffer);
+
+    const animationIds = dotLottieV2.animations.map((animation) => animation.id);
+
+    for (const animationId of animationIds) {
+      const animation = await dotLottieV2.getAnimation(animationId, { inlineAssets: true });
+
+      if (animation && animation.data) {
+        dotLottieV1.addAnimation({
+          data: animation.data,
+          id: animationId,
+        });
+      }
+    }
+
+    await dotLottieV1.build();
+
+    return dotLottieV1;
+  } else {
+    return new DotLottieV1().fromArrayBuffer(arrayBuffer);
+  }
+}
+
 export class DotLottieV1 extends DotLottieCommonV1 {
   public constructor(options?: DotLottieV1Options) {
     super(options);
 
-    if (this.enableDuplicateImageOptimization) this.addPlugins(new DuplicateImageDetector());
-  }
+    if (this.enableDuplicateImageOptimization) {
+      const plugin = new DuplicateImageDetector();
 
-  public override addPlugins(...plugins: DotLottieV1Plugin[]): DotLottieCommonV1 {
-    plugins.forEach((plugin) => {
       plugin.install(this);
 
       this._plugins.push(plugin);
-    });
-
-    return this;
+    }
   }
 
-  public override addAnimation(animationOptions: AnimationOptions): DotLottieV1 {
+  public override addAnimation(animationOptions: AnimationOptionsV1): DotLottieV1 {
     const animation = new LottieAnimationV1(animationOptions);
 
     if (this._animationsMap.get(animationOptions.id)) {
-      throw createError('Duplicate animation id detected, aborting.');
+      throw new DotLottieError('Duplicate animation id detected, aborting.');
     }
 
     this._animationsMap.set(animation.id, animation);
@@ -50,7 +80,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
     return this;
   }
 
-  public override async toBase64(options: ConversionOptions | undefined): Promise<string> {
+  public override async toBase64(options?: ConversionOptions): Promise<string> {
     const data = await this.toArrayBuffer(options);
 
     const uint8Array = new Uint8Array(data);
@@ -59,7 +89,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
     return window.btoa(binaryString);
   }
 
-  public override async download(fileName: string, options: ConversionOptions | undefined = undefined): Promise<void> {
+  public override async download(fileName: string, options?: ConversionOptions): Promise<void> {
     const blob = await this.toBlob(options);
 
     const dataURL = URL.createObjectURL(blob);
@@ -86,17 +116,11 @@ export class DotLottieV1 extends DotLottieCommonV1 {
     return new DotLottieV1(options);
   }
 
-  public override async toArrayBuffer(options: ConversionOptions | undefined): Promise<ArrayBuffer> {
+  public override async toArrayBuffer(options?: ConversionOptions): Promise<ArrayBuffer> {
     const manifest = this._buildManifest();
 
     const dotLottie: Zippable = {
-      'manifest.json': [
-        strToU8(JSON.stringify(manifest)),
-        {
-          // no compression for manifest
-          level: 0,
-        },
-      ],
+      'manifest.json': [strToU8(JSON.stringify(manifest)), {}],
     };
 
     for (const animation of this.animations) {
@@ -144,6 +168,12 @@ export class DotLottieV1 extends DotLottieCommonV1 {
    * @throws Error
    */
   public override async fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieCommonV1> {
+    const dotLottieVersion = await getDotLottieVersion(new Uint8Array(arrayBuffer));
+
+    if (dotLottieVersion === '2') {
+      return toDotLottieV1(arrayBuffer);
+    }
+
     const dotLottie = new DotLottieV1();
 
     try {
@@ -164,8 +194,8 @@ export class DotLottieV1 extends DotLottieCommonV1 {
         // valid buffer
         try {
           // Parse the manifest first so that we can pick up animation settings
-          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
-          const { author, custom, description, generator, keywords } = manifest;
+          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as ManifestV1;
+          const { author, custom, description, keywords } = manifest;
 
           if (author) {
             this._requireValidAuthor(author);
@@ -178,10 +208,6 @@ export class DotLottieV1 extends DotLottieCommonV1 {
           if (description) {
             this._requireValidDescription(description);
             dotLottie.setDescription(description);
-          }
-          if (generator) {
-            this._requireValidGenerator(generator);
-            dotLottie.setGenerator(generator);
           }
           if (keywords) {
             this._requireValidKeywords(keywords);
@@ -197,7 +223,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
               const animationId = /animations\/(.+)\.json/u.exec(key)?.[1];
 
               if (!animationId) {
-                throw createError('Invalid animation id');
+                throw new DotLottieError('Invalid animation id');
               }
 
               const animation = JSON.parse(decodedStr);
@@ -205,7 +231,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
               const animationSettings = manifest.animations.find((anim) => anim.id === animationId);
 
               if (animationSettings === undefined) {
-                throw createError('Animation not found inside manifest');
+                throw new DotLottieError('Animation not found inside manifest');
               }
 
               dotLottie.addAnimation({
@@ -217,18 +243,19 @@ export class DotLottieV1 extends DotLottieCommonV1 {
               const imageId = /images\/(.+)\./u.exec(key)?.[1];
 
               if (!imageId) {
-                throw createError('Invalid image id');
+                throw new DotLottieError('Invalid image id');
               }
 
               let decodedImg = btoa(decodedStr);
 
-              const ext = getExtensionTypeFromBase64(decodedImg);
+              const ext = await getExtensionTypeFromBase64(decodedImg);
 
               // Push the images in to a temporary array
               decodedImg = `data:image/${ext};base64,${decodedImg}`;
               tmpImages.push(
                 new LottieImageV1({
                   id: imageId,
+                  lottieAssetId: imageId,
                   data: decodedImg,
                   fileName: key.split('/')[1] || '',
                 }),
@@ -238,12 +265,12 @@ export class DotLottieV1 extends DotLottieCommonV1 {
               const audioId = /audio\/(.+)\./u.exec(key)?.[1];
 
               if (!audioId) {
-                throw new DotLottieV1Error('Invalid image id');
+                throw new DotLottieError('Invalid image id');
               }
 
               let decodedAudio = btoa(decodedStr);
 
-              const ext = getExtensionTypeFromBase64(decodedAudio);
+              const ext = await getExtensionTypeFromBase64(decodedAudio);
 
               // Push the audio in to a temporary array
               decodedAudio = `data:audio/${ext};base64,${decodedAudio}`;
@@ -266,7 +293,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
                 if (animationAssets) {
                   for (const asset of animationAssets) {
                     if ('w' in asset && 'h' in asset) {
-                      if (asset.p.includes(image.id)) {
+                      if (asset.p === image.fileName) {
                         image.parentAnimations.push(parentAnimation);
                         parentAnimation.imageAssets.push(image);
                       }
@@ -298,16 +325,16 @@ export class DotLottieV1 extends DotLottieCommonV1 {
           }
         } catch (err) {
           if (err instanceof Error) {
-            throw new DotLottieV1Error(`Invalid manifest inside buffer! ${err.message}`);
+            throw new DotLottieError(`Invalid manifest inside buffer! ${err.message}`);
           }
         }
       } else {
         // throw error as it's invalid buffer
-        throw new DotLottieV1Error('Invalid buffer');
+        throw new DotLottieError('Invalid buffer');
       }
     } catch (err) {
       if (err instanceof Error) {
-        throw new DotLottieV1Error(err.message);
+        throw new DotLottieError(err.message);
       }
     }
 

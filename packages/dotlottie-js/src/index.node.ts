@@ -18,12 +18,9 @@ export function makeDotLottie<T extends 'v1' | 'v2'>(
   return new DotLottie(options as DotLottieOptions) as T extends 'v1' ? DotLottieV1 : DotLottie;
 }
 
-// export function fromArrayBuffer(arrayBuffer: ArrayBuffer): DotLottieV1 | DotLottie {
-//   // check the manifest to determine the version
-// }
-
-// export function toDotLottieV2(dotLottie: DotLottieV1): DotLottie {}
-
-// export function toDotLottieV1(dotLottie: DotLottie): DotLottieV1 {}
-
+export * from './v1/node';
+export * from './v1/common';
 export * from './v2/node';
+export * from './v2/common';
+export * from './utils';
+export * from './types';

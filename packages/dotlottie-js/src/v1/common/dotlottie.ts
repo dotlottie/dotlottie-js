@@ -3,35 +3,24 @@
  */
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
-import type { ZipOptions } from 'fflate';
 
-import pkg from '../../../package.json';
-import type { Manifest } from '../../schemas/v1/manifest';
+import { PACKAGE_NAME } from '../../constants';
+import type { ConversionOptions, GetAnimationOptions } from '../../types';
+import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
 
-import type { AnimationOptions, LottieAnimationCommonV1 } from './animation';
+import type { AnimationOptionsV1, LottieAnimationCommonV1 } from './animation';
 import type { LottieAudioCommonV1 } from './audio';
 import type { LottieImageCommonV1 } from './image';
 import type { DotLottieV1Plugin } from './plugin';
-import { DotLottieV1Error, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
+import type { ManifestV1 } from './schemas/manifest';
 
 export interface DotLottieV1Options {
   author?: string;
-  customData?: Record<string, string>;
   description?: string;
   enableDuplicateImageOptimization?: boolean;
   generator?: string;
   keywords?: string;
-  plugins?: DotLottieV1Plugin[];
   revision?: number;
-  version?: string;
-}
-
-export interface GetAnimationOptions {
-  inlineAssets?: boolean;
-}
-
-export interface ConversionOptions {
-  zipOptions?: ZipOptions;
 }
 
 export class DotLottieCommonV1 {
@@ -39,69 +28,75 @@ export class DotLottieCommonV1 {
 
   protected readonly _plugins: DotLottieV1Plugin[] = [];
 
-  protected _author: string = '@dotlottie/dotlottie-js';
+  protected _author: string = PACKAGE_NAME;
 
-  protected _description?: string;
+  protected _description: string | undefined;
 
-  protected _generator: string = `${pkg.name}@${pkg.version}`;
+  protected _generator: string = PACKAGE_NAME;
 
-  protected _keywords?: string;
+  protected _keywords: string | undefined;
 
-  protected _version: string = '1.0.0';
+  protected _version: string = '1';
 
-  protected _revision?: number;
+  protected _revision: number | undefined;
 
   // Custom data for the DotLottieV1
-  protected _customData?: Record<string, unknown>;
+  protected _customData: Record<string, unknown> | undefined;
 
   public enableDuplicateImageOptimization?: boolean;
 
   public constructor(options?: DotLottieV1Options) {
-    this._author = options?.author ?? 'LottieFiles';
+    if (typeof options?.author === 'string') {
+      this._author = options.author;
+    }
 
-    this._description = options?.description ?? '';
+    if (typeof options?.description === 'string') {
+      this._description = options.description;
+    }
 
-    this._generator = options?.generator ?? `${pkg.name}@${pkg.version}`;
+    if (typeof options?.generator === 'string') {
+      this._generator = options.generator;
+    }
 
-    this._keywords = options?.keywords ?? 'DotLottieV1';
+    if (typeof options?.keywords === 'string') {
+      this._keywords = options.keywords;
+    }
 
-    this._version = '1.0.0';
-
-    this._customData = options?.customData ?? {};
-
-    this._revision = options?.revision ?? 1;
+    if (typeof options?.revision === 'number') {
+      this._revision = options.revision;
+    }
 
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
 
   public async toBase64(_options: ConversionOptions | undefined = undefined): Promise<string> {
-    throw createError('toBase64() method not implemented in concrete class!');
+    throw new DotLottieError('toBase64() method not implemented in concrete class!');
   }
 
   public create(_options?: DotLottieV1Options): DotLottieCommonV1 {
-    throw createError('create() method not implemented in concrete class!');
+    throw new DotLottieError('create() method not implemented in concrete class!');
   }
 
   public async download(_fileName: string, _options: ConversionOptions | undefined = undefined): Promise<void> {
-    throw createError('download(fileName:string) method not implemented in concrete class!');
+    throw new DotLottieError('download(fileName:string) method not implemented in concrete class!');
   }
 
   public addPlugins(..._plugins: DotLottieV1Plugin[]): DotLottieCommonV1 {
-    throw createError('addPlugins(...plugins: DotLottieV1Plugin[]) not implemented in concrete class!');
+    throw new DotLottieError('addPlugins(...plugins: DotLottieV1Plugin[]) not implemented in concrete class!');
   }
 
-  public addAnimation(_animationOptions: AnimationOptions): DotLottieCommonV1 {
-    throw createError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
+  public addAnimation(_animationOptions: AnimationOptionsV1): DotLottieCommonV1 {
+    throw new DotLottieError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
   }
 
   public async fromArrayBuffer(_arrayBuffer: ArrayBuffer): Promise<DotLottieCommonV1> {
-    throw createError(
+    throw new DotLottieError(
       'fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieCommonV1> not implemented in concrete class!',
     );
   }
 
   public async toArrayBuffer(_options: ConversionOptions | undefined = undefined): Promise<ArrayBuffer> {
-    throw createError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
+    throw new DotLottieError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
   }
 
   public get plugins(): DotLottieV1Plugin[] {
@@ -136,7 +131,7 @@ export class DotLottieCommonV1 {
     return Array.from(this._animationsMap.values());
   }
 
-  public get manifest(): Manifest {
+  public get manifest(): ManifestV1 {
     return this._buildManifest();
   }
 
@@ -162,12 +157,6 @@ export class DotLottieCommonV1 {
     return this;
   }
 
-  public setGenerator(generator: string): DotLottieCommonV1 {
-    this._generator = generator;
-
-    return this;
-  }
-
   public setKeywords(keywords: string | undefined): DotLottieCommonV1 {
     this._keywords = typeof keywords === 'string' ? keywords : 'DotLottieV1';
 
@@ -180,72 +169,107 @@ export class DotLottieCommonV1 {
     return this;
   }
 
-  public removePlugins(...plugins: DotLottieV1Plugin[]): DotLottieCommonV1 {
-    plugins.forEach((plugin) => {
-      plugin.uninstall();
-
-      const pluginIndex = this._plugins.indexOf(plugin);
-
-      if (pluginIndex !== -1) {
-        this._plugins.splice(pluginIndex, 1);
-      }
-    });
-
-    return this;
-  }
-
   /**
    * Renames the underlying LottieImageV1, as well as updating the image asset path inside the animation data.
    * @param newName - desired id and fileName,
    * @param imageId - The id of the LottieImageV1 to rename
    */
-  private _renameImage(animation: LottieAnimationCommonV1, newName: string, imageId: string): void {
-    animation.imageAssets.forEach((imageAsset) => {
-      if (imageAsset.id === imageId) {
+  private async _renameImage(
+    animation: LottieAnimationCommonV1,
+    newLottieAssetId: string,
+    lottieAssetId: string,
+  ): Promise<void> {
+    for (const imageAsset of animation.imageAssets) {
+      if (imageAsset.lottieAssetId === lottieAssetId) {
         // Rename the LottieImageV1
-        imageAsset.renameImage(newName);
+        const oldPath = imageAsset.fileName;
 
-        if (!animation.data) throw createError('No animation data available.');
+        await imageAsset.renameImage(newLottieAssetId);
+
+        if (!animation.data) throw new DotLottieError('No animation data available.');
 
         const animationAssets = animation.data.assets as AnimationType['assets'];
 
-        if (!animationAssets) throw createError('No image assets to rename.');
+        if (!animationAssets) throw new DotLottieError('No image assets to rename.');
 
         // Find the image asset inside the animation data and rename its path
         for (const asset of animationAssets) {
           if ('w' in asset && 'h' in asset) {
-            if (asset.id === imageId) {
+            if (asset.p === oldPath) {
               asset.p = imageAsset.fileName;
             }
           }
         }
       }
-    });
+    }
   }
 
-  private _renameImageAssets(): void {
-    const images: Map<string, LottieImageCommonV1[]> = new Map();
+  /**
+   * Generates a map of duplicate image ids and their count.
+   * @returns Map of duplicate image ids and their count.
+   */
+  private _generateMapOfOccurencesFromImageIds(): Map<string, number> {
+    const dupeMap = new Map<string, number>();
 
     this.animations.forEach((animation) => {
-      images.set(animation.id, animation.imageAssets);
+      animation.imageAssets.forEach((imageAsset) => {
+        if (dupeMap.has(imageAsset.lottieAssetId)) {
+          const count = dupeMap.get(imageAsset.lottieAssetId) ?? 0;
+
+          dupeMap.set(imageAsset.lottieAssetId, count + 1);
+        } else {
+          dupeMap.set(imageAsset.lottieAssetId, 1);
+        }
+      });
     });
 
-    let size = 0;
+    return dupeMap;
+  }
 
-    images.forEach((value) => {
-      size += value.length;
-    });
+  /**
+   * Renames the image assets in all animations to avoid conflicts.
+   *
+   * Steps:
+   *  - Generate how many times across all animations the same image id has been used.
+   *  - Loop through every animation in reverse order
+   *  - Every time an animation uses an image asset that is also used elsewhere, append the count to the image's asset id and then decrement.
+   *
+   * Result of renaming for every animation:
+   *
+   * - Inside the Lottie's data and it's Asset object:
+   *  - The Asset id stays the same, meaning that every reference to the asset is still valid (refId)
+   *  - The path is changed to the new asset id with the format \{assetId\}_\{count\}
+   *
+   * - On the dotLottie file system scope:
+   *  - The image file name is changed to the new asset id \{assetId\}_\{count\}.\{ext\}
+   */
+  private async _renameImageAssets(): Promise<void> {
+    const occurenceMap = this._generateMapOfOccurencesFromImageIds();
 
+    // Loop over every animation
     for (let i = this.animations.length - 1; i >= 0; i -= 1) {
       const animation = this.animations.at(i);
 
       if (animation) {
+        // Loop over every image asset of the animation
         for (let j = animation.imageAssets.length - 1; j >= 0; j -= 1) {
           const image = animation.imageAssets.at(j);
 
           if (image) {
-            this._renameImage(animation, `image_${size}`, image.id);
-            size -= 1;
+            // Get how many times the same image id has been used
+            let count = occurenceMap.get(image.lottieAssetId) ?? 0;
+
+            if (count > 0) {
+              count -= 1;
+            }
+
+            // Decrement the count
+            occurenceMap.set(image.lottieAssetId, count);
+
+            if (count > 0) {
+              // Rename the with n-1 count
+              await this._renameImage(animation, `${image.lottieAssetId}_${count}`, image.lottieAssetId);
+            }
           }
         }
       }
@@ -257,17 +281,17 @@ export class DotLottieCommonV1 {
    * @param newName - desired id and fileName,
    * @param audioId - The id of the LottieAudioV1 to rename
    */
-  private _renameAudio(animation: LottieAnimationCommonV1, newName: string, audioId: string): void {
-    animation.audioAssets.forEach((audioAsset) => {
+  private async _renameAudio(animation: LottieAnimationCommonV1, newName: string, audioId: string): Promise<void> {
+    for (const audioAsset of animation.audioAssets) {
       if (audioAsset.id === audioId) {
         // Rename the LottieImageV1
-        audioAsset.renameAudio(newName);
+        await audioAsset.renameAudio(newName);
 
-        if (!animation.data) throw new DotLottieV1Error('No animation data available.');
+        if (!animation.data) throw new DotLottieError('No animation data available.');
 
         const animationAssets = animation.data.assets as AnimationType['assets'];
 
-        if (!animationAssets) throw new DotLottieV1Error('No audio assets to rename.');
+        if (!animationAssets) throw new DotLottieError('No audio assets to rename.');
 
         // Find the audio asset inside the animation data and rename its path
         for (const asset of animationAssets) {
@@ -278,10 +302,10 @@ export class DotLottieCommonV1 {
           }
         }
       }
-    });
+    }
   }
 
-  private _renameAudioAssets(): void {
+  private async _renameAudioAssets(): Promise<void> {
     const audio: Map<string, LottieAudioCommonV1[]> = new Map();
 
     this.animations.forEach((animation) => {
@@ -302,7 +326,7 @@ export class DotLottieCommonV1 {
           const audioAsset = animation.audioAssets.at(j);
 
           if (audioAsset) {
-            this._renameAudio(animation, `audio_${size}`, audioAsset.id);
+            await this._renameAudio(animation, `audio_${size}`, audioAsset.id);
             size -= 1;
           }
         }
@@ -310,9 +334,9 @@ export class DotLottieCommonV1 {
     }
   }
 
-  protected _addLottieAnimationV1(animation: LottieAnimationCommonV1): DotLottieCommonV1 {
+  protected _addLottieAnimation(animation: LottieAnimationCommonV1): DotLottieCommonV1 {
     if (this._animationsMap.get(animation.id)) {
-      throw createError('Duplicate animation id detected, aborting.');
+      throw new DotLottieError('Duplicate animation id detected, aborting.');
     }
 
     this._animationsMap.set(animation.id, animation);
@@ -328,7 +352,7 @@ export class DotLottieCommonV1 {
   private async _findAssetsAndInline(animation: LottieAnimationCommonV1): Promise<LottieAnimationCommonV1> {
     const animationAssets = animation.data?.assets as AnimationType['assets'];
 
-    if (!animationAssets) throw new DotLottieV1Error("Failed to inline assets, the animation's assets are undefined.");
+    if (!animationAssets) throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
 
     const images = this.getImages();
     const audios = this.getAudio();
@@ -366,13 +390,13 @@ export class DotLottieCommonV1 {
    */
   public async getAnimation(
     animationId: string,
-    options: GetAnimationOptions = {},
+    options?: GetAnimationOptions,
   ): Promise<LottieAnimationCommonV1 | undefined> {
-    if (!options.inlineAssets) return this._animationsMap.get(animationId);
+    if (!options?.inlineAssets) return this._animationsMap.get(animationId);
 
     let dataWithInlinedImages = this._animationsMap.get(animationId);
 
-    if (!dataWithInlinedImages) throw new DotLottieV1Error('Failed to find animation.');
+    if (!dataWithInlinedImages) throw new DotLottieError('Failed to find animation.');
 
     dataWithInlinedImages = await this._findAssetsAndInline(dataWithInlinedImages);
 
@@ -413,18 +437,26 @@ export class DotLottieCommonV1 {
     return audio;
   }
 
-  protected _buildManifest(): Manifest {
-    const animationsList = Array.from(this._animationsMap.values());
+  protected _buildManifest(): ManifestV1 {
+    const animationsList = Array.from(this._animationsMap.values()).map((animation) => ({
+      id: animation.id,
+      ...(animation.autoplay !== undefined && { autoplay: animation.autoplay }),
+      ...(animation.loop !== undefined && { loop: animation.loop }),
+      ...(animation.speed !== undefined && { speed: animation.speed }),
+      ...(animation.direction !== undefined && { direction: animation.direction }),
+      ...(animation.playMode !== undefined && { playMode: animation.playMode }),
+      ...(animation.hover !== undefined && { hover: animation.hover }),
+      ...(animation.intermission !== undefined && { intermission: animation.intermission }),
+      ...(animation.themeColor !== undefined && { themeColor: animation.themeColor }),
+    }));
 
-    const manifest: Manifest = {
+    const manifest: ManifestV1 = {
       version: this.version,
-      revision: this.revision ?? 0,
-      keywords: this.keywords ?? '',
-      author: this.author,
       generator: this.generator,
-      animations: animationsList.map((animation) => ({
-        id: animation.id,
-      })),
+      author: this.author,
+      ...(this.keywords !== undefined && { keywords: this.keywords }),
+      ...(this.revision !== undefined && { revision: this.revision }),
+      animations: animationsList,
       ...(this.description && this.description.trim() !== '' ? { description: this.description } : {}),
       ...(this._customData && Object.keys(this._customData).length !== 0 ? { custom: this._customData } : {}),
     };
@@ -447,8 +479,8 @@ export class DotLottieCommonV1 {
 
     if (this.animations.length > 1) {
       // Rename assets incrementally if there are multiple animations
-      this._renameImageAssets();
-      this._renameAudioAssets();
+      await this._renameImageAssets();
+      await this._renameAudioAssets();
     }
 
     const parallelPlugins = [];
@@ -485,13 +517,13 @@ export class DotLottieCommonV1 {
    * @returns DotLottieV1 instance
    */
   public async fromURL(url: string): Promise<DotLottieCommonV1> {
-    if (!isValidURL(url)) throw createError('Invalid URL');
+    if (!isValidURL(url)) throw new DotLottieError('Invalid URL');
 
     try {
       const response = await fetch(url);
 
       if (!response.ok) {
-        throw createError(response.statusText);
+        throw new DotLottieError(response.statusText);
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -499,18 +531,18 @@ export class DotLottieCommonV1 {
       return this.fromArrayBuffer(arrayBuffer);
     } catch (err) {
       if (err instanceof Error) {
-        throw createError(err.message);
+        throw new DotLottieError(err.message);
       }
     }
 
-    throw createError('Unknown error');
+    throw new DotLottieError('Unknown error');
   }
 
   public merge(...DotLottieV1s: DotLottieCommonV1[]): DotLottieCommonV1 {
     const mergedDotLottieV1 = this.create();
 
-    for (const DotLottieV1 of DotLottieV1s) {
-      DotLottieV1.animations.forEach((animation) => {
+    for (const dotLottieV1 of DotLottieV1s) {
+      dotLottieV1.animations.forEach((animation) => {
         if (animation.data) {
           mergedDotLottieV1.addAnimation({
             id: animation.id,
@@ -529,28 +561,28 @@ export class DotLottieCommonV1 {
   }
 
   protected _requireValidAuthor(author: string | undefined): asserts author is string {
-    if (typeof author !== 'string') throw createError('Invalid author');
+    if (typeof author !== 'string') throw new DotLottieError('Invalid author');
   }
 
   protected _requireValidDescription(description: string | undefined): asserts description is string {
-    if (typeof description !== 'string') throw createError('Invalid description');
+    if (typeof description !== 'string') throw new DotLottieError('Invalid description');
   }
 
   protected _requireValidGenerator(generator: string | undefined): asserts generator is string {
-    if (typeof generator !== 'string') throw createError('Invalid generator');
+    if (typeof generator !== 'string') throw new DotLottieError('Invalid generator');
   }
 
   protected _requireValidKeywords(keywords: string | undefined): asserts keywords is string {
-    if (typeof keywords !== 'string') throw createError('Invalid keywords');
+    if (typeof keywords !== 'string') throw new DotLottieError('Invalid keywords');
   }
 
   protected _requireValidVersion(version: string | undefined): asserts version is string {
-    if (typeof version !== 'string') throw createError('Invalid version');
+    if (typeof version !== 'string') throw new DotLottieError('Invalid version');
   }
 
   protected _requireValidCustomData(
     customData: Record<string, unknown> | undefined,
   ): asserts customData is Record<string, unknown> {
-    if (!customData) throw createError('Invalid customData');
+    if (!customData) throw new DotLottieError('Invalid customData');
   }
 }

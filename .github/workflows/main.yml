@@ -4,7 +4,7 @@ on:
     branches:
       - 'main'
       - 'beta'
-  pull_request:
+  # pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -46,8 +46,10 @@ jobs:
       - name: 🕵️ Lint
         run: pnpm lint
 
-      # - name: 🛡️ Test
-      #   run: pnpm test
+      - name: 🛡️ Test
+        run: |
+          npx playwright install --with-deps
+          pnpm test
 
       - name: 📏 Report bundle size
         uses: andresz1/size-limit-action@v1
@@ -68,7 +70,7 @@ jobs:
       - name: ⎔ Setup pnpm@9
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 9
 
       - name: ⎔ Setup Node@18
         uses: actions/setup-node@v3
@@ -81,6 +83,7 @@ jobs:
 
       - name: 🏗 Build
         run: pnpm build
+        working-directory: packages/dotlottie-js
 
       - name: 🚀 Release
         uses: changesets/action@v1

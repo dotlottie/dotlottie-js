@@ -4,12 +4,12 @@
 
 import type { ZipOptions } from 'fflate';
 
+import type { AudioData } from '../../types';
+import { dataUrlFromU8, DotLottieError, ErrorCodes, getExtensionTypeFromBase64 } from '../../utils';
+
 import type { LottieAnimationCommonV1 } from './animation';
-import { dataUrlFromU8, DotLottieV1Error, ErrorCodes } from './utils';
 
-export type AudioData = string | ArrayBuffer | Blob;
-
-export interface AudioOptions {
+export interface AudioOptionsV1 {
   data?: AudioData;
   fileName: string;
   id: string;
@@ -31,7 +31,7 @@ export class LottieAudioCommonV1 {
 
   protected _zipOptions: ZipOptions;
 
-  public constructor(options: AudioOptions) {
+  public constructor(options: AudioOptionsV1) {
     this._requireValidId(options.id);
     this._requireValidFileName(options.fileName);
 
@@ -69,7 +69,7 @@ export class LottieAudioCommonV1 {
   }
 
   public set fileName(fileName: string) {
-    if (!fileName) throw new DotLottieV1Error('Invalid audio file name', ErrorCodes.ASSET_NOT_FOUND);
+    if (!fileName) throw new DotLottieError('Invalid audio file name', ErrorCodes.ASSET_NOT_FOUND);
     this._fileName = fileName;
   }
 
@@ -78,7 +78,7 @@ export class LottieAudioCommonV1 {
   }
 
   public set id(id: string) {
-    if (!id) throw new DotLottieV1Error('Invalid audio id', ErrorCodes.ASSET_NOT_FOUND);
+    if (!id) throw new DotLottieError('Invalid audio id', ErrorCodes.ASSET_NOT_FOUND);
     this._id = id;
   }
 
@@ -88,7 +88,7 @@ export class LottieAudioCommonV1 {
 
   public set data(data: AudioData | undefined) {
     if (!data) {
-      throw new DotLottieV1Error('Invalid data');
+      throw new DotLottieError('Invalid data');
     }
 
     this._data = data;
@@ -114,18 +114,18 @@ export class LottieAudioCommonV1 {
    * Renames the id and fileName to newName.
    * @param newName - A new id and filename for the audio.
    */
-  public renameAudio(newName: string): void {
+  public async renameAudio(newName: string): Promise<void> {
     this.id = newName;
 
-    if (this.fileName) {
-      let fileExt = this.fileName.split('.').pop();
+    const data = await this.toDataURL();
 
-      if (!fileExt) {
-        fileExt = '.png';
-      }
-      // Default to png if the file extension isn't available
-      this.fileName = `${newName}.${fileExt}`;
+    const ext = await getExtensionTypeFromBase64(data);
+
+    if (!ext) {
+      throw new DotLottieError('File extension type could not be detected from asset file.');
     }
+
+    this.fileName = `${newName}.${ext}`;
   }
 
   public async toArrayBuffer(): Promise<ArrayBuffer> {
@@ -199,7 +199,7 @@ export class LottieAudioCommonV1 {
    * @throws Error - if the id is not a valid string.
    */
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (!id) throw new DotLottieV1Error('Invalid audio id');
+    if (!id) throw new DotLottieError('Invalid audio id');
   }
 
   /**
@@ -209,6 +209,6 @@ export class LottieAudioCommonV1 {
    * @throws Error - if the fileName is not a valid string.
    */
   private _requireValidFileName(fileName: string | undefined): asserts fileName is string {
-    if (!fileName) throw new DotLottieV1Error('Invalid audio fileName');
+    if (!fileName) throw new DotLottieError('Invalid audio fileName');
   }
 }
