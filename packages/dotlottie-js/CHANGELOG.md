@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.2
+
+### Patch Changes
+
+- 9e7fa8b: small fixes
+
 ## 0.9.0-beta.1
 
 ### Patch Changes

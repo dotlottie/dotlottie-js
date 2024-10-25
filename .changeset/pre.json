@@ -8,5 +8,10 @@
     "react-example": "0.0.0",
     "vue-example": "0.0.0"
   },
-  "changesets": ["green-hairs-dream", "many-emus-cough", "serious-queens-reply"]
+  "changesets": [
+    "green-hairs-dream",
+    "many-emus-cough",
+    "rare-dodos-travel",
+    "serious-queens-reply"
+  ]
 }
