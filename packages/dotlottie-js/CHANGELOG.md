@@ -1,5 +1,15 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.0
+
+### Minor Changes
+
+- 9457abf: feat: init dotLottie v2
+
+### Patch Changes
+
+- f2a1db8: chore: bump lottie-types pkg to v1.2.0
+
 ## 0.8.1
 
 ### Patch Changes
