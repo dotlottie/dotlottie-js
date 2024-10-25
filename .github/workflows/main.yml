@@ -68,7 +68,7 @@ jobs:
       - name: ⎔ Setup pnpm@9
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 9
 
       - name: ⎔ Setup Node@18
         uses: actions/setup-node@v3
