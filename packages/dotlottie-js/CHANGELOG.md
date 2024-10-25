@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.1
+
+### Patch Changes
+
+- 5570a8f: refactor: dotLottie conversion methods
+
 ## 0.9.0-beta.0
 
 ### Minor Changes
