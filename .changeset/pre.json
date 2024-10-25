@@ -2,14 +2,7 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@dotlottie/dotlottie-js": "0.8.1",
-    "next": "0.1.0",
-    "node": "1.0.0",
-    "react": "0.0.0",
-    "vue": "0.0.0"
+    "@dotlottie/dotlottie-js": "0.8.1"
   },
-  "changesets": [
-    "many-emus-cough",
-    "serious-queens-reply"
-  ]
+  "changesets": ["many-emus-cough", "serious-queens-reply"]
 }

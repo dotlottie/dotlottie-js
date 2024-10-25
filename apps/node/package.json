@@ -1,7 +1,7 @@
 {
-  "name": "node",
+  "name": "node-example",
   "private": true,
-  "version": "1.0.1-beta.0",
+  "version": "1.0.0",
   "description": "",
   "author": "",
   "license": "ISC",
@@ -9,6 +9,6 @@
   "keywords": [],
   "scripts": {},
   "dependencies": {
-    "@dotlottie/dotlottie-js": "workspace:^"
+    "@dotlottie/dotlottie-js": "workspace:*"
   }
 }
