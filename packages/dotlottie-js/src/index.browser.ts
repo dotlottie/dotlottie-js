@@ -19,58 +19,63 @@ export function makeDotLottie<T extends 'v1' | 'v2'>(
   return new DotLottie(options as DotLottieOptions) as T extends 'v1' ? DotLottieV1 : DotLottie;
 }
 
-export async function fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieV1 | DotLottie> {
+export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie> {
+  const version = getDotLottieVersion(new Uint8Array(arrayBuffer));
+
+  if (version === '1.0.0') {
+    const dotLottieV2 = new DotLottie();
+    const dotLottieV1 = await new DotLottieV1().fromArrayBuffer(arrayBuffer);
+
+    await dotLottieV1.build();
+
+    const animationIds = dotLottieV1.animations.map((animation) => animation.id);
+
+    for (const animationId of animationIds) {
+      const animation = await dotLottieV1.getAnimation(animationId, { inlineAssets: true });
+
+      if (animation && animation.data) {
+        dotLottieV2.addAnimation({
+          data: animation.data,
+          id: animationId,
+        });
+      }
+    }
+
+    return dotLottieV2;
+  }
+
+  return new DotLottie().fromArrayBuffer(arrayBuffer);
+}
+
+export async function toDotLottieV1(arrayBuffer: ArrayBuffer): Promise<DotLottieV1> {
   const version = getDotLottieVersion(new Uint8Array(arrayBuffer));
 
   if (version === '2.0.0') {
-    return new DotLottie().fromArrayBuffer(arrayBuffer);
-  }
+    const dotLottieV1 = new DotLottieV1();
 
-  return new DotLottieV1().fromArrayBuffer(arrayBuffer);
-}
+    const dotLottieV2 = await new DotLottie().fromArrayBuffer(arrayBuffer);
 
-export async function toDotLottieV2(dotLottie: DotLottieV1): Promise<DotLottie> {
-  const dotLottieV2 = new DotLottie();
+    await dotLottieV2.build();
 
-  const animationIds = dotLottie.animations.map((animation) => animation.id);
+    const animationIds = dotLottieV2.animations.map((animation) => animation.id);
 
-  for (const animationId of animationIds) {
-    const animation = await dotLottieV2.getAnimation(animationId, { inlineAssets: true });
+    for (const animationId of animationIds) {
+      const animation = await dotLottieV2.getAnimation(animationId, { inlineAssets: true });
 
-    if (animation && animation.data) {
-      dotLottieV2.addAnimation({
-        data: animation.data,
-        id: animationId,
-      });
+      if (animation && animation.data) {
+        dotLottieV1.addAnimation({
+          data: animation.data,
+          id: animationId,
+        });
+      }
     }
+
+    await dotLottieV1.build();
+
+    return dotLottieV1;
+  } else {
+    return new DotLottieV1().fromArrayBuffer(arrayBuffer);
   }
-
-  await dotLottieV2.build();
-
-  return dotLottieV2;
-}
-
-export async function toDotLottieV1(dotLottie: DotLottie): Promise<DotLottieV1> {
-  await dotLottie.build();
-
-  const dotLottieV1 = new DotLottieV1();
-
-  const animationIds = dotLottie.animations.map((animation) => animation.id);
-
-  for (const animationId of animationIds) {
-    const animation = await dotLottie.getAnimation(animationId);
-
-    if (animation && animation.data) {
-      dotLottieV1.addAnimation({
-        data: animation.data,
-        id: animationId,
-      });
-    }
-  }
-
-  await dotLottieV1.build();
-
-  return dotLottieV1;
 }
 
 export * from './v2/browser';
