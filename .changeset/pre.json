@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@dotlottie/dotlottie-js": "0.8.1"
+  },
+  "changesets": []
+}
