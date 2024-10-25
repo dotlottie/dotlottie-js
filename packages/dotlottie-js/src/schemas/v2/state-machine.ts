@@ -144,6 +144,7 @@ export const PlaybackStateSchema = object({
   animationId: string(),
   loop: optional(boolean()),
   autoplay: optional(boolean()),
+  final: optional(boolean()),
   mode: optional(Modes),
   speed: optional(number()),
   segment: optional(string()),

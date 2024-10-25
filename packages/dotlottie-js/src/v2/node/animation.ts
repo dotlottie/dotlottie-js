@@ -10,7 +10,7 @@ import { DotLottieError, LottieAnimationCommon, getExtensionTypeFromBase64, isAu
 import { LottieAudio } from './audio';
 import { LottieImage } from './image';
 
-export class LottieAnimationV1 extends LottieAnimationCommon {
+export class LottieAnimationV2 extends LottieAnimationCommon {
   public constructor(options: AnimationOptions) {
     super(options);
   }
@@ -68,7 +68,7 @@ export class LottieAnimationV1 extends LottieAnimationCommon {
         );
 
         asset.p = fileName;
-        asset.u = '/images/';
+        asset.u = '/i/';
         asset.e = 0;
       }
     }
@@ -115,7 +115,7 @@ export class LottieAnimationV1 extends LottieAnimationCommon {
         );
 
         asset.p = fileName;
-        asset.u = '/audio/';
+        asset.u = '/u/';
         asset.e = 0;
       }
     }

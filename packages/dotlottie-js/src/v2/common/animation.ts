@@ -37,7 +37,6 @@ export class LottieAnimationCommon {
 
   private _zipOptions: ZipOptions;
 
-  // Will be translated to 'activeAnimationId' inside of the manifest file
   // This indicates if the player should play this animation by default rather than the first in the list.
   protected _defaultActiveAnimation: boolean;
 
