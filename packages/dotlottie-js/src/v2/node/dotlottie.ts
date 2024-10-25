@@ -90,7 +90,7 @@ export class DotLottie extends DotLottieCommon {
     for (const animation of this.animations) {
       const json = await animation.toJSON();
 
-      dotlottie[`animations/${animation.id}.json`] = [strToU8(JSON.stringify(json)), animation.zipOptions];
+      dotlottie[`a/${animation.id}.json`] = [strToU8(JSON.stringify(json)), animation.zipOptions];
 
       const imageAssets = animation.imageAssets;
       const audioAssets = animation.audioAssets;
@@ -99,26 +99,26 @@ export class DotLottie extends DotLottieCommon {
         // Assure we have a base64 encoded version of the image
         const dataAsString = await asset.toDataURL();
 
-        dotlottie[`images/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
+        dotlottie[`i/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
       }
       for (const asset of audioAssets) {
         // Assure we have a base64 encoded version of the audio
         const dataAsString = await asset.toDataURL();
 
-        dotlottie[`audio/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
+        dotlottie[`u/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
       }
     }
 
     for (const theme of this.themes) {
       const themeData = await theme.toString();
 
-      dotlottie[`themes/${theme.id}.json`] = [strToU8(themeData), theme.zipOptions];
+      dotlottie[`t/${theme.id}.json`] = [strToU8(themeData), theme.zipOptions];
     }
 
     for (const state of this.stateMachines) {
       const stateData = state.toString();
 
-      dotlottie[`states/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
+      dotlottie[`s/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
     }
 
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
@@ -173,8 +173,8 @@ export class DotLottie extends DotLottieCommon {
             const decompressedFile = contentObj[key] as Uint8Array;
             const decodedStr = strFromU8(contentObj[key] as Uint8Array, false);
 
-            if (key.startsWith('animations/') && key.endsWith('.json')) {
-              // extract animationId from key as the key = `animations/${animationId}.json`
+            if (key.startsWith('a/') && key.endsWith('.json')) {
+              // extract animationId from key as the key = `a/${animationId}.json`
               const animationId = /animations\/(.+)\.json/u.exec(key)?.[1];
 
               if (!animationId) {
@@ -193,8 +193,8 @@ export class DotLottie extends DotLottieCommon {
                 data: animation,
                 ...animationSettings,
               });
-            } else if (key.startsWith('images/')) {
-              // extract imageId from key as the key = `images/${imageId}.${ext}`
+            } else if (key.startsWith('i/')) {
+              // extract imageId from key as the key = `i/${imageId}.${ext}`
               const imageId = /images\/(.+)\./u.exec(key)?.[1];
 
               if (!imageId) {
@@ -215,9 +215,9 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
-            } else if (key.startsWith('audio/')) {
+            } else if (key.startsWith('u/')) {
               // Do audio extraction
-              // extract audioID from key as the key = `audio/${audioID}.${ext}`
+              // extract audioID from key as the key = `u/${audioID}.${ext}`
               const audioId = /audio\/(.+)\./u.exec(key)?.[1];
 
               if (!audioId) {
@@ -238,8 +238,8 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
-            } else if (key.startsWith('themes/') && key.endsWith('.json')) {
-              // extract themeId from key as the key = `themes/${themeId}.json`
+            } else if (key.startsWith('t/') && key.endsWith('.json')) {
+              // extract themeId from key as the key = `t/${themeId}.json`
               const themeId = /themes\/(.+)\.json/u.exec(key)?.[1];
 
               if (!themeId) {
@@ -254,8 +254,8 @@ export class DotLottie extends DotLottieCommon {
                   });
                 }
               });
-            } else if (key.startsWith('states/') && key.endsWith('.json')) {
-              // extract stateId from key as the key = `states/${stateId}.json`
+            } else if (key.startsWith('s/') && key.endsWith('.json')) {
+              // extract stateId from key as the key = `s/${stateId}.json`
               const stateId = /states\/(.+)\.json/u.exec(key)?.[1];
 
               if (!stateId) {

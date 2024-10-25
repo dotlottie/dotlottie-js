@@ -601,7 +601,7 @@ export async function getAudio(
   filename: string,
   filter?: UnzipFileFilter,
 ): Promise<string | undefined> {
-  const audioFilename = `audio/${filename}`;
+  const audioFilename = `u/${filename}`;
 
   const unzipped = await unzipDotLottieFile(dotLottie, audioFilename, filter);
 
@@ -633,9 +633,9 @@ export async function getAudio(
  */
 export async function getAllAudio(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
   const unzippedAudio = await unzipDotLottie(dotLottie, (file) => {
-    const name = file.name.replace('audio/', '');
+    const name = file.name.replace('u/', '');
 
-    return file.name.startsWith('audio/') && (!filter || filter({ ...file, name }));
+    return file.name.startsWith('u/') && (!filter || filter({ ...file, name }));
   });
 
   const audio: Record<string, string> = {};
@@ -644,7 +644,7 @@ export async function getAllAudio(dotLottie: Uint8Array, filter?: UnzipFileFilte
     const unzippedSingleAudio = unzippedAudio[audioPath];
 
     if (unzippedSingleAudio instanceof Uint8Array) {
-      const audioId = audioPath.replace('audio/', '');
+      const audioId = audioPath.replace('u/', '');
 
       audio[audioId] = dataUrlFromU8(unzippedSingleAudio);
     }
@@ -740,7 +740,7 @@ export async function getImage(
   filename: string,
   filter?: UnzipFileFilter,
 ): Promise<string | undefined> {
-  const imageFilename = `images/${filename}`;
+  const imageFilename = `i/${filename}`;
 
   const unzipped = await unzipDotLottieFile(dotLottie, imageFilename, filter);
 
@@ -772,9 +772,9 @@ export async function getImage(
  */
 export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
   const unzippedImages = await unzipDotLottie(dotLottie, (file) => {
-    const name = file.name.replace('images/', '');
+    const name = file.name.replace('i/', '');
 
-    return file.name.startsWith('images/') && (!filter || filter({ ...file, name }));
+    return file.name.startsWith('i/') && (!filter || filter({ ...file, name }));
   });
 
   const images: Record<string, string> = {};
@@ -783,7 +783,7 @@ export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter)
     const unzippedImage = unzippedImages[imagePath];
 
     if (unzippedImage instanceof Uint8Array) {
-      const imageId = imagePath.replace('images/', '');
+      const imageId = imagePath.replace('i/', '');
 
       images[imageId] = dataUrlFromU8(unzippedImage);
     }
@@ -881,7 +881,7 @@ export async function getAnimation(
   { inlineAssets }: { inlineAssets?: boolean } = {},
   filter?: UnzipFileFilter,
 ): Promise<AnimationData | undefined> {
-  const animationFilename = `animations/${animationId}.json`;
+  const animationFilename = `a/${animationId}.json`;
 
   const unzippedAnimation = await unzipDotLottieFile(dotLottie, animationFilename, filter);
 
@@ -933,16 +933,16 @@ export async function getAnimations(
 ): Promise<Record<string, AnimationData>> {
   const animationsMap: Record<string, AnimationData> = {};
   const unzippedAnimations = await unzipDotLottie(dotLottie, (file) => {
-    const filename = file.name.replace('animations/', '').replace('.json', '');
+    const filename = file.name.replace('a/', '').replace('.json', '');
 
-    return file.name.startsWith('animations/') && (!filter || filter({ ...file, name: filename }));
+    return file.name.startsWith('a/') && (!filter || filter({ ...file, name: filename }));
   });
 
   for (const animationPath in unzippedAnimations) {
     const data = unzippedAnimations[animationPath];
 
     if (data instanceof Uint8Array) {
-      const animationId = animationPath.replace('animations/', '').replace('.json', '');
+      const animationId = animationPath.replace('a/', '').replace('.json', '');
       const animationData = JSON.parse(strFromU8(data, false)) as AnimationData;
 
       animationsMap[animationId] = animationData;
@@ -982,16 +982,16 @@ export async function getThemes(
   const themesMap: Record<string, Record<string, unknown>> = {};
 
   const unzippedThemes = await unzipDotLottie(dotLottie, (file) => {
-    const name = file.name.replace('themes/', '').replace('.json', '');
+    const name = file.name.replace('t/', '').replace('.json', '');
 
-    return file.name.startsWith('themes/') && (!filter || filter({ ...file, name }));
+    return file.name.startsWith('t/') && (!filter || filter({ ...file, name }));
   });
 
   for (const themePath in unzippedThemes) {
     const data = unzippedThemes[themePath];
 
     if (data instanceof Uint8Array) {
-      const themeId = themePath.replace('themes/', '').replace('.json', '');
+      const themeId = themePath.replace('t/', '').replace('.json', '');
 
       themesMap[themeId] = JSON.parse(strFromU8(data, false));
     }
@@ -1024,7 +1024,7 @@ export async function getTheme(
   themeId: string,
   filter?: UnzipFileFilter,
 ): Promise<Record<string, unknown> | undefined> {
-  const themeFilename = `themes/${themeId}.json`;
+  const themeFilename = `t/${themeId}.json`;
 
   const unzippedTheme = await unzipDotLottieFile(dotLottie, themeFilename, filter);
 
@@ -1059,16 +1059,16 @@ export async function getStateMachines(
   const statesMap: Record<string, string> = {};
 
   const unzippedStates = await unzipDotLottie(dotLottie, (file) => {
-    const name = file.name.replace('states/', '').replace('.json', '');
+    const name = file.name.replace('s/', '').replace('.json', '');
 
-    return file.name.startsWith('states/') && (!filter || filter({ ...file, name }));
+    return file.name.startsWith('s/') && (!filter || filter({ ...file, name }));
   });
 
   for (const statePath in unzippedStates) {
     const data = unzippedStates[statePath];
 
     if (data instanceof Uint8Array) {
-      const themeId = statePath.replace('states/', '').replace('.json', '');
+      const themeId = statePath.replace('s/', '').replace('.json', '');
 
       statesMap[themeId] = strFromU8(data, false);
     }
@@ -1101,7 +1101,7 @@ export async function getStateMachine(
   stateMachineId: string,
   filter?: UnzipFileFilter,
 ): Promise<LottieStateMachine | undefined> {
-  const stateMachineFilename = `states/${stateMachineId}.json`;
+  const stateMachineFilename = `s/${stateMachineId}.json`;
 
   const unzippedStateMachine = await unzipDotLottieFile(dotLottie, stateMachineFilename, filter);
 
