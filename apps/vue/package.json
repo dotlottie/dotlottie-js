@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@lottiefiles/vue-lottie-player": "1.1.0",
-    "vue": "^3.2.47"
+    "vue": "^0.0.0"
   },
   "devDependencies": {
     "@dotlottie/dotlottie-js": "workspace:^",
