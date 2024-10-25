@@ -247,7 +247,7 @@ export class DotLottieCommon {
     }
   }
 
-  protected _addLottieAnimationV1(animation: LottieAnimationCommon): DotLottieCommon {
+  protected _addLottieAnimation(animation: LottieAnimationCommon): DotLottieCommon {
     if (this._animationsMap.get(animation.id)) {
       throw createError('Duplicate animation id detected, aborting.');
     }

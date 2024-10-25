@@ -17,7 +17,7 @@ import {
   isAudioAsset,
 } from '../common';
 
-import { LottieAnimationV1 } from './animation';
+import { LottieAnimationV2 } from './animation';
 import { LottieAudio } from './audio';
 import { LottieImage } from './image';
 import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
@@ -40,7 +40,7 @@ export class DotLottie extends DotLottieCommon {
   }
 
   public override addAnimation(animationOptions: AnimationOptions): DotLottie {
-    const animation = new LottieAnimationV1(animationOptions);
+    const animation = new LottieAnimationV2(animationOptions);
 
     if (this._animationsMap.get(animationOptions.id)) {
       throw createError('Duplicate animation id detected, aborting.');
@@ -191,7 +191,7 @@ export class DotLottie extends DotLottieCommon {
 
             if (key.startsWith('a/') && key.endsWith('.json')) {
               // extract animationId from key as the key = `a/${animationId}.json`
-              const animationId = /animations\/(.+)\.json/u.exec(key)?.[1];
+              const animationId = /a\/(.+)\.json/u.exec(key)?.[1];
 
               if (!animationId) {
                 throw createError('Invalid animation id');
@@ -211,7 +211,7 @@ export class DotLottie extends DotLottieCommon {
               });
             } else if (key.startsWith('i/')) {
               // extract imageId from key as the key = `i/${imageId}.${ext}`
-              const imageId = /images\/(.+)\./u.exec(key)?.[1];
+              const imageId = /i\/(.+)\./u.exec(key)?.[1];
 
               if (!imageId) {
                 throw createError('Invalid image id');
@@ -232,7 +232,7 @@ export class DotLottie extends DotLottieCommon {
               );
             } else if (key.startsWith('u/')) {
               // extract audioId from key as the key = `u/${audioId}.${ext}`
-              const audioId = /audio\/(.+)\./u.exec(key)?.[1];
+              const audioId = /u\/(.+)\./u.exec(key)?.[1];
 
               if (!audioId) {
                 throw new DotLottieError('Invalid image id');
@@ -253,7 +253,7 @@ export class DotLottie extends DotLottieCommon {
               );
             } else if (key.startsWith('t/') && key.endsWith('.json')) {
               // extract themeId from key as the key = `t/${themeId}.json`
-              const themeId = /themes\/(.+)\.json/u.exec(key)?.[1];
+              const themeId = /t\/(.+)\.json/u.exec(key)?.[1];
 
               if (!themeId) {
                 throw createError('Invalid theme id');
@@ -269,7 +269,7 @@ export class DotLottie extends DotLottieCommon {
               });
             } else if (key.startsWith('s/') && key.endsWith('.json')) {
               // extract stateId from key as the key = `s/${stateId}.json`
-              const stateId = /states\/(.+)\.json/u.exec(key)?.[1];
+              const stateId = /s\/(.+)\.json/u.exec(key)?.[1];
 
               if (!stateId) {
                 throw createError('Invalid theme id');
