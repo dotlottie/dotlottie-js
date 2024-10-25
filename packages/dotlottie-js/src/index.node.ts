@@ -3,10 +3,10 @@
  */
 
 import { getDotLottieVersion } from './utils';
-import { DotLottieV1 } from './v1/browser';
 import type { DotLottieV1Options } from './v1/common';
-import { DotLottie } from './v2/browser';
+import { DotLottieV1 } from './v1/node';
 import type { DotLottieOptions } from './v2/common';
+import { DotLottie } from './v2/node';
 
 export function makeDotLottie<T extends 'v1' | 'v2'>(
   version: T,
@@ -73,4 +73,4 @@ export async function toDotLottieV1(dotLottie: DotLottie): Promise<DotLottieV1> 
   return dotLottieV1;
 }
 
-export * from './v2/browser';
+export * from './v2/node';
