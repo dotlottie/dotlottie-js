@@ -81,6 +81,7 @@ jobs:
 
       - name: 🏗 Build
         run: pnpm build
+        working-directory: packages/dotlottie-js
 
       - name: 🚀 Release
         uses: changesets/action@v1
