@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.3
+
+### Patch Changes
+
+- 81014cb: fix: dotLottie v1 <-> v2 conversion
+
 ## 0.9.0-beta.2
 
 ### Patch Changes
