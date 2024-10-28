@@ -8,8 +8,9 @@ import type { Animation as AnimationData, Asset } from '@lottie-animation-commun
 import type { UnzipFileFilter, Unzipped } from 'fflate';
 import { unzip as fflateUnzip, strFromU8 } from 'fflate';
 
-import type { Manifest as ManifestV1 } from './schemas/v1/manifest';
-import type { Manifest as ManifestV2 } from './schemas/v2/manifest';
+import type { ManifestV1 } from './v1/common/schemas/manifest';
+import type { LottieStateMachine } from './v2/browser';
+import type { Manifest as ManifestV2 } from './v2/common/schemas';
 
 export interface MimeTypes {
   [key: string]: string;
@@ -333,12 +334,12 @@ export function isAudioAsset(asset: Asset.Value): asset is Asset.Image {
  * @example
  * ```typescript
  * const dotLottie = new Uint8Array(...);
- * const unzippedData = await unzipdotLottie(dotLottie);
+ * const unzippedData = await unzipDotLottie(dotLottie);
  * ```
  *
  * @public
  */
-export async function unzipdotLottie(
+export async function unzipDotLottie(
   dotLottie: Uint8Array | undefined,
   filter: UnzipFileFilter = (): boolean => true,
 ): Promise<Unzipped> {
@@ -378,12 +379,12 @@ export async function unzipdotLottie(
  * ```typescript
  * const dotLottie = new Uint8Array(...);
  * const targetPath = 'images/image.png';
- * const unzippedFile = await unzipdotLottieFile(dotLottie, targetPath);
+ * const unzippedFile = await unzipDotLottieFile(dotLottie, targetPath);
  * ```
  *
  * @public
  */
-export async function unzipdotLottieFile(
+export async function unzipDotLottieFile(
   dotLottie: Uint8Array,
   path: string,
   filter?: UnzipFileFilter,
@@ -392,7 +393,7 @@ export async function unzipdotLottieFile(
     throw new DotLottieError('Invalid dotLottie', ErrorCodes.INVALID_DOTLOTTIE);
   }
 
-  const unzipped = await unzipdotLottie(dotLottie, (file) => file.name === path && (!filter || filter(file)));
+  const unzipped = await unzipDotLottie(dotLottie, (file) => file.name === path && (!filter || filter(file)));
 
   return unzipped[path];
 }
@@ -419,7 +420,7 @@ export async function unzipdotLottieFile(
 export async function getManifest(dotLottie: Uint8Array): Promise<ManifestV1 | ManifestV2 | undefined> {
   const manifestFileName = 'manifest.json';
 
-  const unzipped = await unzipdotLottie(dotLottie, (file) => file.name === manifestFileName);
+  const unzipped = await unzipDotLottie(dotLottie, (file) => file.name === manifestFileName);
 
   const unzippedManifest = unzipped[manifestFileName];
 
@@ -576,7 +577,7 @@ export async function getAudio(
 
   const audioFilename = `${audioPath}${filename}`;
 
-  const unzipped = await unzipdotLottieFile(dotLottie, audioFilename, filter);
+  const unzipped = await unzipDotLottieFile(dotLottie, audioFilename, filter);
 
   if (typeof unzipped === 'undefined') {
     return undefined;
@@ -613,7 +614,7 @@ export async function getAllAudio(dotLottie: Uint8Array, filter?: UnzipFileFilte
     audioPath = 'u/';
   }
 
-  const unzippedAudio = await unzipdotLottie(dotLottie, (file) => {
+  const unzippedAudio = await unzipDotLottie(dotLottie, (file) => {
     const name = file.name.replace(audioPath, '');
 
     return file.name.startsWith(audioPath) && (!filter || filter({ ...file, name }));
@@ -731,7 +732,7 @@ export async function getImage(
 
   const imageFilename = `${imagesPath}${filename}`;
 
-  const unzipped = await unzipdotLottieFile(dotLottie, imageFilename, filter);
+  const unzipped = await unzipDotLottieFile(dotLottie, imageFilename, filter);
 
   if (typeof unzipped === 'undefined') {
     return undefined;
@@ -768,7 +769,7 @@ export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter)
     imagesPath = 'i/';
   }
 
-  const unzippedImages = await unzipdotLottie(dotLottie, (file) => {
+  const unzippedImages = await unzipDotLottie(dotLottie, (file) => {
     const name = file.name.replace(imagesPath, '');
 
     return file.name.startsWith(imagesPath) && (!filter || filter({ ...file, name }));
@@ -880,7 +881,7 @@ export async function getAnimation(
 ): Promise<AnimationData | undefined> {
   const animationFilename = `animations/${animationId}.json`;
 
-  const unzippedAnimation = await unzipdotLottieFile(dotLottie, animationFilename, filter);
+  const unzippedAnimation = await unzipDotLottieFile(dotLottie, animationFilename, filter);
 
   if (typeof unzippedAnimation === 'undefined') {
     return undefined;
@@ -938,7 +939,7 @@ export async function getAnimations(
     animationsPath = 'a/';
   }
 
-  const unzippedAnimations = await unzipdotLottie(dotLottie, (file) => {
+  const unzippedAnimations = await unzipDotLottie(dotLottie, (file) => {
     const filename = file.name.replace(animationsPath, '').replace('.json', '');
 
     return file.name.startsWith(animationsPath) && (!filter || filter({ ...file, name: filename }));
@@ -962,4 +963,160 @@ export async function getAnimations(
   await inlineImageAssets(dotLottie, animationsMap);
 
   return animationsMap;
+}
+
+/**
+ * Retrieves the themes from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array and an optional filter function to refine the extraction of themes.
+ * It returns a Promise that resolves to a record containing the themes mapped by their ID.
+ *
+ * @param dotLottie - The DotLottie object containing the themes.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to a record containing the themes mapped by their ID.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const themes = await getThemes(dotLottie);
+ * ```
+ */
+export async function getThemes(
+  dotLottie: Uint8Array,
+  filter?: UnzipFileFilter,
+): Promise<Record<string, Record<string, unknown>>> {
+  const themesMap: Record<string, Record<string, unknown>> = {};
+
+  const unzippedThemes = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('t/', '').replace('.json', '');
+
+    return file.name.startsWith('t/') && (!filter || filter({ ...file, name }));
+  });
+
+  for (const themePath in unzippedThemes) {
+    const data = unzippedThemes[themePath];
+
+    if (data instanceof Uint8Array) {
+      const themeId = themePath.replace('t/', '').replace('.json', '');
+
+      themesMap[themeId] = JSON.parse(strFromU8(data, false));
+    }
+  }
+
+  return themesMap;
+}
+
+/**
+ * Retrieves a specific theme by ID from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array, the theme ID to retrieve, and an optional filter function.
+ * It returns a Promise that resolves to the theme as a string or `undefined` if not found.
+ *
+ * @param dotLottie - The DotLottie object containing the theme.
+ * @param themeId - The ID of the theme to retrieve.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to the theme as a string or `undefined` if not found.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const themeId = 'dark';
+ * const theme = await getTheme(dotLottie, themeId);
+ * ```
+ */
+export async function getTheme(
+  dotLottie: Uint8Array,
+  themeId: string,
+  filter?: UnzipFileFilter,
+): Promise<Record<string, unknown> | undefined> {
+  const themeFilename = `t/${themeId}.json`;
+
+  const unzippedTheme = await unzipDotLottieFile(dotLottie, themeFilename, filter);
+
+  if (typeof unzippedTheme === 'undefined') {
+    return undefined;
+  }
+
+  return JSON.parse(strFromU8(unzippedTheme, false));
+}
+
+/**
+ * Retrieves the state machines from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array and an optional filter function to refine the extraction of state machines.
+ * It returns a Promise that resolves to a record containing the state machines mapped by their ID.
+ *
+ * @param dotLottie - The DotLottie object containing the state machines.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to a record containing the state machines mapped by their ID.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const machines = await getStateMachines(dotLottie);
+ * ```
+ */
+export async function getStateMachines(
+  dotLottie: Uint8Array,
+  filter?: UnzipFileFilter,
+): Promise<Record<string, string>> {
+  const statesMap: Record<string, string> = {};
+
+  const unzippedStates = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('s/', '').replace('.json', '');
+
+    return file.name.startsWith('s/') && (!filter || filter({ ...file, name }));
+  });
+
+  for (const statePath in unzippedStates) {
+    const data = unzippedStates[statePath];
+
+    if (data instanceof Uint8Array) {
+      const themeId = statePath.replace('s/', '').replace('.json', '');
+
+      statesMap[themeId] = strFromU8(data, false);
+    }
+  }
+
+  return statesMap;
+}
+
+/**
+ * Retrieves a specific state machine by ID from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array, the state ID to retrieve, and an optional filter function.
+ * It returns a Promise that resolves to the state machine as a string or `undefined` if not found.
+ *
+ * @param dotLottie - The DotLottie object containing the theme.
+ * @param stateMachineId - The ID of the state machine to retrieve.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to the state machine as a string or `undefined` if not found.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const stateMachineId = 'walk';
+ * const stateMachine = await getState(dotLottie, stateMachineId);
+ * ```
+ */
+export async function getStateMachine(
+  dotLottie: Uint8Array,
+  stateMachineId: string,
+  filter?: UnzipFileFilter,
+): Promise<LottieStateMachine | undefined> {
+  const stateMachineFilename = `s/${stateMachineId}.json`;
+
+  const unzippedStateMachine = await unzipDotLottieFile(dotLottie, stateMachineFilename, filter);
+
+  if (typeof unzippedStateMachine === 'undefined') {
+    return undefined;
+  }
+
+  const stateMachine = JSON.parse(strFromU8(unzippedStateMachine, false)) as LottieStateMachine;
+
+  return stateMachine;
 }

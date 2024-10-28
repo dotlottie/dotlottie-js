@@ -8,7 +8,6 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
-import type { Manifest } from '../../schemas/v2/manifest';
 import {
   base64ToUint8Array,
   DotLottieError,
@@ -19,6 +18,7 @@ import {
 import { DotLottieV1 } from '../../v1/browser';
 import type { AnimationOptions, DotLottieOptions, ConversionOptions } from '../common';
 import { DotLottieCommon } from '../common';
+import type { Manifest } from '../common/schemas';
 
 import { LottieAnimation } from './animation';
 import { LottieAudio } from './audio';

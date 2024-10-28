@@ -24,7 +24,7 @@ export enum PlayMode {
 
 export const PlayModeSchema = nativeEnum(PlayMode);
 
-export const ManifestAnimationSchema = object({
+export const ManifestAnimationSchemaV1 = object({
   id: string(),
 
   autoplay: optional(boolean()),
@@ -36,20 +36,14 @@ export const ManifestAnimationSchema = object({
   intermission: optional(number()),
   themeColor: optional(string()),
 });
-export type ManifestAnimation = Output<typeof ManifestAnimationSchema>;
+export type ManifestAnimationV1 = Output<typeof ManifestAnimationSchemaV1>;
 
-export const ManifestThemeSchema = object({
-  animations: array(string()),
-  id: string(),
-});
-export type ManifestTheme = Output<typeof ManifestThemeSchema>;
-
-export const ManifestSchema = object({
+export const ManifestSchemaV1 = object({
   version: optional(string()),
   generator: optional(string()),
 
   activeAnimationId: optional(string()),
-  animations: array(ManifestAnimationSchema),
+  animations: array(ManifestAnimationSchemaV1),
   author: optional(string()),
   custom: optional(record(string(), any())),
   description: optional(string()),
@@ -57,4 +51,4 @@ export const ManifestSchema = object({
   revision: optional(number()),
 });
 
-export type Manifest = Output<typeof ManifestSchema>;
+export type ManifestV1 = Output<typeof ManifestSchemaV1>;

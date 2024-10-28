@@ -6,3 +6,4 @@ export * from './dotlottie';
 export * from './animation';
 export * from './image';
 export * from './audio';
+export * from './schemas';

@@ -8,7 +8,6 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 import type { Zippable } from 'fflate';
 import { strToU8, unzip, zip, strFromU8 } from 'fflate';
 
-import type { Manifest } from '../../schemas/v1/manifest';
 import {
   base64ToUint8Array,
   DotLottieError,
@@ -19,6 +18,7 @@ import {
 import { DotLottie } from '../../v2/node';
 import type { DotLottieV1Options, AnimationOptions, ConversionOptions } from '../common';
 import { DotLottieCommonV1 } from '../common';
+import type { ManifestV1 } from '../common/schemas/manifest';
 
 import { LottieAnimationV1 } from './animation';
 import { LottieAudioV1 } from './audio';
@@ -168,7 +168,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
 
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         try {
-          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
+          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as ManifestV1;
           const { author, custom, description, generator, keywords } = manifest;
 
           if (author) {

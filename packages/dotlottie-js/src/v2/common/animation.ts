@@ -5,11 +5,12 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
-import type { ManifestAnimation } from '../../schemas/v2/manifest';
 import { DotLottieError, isAudioAsset } from '../../utils';
+
 
 import type { LottieAudioCommon } from './audio';
 import type { LottieImageCommon } from './image';
+import type { ManifestAnimation } from './schemas';
 import type { LottieThemeCommon } from './theme';
 
 export type AnimationData = AnimationType;

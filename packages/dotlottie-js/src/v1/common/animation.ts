@@ -5,12 +5,12 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
-import type { ManifestAnimation } from '../../schemas/v1/manifest';
-import { PlayMode } from '../../schemas/v1/manifest';
 import { DotLottieError, isAudioAsset } from '../../utils';
 
 import type { LottieAudioCommonV1 } from './audio';
 import type { LottieImageCommonV1 } from './image';
+import { PlayMode } from './schemas/manifest';
+import type { ManifestAnimationV1 } from './schemas/manifest';
 
 export type AnimationData = AnimationType;
 
@@ -18,7 +18,7 @@ export interface ExportOptions {
   inlineAssets?: boolean;
 }
 
-export interface AnimationOptionsBase extends ManifestAnimation {
+export interface AnimationOptionsBase extends ManifestAnimationV1 {
   defaultActiveAnimation?: boolean;
   zipOptions?: ZipOptions;
 }
@@ -42,7 +42,7 @@ export class LottieAnimationCommonV1 {
 
   protected _url?: string;
 
-  private _direction: ManifestAnimation['direction'];
+  private _direction: ManifestAnimationV1['direction'];
 
   private _speed: number | undefined;
 
@@ -183,11 +183,11 @@ export class LottieAnimationCommonV1 {
     this._themeColor = themeColor;
   }
 
-  public get direction(): ManifestAnimation['direction'] {
+  public get direction(): ManifestAnimationV1['direction'] {
     return this._direction;
   }
 
-  public set direction(direction: ManifestAnimation['direction']) {
+  public set direction(direction: ManifestAnimationV1['direction']) {
     this._direction = direction;
   }
 

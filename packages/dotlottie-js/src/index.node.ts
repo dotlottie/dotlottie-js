@@ -18,5 +18,6 @@ export function makeDotLottie<T extends 'v1' | 'v2'>(
   return new DotLottie(options as DotLottieOptions) as T extends 'v1' ? DotLottieV1 : DotLottie;
 }
 
+export * from './v1/node';
 export * from './v2/node';
 export * from './utils';

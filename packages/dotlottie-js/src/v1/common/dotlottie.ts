@@ -6,13 +6,13 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 import type { ZipOptions } from 'fflate';
 
 import { PACKAGE_NAME } from '../../constants';
-import type { Manifest } from '../../schemas/v1/manifest';
 import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommonV1 } from './animation';
 import type { LottieAudioCommonV1 } from './audio';
 import type { LottieImageCommonV1 } from './image';
 import type { DotLottieV1Plugin } from './plugin';
+import type { ManifestV1 } from './schemas/manifest';
 
 export interface DotLottieV1Options {
   author?: string;
@@ -148,7 +148,7 @@ export class DotLottieCommonV1 {
     return Array.from(this._animationsMap.values());
   }
 
-  public get manifest(): Manifest {
+  public get manifest(): ManifestV1 {
     return this._buildManifest();
   }
 
@@ -411,7 +411,7 @@ export class DotLottieCommonV1 {
     return audio;
   }
 
-  protected _buildManifest(): Manifest {
+  protected _buildManifest(): ManifestV1 {
     const animationsList = Array.from(this._animationsMap.values()).map((animation) => ({
       id: animation.id,
       ...(animation.autoplay !== undefined && { autoplay: animation.autoplay }),
@@ -424,7 +424,7 @@ export class DotLottieCommonV1 {
       ...(animation.themeColor !== undefined && { themeColor: animation.themeColor }),
     }));
 
-    const manifest: Manifest = {
+    const manifest: ManifestV1 = {
       version: this.version,
       generator: this.generator,
       author: this.author,

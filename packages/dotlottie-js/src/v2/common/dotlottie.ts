@@ -6,13 +6,13 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 import type { ZipOptions } from 'fflate';
 
 import { PACKAGE_NAME } from '../../constants';
-import type { Manifest } from '../../schemas/v2/manifest';
 import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
 import type { LottieImageCommon } from './image';
 import type { DotLottiePlugin } from './plugin';
+import type { Manifest } from './schemas';
 import type { DotLottieStateMachineCommonOptions } from './state-machine';
 import { DotLottieStateMachineCommon } from './state-machine';
 import type { ThemeOptions } from './theme';

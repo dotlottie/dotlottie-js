@@ -5,21 +5,16 @@
 import type { ZipOptions } from 'fflate';
 import { safeParse, flatten } from 'valibot';
 
+import { DotLottieError, ErrorCodes } from '../../utils';
+
 import type {
   DotLottieDescriptor,
   DotLottieListeners,
   DotLottieStates,
   DotLottieTransitions,
   DotLottieTriggers,
-} from '../../schemas/v2/state-machine';
-import {
-  DescriptorSchema,
-  ListenersSchema,
-  StatesSchema,
-  TransitionsSchema,
-  TriggersSchema,
-} from '../../schemas/v2/state-machine';
-import { DotLottieError, ErrorCodes } from '../../utils';
+} from './schemas';
+import { DescriptorSchema, ListenersSchema, StatesSchema, TransitionsSchema, TriggersSchema } from './schemas';
 
 export interface DotLottieStateMachineCommonOptions {
   descriptor: DotLottieDescriptor;
