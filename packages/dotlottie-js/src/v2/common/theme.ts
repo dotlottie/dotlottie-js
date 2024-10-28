@@ -4,8 +4,9 @@
 
 import type { ZipOptions } from 'fflate';
 
+import { DotLottieError, isValidURL } from '../../utils';
+
 import type { LottieAnimationCommon } from './animation';
-import { createError, isValidURL } from './utils';
 
 type Data = Record<string, unknown>;
 
@@ -105,15 +106,15 @@ export class LottieThemeCommon {
   }
 
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (typeof id !== 'string' || !id) throw createError('Invalid theme id');
+    if (typeof id !== 'string' || !id) throw new DotLottieError('Invalid theme id');
   }
 
   private _requireValidUrl(url: string | undefined): asserts url is string {
-    if (!url || !isValidURL(url)) throw createError('Invalid theme url');
+    if (!url || !isValidURL(url)) throw new DotLottieError('Invalid theme url');
   }
 
   private _requireValidData(data: Data | undefined): asserts data is Data {
-    if (typeof data !== 'object') throw createError('Invalid theme data');
+    if (typeof data !== 'object') throw new DotLottieError('Invalid theme data');
   }
 
   private async _loadDataFromUrl(url: string): Promise<void> {
@@ -124,7 +125,7 @@ export class LottieThemeCommon {
 
       this._data = data;
     } catch (error) {
-      throw createError(`Failed to fetch theme from url, Error: ${JSON.stringify(error)}`);
+      throw new DotLottieError(`Failed to fetch theme from url, Error: ${JSON.stringify(error)}`);
     }
   }
 }

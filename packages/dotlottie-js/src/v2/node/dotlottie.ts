@@ -2,47 +2,65 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { Zippable } from 'fflate';
 import { strToU8, unzip, zip, strFromU8 } from 'fflate';
 
-import pkg from '../../../package.json';
 import type { Manifest } from '../../schemas/v2/manifest';
-import type { DotLottieOptions, DotLottiePlugin, AnimationOptions, ConversionOptions } from '../common';
 import {
-  createError,
-  DotLottieCommon,
   base64ToUint8Array,
-  getExtensionTypeFromBase64,
   DotLottieError,
+  getDotLottieVersion,
+  getExtensionTypeFromBase64,
   isAudioAsset,
-} from '../common';
+} from '../../utils';
+import { DotLottieV1 } from '../../v1/node';
+import type { DotLottieOptions, AnimationOptions, ConversionOptions } from '../common';
+import { DotLottieCommon } from '../common';
 
 import { LottieAnimationV2 } from './animation';
 import { LottieAudio } from './audio';
 import { LottieImage } from './image';
 import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
 
-export class DotLottie extends DotLottieCommon {
-  public constructor(options?: DotLottieOptions) {
-    const generator = options?.generator ?? `${pkg.name}/node@${pkg.version}`;
+export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie> {
+  const version = await getDotLottieVersion(new Uint8Array(arrayBuffer));
 
-    super({
-      ...options,
-      generator,
-    });
+  // Assume it's a v1 file if the version is not 2.0.0
+  if (version !== '2.0.0') {
+    const dotLottieV2 = new DotLottie();
+    const dotLottieV1 = await new DotLottieV1().fromArrayBuffer(arrayBuffer);
 
-    if (this.enableDuplicateImageOptimization) this.addPlugins(new DuplicateImageDetector());
+    await dotLottieV1.build();
+
+    const animationIds = dotLottieV1.animations.map((animation) => animation.id);
+
+    for (const animationId of animationIds) {
+      const animation = await dotLottieV1.getAnimation(animationId, { inlineAssets: true });
+
+      if (animation && animation.data) {
+        dotLottieV2.addAnimation({
+          data: animation.data,
+          id: animationId,
+        });
+      }
+    }
+
+    return dotLottieV2;
   }
 
-  public override addPlugins(...plugins: DotLottiePlugin[]): DotLottieCommon {
-    plugins.forEach((plugin) => {
-      plugin.install(this);
+  return new DotLottie().fromArrayBuffer(arrayBuffer);
+}
 
-      this._plugins.push(plugin);
-    });
+export class DotLottie extends DotLottieCommon {
+  public constructor(options?: DotLottieOptions) {
+    super(options);
 
-    return this;
+    if (this.enableDuplicateImageOptimization) {
+      this._plugins.push(new DuplicateImageDetector());
+    }
   }
 
   public override create(): DotLottieCommon {
@@ -59,14 +77,14 @@ export class DotLottie extends DotLottieCommon {
     _fileName: string,
     _options: ConversionOptions | undefined = undefined,
   ): Promise<void> {
-    throw createError('Cannot download dotlottie in a non-browser environment');
+    throw new DotLottieError('Cannot download dotlottie in a non-browser environment');
   }
 
   public override addAnimation(animationOptions: AnimationOptions): DotLottieCommon {
     const animation = new LottieAnimationV2(animationOptions);
 
     if (this._animationsMap.get(animationOptions.id)) {
-      throw createError('Duplicate animation id detected, aborting.');
+      throw new DotLottieError('Duplicate animation id detected, aborting.');
     }
 
     this._animationsMap.set(animation.id, animation);
@@ -74,17 +92,11 @@ export class DotLottie extends DotLottieCommon {
     return this;
   }
 
-  public override async toArrayBuffer(options: ConversionOptions | undefined): Promise<ArrayBuffer> {
+  public override async toArrayBuffer(options?: ConversionOptions): Promise<ArrayBuffer> {
     const manifest = this._buildManifest();
 
     const dotlottie: Zippable = {
-      'manifest.json': [
-        strToU8(JSON.stringify(manifest)),
-        {
-          // no compression for manifest
-          level: 0,
-        },
-      ],
+      'manifest.json': [strToU8(JSON.stringify(manifest)), {}],
     };
 
     for (const animation of this.animations) {
@@ -143,6 +155,12 @@ export class DotLottie extends DotLottieCommon {
    * @throws Error
    */
   public override async fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottie> {
+    const dotLottieVersion = await getDotLottieVersion(new Uint8Array(arrayBuffer));
+
+    if (dotLottieVersion !== '2.0.0') {
+      return toDotLottieV2(arrayBuffer);
+    }
+
     const dotlottie = new DotLottie();
 
     try {
@@ -178,7 +196,7 @@ export class DotLottie extends DotLottieCommon {
               const animationId = /a\/(.+)\.json/u.exec(key)?.[1];
 
               if (!animationId) {
-                throw createError('Invalid animation id');
+                throw new DotLottieError('Invalid animation id');
               }
 
               const animation = JSON.parse(decodedStr);
@@ -186,7 +204,7 @@ export class DotLottie extends DotLottieCommon {
               const animationSettings = manifest.animations.find((anim) => anim.id === animationId);
 
               if (animationSettings === undefined) {
-                throw createError('Animation not found inside manifest');
+                throw new DotLottieError('Animation not found inside manifest');
               }
 
               dotlottie.addAnimation({
@@ -198,7 +216,7 @@ export class DotLottie extends DotLottieCommon {
               const imageId = /i\/(.+)\./u.exec(key)?.[1];
 
               if (!imageId) {
-                throw createError('Invalid image id');
+                throw new DotLottieError('Invalid image id');
               }
 
               const base64 = Buffer.from(decompressedFile).toString('base64');
@@ -243,7 +261,7 @@ export class DotLottie extends DotLottieCommon {
               const themeId = /t\/(.+)\.json/u.exec(key)?.[1];
 
               if (!themeId) {
-                throw createError('Invalid theme id');
+                throw new DotLottieError('Invalid theme id');
               }
 
               manifest.themes?.forEach((givenThemeId) => {
@@ -259,7 +277,7 @@ export class DotLottie extends DotLottieCommon {
               const stateId = /s\/(.+)\.json/u.exec(key)?.[1];
 
               if (!stateId) {
-                throw createError('Invalid theme id');
+                throw new DotLottieError('Invalid theme id');
               }
 
               manifest.stateMachines?.forEach((givenStateMachineId) => {

@@ -4,8 +4,9 @@
 
 import type { ZipOptions } from 'fflate';
 
+import { dataUrlFromU8, DotLottieError } from '../../utils';
+
 import type { LottieAnimationCommon } from './animation';
-import { dataUrlFromU8, DotLottieError } from './utils';
 
 export type ImageData = string | ArrayBuffer | Blob;
 

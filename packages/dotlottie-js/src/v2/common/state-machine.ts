@@ -19,8 +19,7 @@ import {
   TransitionsSchema,
   TriggersSchema,
 } from '../../schemas/v2/state-machine';
-
-import { DotLottieError, ErrorCodes } from './utils';
+import { DotLottieError, ErrorCodes } from '../../utils';
 
 export interface DotLottieStateMachineCommonOptions {
   descriptor: DotLottieDescriptor;

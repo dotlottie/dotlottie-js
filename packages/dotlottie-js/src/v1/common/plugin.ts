@@ -2,8 +2,9 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+import { DotLottieError } from '../../utils';
+
 import type { DotLottieCommonV1 } from './dotlottie';
-import { createError } from './utils';
 
 interface DotLottieV1PluginOptions {
   parallel?: boolean;
@@ -39,10 +40,11 @@ export class DotLottieV1Plugin {
   }
 
   public async onBuild(): Promise<void> {
-    throw createError('DotLottieV1-plugin build Not implemented!');
+    throw new DotLottieError('DotLottieV1-plugin build Not implemented!');
   }
 
   protected _requireDotLottieV1(DotLottieV1: DotLottieCommonV1 | undefined): asserts DotLottieV1 {
-    if (!DotLottieV1) throw createError('DotLottieV1 context is null inside of duplicate image detector plugin.');
+    if (!DotLottieV1)
+      throw new DotLottieError('DotLottieV1 context is null inside of duplicate image detector plugin.');
   }
 }

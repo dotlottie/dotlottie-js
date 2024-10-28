@@ -5,14 +5,14 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
-import pkg from '../../../package.json';
+import { PACKAGE_NAME } from '../../constants';
 import type { Manifest } from '../../schemas/v1/manifest';
+import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommonV1 } from './animation';
 import type { LottieAudioCommonV1 } from './audio';
 import type { LottieImageCommonV1 } from './image';
 import type { DotLottieV1Plugin } from './plugin';
-import { DotLottieV1Error, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
 
 export interface DotLottieV1Options {
   author?: string;
@@ -39,69 +39,81 @@ export class DotLottieCommonV1 {
 
   protected readonly _plugins: DotLottieV1Plugin[] = [];
 
-  protected _author: string = '@dotlottie/dotlottie-js';
+  protected _author: string = PACKAGE_NAME;
 
-  protected _description?: string;
+  protected _description: string | undefined;
 
-  protected _generator: string = `${pkg.name}@${pkg.version}`;
+  protected _generator: string = PACKAGE_NAME;
 
-  protected _keywords?: string;
+  protected _keywords: string | undefined;
 
   protected _version: string = '1.0.0';
 
-  protected _revision?: number;
+  protected _revision: number | undefined;
 
   // Custom data for the DotLottieV1
-  protected _customData?: Record<string, unknown>;
+  protected _customData: Record<string, unknown> | undefined;
 
   public enableDuplicateImageOptimization?: boolean;
 
   public constructor(options?: DotLottieV1Options) {
-    this._author = options?.author ?? 'LottieFiles';
+    if (typeof options?.author === 'string') {
+      this._author = options.author;
+    }
 
-    this._description = options?.description ?? '';
+    if (typeof options?.description === 'string') {
+      this._description = options.description;
+    }
 
-    this._generator = options?.generator ?? `${pkg.name}@${pkg.version}`;
+    if (typeof options?.generator === 'string') {
+      this._generator = options.generator;
+    }
 
-    this._keywords = options?.keywords ?? 'DotLottieV1';
+    if (typeof options?.keywords === 'string') {
+      this._keywords = options.keywords;
+    }
 
     this._version = '1.0.0';
 
-    this._customData = options?.customData ?? {};
+    if (typeof options?.customData === 'object') {
+      this._customData = options.customData;
+    }
 
-    this._revision = options?.revision ?? 1;
+    if (typeof options?.revision === 'number') {
+      this._revision = options.revision;
+    }
 
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
 
   public async toBase64(_options: ConversionOptions | undefined = undefined): Promise<string> {
-    throw createError('toBase64() method not implemented in concrete class!');
+    throw new DotLottieError('toBase64() method not implemented in concrete class!');
   }
 
   public create(_options?: DotLottieV1Options): DotLottieCommonV1 {
-    throw createError('create() method not implemented in concrete class!');
+    throw new DotLottieError('create() method not implemented in concrete class!');
   }
 
   public async download(_fileName: string, _options: ConversionOptions | undefined = undefined): Promise<void> {
-    throw createError('download(fileName:string) method not implemented in concrete class!');
+    throw new DotLottieError('download(fileName:string) method not implemented in concrete class!');
   }
 
   public addPlugins(..._plugins: DotLottieV1Plugin[]): DotLottieCommonV1 {
-    throw createError('addPlugins(...plugins: DotLottieV1Plugin[]) not implemented in concrete class!');
+    throw new DotLottieError('addPlugins(...plugins: DotLottieV1Plugin[]) not implemented in concrete class!');
   }
 
   public addAnimation(_animationOptions: AnimationOptions): DotLottieCommonV1 {
-    throw createError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
+    throw new DotLottieError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
   }
 
   public async fromArrayBuffer(_arrayBuffer: ArrayBuffer): Promise<DotLottieCommonV1> {
-    throw createError(
+    throw new DotLottieError(
       'fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieCommonV1> not implemented in concrete class!',
     );
   }
 
   public async toArrayBuffer(_options: ConversionOptions | undefined = undefined): Promise<ArrayBuffer> {
-    throw createError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
+    throw new DotLottieError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
   }
 
   public get plugins(): DotLottieV1Plugin[] {
@@ -180,20 +192,6 @@ export class DotLottieCommonV1 {
     return this;
   }
 
-  public removePlugins(...plugins: DotLottieV1Plugin[]): DotLottieCommonV1 {
-    plugins.forEach((plugin) => {
-      plugin.uninstall();
-
-      const pluginIndex = this._plugins.indexOf(plugin);
-
-      if (pluginIndex !== -1) {
-        this._plugins.splice(pluginIndex, 1);
-      }
-    });
-
-    return this;
-  }
-
   /**
    * Renames the underlying LottieImageV1, as well as updating the image asset path inside the animation data.
    * @param newName - desired id and fileName,
@@ -205,11 +203,11 @@ export class DotLottieCommonV1 {
         // Rename the LottieImageV1
         imageAsset.renameImage(newName);
 
-        if (!animation.data) throw createError('No animation data available.');
+        if (!animation.data) throw new DotLottieError('No animation data available.');
 
         const animationAssets = animation.data.assets as AnimationType['assets'];
 
-        if (!animationAssets) throw createError('No image assets to rename.');
+        if (!animationAssets) throw new DotLottieError('No image assets to rename.');
 
         // Find the image asset inside the animation data and rename its path
         for (const asset of animationAssets) {
@@ -263,11 +261,11 @@ export class DotLottieCommonV1 {
         // Rename the LottieImageV1
         audioAsset.renameAudio(newName);
 
-        if (!animation.data) throw new DotLottieV1Error('No animation data available.');
+        if (!animation.data) throw new DotLottieError('No animation data available.');
 
         const animationAssets = animation.data.assets as AnimationType['assets'];
 
-        if (!animationAssets) throw new DotLottieV1Error('No audio assets to rename.');
+        if (!animationAssets) throw new DotLottieError('No audio assets to rename.');
 
         // Find the audio asset inside the animation data and rename its path
         for (const asset of animationAssets) {
@@ -312,7 +310,7 @@ export class DotLottieCommonV1 {
 
   protected _addLottieAnimation(animation: LottieAnimationCommonV1): DotLottieCommonV1 {
     if (this._animationsMap.get(animation.id)) {
-      throw createError('Duplicate animation id detected, aborting.');
+      throw new DotLottieError('Duplicate animation id detected, aborting.');
     }
 
     this._animationsMap.set(animation.id, animation);
@@ -328,7 +326,7 @@ export class DotLottieCommonV1 {
   private async _findAssetsAndInline(animation: LottieAnimationCommonV1): Promise<LottieAnimationCommonV1> {
     const animationAssets = animation.data?.assets as AnimationType['assets'];
 
-    if (!animationAssets) throw new DotLottieV1Error("Failed to inline assets, the animation's assets are undefined.");
+    if (!animationAssets) throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
 
     const images = this.getImages();
     const audios = this.getAudio();
@@ -372,7 +370,7 @@ export class DotLottieCommonV1 {
 
     let dataWithInlinedImages = this._animationsMap.get(animationId);
 
-    if (!dataWithInlinedImages) throw new DotLottieV1Error('Failed to find animation.');
+    if (!dataWithInlinedImages) throw new DotLottieError('Failed to find animation.');
 
     dataWithInlinedImages = await this._findAssetsAndInline(dataWithInlinedImages);
 
@@ -414,17 +412,25 @@ export class DotLottieCommonV1 {
   }
 
   protected _buildManifest(): Manifest {
-    const animationsList = Array.from(this._animationsMap.values());
+    const animationsList = Array.from(this._animationsMap.values()).map((animation) => ({
+      id: animation.id,
+      ...(animation.autoplay !== undefined && { autoplay: animation.autoplay }),
+      ...(animation.loop !== undefined && { loop: animation.loop }),
+      ...(animation.speed !== undefined && { speed: animation.speed }),
+      ...(animation.direction !== undefined && { direction: animation.direction }),
+      ...(animation.playMode !== undefined && { playMode: animation.playMode }),
+      ...(animation.hover !== undefined && { hover: animation.hover }),
+      ...(animation.intermission !== undefined && { intermission: animation.intermission }),
+      ...(animation.themeColor !== undefined && { themeColor: animation.themeColor }),
+    }));
 
     const manifest: Manifest = {
       version: this.version,
-      revision: this.revision ?? 0,
-      keywords: this.keywords ?? '',
-      author: this.author,
       generator: this.generator,
-      animations: animationsList.map((animation) => ({
-        id: animation.id,
-      })),
+      author: this.author,
+      ...(this.keywords !== undefined && { keywords: this.keywords }),
+      ...(this.revision !== undefined && { revision: this.revision }),
+      animations: animationsList,
       ...(this.description && this.description.trim() !== '' ? { description: this.description } : {}),
       ...(this._customData && Object.keys(this._customData).length !== 0 ? { custom: this._customData } : {}),
     };
@@ -485,13 +491,13 @@ export class DotLottieCommonV1 {
    * @returns DotLottieV1 instance
    */
   public async fromURL(url: string): Promise<DotLottieCommonV1> {
-    if (!isValidURL(url)) throw createError('Invalid URL');
+    if (!isValidURL(url)) throw new DotLottieError('Invalid URL');
 
     try {
       const response = await fetch(url);
 
       if (!response.ok) {
-        throw createError(response.statusText);
+        throw new DotLottieError(response.statusText);
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -499,11 +505,11 @@ export class DotLottieCommonV1 {
       return this.fromArrayBuffer(arrayBuffer);
     } catch (err) {
       if (err instanceof Error) {
-        throw createError(err.message);
+        throw new DotLottieError(err.message);
       }
     }
 
-    throw createError('Unknown error');
+    throw new DotLottieError('Unknown error');
   }
 
   public merge(...DotLottieV1s: DotLottieCommonV1[]): DotLottieCommonV1 {
@@ -529,28 +535,28 @@ export class DotLottieCommonV1 {
   }
 
   protected _requireValidAuthor(author: string | undefined): asserts author is string {
-    if (typeof author !== 'string') throw createError('Invalid author');
+    if (typeof author !== 'string') throw new DotLottieError('Invalid author');
   }
 
   protected _requireValidDescription(description: string | undefined): asserts description is string {
-    if (typeof description !== 'string') throw createError('Invalid description');
+    if (typeof description !== 'string') throw new DotLottieError('Invalid description');
   }
 
   protected _requireValidGenerator(generator: string | undefined): asserts generator is string {
-    if (typeof generator !== 'string') throw createError('Invalid generator');
+    if (typeof generator !== 'string') throw new DotLottieError('Invalid generator');
   }
 
   protected _requireValidKeywords(keywords: string | undefined): asserts keywords is string {
-    if (typeof keywords !== 'string') throw createError('Invalid keywords');
+    if (typeof keywords !== 'string') throw new DotLottieError('Invalid keywords');
   }
 
   protected _requireValidVersion(version: string | undefined): asserts version is string {
-    if (typeof version !== 'string') throw createError('Invalid version');
+    if (typeof version !== 'string') throw new DotLottieError('Invalid version');
   }
 
   protected _requireValidCustomData(
     customData: Record<string, unknown> | undefined,
   ): asserts customData is Record<string, unknown> {
-    if (!customData) throw createError('Invalid customData');
+    if (!customData) throw new DotLottieError('Invalid customData');
   }
 }

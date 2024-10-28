@@ -5,18 +5,18 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
-import pkg from '../../../package.json';
+import { PACKAGE_NAME } from '../../constants';
 import type { Manifest } from '../../schemas/v2/manifest';
+import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
-import type { DotLottieStateMachineCommonOptions } from './dotlottie-state-machine-common';
-import { DotLottieStateMachineCommon } from './dotlottie-state-machine-common';
 import type { LottieImageCommon } from './image';
 import type { DotLottiePlugin } from './plugin';
+import type { DotLottieStateMachineCommonOptions } from './state-machine';
+import { DotLottieStateMachineCommon } from './state-machine';
 import type { ThemeOptions } from './theme';
 import { LottieThemeCommon } from './theme';
-import { DotLottieError, createError, isAudioAsset, isImageAsset, isValidURL } from './utils';
 
 export interface DotLottieOptions {
   enableDuplicateImageOptimization?: boolean;
@@ -41,46 +41,48 @@ export class DotLottieCommon {
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
 
-  protected _generator: string = `${pkg.name}@${pkg.version}`;
+  protected _generator: string = PACKAGE_NAME;
 
   protected _version: string = '2.0.0';
 
   public enableDuplicateImageOptimization?: boolean;
 
   public constructor(options?: DotLottieOptions) {
-    this._generator = options?.generator ?? `${pkg.name}@${pkg.version}`;
+    if (options?.generator) {
+      this._generator = options.generator;
+    }
 
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
 
   public async toBase64(_options: ConversionOptions | undefined = undefined): Promise<string> {
-    throw createError('toBase64() method not implemented in concrete class!');
+    throw new DotLottieError('toBase64() method not implemented in concrete class!');
   }
 
   public create(_options?: DotLottieOptions): DotLottieCommon {
-    throw createError('create() method not implemented in concrete class!');
+    throw new DotLottieError('create() method not implemented in concrete class!');
   }
 
   public async download(_fileName: string, _options: ConversionOptions | undefined = undefined): Promise<void> {
-    throw createError('download(fileName:string) method not implemented in concrete class!');
+    throw new DotLottieError('download(fileName:string) method not implemented in concrete class!');
   }
 
   public addPlugins(..._plugins: DotLottiePlugin[]): DotLottieCommon {
-    throw createError('addPlugins(...plugins: DotLottiePlugin[]) not implemented in concrete class!');
+    throw new DotLottieError('addPlugins(...plugins: DotLottiePlugin[]) not implemented in concrete class!');
   }
 
   public addAnimation(_animationOptions: AnimationOptions): DotLottieCommon {
-    throw createError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
+    throw new DotLottieError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
   }
 
   public async fromArrayBuffer(_arrayBuffer: ArrayBuffer): Promise<DotLottieCommon> {
-    throw createError(
+    throw new DotLottieError(
       'fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieCommon> not implemented in concrete class!',
     );
   }
 
   public async toArrayBuffer(_options: ConversionOptions | undefined = undefined): Promise<ArrayBuffer> {
-    throw createError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
+    throw new DotLottieError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
   }
 
   public get plugins(): DotLottiePlugin[] {
@@ -112,21 +114,11 @@ export class DotLottieCommon {
   }
 
   public setGenerator(generator: string | undefined): DotLottieCommon {
-    this._generator = typeof generator === 'string' ? generator : `${pkg.name}@${pkg.version}`;
-
-    return this;
-  }
-
-  public removePlugins(...plugins: DotLottiePlugin[]): DotLottieCommon {
-    plugins.forEach((plugin) => {
-      plugin.uninstall();
-
-      const pluginIndex = this._plugins.indexOf(plugin);
-
-      if (pluginIndex !== -1) {
-        this._plugins.splice(pluginIndex, 1);
-      }
-    });
+    if (generator) {
+      this._generator = generator;
+    } else {
+      this._generator = PACKAGE_NAME;
+    }
 
     return this;
   }
@@ -142,11 +134,11 @@ export class DotLottieCommon {
         // Rename the LottieImage
         imageAsset.renameImage(newName);
 
-        if (!animation.data) throw createError('No animation data available.');
+        if (!animation.data) throw new DotLottieError('No animation data available.');
 
         const animationAssets = animation.data.assets as AnimationType['assets'];
 
-        if (!animationAssets) throw createError('No image assets to rename.');
+        if (!animationAssets) throw new DotLottieError('No image assets to rename.');
 
         // Find the image asset inside the animation data and rename its path
         for (const asset of animationAssets) {
@@ -249,7 +241,7 @@ export class DotLottieCommon {
 
   protected _addLottieAnimation(animation: LottieAnimationCommon): DotLottieCommon {
     if (this._animationsMap.get(animation.id)) {
-      throw createError('Duplicate animation id detected, aborting.');
+      throw new DotLottieError('Duplicate animation id detected, aborting.');
     }
 
     this._animationsMap.set(animation.id, animation);
@@ -448,13 +440,13 @@ export class DotLottieCommon {
    * @returns DotLottie instance
    */
   public async fromURL(url: string): Promise<DotLottieCommon> {
-    if (!isValidURL(url)) throw createError('Invalid URL');
+    if (!isValidURL(url)) throw new DotLottieError('Invalid URL');
 
     try {
       const response = await fetch(url);
 
       if (!response.ok) {
-        throw createError(response.statusText);
+        throw new DotLottieError(response.statusText);
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -462,11 +454,11 @@ export class DotLottieCommon {
       return this.fromArrayBuffer(arrayBuffer);
     } catch (err) {
       if (err instanceof Error) {
-        throw createError(err.message);
+        throw new DotLottieError(err.message);
       }
     }
 
-    throw createError('Unknown error');
+    throw new DotLottieError('Unknown error');
   }
 
   public merge(...dotlotties: DotLottieCommon[]): DotLottieCommon {
@@ -554,11 +546,11 @@ export class DotLottieCommon {
   public assignTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
     const theme = this._themesMap.get(themeId);
 
-    if (!theme) throw createError(`Failed to find theme with id ${themeId}`);
+    if (!theme) throw new DotLottieError(`Failed to find theme with id ${themeId}`);
 
     const animation = this._animationsMap.get(animationId);
 
-    if (!animation) throw createError(`Failed to find animation with id ${animationId}`);
+    if (!animation) throw new DotLottieError(`Failed to find animation with id ${animationId}`);
 
     theme.addAnimation(animation);
 
@@ -570,11 +562,11 @@ export class DotLottieCommon {
   public unassignTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
     const theme = this._themesMap.get(themeId);
 
-    if (!theme) throw createError(`Failed to find theme with id ${themeId}`);
+    if (!theme) throw new DotLottieError(`Failed to find theme with id ${themeId}`);
 
     const animation = this._animationsMap.get(animationId);
 
-    if (!animation) throw createError(`Failed to find animation with id ${animationId}`);
+    if (!animation) throw new DotLottieError(`Failed to find animation with id ${animationId}`);
 
     theme.removeAnimation(animation.id);
 
@@ -601,29 +593,25 @@ export class DotLottieCommon {
     return this;
   }
 
-  protected _requireValidAuthor(author: string | undefined): asserts author is string {
-    if (typeof author !== 'string') throw createError('Invalid author');
-  }
-
   protected _requireValidDescription(description: string | undefined): asserts description is string {
-    if (typeof description !== 'string') throw createError('Invalid description');
+    if (typeof description !== 'string') throw new DotLottieError('Invalid description');
   }
 
   protected _requireValidGenerator(generator: string | undefined): asserts generator is string {
-    if (typeof generator !== 'string') throw createError('Invalid generator');
+    if (typeof generator !== 'string') throw new DotLottieError('Invalid generator');
   }
 
   protected _requireValidKeywords(keywords: string | undefined): asserts keywords is string {
-    if (typeof keywords !== 'string') throw createError('Invalid keywords');
+    if (typeof keywords !== 'string') throw new DotLottieError('Invalid keywords');
   }
 
   protected _requireValidVersion(version: string | undefined): asserts version is string {
-    if (typeof version !== 'string') throw createError('Invalid version');
+    if (typeof version !== 'string') throw new DotLottieError('Invalid version');
   }
 
   protected _requireValidCustomData(
     customData: Record<string, unknown> | undefined,
   ): asserts customData is Record<string, unknown> {
-    if (!customData) throw createError('Invalid customData');
+    if (!customData) throw new DotLottieError('Invalid customData');
   }
 }

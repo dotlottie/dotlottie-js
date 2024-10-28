@@ -4,8 +4,9 @@
 
 import type { ZipOptions } from 'fflate';
 
+import { dataUrlFromU8, DotLottieError, ErrorCodes } from '../../utils';
+
 import type { LottieAnimationCommonV1 } from './animation';
-import { dataUrlFromU8, DotLottieV1Error, ErrorCodes } from './utils';
 
 export type AudioData = string | ArrayBuffer | Blob;
 
@@ -69,7 +70,7 @@ export class LottieAudioCommonV1 {
   }
 
   public set fileName(fileName: string) {
-    if (!fileName) throw new DotLottieV1Error('Invalid audio file name', ErrorCodes.ASSET_NOT_FOUND);
+    if (!fileName) throw new DotLottieError('Invalid audio file name', ErrorCodes.ASSET_NOT_FOUND);
     this._fileName = fileName;
   }
 
@@ -78,7 +79,7 @@ export class LottieAudioCommonV1 {
   }
 
   public set id(id: string) {
-    if (!id) throw new DotLottieV1Error('Invalid audio id', ErrorCodes.ASSET_NOT_FOUND);
+    if (!id) throw new DotLottieError('Invalid audio id', ErrorCodes.ASSET_NOT_FOUND);
     this._id = id;
   }
 
@@ -88,7 +89,7 @@ export class LottieAudioCommonV1 {
 
   public set data(data: AudioData | undefined) {
     if (!data) {
-      throw new DotLottieV1Error('Invalid data');
+      throw new DotLottieError('Invalid data');
     }
 
     this._data = data;
@@ -199,7 +200,7 @@ export class LottieAudioCommonV1 {
    * @throws Error - if the id is not a valid string.
    */
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (!id) throw new DotLottieV1Error('Invalid audio id');
+    if (!id) throw new DotLottieError('Invalid audio id');
   }
 
   /**
@@ -209,6 +210,6 @@ export class LottieAudioCommonV1 {
    * @throws Error - if the fileName is not a valid string.
    */
   private _requireValidFileName(fileName: string | undefined): asserts fileName is string {
-    if (!fileName) throw new DotLottieV1Error('Invalid audio fileName');
+    if (!fileName) throw new DotLottieError('Invalid audio fileName');
   }
 }

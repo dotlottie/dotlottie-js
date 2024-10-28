@@ -5,9 +5,12 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
+import type { ManifestAnimation } from '../../schemas/v1/manifest';
+import { PlayMode } from '../../schemas/v1/manifest';
+import { DotLottieError, isAudioAsset } from '../../utils';
+
 import type { LottieAudioCommonV1 } from './audio';
 import type { LottieImageCommonV1 } from './image';
-import { DotLottieV1Error, createError, isAudioAsset } from './utils';
 
 export type AnimationData = AnimationType;
 
@@ -15,13 +18,22 @@ export interface ExportOptions {
   inlineAssets?: boolean;
 }
 
-export interface AnimationOptions {
-  data?: AnimationData;
+export interface AnimationOptionsBase extends ManifestAnimation {
   defaultActiveAnimation?: boolean;
-  id: string;
-  url?: string;
   zipOptions?: ZipOptions;
 }
+
+export interface AnimationOptionsWithData extends AnimationOptionsBase {
+  data: AnimationData;
+  url?: never;
+}
+
+export interface AnimationOptionsWithUrl extends AnimationOptionsBase {
+  data?: never;
+  url: string;
+}
+
+export type AnimationOptions = AnimationOptionsWithData | AnimationOptionsWithUrl;
 
 export class LottieAnimationCommonV1 {
   protected _data?: AnimationData;
@@ -30,7 +42,23 @@ export class LottieAnimationCommonV1 {
 
   protected _url?: string;
 
-  protected _zipOptions: ZipOptions;
+  private _direction: ManifestAnimation['direction'];
+
+  private _speed: number | undefined;
+
+  private _playMode: PlayMode | undefined;
+
+  private _loop: boolean | number | undefined;
+
+  private _autoplay: boolean | undefined;
+
+  private _hover: boolean | undefined;
+
+  private _intermission: number | undefined;
+
+  private _themeColor: string | undefined;
+
+  private _zipOptions: ZipOptions;
 
   // Will be translated to 'activeAnimationId' inside of the manifest file
   // This indicates if the player should play this animation by default rather than the first in the list.
@@ -51,10 +79,42 @@ export class LottieAnimationCommonV1 {
     if (options.url) this._url = options.url;
 
     this._defaultActiveAnimation = options.defaultActiveAnimation ?? false;
+
+    if (typeof options.direction === 'number') {
+      this.direction = options.direction;
+    }
+
+    if (typeof options.speed === 'number') {
+      this.speed = options.speed;
+    }
+
+    if (typeof options.playMode === 'string') {
+      this.playMode = options.playMode;
+    }
+
+    if (typeof options.loop === 'boolean' || typeof options.loop === 'number') {
+      this.loop = options.loop;
+    }
+
+    if (typeof options.autoplay === 'boolean') {
+      this.autoplay = options.autoplay;
+    }
+
+    if (typeof options.hover === 'boolean') {
+      this.hover = options.hover;
+    }
+
+    if (typeof options.intermission === 'number') {
+      this.intermission = options.intermission;
+    }
+
+    if (typeof options.themeColor === 'string') {
+      this.themeColor = options.themeColor;
+    }
   }
 
   public async toBase64(): Promise<string> {
-    throw createError('lottie animation controls tobase64 not implemented!');
+    throw new DotLottieError('lottie animation controls tobase64 not implemented!');
   }
 
   public get zipOptions(): ZipOptions {
@@ -111,12 +171,104 @@ export class LottieAnimationCommonV1 {
     this._url = url;
   }
 
+  public get themeColor(): string | undefined {
+    return this._themeColor;
+  }
+
+  public set themeColor(themeColor: string | undefined) {
+    if (themeColor) {
+      this._requireValidThemeColor(themeColor);
+    }
+
+    this._themeColor = themeColor;
+  }
+
+  public get direction(): ManifestAnimation['direction'] {
+    return this._direction;
+  }
+
+  public set direction(direction: ManifestAnimation['direction']) {
+    this._direction = direction;
+  }
+
+  public get speed(): number | undefined {
+    return this._speed;
+  }
+
+  public set speed(speed: number | undefined) {
+    if (typeof speed === 'number') {
+      this._requireValidSpeed(speed);
+    }
+
+    this._speed = speed;
+  }
+
+  public get playMode(): PlayMode | undefined {
+    return this._playMode;
+  }
+
+  public set playMode(playMode: PlayMode | undefined) {
+    if (typeof playMode === 'string') {
+      this._requireValidPlayMode(playMode);
+    }
+
+    this._playMode = playMode;
+  }
+
+  public get loop(): boolean | number | undefined {
+    return this._loop;
+  }
+
+  public set loop(loop: boolean | number | undefined) {
+    if (typeof loop === 'number' || typeof loop === 'boolean') {
+      this._requireValidLoop(loop);
+    }
+
+    this._loop = loop;
+  }
+
+  public get autoplay(): boolean | undefined {
+    return this._autoplay;
+  }
+
+  public set autoplay(autoplay: boolean | undefined) {
+    if (typeof autoplay === 'boolean') {
+      this._requireValidAutoplay(autoplay);
+    }
+
+    this._autoplay = autoplay;
+  }
+
   public get defaultActiveAnimation(): boolean {
     return this._defaultActiveAnimation;
   }
 
   public set defaultActiveAnimation(defaultActiveAnimation: boolean) {
     this._defaultActiveAnimation = defaultActiveAnimation;
+  }
+
+  public get hover(): boolean | undefined {
+    return this._hover;
+  }
+
+  public set hover(hover: boolean | undefined) {
+    if (typeof hover === 'boolean') {
+      this._requireValidHover(hover);
+    }
+
+    this._hover = hover;
+  }
+
+  public get intermission(): number | undefined {
+    return this._intermission;
+  }
+
+  public set intermission(intermission: number | undefined) {
+    if (typeof intermission === 'number') {
+      this._requireValidIntermission(intermission);
+    }
+
+    this._intermission = intermission;
   }
 
   /**
@@ -126,18 +278,18 @@ export class LottieAnimationCommonV1 {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toArrayBuffer(options: ExportOptions = {}): Promise<ArrayBuffer> {
+  public async toArrayBuffer(options?: ExportOptions): Promise<ArrayBuffer> {
     const dataJson = await this.toJSON(options);
 
     return new TextEncoder().encode(JSON.stringify(dataJson)).buffer;
   }
 
   protected async _extractImageAssets(): Promise<boolean> {
-    throw new DotLottieV1Error('_extractImageAssets(): Promise<boolean> method not implemented in concrete class');
+    throw new DotLottieError('_extractImageAssets(): Promise<boolean> method not implemented in concrete class');
   }
 
   protected async _extractAudioAssets(): Promise<boolean> {
-    throw new DotLottieV1Error('_extractAudioAssets(): Promise<boolean> method not implemented in concrete class');
+    throw new DotLottieError('_extractAudioAssets(): Promise<boolean> method not implemented in concrete class');
   }
 
   /**
@@ -160,7 +312,7 @@ export class LottieAnimationCommonV1 {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toJSON(options: ExportOptions = {}): Promise<AnimationType> {
+  public async toJSON(options?: ExportOptions): Promise<AnimationType> {
     if (this._url && !this._data) {
       this._data = await this._fromUrl(this._url);
     }
@@ -172,11 +324,11 @@ export class LottieAnimationCommonV1 {
       await this._extractImageAssets();
       await this._extractAudioAssets();
 
-      if (options.inlineAssets) {
+      if (options?.inlineAssets) {
         const animationAssets = this.data?.assets as AnimationType['assets'];
 
         if (!animationAssets)
-          throw new DotLottieV1Error("Failed to inline assets, the animation's assets are undefined.");
+          throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
 
         const images = this.imageAssets;
         const audios = this.audioAssets;
@@ -227,7 +379,7 @@ export class LottieAnimationCommonV1 {
       json = JSON.parse(text);
     } catch (error) {
       if (error instanceof Error) {
-        throw createError(`${error.message}: Invalid json returned from url`);
+        throw new DotLottieError(`${error.message}: Invalid json returned from url`);
       }
     }
 
@@ -248,7 +400,7 @@ export class LottieAnimationCommonV1 {
       // eslint-disable-next-line no-new
       new URL(url || '');
     } catch (_err) {
-      throw createError('Invalid animation url');
+      throw new DotLottieError('Invalid animation url');
     }
   }
 
@@ -267,7 +419,7 @@ export class LottieAnimationCommonV1 {
     );
 
     if (!hasAllMandatoryProperties) {
-      throw createError('Received invalid Lottie data.');
+      throw new DotLottieError('Received invalid Lottie data.');
     }
   }
 
@@ -278,7 +430,42 @@ export class LottieAnimationCommonV1 {
    * @throws Error - if the id is not a valid string.
    */
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (!id) throw createError('Invalid animation id');
+    if (!id) throw new DotLottieError('Invalid animation id');
+  }
+
+  /**
+   * Ensure that the provided url is a valid string.
+   * The url must be a non-empty string, otherwise an error will be thrown.
+   * @param url - The url to validate.
+   * @throws Error - if the url is not a valid string.
+   *
+   */
+  private _requireValidDirection(direction: number): asserts direction is number {
+    if (direction !== -1 && direction !== 1) {
+      throw new DotLottieError('Direction can only be -1 (backwards) or 1 (forwards)');
+    }
+  }
+
+  /**
+   * Ensure that the provided intermission is a valid, positive number.
+   * @param intermission - The intermission to validate.
+   * @throws Error - if the intermission is not a valid number.
+   */
+  private _requireValidIntermission(intermission: number): asserts intermission is number {
+    if (intermission < 0 || !Number.isInteger(intermission)) {
+      throw new DotLottieError('intermission must be a positive number');
+    }
+  }
+
+  /**
+   * Ensure that the provided loop is a valid, positive number or boolean.
+   * @param loop - The loop to validate.
+   * @throws Error - if the loop is not a valid number or boolean.
+   */
+  private _requireValidLoop(loop: number | boolean): asserts loop is number | boolean {
+    if (typeof loop === 'number' && (!Number.isInteger(loop) || loop < 0)) {
+      throw new DotLottieError('loop must be a positive number or boolean');
+    }
   }
 
   /**
@@ -296,7 +483,7 @@ export class LottieAnimationCommonV1 {
     this._requireValidId(options.id);
 
     if (!options.data && !options.url) {
-      throw createError('No data or url provided.');
+      throw new DotLottieError('No data or url provided.');
     }
 
     if (options.data) {
@@ -305,6 +492,54 @@ export class LottieAnimationCommonV1 {
 
     if (options.url) {
       this._requireValidUrl(options.url);
+    }
+
+    if (options.direction) {
+      this._requireValidDirection(options.direction);
+    }
+
+    if (options.intermission) {
+      this._requireValidIntermission(options.intermission);
+    }
+
+    if (options.loop) {
+      this._requireValidLoop(options.loop);
+    }
+  }
+
+  private _requireValidSpeed(speed: number | undefined): asserts speed is number {
+    if (speed !== undefined && (typeof speed !== 'number' || speed < 0)) {
+      throw new DotLottieError('Speed must be a non-negative number');
+    }
+  }
+
+  private _requireValidPlayMode(playMode: PlayMode | undefined): asserts playMode is PlayMode {
+    const validPlayModes = Object.values(PlayMode);
+
+    if (playMode !== undefined && !validPlayModes.includes(playMode)) {
+      throw new DotLottieError(`playMode must be one of: ${validPlayModes.join(', ')}`);
+    }
+  }
+
+  private _requireValidAutoplay(autoplay: boolean | undefined): asserts autoplay is boolean {
+    if (autoplay !== undefined && typeof autoplay !== 'boolean') {
+      throw new DotLottieError('autoplay must be a boolean');
+    }
+  }
+
+  private _requireValidHover(hover: boolean | undefined): asserts hover is boolean {
+    if (hover !== undefined && typeof hover !== 'boolean') {
+      throw new DotLottieError('Hover must be a boolean');
+    }
+  }
+
+  private _requireValidThemeColor(themeColor: string | undefined): asserts themeColor is string {
+    if (themeColor !== undefined && typeof themeColor !== 'string') {
+      throw new DotLottieError('themeColor must be a string and start with #');
+    }
+
+    if (themeColor !== undefined && !themeColor.startsWith('#')) {
+      throw new DotLottieError('themeColor must be a string and start with #');
     }
   }
 }

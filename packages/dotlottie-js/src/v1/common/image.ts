@@ -4,8 +4,9 @@
 
 import type { ZipOptions } from 'fflate';
 
+import { dataUrlFromU8, DotLottieError } from '../../utils';
+
 import type { LottieAnimationCommonV1 } from './animation';
-import { dataUrlFromU8, DotLottieV1Error } from './utils';
 
 export type ImageData = string | ArrayBuffer | Blob;
 
@@ -64,7 +65,7 @@ export class LottieImageCommonV1 {
    * @throws Error - if the id is not a valid string.
    */
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (!id) throw new DotLottieV1Error('Invalid image id');
+    if (!id) throw new DotLottieError('Invalid image id');
   }
 
   /**
@@ -74,7 +75,7 @@ export class LottieImageCommonV1 {
    * @throws Error - if the fileName is not a valid string.
    */
   private _requireValidFileName(fileName: string | undefined): asserts fileName is string {
-    if (!fileName) throw new DotLottieV1Error('Invalid image fileName');
+    if (!fileName) throw new DotLottieError('Invalid image fileName');
   }
 
   public get fileName(): string {
@@ -103,7 +104,7 @@ export class LottieImageCommonV1 {
 
   public set data(data: ImageData | undefined) {
     if (!data) {
-      throw new DotLottieV1Error('Invalid data');
+      throw new DotLottieError('Invalid data');
     }
 
     this._data = data;
@@ -151,7 +152,7 @@ export class LottieImageCommonV1 {
 
   public async toBlob(): Promise<Blob> {
     if (!this._data) {
-      throw new DotLottieV1Error('Invalid image data.');
+      throw new DotLottieError('Invalid image data.');
     }
 
     if (this._isDataURL(this._data)) {
@@ -165,7 +166,7 @@ export class LottieImageCommonV1 {
       }
 
       if (!header || !base64) {
-        throw new DotLottieV1Error('Invalid image data.');
+        throw new DotLottieError('Invalid image data.');
       }
 
       // eslint-disable-next-line require-unicode-regexp
@@ -182,7 +183,7 @@ export class LottieImageCommonV1 {
       return this._data as Blob;
     }
 
-    throw new DotLottieV1Error('Invalid image data.');
+    throw new DotLottieError('Invalid image data.');
   }
 
   protected async _fromUrlToBlob(url: string): Promise<Blob> {

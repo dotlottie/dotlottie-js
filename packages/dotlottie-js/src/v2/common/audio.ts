@@ -4,8 +4,9 @@
 
 import type { ZipOptions } from 'fflate';
 
+import { dataUrlFromU8, DotLottieError, ErrorCodes } from '../../utils';
+
 import type { LottieAnimationCommon } from './animation';
-import { dataUrlFromU8, DotLottieError, ErrorCodes } from './utils';
 
 export type AudioData = string | ArrayBuffer | Blob;
 

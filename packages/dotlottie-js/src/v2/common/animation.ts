@@ -6,11 +6,11 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 import type { ZipOptions } from 'fflate';
 
 import type { ManifestAnimation } from '../../schemas/v2/manifest';
+import { DotLottieError, isAudioAsset } from '../../utils';
 
 import type { LottieAudioCommon } from './audio';
 import type { LottieImageCommon } from './image';
 import type { LottieThemeCommon } from './theme';
-import { DotLottieError, createError, isAudioAsset } from './utils';
 
 export type AnimationData = AnimationType;
 
@@ -67,7 +67,7 @@ export class LottieAnimationCommon {
   }
 
   public async toBase64(): Promise<string> {
-    throw createError('lottie animation controls tobase64 not implemented!');
+    throw new DotLottieError('lottie animation controls tobase64 not implemented!');
   }
 
   public get zipOptions(): ZipOptions {
@@ -275,7 +275,7 @@ export class LottieAnimationCommon {
       json = JSON.parse(text);
     } catch (error) {
       if (error instanceof Error) {
-        throw createError(`${error.message}: Invalid json returned from url`);
+        throw new DotLottieError(`${error.message}: Invalid json returned from url`);
       }
     }
 
@@ -296,7 +296,7 @@ export class LottieAnimationCommon {
       // eslint-disable-next-line no-new
       new URL(url || '');
     } catch (_err) {
-      throw createError('Invalid animation url');
+      throw new DotLottieError('Invalid animation url');
     }
   }
 
@@ -315,7 +315,7 @@ export class LottieAnimationCommon {
     );
 
     if (!hasAllMandatoryProperties) {
-      throw createError('Received invalid Lottie data.');
+      throw new DotLottieError('Received invalid Lottie data.');
     }
   }
 
@@ -326,7 +326,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the id is not a valid string.
    */
   private _requireValidId(id: string | undefined): asserts id is string {
-    if (!id) throw createError('Invalid animation id');
+    if (!id) throw new DotLottieError('Invalid animation id');
   }
 
   /**
@@ -344,7 +344,7 @@ export class LottieAnimationCommon {
     this._requireValidId(options.id);
 
     if (!options.data && !options.url) {
-      throw createError('No data or url provided.');
+      throw new DotLottieError('No data or url provided.');
     }
 
     if (options.data) {

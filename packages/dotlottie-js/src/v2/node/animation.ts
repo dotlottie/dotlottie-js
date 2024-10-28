@@ -4,8 +4,9 @@
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
+import { DotLottieError, getExtensionTypeFromBase64, isAudioAsset } from '../../utils';
 import type { AnimationOptions } from '../common';
-import { DotLottieError, LottieAnimationCommon, getExtensionTypeFromBase64, isAudioAsset } from '../common';
+import { LottieAnimationCommon } from '../common';
 
 import { LottieAudio } from './audio';
 import { LottieImage } from './image';
