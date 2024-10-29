@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.4
+
+### Patch Changes
+
+- 9a32fd4: fix: export missing types for dotLottie v1
+
 ## 0.9.0-beta.3
 
 ### Patch Changes
