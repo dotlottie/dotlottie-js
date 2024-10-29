@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.5
+
+### Patch Changes
+
+- df94db0: fix: remove themes & stateMachines from manifest if non available
+
 ## 0.9.0-beta.4
 
 ### Patch Changes
