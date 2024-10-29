@@ -370,8 +370,8 @@ export class DotLottieCommon {
         ...(animation.background ? { background: animation.background } : {}),
         ...(animation.themes.length > 0 ? { themes: animation.themes.map((theme) => theme.id) } : {}),
       })),
-      themes: themesList,
-      stateMachines: stateMachinesList,
+      ...(themesList.length > 0 ? { themes: themesList } : {}),
+      ...(stateMachinesList.length > 0 ? { stateMachines: stateMachinesList } : {}),
     };
 
     if (activeAnimationId) {

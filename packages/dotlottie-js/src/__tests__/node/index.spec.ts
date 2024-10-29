@@ -67,10 +67,8 @@ describe('toDotLottieV2', () => {
     const dotLottieV2 = await toDotLottieV2(dotLottieFile);
 
     expect(dotLottieV2.manifest).toEqual({
-      generator: PACKAGE_NAME,
       version: '2.0.0',
-      themes: [],
-      stateMachines: [],
+      generator: PACKAGE_NAME,
       animations: [{ id: 'bull' }],
     });
 
@@ -198,11 +196,9 @@ describe('DotLottie v2', () => {
     const dotLottieV2 = await new DotLottie().fromArrayBuffer(dotLottieV1File);
 
     expect(dotLottieV2.manifest).toEqual({
-      animations: [{ id: 'bull' }],
-      generator: PACKAGE_NAME,
       version: '2.0.0',
-      themes: [],
-      stateMachines: [],
+      generator: PACKAGE_NAME,
+      animations: [{ id: 'bull' }],
     });
   });
 });
@@ -219,10 +215,10 @@ describe('DotLottie v1', () => {
     const dotLottieV1 = await new DotLottieV1().fromArrayBuffer(dotLottieV2File);
 
     expect(dotLottieV1.manifest).toEqual({
-      animations: [{ id: 'bull' }],
       version: '1.0.0',
-      author: PACKAGE_NAME,
       generator: PACKAGE_NAME,
+      author: PACKAGE_NAME,
+      animations: [{ id: 'bull' }],
     });
   });
 });

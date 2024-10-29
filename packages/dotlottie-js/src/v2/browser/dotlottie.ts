@@ -28,7 +28,7 @@ import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
 export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie> {
   const version = await getDotLottieVersion(new Uint8Array(arrayBuffer));
 
-  if (version === '1.0.0') {
+  if (version !== '2.0.0') {
     const dotLottieV2 = new DotLottie();
     const dotLottieV1 = await new DotLottieV1().fromArrayBuffer(arrayBuffer);
 
