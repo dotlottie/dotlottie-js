@@ -7,7 +7,6 @@ import type { ZipOptions } from 'fflate';
 
 import { DotLottieError, isAudioAsset } from '../../utils';
 
-
 import type { LottieAudioCommon } from './audio';
 import type { LottieImageCommon } from './image';
 import type { ManifestAnimation } from './schemas';
