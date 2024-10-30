@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.6
+
+### Patch Changes
+
+- 74bfed1: fix: dotLottie manifest version format
+
 ## 0.9.0-beta.5
 
 ### Patch Changes
