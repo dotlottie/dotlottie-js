@@ -28,7 +28,7 @@ import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
 export async function toDotLottieV1(arrayBuffer: ArrayBuffer): Promise<DotLottieV1> {
   const version = await getDotLottieVersion(new Uint8Array(arrayBuffer));
 
-  if (version === '2.0.0') {
+  if (version === '2') {
     const dotLottieV1 = new DotLottieV1();
 
     const dotLottieV2 = await new DotLottie().fromArrayBuffer(arrayBuffer);
@@ -167,7 +167,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
   public override async fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieCommonV1> {
     const dotLottieVersion = await getDotLottieVersion(new Uint8Array(arrayBuffer));
 
-    if (dotLottieVersion === '2.0.0') {
+    if (dotLottieVersion === '2') {
       return toDotLottieV1(arrayBuffer);
     }
 

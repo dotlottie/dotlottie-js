@@ -47,7 +47,7 @@ export class DotLottieCommonV1 {
 
   protected _keywords: string | undefined;
 
-  protected _version: string = '1.0.0';
+  protected _version: string = '1';
 
   protected _revision: number | undefined;
 
@@ -72,8 +72,6 @@ export class DotLottieCommonV1 {
     if (typeof options?.keywords === 'string') {
       this._keywords = options.keywords;
     }
-
-    this._version = '1.0.0';
 
     if (typeof options?.customData === 'object') {
       this._customData = options.customData;

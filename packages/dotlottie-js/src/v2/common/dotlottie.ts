@@ -43,7 +43,7 @@ export class DotLottieCommon {
 
   protected _generator: string = PACKAGE_NAME;
 
-  protected _version: string = '2.0.0';
+  protected _version: string = '2';
 
   public enableDuplicateImageOptimization?: boolean;
 

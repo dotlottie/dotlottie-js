@@ -20,7 +20,7 @@ describe('makeDotLottie', () => {
   test('make dotLottie v1', () => {
     const dotLottie = makeDotLottie('v1');
 
-    expect(dotLottie.version).toBe('1.0.0');
+    expect(dotLottie.version).toBe('1');
 
     expect(dotLottie).toBeInstanceOf(DotLottieV1);
   });
@@ -28,7 +28,7 @@ describe('makeDotLottie', () => {
   test('make dotLottie v2', () => {
     const dotLottie = makeDotLottie('v2');
 
-    expect(dotLottie.version).toBe('2.0.0');
+    expect(dotLottie.version).toBe('2');
 
     expect(dotLottie).toBeInstanceOf(DotLottie);
   });
@@ -45,7 +45,7 @@ describe('toDotLottieV2', () => {
       animations: [{ id: 'bull' }],
       author: PACKAGE_NAME,
       generator: PACKAGE_NAME,
-      version: '1.0.0',
+      version: '1',
     };
 
     expect(dotLottie.manifest).toEqual(expectedManifest);
@@ -67,7 +67,7 @@ describe('toDotLottieV2', () => {
     const dotLottieV2 = await toDotLottieV2(dotLottieFile);
 
     expect(dotLottieV2.manifest).toEqual({
-      version: '2.0.0',
+      version: '2',
       generator: PACKAGE_NAME,
       animations: [{ id: 'bull' }],
     });
@@ -138,7 +138,7 @@ describe('toDotLottieV1', () => {
 
     expect(dotLottieV1.manifest).toEqual({
       animations: [{ id: 'bull' }],
-      version: '1.0.0',
+      version: '1',
       author: PACKAGE_NAME,
       generator: PACKAGE_NAME,
     });
@@ -196,7 +196,7 @@ describe('DotLottie v2', () => {
     const dotLottieV2 = await new DotLottie().fromArrayBuffer(dotLottieV1File);
 
     expect(dotLottieV2.manifest).toEqual({
-      version: '2.0.0',
+      version: '2',
       generator: PACKAGE_NAME,
       animations: [{ id: 'bull' }],
     });
@@ -215,7 +215,7 @@ describe('DotLottie v1', () => {
     const dotLottieV1 = await new DotLottieV1().fromArrayBuffer(dotLottieV2File);
 
     expect(dotLottieV1.manifest).toEqual({
-      version: '1.0.0',
+      version: '1',
       generator: PACKAGE_NAME,
       author: PACKAGE_NAME,
       animations: [{ id: 'bull' }],
