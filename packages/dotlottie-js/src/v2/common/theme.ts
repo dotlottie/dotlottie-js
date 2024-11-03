@@ -3,44 +3,32 @@
  */
 
 import type { ZipOptions } from 'fflate';
+import { safeParse } from 'valibot';
 
-import { DotLottieError, isValidURL } from '../../utils';
+import { DotLottieError } from '../../utils';
 
-import type { LottieAnimationCommon } from './animation';
-
-type Data = Record<string, unknown>;
+import type { ThemeData } from './schemas';
+import { ThemeDataSchema } from './schemas';
 
 export interface ThemeOptions {
-  data?: Data;
+  data: ThemeData;
   id: string;
-  url?: string;
   zipOptions?: ZipOptions;
 }
 
 export class LottieThemeCommon {
-  protected _data?: Data;
+  protected _data: ThemeData;
 
-  protected _id: string = '';
-
-  protected _url?: string;
-
-  protected readonly _animationsMap: Map<string, LottieAnimationCommon> = new Map();
+  protected _id: string;
 
   protected _zipOptions: ZipOptions;
 
   public constructor(options: ThemeOptions) {
     this._requireValidId(options.id);
+    this._requireValidData(options.data);
+
+    this._data = options.data;
     this._id = options.id;
-
-    if (options.data) {
-      this._requireValidData(options.data);
-      this._data = options.data;
-    }
-
-    if (options.url) {
-      this._requireValidUrl(options.url);
-      this._url = options.url;
-    }
 
     this._zipOptions = options.zipOptions ?? {};
   }
@@ -57,75 +45,40 @@ export class LottieThemeCommon {
     return this._id;
   }
 
-  public set id(id: string | undefined) {
+  public set id(id: string) {
     this._requireValidId(id);
 
     this._id = id;
   }
 
-  public get url(): string | undefined {
-    return this._url;
-  }
-
-  public set url(url: string | undefined) {
-    this._requireValidUrl(url);
-
-    this._url = url;
-  }
-
-  public get data(): Data | undefined {
+  public get data(): ThemeData {
     return this._data;
   }
 
-  public set data(data: Data | undefined) {
+  public set data(data: ThemeData) {
     this._requireValidData(data);
 
     this._data = data;
   }
 
-  public get animations(): LottieAnimationCommon[] {
-    return Array.from(this._animationsMap.values());
-  }
-
   public async toString(): Promise<string> {
-    if (!this._data && this._url) {
-      await this._loadDataFromUrl(this._url);
-    }
-
-    this._requireValidData(this._data);
-
-    return JSON.stringify(this._data);
-  }
-
-  public addAnimation(animation: LottieAnimationCommon): void {
-    this._animationsMap.set(animation.id, animation);
-  }
-
-  public removeAnimation(animationId: string): void {
-    this._animationsMap.delete(animationId);
+    return JSON.stringify({
+      id: this._id,
+      rules: this._data.rules,
+    });
   }
 
   private _requireValidId(id: string | undefined): asserts id is string {
     if (typeof id !== 'string' || !id) throw new DotLottieError('Invalid theme id');
   }
 
-  private _requireValidUrl(url: string | undefined): asserts url is string {
-    if (!url || !isValidURL(url)) throw new DotLottieError('Invalid theme url');
-  }
+  private _requireValidData(data: ThemeData): asserts data is ThemeData {
+    const result = safeParse(ThemeDataSchema, data);
 
-  private _requireValidData(data: Data | undefined): asserts data is Data {
-    if (typeof data !== 'object') throw new DotLottieError('Invalid theme data');
-  }
+    if (!result.success) {
+      const issues = JSON.stringify(result.issues, null, 2);
 
-  private async _loadDataFromUrl(url: string): Promise<void> {
-    try {
-      const response = await fetch(url);
-
-      const data = await response.json();
-
-      this._data = data;
-    } catch (error) {
-      throw new DotLottieError(`Failed to fetch theme from url, Error: ${JSON.stringify(error)}`);
+      throw new DotLottieError(`Invalid theme data: ${issues}`);
     }
   }
 }

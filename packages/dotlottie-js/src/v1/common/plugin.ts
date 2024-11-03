@@ -11,24 +11,24 @@ interface DotLottieV1PluginOptions {
 }
 
 export class DotLottieV1Plugin {
-  protected DotLottieV1: DotLottieCommonV1 | undefined;
+  protected dotLottieV1: DotLottieCommonV1 | undefined;
 
   protected _parallel: boolean = false;
 
   public constructor(options?: DotLottieV1PluginOptions) {
-    this.DotLottieV1 = undefined;
+    this.dotLottieV1 = undefined;
 
     if (options?.parallel) {
       this._parallel = options.parallel;
     }
   }
 
-  public install(DotLottieV1: DotLottieCommonV1): void {
-    this.DotLottieV1 = DotLottieV1;
+  public install(dotLottieV1: DotLottieCommonV1): void {
+    this.dotLottieV1 = dotLottieV1;
   }
 
   public uninstall(): void {
-    this.DotLottieV1 = undefined;
+    this.dotLottieV1 = undefined;
   }
 
   public get parallel(): boolean {
@@ -43,8 +43,8 @@ export class DotLottieV1Plugin {
     throw new DotLottieError('DotLottieV1-plugin build Not implemented!');
   }
 
-  protected _requireDotLottieV1(DotLottieV1: DotLottieCommonV1 | undefined): asserts DotLottieV1 {
-    if (!DotLottieV1)
+  protected _requireDotLottieV1(dotLottieV1: DotLottieCommonV1 | undefined): asserts dotLottieV1 {
+    if (!dotLottieV1)
       throw new DotLottieError('DotLottieV1 context is null inside of duplicate image detector plugin.');
   }
 }

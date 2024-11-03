@@ -47,7 +47,9 @@ jobs:
         run: pnpm lint
 
       - name: 🛡️ Test
-        run: pnpm test
+        run: |
+          npx playwright install --with-deps
+          pnpm test
 
       - name: 📏 Report bundle size
         uses: andresz1/size-limit-action@v1

@@ -1,0 +1,18 @@
+{
+  "version": "1",
+  "keywords": "dotLottie",
+  "author": "LottieFiles",
+  "generator": "generator",
+  "animations": [
+    {
+      "id": "lottie01",
+      "direction": -1,
+      "speed": 3,
+      "playMode": "bounce",
+      "loop": false,
+      "autoplay": true,
+      "hover": false,
+      "intermission": 0
+    }
+  ]
+}

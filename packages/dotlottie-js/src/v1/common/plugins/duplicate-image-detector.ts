@@ -30,13 +30,13 @@ export class DuplicateImageDetectorCommon extends DotLottieV1Plugin {
   }
 
   private async _createRecordOfDuplicates(): Promise<Record<string, LottieImageCommonV1[]>> {
-    this._requireDotLottieV1(this.DotLottieV1);
+    this._requireDotLottieV1(this.dotLottieV1);
 
     const images: LottieImageV1Compare[] = [];
     const recordOfDuplicates: Record<string, LottieImageCommonV1[]> = {};
 
     // push all of the animation image assets in to the images array
-    for (const animation of this.DotLottieV1.animations) {
+    for (const animation of this.dotLottieV1.animations) {
       for (const image of animation.imageAssets) {
         images.push({
           excludeFromExport: false,
@@ -118,19 +118,19 @@ export class DuplicateImageDetectorCommon extends DotLottieV1Plugin {
   }
 
   public override async onBuild(): Promise<void> {
-    this._requireDotLottieV1(this.DotLottieV1);
+    this._requireDotLottieV1(this.dotLottieV1);
 
     // Create a record of duplicates
     const recordOfDuplicates: Record<string, LottieImageCommonV1[]> = await this._createRecordOfDuplicates();
 
     // Check the record of duplicates and repath the duplicate images
-    this.DotLottieV1.animations.forEach((animation) => {
+    this.dotLottieV1.animations.forEach((animation) => {
       this.adjustDuplicateImageAssetPath(animation, recordOfDuplicates);
     });
 
     // Create an array of duplicates by looping over the recordOfDuplicates and using the key as the image to use
     const clonedImages: Record<string, LottieImageV1> = {};
-    const images = this.DotLottieV1.getImages();
+    const images = this.dotLottieV1.getImages();
 
     for (const key in recordOfDuplicates) {
       if (key) {

@@ -11,7 +11,7 @@ import { LottieAnimationCommon } from '../common';
 import { LottieAudio } from './audio';
 import { LottieImage } from './image';
 
-export class LottieAnimationV2 extends LottieAnimationCommon {
+export class LottieAnimation extends LottieAnimationCommon {
   public constructor(options: AnimationOptions) {
     super(options);
   }

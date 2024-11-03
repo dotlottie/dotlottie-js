@@ -58,7 +58,11 @@ export class DotLottie extends DotLottieCommon {
     super(options);
 
     if (this.enableDuplicateImageOptimization) {
-      this._plugins.push(new DuplicateImageDetector());
+      const plugin = new DuplicateImageDetector();
+
+      plugin.install(this);
+
+      this._plugins.push(plugin);
     }
   }
 

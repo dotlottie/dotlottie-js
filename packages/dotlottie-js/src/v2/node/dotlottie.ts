@@ -20,7 +20,7 @@ import type { DotLottieOptions, AnimationOptions, ConversionOptions } from '../c
 import { DotLottieCommon } from '../common';
 import type { Manifest } from '../common/schemas';
 
-import { LottieAnimationV2 } from './animation';
+import { LottieAnimation } from './animation';
 import { LottieAudio } from './audio';
 import { LottieImage } from './image';
 import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
@@ -48,6 +48,8 @@ export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie
       }
     }
 
+    await dotLottieV2.build();
+
     return dotLottieV2;
   }
 
@@ -59,7 +61,11 @@ export class DotLottie extends DotLottieCommon {
     super(options);
 
     if (this.enableDuplicateImageOptimization) {
-      this._plugins.push(new DuplicateImageDetector());
+      const plugin = new DuplicateImageDetector();
+
+      plugin.install(this);
+
+      this._plugins.push(plugin);
     }
   }
 
@@ -81,7 +87,7 @@ export class DotLottie extends DotLottieCommon {
   }
 
   public override addAnimation(animationOptions: AnimationOptions): DotLottieCommon {
-    const animation = new LottieAnimationV2(animationOptions);
+    const animation = new LottieAnimation(animationOptions);
 
     if (this._animationsMap.get(animationOptions.id)) {
       throw new DotLottieError('Duplicate animation id detected, aborting.');
@@ -329,9 +335,11 @@ export class DotLottie extends DotLottieCommon {
               }
             }
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
           // throw error as it's invalid json
-          throw new DotLottieError(`Invalid manifest inside buffer! ${err.message}`);
+          throw new DotLottieError(
+            `Invalid manifest inside buffer! ${err instanceof Error ? err.message : 'Unknown error'}`,
+          );
         }
       } else {
         // throw error as it's invalid buffer

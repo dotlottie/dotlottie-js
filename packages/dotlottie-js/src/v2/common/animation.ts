@@ -159,11 +159,11 @@ export class LottieAnimationCommon {
     this._defaultActiveAnimation = defaultActiveAnimation;
   }
 
-  public addTheme(theme: LottieThemeCommon): void {
+  public scopeTheme(theme: LottieThemeCommon): void {
     this._themesMap.set(theme.id, theme);
   }
 
-  public removeTheme(themeId: string): void {
+  public unscopeTheme(themeId: string): void {
     this._themesMap.delete(themeId);
   }
 

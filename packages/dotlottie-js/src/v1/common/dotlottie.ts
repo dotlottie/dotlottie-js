@@ -513,8 +513,8 @@ export class DotLottieCommonV1 {
   public merge(...DotLottieV1s: DotLottieCommonV1[]): DotLottieCommonV1 {
     const mergedDotLottieV1 = this.create();
 
-    for (const DotLottieV1 of DotLottieV1s) {
-      DotLottieV1.animations.forEach((animation) => {
+    for (const dotLottieV1 of DotLottieV1s) {
+      dotLottieV1.animations.forEach((animation) => {
         if (animation.data) {
           mergedDotLottieV1.addAnimation({
             id: animation.id,

@@ -61,7 +61,11 @@ export class DotLottieV1 extends DotLottieCommonV1 {
     super(options);
 
     if (this.enableDuplicateImageOptimization) {
-      this._plugins.push(new DuplicateImageDetector());
+      const plugin = new DuplicateImageDetector();
+
+      plugin.install(this);
+
+      this._plugins.push(plugin);
     }
   }
 
@@ -79,7 +83,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
     _fileName: string,
     _options: ConversionOptions | undefined = undefined,
   ): Promise<void> {
-    throw new DotLottieError('Cannot download DotLottieV1 in a non-browser environment');
+    throw new DotLottieError('Cannot download dotlottie in a non-browser environment');
   }
 
   public override addAnimation(animationOptions: AnimationOptions): DotLottieCommonV1 {

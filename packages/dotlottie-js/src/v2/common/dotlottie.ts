@@ -319,7 +319,7 @@ export class DotLottieCommon {
       const assignedThemes = targetAnimation.themes;
 
       for (const assignedTheme of assignedThemes) {
-        this.unassignTheme({
+        this.unscopeTheme({
           animationId: targetAnimation.id,
           themeId: assignedTheme.id,
         });
@@ -396,10 +396,6 @@ export class DotLottieCommon {
       await animation.toJSON();
     }
 
-    for (const theme of this.themes) {
-      await theme.toString();
-    }
-
     if (this.animations.length > 1) {
       // Rename assets incrementally if there are multiple animations
       this._renameImageAssets();
@@ -465,6 +461,13 @@ export class DotLottieCommon {
     const mergedDotlottie = this.create();
 
     for (const dotlottie of dotlotties) {
+      dotlottie.themes.forEach((theme) => {
+        mergedDotlottie.addTheme({
+          id: theme.id,
+          data: theme.data,
+        });
+      });
+
       dotlottie.animations.forEach((animation) => {
         if (animation.data) {
           mergedDotlottie.addAnimation({
@@ -477,23 +480,9 @@ export class DotLottieCommon {
             url: animation.url,
           });
         }
-      });
 
-      dotlottie.themes.forEach((theme) => {
-        if (theme.data) {
-          mergedDotlottie.addTheme({
-            id: theme.id,
-            data: theme.data,
-          });
-        } else if (theme.url) {
-          mergedDotlottie.addTheme({
-            id: theme.id,
-            url: theme.url,
-          });
-        }
-
-        theme.animations.forEach((animation) => {
-          mergedDotlottie.assignTheme({
+        animation.themes.forEach((theme) => {
+          mergedDotlottie.scopeTheme({
             animationId: animation.id,
             themeId: theme.id,
           });
@@ -528,13 +517,10 @@ export class DotLottieCommon {
     const targetTheme = this._themesMap.get(id);
 
     if (targetTheme) {
-      const scopedAnimations = targetTheme.animations;
-
-      for (const scopedAnimation of scopedAnimations) {
-        this.unassignTheme({
-          animationId: scopedAnimation.id,
-          themeId: id,
-        });
+      for (const animation of this.animations) {
+        if (animation.themes.includes(targetTheme)) {
+          animation.unscopeTheme(targetTheme.id);
+        }
       }
 
       this._themesMap.delete(targetTheme.id);
@@ -543,7 +529,7 @@ export class DotLottieCommon {
     return this;
   }
 
-  public assignTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
+  public scopeTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
     const theme = this._themesMap.get(themeId);
 
     if (!theme) throw new DotLottieError(`Failed to find theme with id ${themeId}`);
@@ -552,14 +538,12 @@ export class DotLottieCommon {
 
     if (!animation) throw new DotLottieError(`Failed to find animation with id ${animationId}`);
 
-    theme.addAnimation(animation);
-
-    animation.addTheme(theme);
+    animation.scopeTheme(theme);
 
     return this;
   }
 
-  public unassignTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
+  public unscopeTheme({ animationId, themeId }: { animationId: string; themeId: string }): DotLottieCommon {
     const theme = this._themesMap.get(themeId);
 
     if (!theme) throw new DotLottieError(`Failed to find theme with id ${themeId}`);
@@ -568,9 +552,7 @@ export class DotLottieCommon {
 
     if (!animation) throw new DotLottieError(`Failed to find animation with id ${animationId}`);
 
-    theme.removeAnimation(animation.id);
-
-    animation.removeTheme(theme.id);
+    animation.unscopeTheme(theme.id);
 
     return this;
   }
