@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.7
+
+### Patch Changes
+
+- 1611716: fix: add theme data schema
+
 ## 0.9.0-beta.6
 
 ### Patch Changes
