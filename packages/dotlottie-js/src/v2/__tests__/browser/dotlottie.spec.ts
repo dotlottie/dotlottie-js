@@ -557,7 +557,7 @@ describe('fromURL', () => {
     expect(dotLottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
     expect(dotLottie.manifest).toEqual({
       version: '2',
-      generator: '@dotlottie/dotlottie-js@0.9.0-beta.5',
+      generator: `${pkg.name}@${pkg.version}`,
       animations: [
         {
           id: 'lottie1',
@@ -586,7 +586,7 @@ describe('fromURL', () => {
     expect(dotlottie.animations[0]?.data).toEqual(editedAnimationData as unknown as AnimationType);
     expect(dotlottie.manifest).toEqual({
       version: '2',
-      generator: '@dotlottie/dotlottie-js@0.9.0-beta.5',
+      generator: `${pkg.name}@${pkg.version}`,
       animations: [
         {
           id: 'lottie01',
@@ -611,7 +611,7 @@ describe('fromArrayBuffer', () => {
     expect(dotlottie.animations[0]?.data).toEqual(animationData as unknown as AnimationType);
     expect(dotlottie.manifest).toEqual({
       version: '2',
-      generator: '@dotlottie/dotlottie-js@0.9.0-beta.5',
+      generator: `${pkg.name}@${pkg.version}`,
       animations: [
         {
           id: 'lottie1',

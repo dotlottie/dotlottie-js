@@ -50,8 +50,8 @@
     "stats:eslint": "cross-env TIMING=1 eslint .",
     "stats:ts": "tsc -p tsconfig.build.json --extendedDiagnostics",
     "test": "pnpm run test:node && pnpm run test:browser",
-    "test:browser": "vitest --config=vitest.browser.config.ts",
-    "test:node": "vitest --config=vitest.config.ts",
+    "test:browser": "vitest --config=vitest.browser.config.js",
+    "test:node": "vitest --config=vitest.config.js",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

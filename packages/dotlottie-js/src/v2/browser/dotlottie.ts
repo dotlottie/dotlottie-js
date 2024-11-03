@@ -47,6 +47,8 @@ export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie
       }
     }
 
+    await dotLottieV2.build();
+
     return dotLottieV2;
   }
 
