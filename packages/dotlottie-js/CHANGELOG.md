@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.13
+
+### Patch Changes
+
+- c6fa979: refactor: add tests && update LottieThemeCommon toString method
+
 ## 0.9.0-beta.12
 
 ### Patch Changes
