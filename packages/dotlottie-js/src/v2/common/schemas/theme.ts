@@ -29,7 +29,7 @@ const ColorKeyframeSchema = object({
 
 const BaseRuleSchema = {
   animations: optional(array(string())),
-  slotId: string(),
+  id: string(),
 };
 
 const ScalarRuleSchema = object({
