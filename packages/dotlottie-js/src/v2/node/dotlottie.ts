@@ -34,8 +34,6 @@ export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie
     const dotLottieV2 = new DotLottie();
     const dotLottieV1 = await new DotLottieV1().fromArrayBuffer(arrayBuffer);
 
-    await dotLottieV1.build();
-
     const animationIds = dotLottieV1.animations.map((animation) => animation.id);
 
     for (const animationId of animationIds) {

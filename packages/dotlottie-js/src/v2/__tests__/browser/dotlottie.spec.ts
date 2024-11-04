@@ -628,9 +628,7 @@ describe('fromArrayBuffer', () => {
     dotlottie = await dotlottie.fromArrayBuffer(arrayBuffer);
 
     expect(dotlottie.animations.length).toBe(6);
-    // eslint-disable-next-line no-warning-comments
-    // TODO: fix this
-    // expect(dotlottie.getImages().length).toBe(16);
+    expect(dotlottie.getImages().length).toBe(16);
     expect(dotlottie.animations[0]?.id).toEqual('v1');
     expect(dotlottie.animations[1]?.id).toEqual('v2');
     expect(dotlottie.animations[2]?.id).toEqual('v3');
