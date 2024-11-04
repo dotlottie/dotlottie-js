@@ -5,11 +5,13 @@
 /* eslint-disable @lottiefiles/import-filename-format */
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
-import { unzipSync } from 'fflate';
+import { strFromU8, unzipSync } from 'fflate';
 import { Base64 } from 'js-base64';
 import { describe, test, expect, vi } from 'vitest';
 
 import pkg from '../../../../package.json';
+import BALL_ANIMATION_DATA from '../../../__tests__/__fixtures__/ball.json';
+import BULL_ANIMATION_DATA from '../../../__tests__/__fixtures__/bull.json';
 import bullData from '../../../__tests__/__fixtures__/image-asset-optimization/bull.json';
 import IMAGE_ANIMATION_1_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-1.json';
 import IMAGE_ANIMATION_5_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
@@ -763,5 +765,160 @@ describe('build', () => {
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
 
     fetchSpy.mockRestore();
+  });
+});
+
+describe('theming', () => {
+  test('adds a global theme to the dotlottie file', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie.addAnimation({
+      id: 'ball',
+      data: structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationData,
+    });
+
+    dotlottie.addTheme({
+      id: 'light',
+      data: {
+        rules: [
+          {
+            id: 'ball-color',
+            type: 'Color',
+            value: [0, 1, 0, 1],
+          },
+        ],
+      },
+    });
+
+    await dotlottie.build();
+
+    expect(dotlottie.manifest).toEqual({
+      version: '2',
+      generator: `${pkg.name}@${pkg.version}`,
+      animations: [{ id: 'ball' }],
+      themes: [{ id: 'light' }],
+    });
+
+    expect(dotlottie.animations[0]?.themes.length).toBe(0);
+  });
+
+  test('scopes a theme to an animation', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie.addAnimation({
+      id: 'ball',
+      data: structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationData,
+    });
+
+    dotlottie.addTheme({
+      id: 'light',
+      data: {
+        rules: [{ id: 'ball-color', type: 'Color', value: [0, 1, 0, 1] }],
+      },
+    });
+
+    dotlottie.scopeTheme({
+      animationId: 'ball',
+      themeId: 'light',
+    });
+
+    await dotlottie.build();
+
+    expect(dotlottie.manifest).toEqual({
+      version: '2',
+      generator: `${pkg.name}@${pkg.version}`,
+      animations: [{ id: 'ball', themes: ['light'] }],
+      themes: [{ id: 'light' }],
+    });
+
+    expect(dotlottie.animations[0]?.themes.length).toBe(1);
+    expect(dotlottie.animations[0]?.themes[0]?.id).toBe('light');
+  });
+
+  test('throws an error if the theme does not exist', async () => {
+    const dotlottie = new DotLottie();
+
+    expect(() => dotlottie.scopeTheme({ animationId: 'ball', themeId: 'light' })).toThrow(
+      'Failed to find theme with id light',
+    );
+  });
+
+  test('throws an error if the animation does not exist', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie.addTheme({
+      id: 'light',
+      data: {
+        rules: [{ id: 'ball-color', type: 'Color', value: [0, 1, 0, 1] }],
+      },
+    });
+
+    expect(() => dotlottie.scopeTheme({ animationId: 'ball', themeId: 'light' })).toThrow(
+      'Failed to find animation with id ball',
+    );
+  });
+
+  test('themes assets are properly exported in the .lottie file', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie.addAnimation({
+      id: 'ball',
+      data: structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationData,
+    });
+
+    dotlottie.addAnimation({
+      id: 'bull',
+      data: structuredClone(BULL_ANIMATION_DATA) as unknown as AnimationData,
+    });
+
+    dotlottie.addTheme({
+      id: 'light',
+      name: 'Light Theme',
+      data: {
+        rules: [{ id: 'ball-color', type: 'Color', value: [0, 1, 0, 1] }],
+      },
+    });
+
+    dotlottie.addTheme({
+      id: 'dark',
+      data: {
+        rules: [{ id: 'bull-color', type: 'Color', value: [1, 0, 0, 1] }],
+      },
+    });
+
+    dotlottie.scopeTheme({
+      animationId: 'bull',
+      themeId: 'dark',
+    });
+
+    await dotlottie.build();
+
+    const dotLottieFile = await dotlottie.toArrayBuffer();
+
+    const content = unzipSync(new Uint8Array(dotLottieFile));
+
+    expect(Object.keys(content)).toEqual([
+      'manifest.json',
+      'a/ball.json',
+      'a/bull.json',
+      'i/image_1.png',
+      'i/image_2.png',
+      'i/image_3.png',
+      'i/image_4.png',
+      'i/image_5.png',
+      't/light.json',
+      't/dark.json',
+    ]);
+
+    expect(strFromU8(content['t/light.json'] as Uint8Array)).toEqual(JSON.stringify(dotlottie.themes[0]?.data));
+    expect(strFromU8(content['a/ball.json'] as Uint8Array)).toEqual(JSON.stringify(dotlottie.animations[0]?.data));
+    expect(strFromU8(content['a/bull.json'] as Uint8Array)).toEqual(JSON.stringify(dotlottie.animations[1]?.data));
+    expect(strFromU8(content['manifest.json'] as Uint8Array)).toEqual(JSON.stringify(dotlottie.manifest));
+    expect(dotlottie.manifest).toEqual({
+      version: '2',
+      generator: `${pkg.name}@${pkg.version}`,
+      animations: [{ id: 'ball' }, { id: 'bull', themes: ['dark'] }],
+      themes: [{ id: 'light', name: 'Light Theme' }, { id: 'dark' }],
+    });
   });
 });

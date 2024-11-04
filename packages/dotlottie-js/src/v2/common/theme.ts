@@ -73,10 +73,7 @@ export class LottieThemeCommon {
   }
 
   public async toString(): Promise<string> {
-    return JSON.stringify({
-      id: this._id,
-      rules: this._data.rules,
-    });
+    return JSON.stringify(this._data);
   }
 
   private _requireValidId(id: string | undefined): asserts id is string {
