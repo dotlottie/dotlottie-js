@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.10
+
+### Patch Changes
+
+- 2134d08: fix(conversion): 🐛 never build dotLottie instance before conversion
+
 ## 0.9.0-beta.9
 
 ### Patch Changes
