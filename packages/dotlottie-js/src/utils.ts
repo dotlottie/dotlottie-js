@@ -571,7 +571,7 @@ export async function getAudio(
 
   let audioPath = 'audio/';
 
-  if (version === '2.0.0') {
+  if (version === '2') {
     audioPath = 'u/';
   }
 
@@ -610,7 +610,7 @@ export async function getAllAudio(dotLottie: Uint8Array, filter?: UnzipFileFilte
 
   let audioPath = 'audio/';
 
-  if (version === '2.0.0') {
+  if (version === '2') {
     audioPath = 'u/';
   }
 
@@ -726,7 +726,7 @@ export async function getImage(
 
   let imagesPath = 'images/';
 
-  if (version === '2.0.0') {
+  if (version === '2') {
     imagesPath = 'i/';
   }
 
@@ -765,7 +765,7 @@ export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter)
 
   let imagesPath = 'images/';
 
-  if (version === '2.0.0') {
+  if (version === '2') {
     imagesPath = 'i/';
   }
 
@@ -935,7 +935,7 @@ export async function getAnimations(
 
   let animationsPath = 'animations/';
 
-  if (version === '2.0.0') {
+  if (version === '2') {
     animationsPath = 'a/';
   }
 
