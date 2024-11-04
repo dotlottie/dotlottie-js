@@ -21,7 +21,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.node.js",
   "exports": {
     ".": {
       "node": "./dist/index.node.js",
