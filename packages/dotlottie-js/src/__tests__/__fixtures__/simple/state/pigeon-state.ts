@@ -1,8 +1,12 @@
 import { DotLottieStateMachine } from "../../../../v2/common/schemas/state-machine"
 
-export const PigeonState: DotLottieStateMachine = {
-  descriptor: {
-    id: "explodingPigeon",
+export const PigeonState: {
+  id: string;
+  data: DotLottieStateMachine;
+} = {
+  id: "explodingPigeon",
+  data: {
+    descriptor: {
     initial: "pigeonRunning"
   },
   states: [
@@ -110,16 +114,20 @@ export const PigeonState: DotLottieStateMachine = {
       type: "Event",
       name: "restart"
     }
-  ]
+    ]
+  }
 }
 
 
-export const PigeonWithoutExplosion: DotLottieStateMachine = 
-{
-  descriptor: {
-    id: "pigeonWithoutExplosion",
-    initial: "pigeonRunning"
-  },
+export const PigeonWithoutExplosion: {
+  id: string;
+  data: DotLottieStateMachine;
+} = {
+  id: "pigeonWithoutExplosion",
+  data: {
+    descriptor: {
+      initial: "pigeonRunning"
+    },
   states: [
     {
       type: "PlaybackState",
@@ -195,12 +203,17 @@ export const PigeonWithoutExplosion: DotLottieStateMachine =
       type: "Event",
       name: "restart"
     }
-  ]
+    ]
+  }
 }
 
-export const SmileyWifi: DotLottieStateMachine = {
-  descriptor: {
-    id: 'simple_click_to_next_prev',
+export const SmileyWifi: {
+  id: string;
+  data: DotLottieStateMachine;
+} = {
+  id: 'simple_click_to_next_prev',
+  data: {
+    descriptor: {
     initial: "smiley",
   },
   states: [
@@ -238,5 +251,6 @@ export const SmileyWifi: DotLottieStateMachine = {
   triggers: [{
     type: "Event",
     name: "click"
-  }]
+    }]
+  },
 };

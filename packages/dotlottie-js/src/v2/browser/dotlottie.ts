@@ -287,10 +287,11 @@ export class DotLottie extends DotLottieCommon {
                 throw new DotLottieError('Invalid theme id');
               }
 
-              manifest.themes?.forEach((givenThemeId) => {
-                if (givenThemeId === themeId) {
+              manifest.themes?.forEach((theme) => {
+                if (theme.id === themeId) {
                   dotlottie.addTheme({
-                    id: givenThemeId,
+                    id: theme.id,
+                    name: theme.name,
                     data: JSON.parse(decodedStr),
                   });
                 }
@@ -303,9 +304,13 @@ export class DotLottie extends DotLottieCommon {
                 throw new DotLottieError('Invalid theme id');
               }
 
-              manifest.stateMachines?.forEach((givenStateId) => {
-                if (givenStateId === stateId) {
-                  dotlottie.addStateMachine(JSON.parse(decodedStr));
+              manifest.stateMachines?.forEach((stateMachine) => {
+                if (stateMachine.id === stateId) {
+                  dotlottie.addStateMachine({
+                    id: stateMachine.id,
+                    name: stateMachine.name,
+                    data: JSON.parse(decodedStr),
+                  });
                 }
               });
             }

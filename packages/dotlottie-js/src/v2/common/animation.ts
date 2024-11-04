@@ -21,6 +21,8 @@ export interface AnimationOptions extends ManifestAnimation {
 }
 
 export class LottieAnimationCommon {
+  protected _name: string | undefined;
+
   protected _data?: AnimationData;
 
   protected _id: string = '';
@@ -46,7 +48,7 @@ export class LottieAnimationCommon {
     this._requireValidOptions(options);
 
     this._id = options.id;
-
+    this._name = options.name;
     this._zipOptions = options.zipOptions ?? {};
 
     if (options.data) this._data = options.data;
@@ -78,6 +80,14 @@ export class LottieAnimationCommon {
     this._requireValidId(id);
 
     this._id = id;
+  }
+
+  public get name(): string | undefined {
+    return this._name;
+  }
+
+  public set name(name: string | undefined) {
+    this._name = name;
   }
 
   public get background(): string | null {

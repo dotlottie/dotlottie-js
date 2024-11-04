@@ -348,8 +348,8 @@ export class DotLottieCommon {
 
   protected _buildManifest(): Manifest {
     const animationsList = Array.from(this._animationsMap.values());
-    const themesList = Array.from(this._themesMap.keys());
-    const stateMachinesList = Array.from(this._stateMachinesMap.keys());
+    const themesList = Array.from(this._themesMap.values());
+    const stateMachinesList = Array.from(this._stateMachinesMap.values());
     const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
@@ -357,13 +357,26 @@ export class DotLottieCommon {
       generator: this.generator,
       animations: animationsList.map((animation) => ({
         id: animation.id,
+        ...(animation.name ? { name: animation.name } : {}),
         ...(animation.initialTheme ? { initialTheme: animation.initialTheme } : {}),
         ...(animation.background ? { background: animation.background } : {}),
         ...(animation.themes.length > 0 ? { themes: animation.themes.map((theme) => theme.id) } : {}),
       })),
-      ...(themesList.length > 0 ? { themes: themesList } : {}),
-      ...(stateMachinesList.length > 0 ? { stateMachines: stateMachinesList } : {}),
     };
+
+    if (themesList.length > 0) {
+      manifest.themes = themesList.map((theme) => ({
+        id: theme.id,
+        ...(theme.name ? { name: theme.name } : {}),
+      }));
+    }
+
+    if (stateMachinesList.length > 0) {
+      manifest.stateMachines = stateMachinesList.map((stateMachine) => ({
+        id: stateMachine.id,
+        ...(stateMachine.name ? { name: stateMachine.name } : {}),
+      }));
+    }
 
     if (activeAnimationId) {
       manifest.initial = {
@@ -455,6 +468,7 @@ export class DotLottieCommon {
       dotlottie.themes.forEach((theme) => {
         mergedDotlottie.addTheme({
           id: theme.id,
+          name: theme.name,
           data: theme.data,
         });
       });
@@ -463,11 +477,13 @@ export class DotLottieCommon {
         if (animation.data) {
           mergedDotlottie.addAnimation({
             id: animation.id,
+            name: animation.name,
             data: animation.data,
           });
         } else if (animation.url) {
           mergedDotlottie.addAnimation({
             id: animation.id,
+            name: animation.name,
             url: animation.url,
           });
         }
@@ -482,10 +498,14 @@ export class DotLottieCommon {
 
       dotlottie.stateMachines.forEach((stateMachine) => {
         const stateOption = {
-          states: stateMachine.states,
-          descriptor: { id: stateMachine.id, initial: stateMachine.initial },
-          listeners: stateMachine.listeners,
-          triggers: stateMachine.triggers,
+          id: stateMachine.id,
+          name: stateMachine.name,
+          data: {
+            states: stateMachine.states,
+            descriptor: { initial: stateMachine.initial },
+            listeners: stateMachine.listeners,
+            triggers: stateMachine.triggers,
+          },
           zipOptions: stateMachine.zipOptions,
         };
 
@@ -551,7 +571,7 @@ export class DotLottieCommon {
   public addStateMachine(stateMachineOptions: DotLottieStateMachineCommonOptions): DotLottieCommon {
     const newState = new DotLottieStateMachineCommon(stateMachineOptions);
 
-    this._stateMachinesMap.set(stateMachineOptions.descriptor.id, newState);
+    this._stateMachinesMap.set(stateMachineOptions.id, newState);
 
     return this;
   }

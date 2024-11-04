@@ -37,6 +37,7 @@ const ScalarRuleSchema = object({
   type: literal('Scalar'),
   value: optional(number()),
   keyframes: optional(array(ScalarKeyframeSchema)),
+  expression: optional(string()),
 });
 
 const PositionKeyframeSchema = object({
@@ -49,7 +50,9 @@ const PositionKeyframeSchema = object({
 const PositionRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Position'),
+  split: optional(boolean()),
   keyframes: optional(array(PositionKeyframeSchema)),
+  expression: optional(string()),
 });
 
 const ColorRuleSchema = object({
@@ -57,12 +60,49 @@ const ColorRuleSchema = object({
   type: literal('Color'),
   value: optional(array(number())),
   keyframes: optional(array(ColorKeyframeSchema)),
+  expression: optional(string()),
 });
 
-export const RulesSchema = array(union([ColorRuleSchema, ScalarRuleSchema, PositionRuleSchema]));
+const ImageRuleSchema = object({
+  ...BaseRuleSchema,
+  type: literal('Image'),
+  value: object({
+    id: optional(string()),
+    width: optional(number()),
+    height: optional(number()),
+    url: optional(string()),
+  }),
+});
+
+const GradientKeyframeSchema = object({
+  ...BaseKeyframeSchema,
+  value: array(
+    object({
+      color: array(number()),
+      offset: number(),
+    }),
+  ),
+});
+
+const GradientRuleSchema = object({
+  ...BaseRuleSchema,
+  type: literal('Gradient'),
+  value: optional(
+    array(
+      object({
+        color: array(number()),
+        offset: number(),
+      }),
+    ),
+  ),
+  keyframes: optional(array(GradientKeyframeSchema)),
+});
+
+const RuleSchema = union([ColorRuleSchema, ScalarRuleSchema, PositionRuleSchema, ImageRuleSchema, GradientRuleSchema]);
+
+export const RulesSchema = array(RuleSchema);
 
 export const ThemeDataSchema = object({
-  id: optional(string()),
   rules: RulesSchema,
 });
 

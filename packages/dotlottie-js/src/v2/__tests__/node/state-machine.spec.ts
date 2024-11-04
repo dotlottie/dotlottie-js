@@ -18,10 +18,8 @@ describe('LottieStateMachine', () => {
     expect(() => {
       // act
       new LottieStateMachine({
-        descriptor: { id: '', initial: 'pigeon' },
-        states: PigeonState.states,
-        listeners: PigeonState.listeners ?? [],
-        triggers: PigeonState.triggers ?? [],
+        id: '',
+        data: PigeonState.data,
       });
       // assert
     }).toThrowError('Invalid id.');
@@ -29,10 +27,7 @@ describe('LottieStateMachine', () => {
 
   it('gets and sets the zipOptions', () => {
     const theme = new LottieStateMachine({
-      descriptor: PigeonState.descriptor,
-      states: PigeonState.states,
-      listeners: PigeonState.listeners ?? [],
-      triggers: PigeonState.triggers ?? [],
+      ...PigeonState,
       zipOptions: {
         level: 9,
         mem: 1,
@@ -56,15 +51,18 @@ describe('LottieStateMachine', () => {
   it('gets and sets the id', () => {
     // arrange
     const state = new LottieStateMachine({
-      descriptor: { id: 'test', initial: 'test' },
-      states: [
-        {
-          name: 'test',
-          type: 'PlaybackState',
-          mode: 'Forward',
-          autoplay: true,
-        },
-      ],
+      id: 'test',
+      data: {
+        descriptor: { initial: 'test' },
+        states: [
+          {
+            name: 'test',
+            type: 'PlaybackState',
+            mode: 'Forward',
+            autoplay: true,
+          },
+        ],
+      },
     });
 
     expect(state.id).toEqual('test');
@@ -81,11 +79,11 @@ describe('LottieStateMachine', () => {
     const pigeonState = new LottieStateMachine(PigeonState);
 
     // assert
-    expect(pigeonState.id).toEqual(PigeonState.descriptor.id);
+    expect(pigeonState.id).toEqual(PigeonState.id);
 
-    expect(pigeonState.initial).toEqual(PigeonState.descriptor.initial);
+    expect(pigeonState.initial).toEqual(PigeonState.data.descriptor.initial);
 
-    expect(pigeonState.states).toEqual(PigeonState.states);
+    expect(pigeonState.states).toEqual(PigeonState.data.states);
 
     const dotlottie = new DotLottie();
 
@@ -109,24 +107,24 @@ describe('LottieStateMachine', () => {
 
     expect(dotlottie.stateMachines.length).toEqual(2);
 
-    expect(dotlottie.stateMachines[0]?.id).toEqual(PigeonState.descriptor.id);
+    expect(dotlottie.stateMachines[0]?.id).toEqual(PigeonState.id);
 
-    expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.descriptor.id);
+    expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.id);
 
-    expect(dotlottie.stateMachines[0]?.id).toEqual(PigeonState.descriptor.id);
-    expect(dotlottie.stateMachines[0]?.initial).toEqual(PigeonState.descriptor.initial);
-    expect(dotlottie.stateMachines[0]?.states).toEqual(PigeonState.states);
+    expect(dotlottie.stateMachines[0]?.id).toEqual(PigeonState.id);
+    expect(dotlottie.stateMachines[0]?.initial).toEqual(PigeonState.data.descriptor.initial);
+    expect(dotlottie.stateMachines[0]?.states).toEqual(PigeonState.data.states);
 
-    expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.descriptor.id);
-    expect(dotlottie.stateMachines[1]?.initial).toEqual(SmileyWifi.descriptor.initial);
-    expect(dotlottie.stateMachines[1]?.states).toEqual(SmileyWifi.states);
+    expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.id);
+    expect(dotlottie.stateMachines[1]?.initial).toEqual(SmileyWifi.data.descriptor.initial);
+    expect(dotlottie.stateMachines[1]?.states).toEqual(SmileyWifi.data.states);
 
     // Remove a state and check
-    dotlottie.removeStateMachine(PigeonState.descriptor.id);
+    dotlottie.removeStateMachine(PigeonState.id);
 
     expect(dotlottie.stateMachines.length).toEqual(1);
 
-    expect(dotlottie.stateMachines[0]?.id).toEqual(SmileyWifi.descriptor.id);
+    expect(dotlottie.stateMachines[0]?.id).toEqual(SmileyWifi.id);
 
     // dotlottie.download('test_02_with_states.lottie');
   });
@@ -155,7 +153,7 @@ describe('LottieStateMachine', () => {
 
     expect(dotlottie.manifest.stateMachines?.length).toEqual(2);
 
-    const values = [PigeonState.descriptor.id, SmileyWifi.descriptor.id];
+    const values = [{ id: PigeonState.id }, { id: SmileyWifi.id }];
 
     if (dotlottie.manifest.stateMachines) {
       dotlottie.manifest.stateMachines.forEach((value, index) => {

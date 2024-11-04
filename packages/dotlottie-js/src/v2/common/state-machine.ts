@@ -10,21 +10,24 @@ import { DotLottieError, ErrorCodes } from '../../utils';
 import type {
   DotLottieDescriptor,
   DotLottieListeners,
+  DotLottieStateMachine,
   DotLottieStates,
   DotLottieTransitions,
   DotLottieTriggers,
+  ManifestStateMachine,
 } from './schemas';
 import { DescriptorSchema, ListenersSchema, StatesSchema, TransitionsSchema, TriggersSchema } from './schemas';
 
-export interface DotLottieStateMachineCommonOptions {
-  descriptor: DotLottieDescriptor;
-  listeners?: DotLottieListeners | undefined;
-  states: DotLottieStates;
-  triggers?: DotLottieTriggers | undefined;
+export interface DotLottieStateMachineCommonOptions extends ManifestStateMachine {
+  data: DotLottieStateMachine;
   zipOptions?: ZipOptions;
 }
 
 export class DotLottieStateMachineCommon {
+  protected _name: string | undefined;
+
+  protected _id: string;
+
   protected _descriptor: DotLottieDescriptor;
 
   protected _zipOptions: ZipOptions;
@@ -36,23 +39,25 @@ export class DotLottieStateMachineCommon {
   protected _triggers: DotLottieTriggers;
 
   public constructor(options: DotLottieStateMachineCommonOptions) {
-    this._requireValidTriggers(options.triggers ?? []);
-    this._requireValidListeners(options.listeners ?? []);
-    this._requireValidId(options.descriptor.id);
-    this._requireValidStates(options.states);
-    this._requireValidDescriptor(options.descriptor);
+    this._requireValidId(options.id);
+    this._requireValidTriggers(options.data.triggers ?? []);
+    this._requireValidListeners(options.data.listeners ?? []);
+    this._requireValidStates(options.data.states);
+    this._requireValidDescriptor(options.data.descriptor);
 
-    this._descriptor = options.descriptor;
+    this._name = options.name;
+
+    this._id = options.id;
+
+    this._descriptor = options.data.descriptor;
 
     this._zipOptions = options.zipOptions ?? {};
 
-    this._states = options.states;
+    this._states = options.data.states;
 
-    this._descriptor = options.descriptor;
+    this._listeners = options.data.listeners ?? [];
 
-    this._listeners = options.listeners ?? [];
-
-    this._triggers = options.triggers ?? [];
+    this._triggers = options.data.triggers ?? [];
   }
 
   public get zipOptions(): ZipOptions {
@@ -64,13 +69,21 @@ export class DotLottieStateMachineCommon {
   }
 
   public get id(): string {
-    return this._descriptor.id;
+    return this._id;
   }
 
   public set id(id: string) {
     this._requireValidId(id);
 
-    this._descriptor.id = id;
+    this._id = id;
+  }
+
+  public get name(): string | undefined {
+    return this._name;
+  }
+
+  public set name(name: string | undefined) {
+    this._name = name;
   }
 
   public get states(): DotLottieStates {

@@ -7,10 +7,10 @@ import { safeParse } from 'valibot';
 
 import { DotLottieError } from '../../utils';
 
-import type { ThemeData } from './schemas';
+import type { ManifestTheme, ThemeData } from './schemas';
 import { ThemeDataSchema } from './schemas';
 
-export interface ThemeOptions {
+export interface ThemeOptions extends ManifestTheme {
   data: ThemeData;
   id: string;
   zipOptions?: ZipOptions;
@@ -21,12 +21,15 @@ export class LottieThemeCommon {
 
   protected _id: string;
 
+  protected _name: string | undefined;
+
   protected _zipOptions: ZipOptions;
 
   public constructor(options: ThemeOptions) {
     this._requireValidId(options.id);
     this._requireValidData(options.data);
 
+    this._name = options.name;
     this._data = options.data;
     this._id = options.id;
 
@@ -49,6 +52,14 @@ export class LottieThemeCommon {
     this._requireValidId(id);
 
     this._id = id;
+  }
+
+  public get name(): string | undefined {
+    return this._name;
+  }
+
+  public set name(name: string | undefined) {
+    this._name = name;
   }
 
   public get data(): ThemeData {

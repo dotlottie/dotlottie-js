@@ -246,7 +246,6 @@ export const TriggersSchema = array(TriggerSchema);
 
 // Descriptor Schema
 export const DescriptorSchema = object({
-  id: string(),
   initial: string(),
 });
 
