@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.9
+
+### Patch Changes
+
+- 28e6b57: fix: getAnimations & getImages & getAudios for v2
+
 ## 0.9.0-beta.8
 
 ### Patch Changes
