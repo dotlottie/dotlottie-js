@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.11
+
+### Patch Changes
+
+- b167892: refactor: update v2 manifest schema
+
 ## 0.9.0-beta.10
 
 ### Patch Changes
