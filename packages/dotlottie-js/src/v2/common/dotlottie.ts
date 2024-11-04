@@ -3,9 +3,9 @@
  */
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
-import type { ZipOptions } from 'fflate';
 
 import { PACKAGE_NAME } from '../../constants';
+import type { ConversionOptions, GetAnimationOptions } from '../../types';
 import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
@@ -21,15 +21,6 @@ import { LottieThemeCommon } from './theme';
 export interface DotLottieOptions {
   enableDuplicateImageOptimization?: boolean;
   generator?: string;
-  plugins?: DotLottiePlugin[];
-}
-
-export interface GetAnimationOptions {
-  inlineAssets?: boolean;
-}
-
-export interface ConversionOptions {
-  zipOptions?: ZipOptions;
 }
 
 export class DotLottieCommon {
@@ -55,7 +46,7 @@ export class DotLottieCommon {
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
 
-  public async toBase64(_options: ConversionOptions | undefined = undefined): Promise<string> {
+  public async toBase64(_options?: ConversionOptions): Promise<string> {
     throw new DotLottieError('toBase64() method not implemented in concrete class!');
   }
 
@@ -295,9 +286,9 @@ export class DotLottieCommon {
    */
   public async getAnimation(
     animationId: string,
-    options: GetAnimationOptions = {},
+    options?: GetAnimationOptions,
   ): Promise<LottieAnimationCommon | undefined> {
-    if (!options.inlineAssets) return this._animationsMap.get(animationId);
+    if (!options?.inlineAssets) return this._animationsMap.get(animationId);
 
     let dataWithInlinedImages = this._animationsMap.get(animationId);
 

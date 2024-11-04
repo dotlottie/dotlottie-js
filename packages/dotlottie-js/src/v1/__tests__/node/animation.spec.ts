@@ -11,7 +11,7 @@ import { describe, test, expect, vi } from 'vitest';
 
 import BULL_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/bull.json';
 import animationData from '../../../__tests__/__fixtures__/simple/animation/animations/lottie1.json';
-import type { AnimationOptions } from '../../index.node';
+import type { AnimationOptionsV1 as AnimationOptions } from '../../index.node';
 import { LottieAnimationV1 } from '../../index.node';
 
 test('throws an error if it receives an invalid id when constructed', () => {

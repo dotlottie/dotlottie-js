@@ -4,11 +4,10 @@
 
 import type { ZipOptions } from 'fflate';
 
+import type { AudioData } from '../../types';
 import { dataUrlFromU8, DotLottieError, ErrorCodes } from '../../utils';
 
 import type { LottieAnimationCommon } from './animation';
-
-export type AudioData = string | ArrayBuffer | Blob;
 
 export interface AudioOptions {
   data?: AudioData;

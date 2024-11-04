@@ -10,10 +10,10 @@ import animationData from '../../../__tests__/__fixtures__/simple/animation/anim
 import smileyAnimationData from '../../../__tests__/__fixtures__/simple/animation/animations/smiley.json';
 import wifiAnimationData from '../../../__tests__/__fixtures__/simple/animation/animations/wifi.json';
 import { SmileyWifi, PigeonState } from '../../../__tests__/__fixtures__/simple/state/pigeon-state';
-import type { AnimationData } from '../../common';
+import type { AnimationData } from '../../../types';
 import { DotLottie, LottieStateMachine } from '../../index.browser';
 
-describe('LottieState', () => {
+describe('LottieStateMachine', () => {
   it('throws an error if it receives an invalid id when constructed', () => {
     expect(() => {
       // act

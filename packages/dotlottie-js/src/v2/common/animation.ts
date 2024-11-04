@@ -5,6 +5,7 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
+import type { AnimationData, ExportOptions } from '../../types';
 import { DotLottieError, isAudioAsset } from '../../utils';
 
 import type { LottieAudioCommon } from './audio';
@@ -12,18 +13,9 @@ import type { LottieImageCommon } from './image';
 import type { ManifestAnimation } from './schemas';
 import type { LottieThemeCommon } from './theme';
 
-export type AnimationData = AnimationType;
-
-export interface ExportOptions {
-  inlineAssets?: boolean;
-}
-
 export interface AnimationOptions extends ManifestAnimation {
-  background?: string | undefined;
   data?: AnimationData | undefined;
   defaultActiveAnimation?: boolean | undefined;
-  id: string;
-  initialTheme?: string | undefined;
   url?: string | undefined;
   zipOptions?: ZipOptions | undefined;
 }
@@ -174,7 +166,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toArrayBuffer(options: ExportOptions = {}): Promise<ArrayBuffer> {
+  public async toArrayBuffer(options?: ExportOptions): Promise<ArrayBuffer> {
     const dataJson = await this.toJSON(options);
 
     return new TextEncoder().encode(JSON.stringify(dataJson)).buffer;
@@ -195,7 +187,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toBlob(options: ExportOptions = {}): Promise<Blob> {
+  public async toBlob(options?: ExportOptions): Promise<Blob> {
     const dataJson = await this.toJSON(options);
 
     return new Blob([JSON.stringify(dataJson)], { type: 'application/json' });
@@ -208,7 +200,7 @@ export class LottieAnimationCommon {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toJSON(options: ExportOptions = {}): Promise<AnimationType> {
+  public async toJSON(options?: ExportOptions): Promise<AnimationType> {
     if (this._url && !this._data) {
       this._data = await this._fromUrl(this._url);
     }
@@ -220,7 +212,7 @@ export class LottieAnimationCommon {
       await this._extractImageAssets();
       await this._extractAudioAssets();
 
-      if (options.inlineAssets) {
+      if (options?.inlineAssets) {
         const animationAssets = this.data?.assets as AnimationType['assets'];
 
         if (!animationAssets)

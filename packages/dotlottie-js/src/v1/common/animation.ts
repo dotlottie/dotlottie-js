@@ -2,9 +2,9 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
+import type { AnimationData, ExportOptions } from '../../types';
 import { DotLottieError, isAudioAsset } from '../../utils';
 
 import type { LottieAudioCommonV1 } from './audio';
@@ -12,28 +12,22 @@ import type { LottieImageCommonV1 } from './image';
 import { PlayMode } from './schemas/manifest';
 import type { ManifestAnimationV1 } from './schemas/manifest';
 
-export type AnimationData = AnimationType;
-
-export interface ExportOptions {
-  inlineAssets?: boolean;
-}
-
-export interface AnimationOptionsBase extends ManifestAnimationV1 {
+interface AnimationOptionsBase extends ManifestAnimationV1 {
   defaultActiveAnimation?: boolean;
   zipOptions?: ZipOptions;
 }
 
-export interface AnimationOptionsWithData extends AnimationOptionsBase {
+interface AnimationOptionsWithData extends AnimationOptionsBase {
   data: AnimationData;
   url?: never;
 }
 
-export interface AnimationOptionsWithUrl extends AnimationOptionsBase {
+interface AnimationOptionsWithUrl extends AnimationOptionsBase {
   data?: never;
   url: string;
 }
 
-export type AnimationOptions = AnimationOptionsWithData | AnimationOptionsWithUrl;
+export type AnimationOptionsV1 = AnimationOptionsWithData | AnimationOptionsWithUrl;
 
 export class LottieAnimationCommonV1 {
   protected _data?: AnimationData;
@@ -68,7 +62,7 @@ export class LottieAnimationCommonV1 {
 
   protected _audioAssets: LottieAudioCommonV1[] = [];
 
-  public constructor(options: AnimationOptions) {
+  public constructor(options: AnimationOptionsV1) {
     this._requireValidOptions(options);
 
     this._id = options.id;
@@ -312,7 +306,7 @@ export class LottieAnimationCommonV1 {
    * @throws Error - if the animation data is not a valid Lottie animation data object.
    * @throws Error - if the fetch request fails.
    */
-  public async toJSON(options?: ExportOptions): Promise<AnimationType> {
+  public async toJSON(options?: ExportOptions): Promise<AnimationData> {
     if (this._url && !this._data) {
       this._data = await this._fromUrl(this._url);
     }
@@ -325,7 +319,7 @@ export class LottieAnimationCommonV1 {
       await this._extractAudioAssets();
 
       if (options?.inlineAssets) {
-        const animationAssets = this.data?.assets as AnimationType['assets'];
+        const animationAssets = this.data?.assets as AnimationData['assets'];
 
         if (!animationAssets)
           throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
@@ -368,7 +362,7 @@ export class LottieAnimationCommonV1 {
    * @throws Error - if the fetch request fails.
    * @throws Error - if the data object is not a valid Lottie animation data object.
    */
-  private async _fromUrl(url: string): Promise<AnimationType> {
+  private async _fromUrl(url: string): Promise<AnimationData> {
     const response = await fetch(url);
 
     const text = await response.text();
@@ -479,7 +473,7 @@ export class LottieAnimationCommonV1 {
    * @throws Error - if the url is not a valid url string.
    * @throws Error - if the data object is not set and the url is not provided.
    */
-  private _requireValidOptions(options: AnimationOptions): asserts options is AnimationOptions {
+  private _requireValidOptions(options: AnimationOptionsV1): asserts options is AnimationOptionsV1 {
     this._requireValidId(options.id);
 
     if (!options.data && !options.url) {

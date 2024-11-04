@@ -24,7 +24,8 @@ import bigMergedDotLottie from '../../../__tests__/__fixtures__/simple/big-merge
 import editedDotlottieAnimation from '../../../__tests__/__fixtures__/simple/edited-settings.lottie?arraybuffer';
 import editedAnimationData from '../../../__tests__/__fixtures__/simple/edited-settings/animations/lottie01.json';
 import editedManifest from '../../../__tests__/__fixtures__/simple/edited-settings/manifest.json';
-import type { AnimationData, AnimationOptions, ManifestAnimation } from '../../index.node';
+import type { AnimationData } from '../../../types';
+import type { AnimationOptions, ManifestAnimation } from '../../index.node';
 import { DotLottie, LottieAnimation } from '../../index.node';
 
 describe('setGenerator', () => {

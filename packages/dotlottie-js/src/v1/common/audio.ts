@@ -4,13 +4,12 @@
 
 import type { ZipOptions } from 'fflate';
 
+import type { AudioData } from '../../types';
 import { dataUrlFromU8, DotLottieError, ErrorCodes } from '../../utils';
 
 import type { LottieAnimationCommonV1 } from './animation';
 
-export type AudioData = string | ArrayBuffer | Blob;
-
-export interface AudioOptions {
+export interface AudioOptionsV1 {
   data?: AudioData;
   fileName: string;
   id: string;
@@ -32,7 +31,7 @@ export class LottieAudioCommonV1 {
 
   protected _zipOptions: ZipOptions;
 
-  public constructor(options: AudioOptions) {
+  public constructor(options: AudioOptionsV1) {
     this._requireValidId(options.id);
     this._requireValidFileName(options.fileName);
 

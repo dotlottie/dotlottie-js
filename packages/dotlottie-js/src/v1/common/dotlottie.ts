@@ -3,12 +3,12 @@
  */
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
-import type { ZipOptions } from 'fflate';
 
 import { PACKAGE_NAME } from '../../constants';
+import type { ConversionOptions, GetAnimationOptions } from '../../types';
 import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
 
-import type { AnimationOptions, LottieAnimationCommonV1 } from './animation';
+import type { AnimationOptionsV1, LottieAnimationCommonV1 } from './animation';
 import type { LottieAudioCommonV1 } from './audio';
 import type { LottieImageCommonV1 } from './image';
 import type { DotLottieV1Plugin } from './plugin';
@@ -16,22 +16,11 @@ import type { ManifestV1 } from './schemas/manifest';
 
 export interface DotLottieV1Options {
   author?: string;
-  customData?: Record<string, string>;
   description?: string;
   enableDuplicateImageOptimization?: boolean;
   generator?: string;
   keywords?: string;
-  plugins?: DotLottieV1Plugin[];
   revision?: number;
-  version?: string;
-}
-
-export interface GetAnimationOptions {
-  inlineAssets?: boolean;
-}
-
-export interface ConversionOptions {
-  zipOptions?: ZipOptions;
 }
 
 export class DotLottieCommonV1 {
@@ -73,10 +62,6 @@ export class DotLottieCommonV1 {
       this._keywords = options.keywords;
     }
 
-    if (typeof options?.customData === 'object') {
-      this._customData = options.customData;
-    }
-
     if (typeof options?.revision === 'number') {
       this._revision = options.revision;
     }
@@ -100,7 +85,7 @@ export class DotLottieCommonV1 {
     throw new DotLottieError('addPlugins(...plugins: DotLottieV1Plugin[]) not implemented in concrete class!');
   }
 
-  public addAnimation(_animationOptions: AnimationOptions): DotLottieCommonV1 {
+  public addAnimation(_animationOptions: AnimationOptionsV1): DotLottieCommonV1 {
     throw new DotLottieError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
   }
 
@@ -362,9 +347,9 @@ export class DotLottieCommonV1 {
    */
   public async getAnimation(
     animationId: string,
-    options: GetAnimationOptions = {},
+    options?: GetAnimationOptions,
   ): Promise<LottieAnimationCommonV1 | undefined> {
-    if (!options.inlineAssets) return this._animationsMap.get(animationId);
+    if (!options?.inlineAssets) return this._animationsMap.get(animationId);
 
     let dataWithInlinedImages = this._animationsMap.get(animationId);
 

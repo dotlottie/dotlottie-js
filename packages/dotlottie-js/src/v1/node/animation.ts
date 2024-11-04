@@ -5,14 +5,14 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
 import { DotLottieError, getExtensionTypeFromBase64, isAudioAsset } from '../../utils';
-import type { AnimationOptions } from '../common';
+import type { AnimationOptionsV1 } from '../common';
 import { LottieAnimationCommonV1 } from '../common';
 
 import { LottieAudioV1 } from './audio';
 import { LottieImageV1 } from './image';
 
 export class LottieAnimationV1 extends LottieAnimationCommonV1 {
-  public constructor(options: AnimationOptions) {
+  public constructor(options: AnimationOptionsV1) {
     super(options);
   }
 

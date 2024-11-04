@@ -4,13 +4,12 @@
 
 import type { ZipOptions } from 'fflate';
 
+import type { ImageData } from '../../types';
 import { dataUrlFromU8, DotLottieError } from '../../utils';
 
 import type { LottieAnimationCommonV1 } from './animation';
 
-export type ImageData = string | ArrayBuffer | Blob;
-
-export interface ImageOptions {
+export interface ImageOptionsV1 {
   data?: ImageData;
   fileName: string;
   id: string;
@@ -29,7 +28,7 @@ export class LottieImageCommonV1 {
 
   protected _zipOptions: ZipOptions;
 
-  public constructor(options: ImageOptions) {
+  public constructor(options: ImageOptionsV1) {
     this._requireValidId(options.id);
     this._requireValidFileName(options.fileName);
 

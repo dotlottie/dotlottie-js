@@ -4,11 +4,10 @@
 
 import type { ZipOptions } from 'fflate';
 
+import type { ImageData } from '../../types';
 import { dataUrlFromU8, DotLottieError } from '../../utils';
 
 import type { LottieAnimationCommon } from './animation';
-
-export type ImageData = string | ArrayBuffer | Blob;
 
 export interface ImageOptions {
   data?: ImageData;

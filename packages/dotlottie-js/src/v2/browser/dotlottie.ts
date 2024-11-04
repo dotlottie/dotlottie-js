@@ -8,6 +8,7 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 import type { Zippable } from 'fflate';
 import { strToU8, zip, strFromU8, unzip } from 'fflate';
 
+import type { ConversionOptions } from '../../types';
 import {
   base64ToUint8Array,
   DotLottieError,
@@ -16,7 +17,7 @@ import {
   isAudioAsset,
 } from '../../utils';
 import { DotLottieV1 } from '../../v1/browser';
-import type { AnimationOptions, DotLottieOptions, ConversionOptions } from '../common';
+import type { AnimationOptions, DotLottieOptions } from '../common';
 import { DotLottieCommon } from '../common';
 import type { Manifest } from '../common/schemas';
 
@@ -80,7 +81,7 @@ export class DotLottie extends DotLottieCommon {
     return this;
   }
 
-  public override async toBase64(options: ConversionOptions | undefined): Promise<string> {
+  public override async toBase64(options?: ConversionOptions): Promise<string> {
     const data = await this.toArrayBuffer(options);
 
     const uint8Array = new Uint8Array(data);
@@ -89,7 +90,7 @@ export class DotLottie extends DotLottieCommon {
     return window.btoa(binaryString);
   }
 
-  public override async download(fileName: string, options: ConversionOptions | undefined = undefined): Promise<void> {
+  public override async download(fileName: string, options?: ConversionOptions): Promise<void> {
     const blob = await this.toBlob(options);
 
     const dataURL = URL.createObjectURL(blob);

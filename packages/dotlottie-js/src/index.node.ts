@@ -19,5 +19,8 @@ export function makeDotLottie<T extends 'v1' | 'v2'>(
 }
 
 export * from './v1/node';
+export * from './v1/common';
 export * from './v2/node';
+export * from './v2/common';
 export * from './utils';
+export * from './types';
