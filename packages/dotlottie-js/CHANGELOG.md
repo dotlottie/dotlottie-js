@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.12
+
+### Patch Changes
+
+- dc0ce5d: fix: update theme schema slotId
+
 ## 0.9.0-beta.11
 
 ### Patch Changes
