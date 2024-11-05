@@ -182,12 +182,6 @@ export class DotLottie extends DotLottieCommon {
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         try {
           const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
-          const { generator } = manifest;
-
-          if (generator) {
-            this._requireValidGenerator(generator);
-            dotlottie.setGenerator(generator);
-          }
 
           for (const key of Object.keys(contentObj)) {
             const decompressedFile = contentObj[key] as Uint8Array;

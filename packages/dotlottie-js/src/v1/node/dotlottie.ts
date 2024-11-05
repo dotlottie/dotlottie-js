@@ -169,7 +169,7 @@ export class DotLottieV1 extends DotLottieCommonV1 {
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         try {
           const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as ManifestV1;
-          const { author, custom, description, generator, keywords } = manifest;
+          const { author, custom, description, keywords } = manifest;
 
           if (author) {
             this._requireValidAuthor(author);
@@ -182,10 +182,6 @@ export class DotLottieV1 extends DotLottieCommonV1 {
           if (description) {
             this._requireValidDescription(description);
             dotLottie.setDescription(description);
-          }
-          if (generator) {
-            this._requireValidGenerator(generator);
-            dotLottie.setGenerator(generator);
           }
           if (keywords) {
             this._requireValidKeywords(keywords);

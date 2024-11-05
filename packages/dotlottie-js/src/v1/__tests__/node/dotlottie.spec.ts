@@ -9,7 +9,6 @@ import { unzipSync } from 'fflate';
 import { Base64 } from 'js-base64';
 import { describe, test, expect, vi } from 'vitest';
 
-import pkg from '../../../../package.json';
 import bullData from '../../../__tests__/__fixtures__/image-asset-optimization/bull.json';
 import IMAGE_ANIMATION_1_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-1.json';
 import IMAGE_ANIMATION_5_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
@@ -97,40 +96,6 @@ describe('setDescription', () => {
     dotlottie.setDescription('');
 
     expect(dotlottie.description).toBe('');
-  });
-});
-
-describe('setGenerator', () => {
-  test('returns the dotlottie instance', () => {
-    const dotlottie = new DotLottie();
-
-    const result = dotlottie.setGenerator('Design Barn');
-
-    expect(result).toBe(dotlottie);
-  });
-
-  test('sets the generator', () => {
-    const dotlottie = new DotLottie();
-
-    const generator = 'Design Barn';
-
-    dotlottie.setGenerator(generator);
-
-    expect(dotlottie.generator).toBe(generator);
-  });
-
-  test('has proper generator when no input provided', () => {
-    const dotLottie = new DotLottie();
-
-    expect(dotLottie.generator).toBe(`${pkg.name}@${pkg.version}`);
-  });
-
-  test('accepts empty string', () => {
-    const dotlottie = new DotLottie();
-
-    dotlottie.setGenerator('');
-
-    expect(dotlottie.generator).toBe('');
   });
 });
 
@@ -499,7 +464,6 @@ describe('download', () => {
 
     await dotlottie
       .setAuthor(manifest.author)
-      .setGenerator(manifest.generator)
       .addAnimation({
         id: 'lottie1',
         data: animationData as unknown as AnimationType,
@@ -525,7 +489,6 @@ describe('toBlob', () => {
 
     const blob = await dotlottie
       .setAuthor(manifest.author)
-      .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
@@ -544,7 +507,6 @@ describe('toBlob', () => {
 
     const blob1 = await dotlottie
       .setAuthor(manifest.author)
-      .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
@@ -580,7 +542,6 @@ describe('toArrayBuffer', () => {
 
     const arrayBuffer = await dotlottie
       .setAuthor(manifest.author)
-      .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
@@ -596,7 +557,6 @@ describe('toArrayBuffer', () => {
 
     const arrayBuffer1 = await dotLottie1
       .setAuthor(manifest.author)
-      .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
@@ -629,7 +589,6 @@ describe('toBase64', () => {
 
     const dataURL = await dotlottie
       .setAuthor(manifest.author)
-      .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,
@@ -651,8 +610,6 @@ describe('toBase64', () => {
 
     const dataURL1 = await dotLottie1
       .setAuthor(manifest.author)
-
-      .setGenerator(manifest.generator)
       .addAnimation({
         id: manifest.animations[0]?.id as string,
         data: animationData as unknown as AnimationType,

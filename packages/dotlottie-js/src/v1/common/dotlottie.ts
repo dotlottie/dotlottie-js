@@ -157,12 +157,6 @@ export class DotLottieCommonV1 {
     return this;
   }
 
-  public setGenerator(generator: string): DotLottieCommonV1 {
-    this._generator = generator;
-
-    return this;
-  }
-
   public setKeywords(keywords: string | undefined): DotLottieCommonV1 {
     this._keywords = typeof keywords === 'string' ? keywords : 'DotLottieV1';
 

@@ -104,16 +104,6 @@ export class DotLottieCommon {
     return Array.from(this._stateMachinesMap.values());
   }
 
-  public setGenerator(generator: string | undefined): DotLottieCommon {
-    if (generator) {
-      this._generator = generator;
-    } else {
-      this._generator = PACKAGE_NAME;
-    }
-
-    return this;
-  }
-
   /**
    * Renames the underlying LottieImage, as well as updating the image asset path inside the animation data.
    * @param newName - desired id and fileName,
