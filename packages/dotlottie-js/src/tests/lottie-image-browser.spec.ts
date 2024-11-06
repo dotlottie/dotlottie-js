@@ -64,13 +64,13 @@ describe('LottieImage', () => {
 
         expect(uniqueImages.length).toBe(5);
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_0.png',
           'image_1.png',
           'image_2.png',
           'image_3.png',
           'image_4.png',
-          'image_5.png',
         ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_3', 'image_4', 'image_5']);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_2', 'image_3', 'image_4']);
       });
   });
 
@@ -110,13 +110,13 @@ describe('LottieImage', () => {
         );
 
         expect(uniqueImages.length).toBe(5);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_3', 'image_4', 'image_5']);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_2', 'image_3', 'image_4']);
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_0.png',
           'image_1.png',
           'image_2.png',
           'image_3.png',
           'image_4.png',
-          'image_5.png',
         ]);
       });
   });
@@ -214,13 +214,13 @@ describe('LottieImage', () => {
         expect(uniqueImages.length).toBe(5);
 
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
+          'image_0.jpeg',
           'image_1.jpeg',
-          'image_2.jpeg',
+          'image_3.png',
           'image_4.png',
-          'image_5.png',
-          'image_9.png',
+          'image_1_1.png',
         ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_1', 'image_2', 'image_4', 'image_5', 'image_9']);
+        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_3', 'image_4', 'image_1_1']);
       });
   });
 
