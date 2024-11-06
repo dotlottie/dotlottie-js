@@ -220,7 +220,13 @@ describe('LottieImage', () => {
           'image_4.png',
           'image_1_1.png',
         ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_3', 'image_4', 'image_1_1']);
+        expect(uniqueImages.map((image) => image.id)).toEqual([
+          'image_0',
+          'image_1',
+          'image_3',
+          'image_4',
+          'image_1_1',
+        ]);
       });
   });
 
