@@ -316,7 +316,7 @@ export class DotLottie extends DotLottieCommon {
                 if (animationAssets) {
                   for (const asset of animationAssets) {
                     if ('w' in asset && 'h' in asset) {
-                      if (asset.p.includes(image.id)) {
+                      if (asset.p === image.fileName) {
                         image.parentAnimations.push(parentAnimation);
                         parentAnimation.imageAssets.push(image);
                       }

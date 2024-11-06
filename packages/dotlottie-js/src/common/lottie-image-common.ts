@@ -140,6 +140,8 @@ export class LottieImageCommon {
       }
       // Default to png if the file extension isn't available
       this.fileName = `${newName}.${fileExt}`;
+    } else {
+      this.fileName = `${newName}.png`;
     }
   }
 

@@ -224,7 +224,8 @@ export class DotLottieCommon {
   private _renameImage(animation: LottieAnimationCommon, newName: string, imageId: string): void {
     animation.imageAssets.forEach((imageAsset) => {
       if (imageAsset.id === imageId) {
-        // Rename the LottieImage
+        const oldPath = imageAsset.fileName;
+
         imageAsset.renameImage(newName);
 
         if (!animation.data) throw createError('No animation data available.');
@@ -236,7 +237,7 @@ export class DotLottieCommon {
         // Find the image asset inside the animation data and rename its path
         for (const asset of animationAssets) {
           if ('w' in asset && 'h' in asset) {
-            if (asset.id === imageId) {
+            if (asset.p === oldPath) {
               asset.p = imageAsset.fileName;
             }
           }
@@ -245,18 +246,33 @@ export class DotLottieCommon {
     });
   }
 
-  private _renameImageAssets(): void {
-    const images: Map<string, LottieImageCommon[]> = new Map();
+  /**
+   * Generates a map of duplicate image ids and their count.
+   * @returns Map of duplicate image ids and their count.
+   */
+  private _getMapOfDuplicateImageIds(): Map<string, number> {
+    let count = 0;
+    const dupeMap = new Map<string, number>();
 
     this.animations.forEach((animation) => {
-      images.set(animation.id, animation.imageAssets);
+      animation.imageAssets.forEach((imageAsset) => {
+        if (dupeMap.has(imageAsset.id)) {
+          count = dupeMap.get(imageAsset.id) ?? 0;
+          dupeMap.set(imageAsset.id, count + 1);
+        } else {
+          dupeMap.set(imageAsset.id, 1);
+        }
+      });
     });
 
-    let size = 0;
+    return dupeMap;
+  }
 
-    images.forEach((value) => {
-      size += value.length;
-    });
+  /**
+   * Renames the image assets in all animations to avoid conflicts.
+   */
+  private _renameImageAssets(): void {
+    const dupeMap = this._getMapOfDuplicateImageIds();
 
     for (let i = this.animations.length - 1; i >= 0; i -= 1) {
       const animation = this.animations.at(i);
@@ -266,8 +282,18 @@ export class DotLottieCommon {
           const image = animation.imageAssets.at(j);
 
           if (image) {
-            this._renameImage(animation, `image_${size}`, image.id);
-            size -= 1;
+            let count = dupeMap.get(image.id) ?? 0;
+
+            if (count > 0) {
+              count -= 1;
+            }
+
+            dupeMap.set(image.id, count);
+
+            if (count > 0) {
+              // Rename the image
+              this._renameImage(animation, `${image.id}_${count}`, image.id);
+            }
           }
         }
       }
