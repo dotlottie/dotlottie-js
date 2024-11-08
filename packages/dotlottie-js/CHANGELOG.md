@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.14
+
+### Minor Changes
+
+- b2aae20: refactor: remove setGenerator method from DotLottieCommonV1 and DotLottieCommon classes
+
 ## 0.9.0-beta.13
 
 ### Patch Changes
