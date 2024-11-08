@@ -1,8 +1,9 @@
 {
   // Extend from the build config
-  "extends": "../../tsconfig.dev.json"
+  "extends": "../../tsconfig.dev.json",
 
   // Compiler options
-  // "compilerOptions": {
-  // }
+  "compilerOptions": {
+    "types": ["vite-plugin-arraybuffer/types"]
+  }
 }

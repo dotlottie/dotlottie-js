@@ -6,12 +6,12 @@ declare module 'DifferenceHashBuilder';
 
 declare module 'sharp-phash';
 
-declare module '*.lottie' {
+declare module '*.lottie?uint8array' {
   const value: Uint8Array;
   export default value;
 }
 
-declare module '*.txt' {
+declare module '*.txt?raw' {
   const value: string;
   export default value;
 }

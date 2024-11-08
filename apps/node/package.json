@@ -1,5 +1,6 @@
 {
-  "name": "node",
+  "name": "node-example",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "author": "",
@@ -8,6 +9,6 @@
   "keywords": [],
   "scripts": {},
   "dependencies": {
-    "@dotlottie/dotlottie-js": "workspace:^"
+    "@dotlottie/dotlottie-js": "workspace:*"
   }
 }
