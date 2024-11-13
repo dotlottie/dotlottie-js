@@ -221,12 +221,12 @@ export class DotLottieCommon {
    * @param newName - desired id and fileName,
    * @param imageId - The id of the LottieImage to rename
    */
-  private _renameImage(animation: LottieAnimationCommon, newName: string, imageId: string): void {
-    animation.imageAssets.forEach((imageAsset) => {
+  private async _renameImage(animation: LottieAnimationCommon, newName: string, imageId: string): Promise<void> {
+    for (const imageAsset of animation.imageAssets) {
       if (imageAsset.id === imageId) {
         const oldPath = imageAsset.fileName;
 
-        imageAsset.renameImage(newName);
+        await imageAsset.renameImage(newName);
 
         if (!animation.data) throw createError('No animation data available.');
 
@@ -243,21 +243,21 @@ export class DotLottieCommon {
           }
         }
       }
-    });
+    }
   }
 
   /**
    * Generates a map of duplicate image ids and their count.
    * @returns Map of duplicate image ids and their count.
    */
-  private _getMapOfDuplicateImageIds(): Map<string, number> {
-    let count = 0;
+  private _generateMapOfOccurencesFromImageIds(): Map<string, number> {
     const dupeMap = new Map<string, number>();
 
     this.animations.forEach((animation) => {
       animation.imageAssets.forEach((imageAsset) => {
         if (dupeMap.has(imageAsset.id)) {
-          count = dupeMap.get(imageAsset.id) ?? 0;
+          const count = dupeMap.get(imageAsset.id) ?? 0;
+
           dupeMap.set(imageAsset.id, count + 1);
         } else {
           dupeMap.set(imageAsset.id, 1);
@@ -271,8 +271,8 @@ export class DotLottieCommon {
   /**
    * Renames the image assets in all animations to avoid conflicts.
    */
-  private _renameImageAssets(): void {
-    const dupeMap = this._getMapOfDuplicateImageIds();
+  private async _renameImageAssets(): Promise<void> {
+    const dupeMap = this._generateMapOfOccurencesFromImageIds();
 
     for (let i = this.animations.length - 1; i >= 0; i -= 1) {
       const animation = this.animations.at(i);
@@ -292,7 +292,7 @@ export class DotLottieCommon {
 
             if (count > 0) {
               // Rename the image
-              this._renameImage(animation, `${image.id}_${count}`, image.id);
+              await this._renameImage(animation, `${image.id}_${count}`, image.id);
             }
           }
         }
@@ -535,7 +535,7 @@ export class DotLottieCommon {
 
     if (this.animations.length > 1) {
       // Rename assets incrementally if there are multiple animations
-      this._renameImageAssets();
+      await this._renameImageAssets();
       this._renameAudioAssets();
     }
 

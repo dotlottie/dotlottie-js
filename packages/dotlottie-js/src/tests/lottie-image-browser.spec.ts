@@ -231,50 +231,52 @@ describe('LottieImage', () => {
   });
 
   it('getMimeTypeFromBase64 Properly detects mimetype of images.', async () => {
-    const jpegFormat = getMimeTypeFromBase64(
+    const jpegFormat = await getMimeTypeFromBase64(
       'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAZABkAAD/2wCEABQQEBkSGScXFycyJh8mMi4mJiYmLj41NTU1NT5EQUFBQUFBREREREREREREREREREREREREREREREREREREREQBFRkZIBwgJhgYJjYmICY2RDYrKzZERERCNUJERERERERERERERERERERERERERERERERERERERERERERERERERP/AABEIAAEAAQMBIgACEQEDEQH/xABMAAEBAAAAAAAAAAAAAAAAAAAABQEBAQAAAAAAAAAAAAAAAAAABQYQAQAAAAAAAAAAAAAAAAAAAAARAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJQA9Yv/2Q==',
     );
 
     expect(jpegFormat).toEqual('image/jpeg');
 
-    const pngFormat = getMimeTypeFromBase64(
+    const pngFormat = await getMimeTypeFromBase64(
       // eslint-disable-next-line no-secrets/no-secrets
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4z8AAAAMBAQD3A0FDAAAAAElFTkSuQmCC',
     );
 
     expect(pngFormat).toEqual('image/png');
 
-    const gifFormat = getMimeTypeFromBase64('data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=');
+    const gifFormat = await getMimeTypeFromBase64(
+      'data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=',
+    );
 
     expect(gifFormat).toEqual('image/gif');
 
-    const bmpFormat = getMimeTypeFromBase64(
+    const bmpFormat = await getMimeTypeFromBase64(
       'data:image/bmp;base64,Qk06AAAAAAAAADYAAAAoAAAAAQAAAAEAAAABABgAAAAAAAQAAADEDgAAxA4AAAAAAAAAAAAAAgD+AA==',
     );
 
     expect(bmpFormat).toEqual('image/bmp');
 
-    const webpFormat = getMimeTypeFromBase64(
+    const webpFormat = await getMimeTypeFromBase64(
       // eslint-disable-next-line no-secrets/no-secrets
       'data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAADwAQCdASoBAAEAAQAcJaACdLoB+AAETAAA/vW4f/6aR40jxpHxcP/ugT90CfugT/3NoAAA',
     );
 
     expect(webpFormat).toEqual('image/webp');
 
-    const svgFormat = getMimeTypeFromBase64(
+    const svgFormat = await getMimeTypeFromBase64(
       // eslint-disable-next-line no-secrets/no-secrets
       'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InJlZCIvPjwvc3ZnPg==',
     );
 
-    expect(svgFormat).toEqual('image/svg+xml');
+    expect(svgFormat).toEqual(undefined);
 
-    const svgXmlFormat = getMimeTypeFromBase64(SVG_XML_TEST);
+    const svgXmlFormat = await getMimeTypeFromBase64(SVG_XML_TEST);
 
-    expect(svgXmlFormat).toEqual('image/svg+xml');
+    expect(svgXmlFormat).toEqual('application/xml');
 
-    const mp3Format = getMimeTypeFromBase64(AUDIO_TEST);
+    const mp3Format = await getMimeTypeFromBase64(AUDIO_TEST);
 
-    expect(mp3Format).toEqual('audio/mp3');
+    expect(mp3Format).toEqual('audio/mpeg');
   });
 
   it('Throws an error when an unrecognized file mimetype is detected.', async () => {

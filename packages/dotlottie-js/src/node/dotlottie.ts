@@ -231,7 +231,7 @@ export class DotLottie extends DotLottieCommon {
 
               const base64 = Buffer.from(decompressedFile).toString('base64');
 
-              const ext = getExtensionTypeFromBase64(base64);
+              const ext = await getExtensionTypeFromBase64(base64);
 
               // Push the images in to a temporary array
               const imgDataURL = `data:image/${ext};base64,${base64}`;
@@ -254,7 +254,7 @@ export class DotLottie extends DotLottieCommon {
 
               const base64 = Buffer.from(decompressedFile).toString('base64');
 
-              const ext = getExtensionTypeFromBase64(base64);
+              const ext = await getExtensionTypeFromBase64(base64);
 
               // Push the images in to a temporary array
               const audioDataURL = `data:audio/${ext};base64,${base64}`;

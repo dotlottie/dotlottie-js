@@ -269,7 +269,7 @@ describe('getImages', () => {
       const data = unzippedDotLottie[key];
 
       if (key.startsWith('images/') && data) {
-        expectedImages[key.replace('images/', '')] = dataUrlFromU8(data);
+        expectedImages[key.replace('images/', '')] = await dataUrlFromU8(data);
       }
     }
 
@@ -295,7 +295,7 @@ describe('getAllAudio', () => {
       const data = unzippedDotLottie[key];
 
       if (key.startsWith('audio/') && data) {
-        expectedAudio[key.replace('audio/', '')] = dataUrlFromU8(data);
+        expectedAudio[key.replace('audio/', '')] = await dataUrlFromU8(data);
       }
     }
 
