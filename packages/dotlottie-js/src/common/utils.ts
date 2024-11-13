@@ -142,6 +142,7 @@ export const getExtensionTypeFromBase64 = async (base64: string): Promise<string
 
   const mime = await fileTypeFromBuffer(data);
 
+  // To keep mimetype(jpeg) and extension(jpg) consistent
   if (mime?.ext.toString() === 'jpg') {
     return 'jpeg';
   }
