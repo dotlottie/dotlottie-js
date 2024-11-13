@@ -14,7 +14,8 @@ export default defineConfig(({ platform }) => {
     platform,
     target: ['esnext'],
     tsconfig: 'tsconfig.build.json',
-    noExternal: platform === 'browser' ? ['fflate', 'file-type', 'browser-image-hash', 'valibot'] : ['browser-image-hash'],
+    noExternal:
+      platform === 'browser' ? ['fflate', 'file-type', 'browser-image-hash', 'valibot'] : ['browser-image-hash'],
     loader: {
       '.lottie': 'binary',
     },
