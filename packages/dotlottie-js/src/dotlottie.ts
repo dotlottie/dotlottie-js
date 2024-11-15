@@ -246,7 +246,7 @@ export class DotLottie extends DotLottieCommon {
 
               let decodedImg = btoa(decodedStr);
 
-              const ext = getExtensionTypeFromBase64(decodedImg);
+              const ext = await getExtensionTypeFromBase64(decodedImg);
 
               // Push the images in to a temporary array
               decodedImg = `data:image/${ext};base64,${decodedImg}`;
@@ -267,7 +267,7 @@ export class DotLottie extends DotLottieCommon {
 
               let decodedAudio = btoa(decodedStr);
 
-              const ext = getExtensionTypeFromBase64(decodedAudio);
+              const ext = await getExtensionTypeFromBase64(decodedAudio);
 
               // Push the audio in to a temporary array
               decodedAudio = `data:audio/${ext};base64,${decodedAudio}`;
@@ -328,7 +328,7 @@ export class DotLottie extends DotLottieCommon {
                 if (animationAssets) {
                   for (const asset of animationAssets) {
                     if ('w' in asset && 'h' in asset) {
-                      if (asset.p.includes(image.id)) {
+                      if (asset.p === image.fileName) {
                         image.parentAnimations.push(parentAnimation);
                         parentAnimation.imageAssets.push(image);
                       }

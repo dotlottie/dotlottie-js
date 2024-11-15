@@ -1168,88 +1168,70 @@ async function create_showcase() {
     });
 }
 
-async function debugScenario() {
+async function logImages(arrayBuffer) {
+  // Create a new DotLottie instance from the array buffer
+  const dotLottie = await new DotLottie().fromArrayBuffer(arrayBuffer);
+
+  // Build the dotLottie instance
+  await dotLottie.build();
+
+  // Retrieve and log the image assets' IDs
+  const images = dotLottie.getImages().map((image) => image.id);
+
+  console.log({
+    images,
+  });
+
+  // Return the instance for further operations
+  return dotLottie;
+}
+
+async function debugScenario1() {
   const dotLottie = new DotLottie();
 
-  await dotLottie
-    .setAuthor('Sam')
-    .setVersion('1.0')
-    .addAnimation({
-      id: 'folder',
-      url: 'https://lottie.host/32e49c72-af7a-4a79-97e4-fb0d115eae3e/wIqFzTMKsk.json',
-    })
-    .addStateMachine(
-      {
-        descriptor: {
-          id: 'openCloseFolder',
-          initial: 0,
-        },
-        states: [
-          {
-            name: "initialState",
-            type: "PlaybackState",
-            autoplay: true,
-            loop: false,
-            segment: [1.0, 2.0],
-          },
-          {
-            name: "open",
-            type: "PlaybackState",
-            autoplay: true,
-            loop: false,
-            segment: [1.0, 30.0],
-          },
-          {
-            name: "close",
-            type: "PlaybackState",
-            autoplay: true,
-            mode: "Reverse",
-            loop: false,
-            segment: [1.0, 30.0],
-          }
-        ],
-        transitions: [
-          {
-            type: 'Transition',
-            from_state: 0,
-            to_state: 1,
-            string_event: {
-              value: 'open',
-            },
-          },
-          {
-            type: 'Transition',
-            from_state: 1,
-            to_state: 2,
-            string_event: {
-              value: 'close',
-            },
-          },
-          {
-            type: 'Transition',
-            from_state: 2,
-            to_state: 0,
-            on_complete_event: {},
-          },
-        ],
-        listeners: [],
-        context_variables: [],
-      }
-    )
+  // Fetch the dotLottie file and convert it to an ArrayBuffer
+  const res = await fetch('https://lottie.host/7c65acc7-80e7-4bad-8098-6cebd17c8b92/ee8uf2TX6N.lottie');
+  const arrayBuffer = await res.arrayBuffer();
+
+  // Log the image assets on the first import
+  const dotLottie1 = await logImages(arrayBuffer);
+
+  // Rebuild the dotLottie instance (simulating re-import)
+  await dotLottie1.build();
+
+  // Convert the instance back to an ArrayBuffer
+  const buffer = await dotLottie1.toArrayBuffer({});
+
+  // Log the image assets after the second import
+  await logImages(buffer);
+}
+
+async function debugScenario2() {
+  const dotLottie = new DotLottie();
+
+  await dotLottie.addAnimation({
+    id: 'bull',
+    url: 'https://lottie.host/c7d4e60a-102a-4ca1-97f1-f73b2b5f0f7b/s2z6VrPpnn.json',
+  }).addAnimation({
+    id: 'shrek',
+    url: 'https://lottie.host/204e1620-32b7-46a1-8f99-eda64771b781/hYeiO04uqx.json'
+  })
     .build()
     .then((value) => {
       return value.toArrayBuffer();
     })
     .then((value) => {
-      fs.writeFileSync('folder.lottie', Buffer.from(value));
+      fs.writeFileSync('new-issue.lottie', Buffer.from(value));
     });
+
 }
 
 // create_showcase();
 
-// debugScenario();
+debugScenario1();
+// debugScenario2();
 
-createExplodingPigeon();
+// createExplodingPigeon();
 // createListenersAnimation();
 // create_pigeon_fsm_eq_guard();
 // create_pigeon_gt_gte_guard();
