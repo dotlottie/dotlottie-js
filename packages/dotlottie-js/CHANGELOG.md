@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 0.8.2
+
+### Patch Changes
+
+- f2a1db8: chore: bump lottie-types pkg to v1.2.0
+- 2566abe: fixes issues with wrong images ids
+
 ## 0.8.1
 
 ### Patch Changes
