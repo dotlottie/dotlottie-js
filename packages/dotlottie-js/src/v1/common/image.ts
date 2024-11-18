@@ -5,7 +5,7 @@
 import type { ZipOptions } from 'fflate';
 
 import type { ImageData } from '../../types';
-import { dataUrlFromU8, DotLottieError } from '../../utils';
+import { dataUrlFromU8, DotLottieError, getMimeTypeFromBase64 } from '../../utils';
 
 import type { LottieAnimationCommonV1 } from './animation';
 
@@ -125,23 +125,19 @@ export class LottieImageCommonV1 {
     return dataUrlFromU8(new Uint8Array(arrayBuffer));
   }
 
-  /**
+/**
    * Renames the id and fileName to newName.
    * @param newName - A new id and filename for the image.
    */
-  public renameImage(newName: string): void {
-    this.id = newName;
+public async renameImage(newName: string): Promise<void> {
+  this.id = newName;
 
-    if (this.fileName) {
-      let fileExt = this.fileName.split('.').pop();
+  const data = await this.toDataURL();
 
-      if (!fileExt) {
-        fileExt = '.png';
-      }
-      // Default to png if the file extension isn't available
-      this.fileName = `${newName}.${fileExt}`;
-    }
-  }
+  const mimeType = await getMimeTypeFromBase64(data);
+
+  this.fileName = `${newName}.${mimeType ? mimeType.split('/')[1] : 'png'}`;
+}
 
   public async toArrayBuffer(): Promise<ArrayBuffer> {
     const blob = await (await this.toBlob()).arrayBuffer();
