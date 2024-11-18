@@ -4,74 +4,73 @@
 
 import fs from 'fs';
 
-import { DotLottie } from '@dotlottie/dotlottie-js';
+import { DotLottie } from '@dotlottie/dotlottie-js/node';
 
 async function createDotLottieForTests() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Joe')
+    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
     })
     .addStateMachine({
-      id: "explodingPigeon",
-      name: "Exploding Pigeon",
-      data: {
-        descriptor: {
-          initial: "pigeon",
+      descriptor: {
+        id: 'pigeon_fsm',
+        initial: 0,
+      },
+      states: [
+        {
+          name: "pigeon",
+          animation_id: "pigeon",
+          type: "PlaybackState",
+          autoplay: true,
+          loop: false,
+          marker: "bird"
         },
-        states: [
-          {
-            name: "pigeon",
-            animation_id: "pigeon",
-            type: "PlaybackState",
-            autoplay: true,
-            loop: false,
-            marker: "bird"
-          },
-          {
-            name: "explosion",
-            animation_id: "pigeon",
-            type: "PlaybackState",
-            autoplay: true,
-            speed: 0.8,
-            loop: false,
-            marker: 'explosion',
-          },
-          {
-            name: "feathers",
-            animation_id: "pigeon",
-            type: "PlaybackState",
-            autoplay: true,
-            speed: 0.8,
-            loop: false,
-            marker: 'feathers',
-          }
-        ],
-        transitions: [
-          {
-            type: "Transition",
-            from_state: 0,
-            to_state: 1,
-            on_complete_event: {},
-          },
-          {
-            type: "Transition",
-            from_state: 1,
-            to_state: 2,
-            on_complete_event: {},
-          },
-          {
-            type: "Transition",
-            from_state: 2,
-            to_state: 0,
-            on_complete_event: {},
-          },
-        ],
-        context_variables: [],
-        listeners: []
-      }
+        {
+          name: "explosion",
+          animation_id: "pigeon",
+          type: "PlaybackState",
+          autoplay: true,
+          speed: 0.8,
+          loop: false,
+          marker: 'explosion',
+        },
+        {
+          name: "feathers",
+          animation_id: "pigeon",
+          type: "PlaybackState",
+          autoplay: true,
+          speed: 0.8,
+          loop: false,
+          marker: 'feathers',
+        }
+      ],
+      transitions: [
+        {
+          type: "Transition",
+          from_state: 0,
+          to_state: 1,
+          on_complete_event: {},
+        },
+        {
+          type: "Transition",
+          from_state: 1,
+          to_state: 2,
+          on_complete_event: {},
+        },
+        {
+          type: "Transition",
+          from_state: 2,
+          to_state: 0,
+          on_complete_event: {},
+        },
+      ],
+      context_variables: [],
+      listeners: []
     })
     .addStateMachine({
       descriptor: {
@@ -127,131 +126,212 @@ async function createExplodingPigeon() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Sam')
+    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
     })
     .addStateMachine({
-      id: "explodingPigeon",
-      name: "Exploding Pigeon!! 🤯 🕊️",
-      data: {
-        descriptor: {
-          initial: "pigeonRunning"
+      descriptor: {
+        id: "explodingPigeon",
+        initial: "pigeonRunning"
+      },
+      states: [
+        {
+          type: "PlaybackState",
+          name: "pigeonRunning",
+          animationId: "",
+          loop: true,
+          autoplay: true,
+          segment: "bird",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "explosion",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "explode"
+                }
+              ]
+            }
+          ]
         },
-        states: [
-          {
-            type: "PlaybackState",
-            name: "pigeonRunning",
-            animationId: "",
-            loop: true,
-            autoplay: true,
-            segment: "bird",
-            transitions: [
-              {
-                type: "Transition",
-                toState: "explosion",
-                guards: [
-                  {
-                    type: "Event",
-                    triggerName: "explode"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            type: "PlaybackState",
-            name: "explosion",
-            animationId: "",
-            loop: false,
-            autoplay: true,
-            segment: "explosion",
-            transitions: [
-              {
-                type: "Transition",
-                toState: "feathersFalling",
-                guards: [
-                  {
-                    type: "Event",
-                    triggerName: "rainFeathers"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            type: "PlaybackState",
-            name: "feathersFalling",
-            animationId: "",
-            loop: false,
-            autoplay: true,
-            segment: "feathers",
-            transitions: [
-              {
-                type: "Transition",
-                toState: "pigeonRunning",
-                guards: [
-                  {
-                    type: "Event",
-                    triggerName: "restart"
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        listeners: [
-          {
-            type: "PointerDown",
-            actions: [
-              {
-                type: "Fire",
-                triggerName: "explode"
-              }
-            ]
-          },
-          {
-            type: "OnComplete",
-            stateName: "explosion",
-            actions: [
-              {
-                type: "Fire",
-                triggerName: "rainFeathers"
-              }
-            ]
-          },
-          {
-            type: "PointerDown",
-            actions: [
-              {
-                type: "Fire",
-                triggerName: "restart"
-              }
-            ]
-          }
-        ],
-        triggers: [
-          {
-            type: "Event",
-            name: "explode"
-          },
-          {
-            type: "Event",
-            name: "rainFeathers"
-          },
-          {
-            type: "Event",
-            name: "restart"
-          }
-        ]
-      }
+        {
+          type: "PlaybackState",
+          name: "explosion",
+          animationId: "",
+          loop: false,
+          autoplay: true,
+          segment: "explosion",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "feathersFalling",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "rainFeathers"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          type: "PlaybackState",
+          name: "feathersFalling",
+          animationId: "",
+          loop: false,
+          autoplay: true,
+          segment: "feathers",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "pigeonRunning",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "restart"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      listeners: [
+        {
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "explode"
+            }
+          ]
+        },
+        {
+          type: "OnComplete",
+          stateName: "explosion",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "rainFeathers"
+            }
+          ]
+        },
+        {
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "restart"
+            }
+          ]
+        }
+      ],
+      triggers: [
+        {
+          type: "Event",
+          name: "explode"
+        },
+        {
+          type: "Event",
+          name: "rainFeathers"
+        },
+        {
+          type: "Event",
+          name: "restart"
+        }
+      ]
+    })
+    .addStateMachine({
+      descriptor: {
+        id: "pigeonWithoutExplosion",
+        initial: "pigeonRunning"
+      },
+      states: [
+        {
+          type: "PlaybackState",
+          name: "pigeonRunning",
+          animationId: "",
+          loop: true,
+          autoplay: true,
+          segment: "bird",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "feathersFalling",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "explode"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          type: "PlaybackState",
+          name: "feathersFalling",
+          animationId: "",
+          loop: false,
+          autoplay: true,
+          segment: "feathers",
+          transitions: [
+            {
+              type: "Transition",
+              toState: "pigeonRunning",
+              guards: [
+                {
+                  type: "Event",
+                  triggerName: "restart"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      listeners: [
+        {
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "explode"
+            }
+          ]
+        },
+        {
+          type: "PointerDown",
+          actions: [
+            {
+              type: "Fire",
+              triggerName: "restart"
+            }
+          ]
+        }
+      ],
+      triggers: [
+        {
+          type: "Event",
+          name: "explode"
+        },
+        {
+          type: "Event",
+          name: "rainFeathers"
+        },
+        {
+          type: "Event",
+          name: "restart"
+        }
+      ]
     })
     .build()
     .then((value) => {
       return value.toArrayBuffer();
     })
     .then((value) => {
-      fs.writeFileSync('exploding_pigeon_v2.lottie', Buffer.from(value));
+      fs.writeFileSync('exploding_pigeon.lottie', Buffer.from(value));
     });
 }
 
@@ -259,6 +339,8 @@ async function createListenersAnimation() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Joe')
+    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -359,6 +441,8 @@ async function createDotLottie() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Joe')
+    .setVersion('1.0')
     .addAnimation({
       id: 'animation_1',
       url: 'https://lottie.host/18b639d1-a200-4225-ba0e-3456d40f95a5/wlrsaqWa8r.json',
@@ -403,6 +487,8 @@ async function create_pigeon_fsm_eq_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Joe')
+    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -525,6 +611,8 @@ async function create_pigeon_gt_gte_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Joe')
+    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -647,6 +735,8 @@ async function create_pigeon_lt_lte_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Joe')
+    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -770,6 +860,8 @@ async function create_pigeon_ne_guard() {
   const dotLottie = new DotLottie();
 
   await dotLottie
+    .setAuthor('Joe')
+    .setVersion('1.0')
     .addAnimation({
       id: 'pigeon',
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
@@ -1076,86 +1168,70 @@ async function create_showcase() {
     });
 }
 
-async function debugScenario() {
+async function logImages(arrayBuffer) {
+  // Create a new DotLottie instance from the array buffer
+  const dotLottie = await new DotLottie().fromArrayBuffer(arrayBuffer);
+
+  // Build the dotLottie instance
+  await dotLottie.build();
+
+  // Retrieve and log the image assets' IDs
+  const images = dotLottie.getImages().map((image) => image.id);
+
+  console.log({
+    images,
+  });
+
+  // Return the instance for further operations
+  return dotLottie;
+}
+
+async function debugScenario1() {
   const dotLottie = new DotLottie();
 
-  await dotLottie
-    .addAnimation({
-      id: 'folder',
-      url: 'https://lottie.host/32e49c72-af7a-4a79-97e4-fb0d115eae3e/wIqFzTMKsk.json',
-    })
-    .addStateMachine(
-      {
-        descriptor: {
-          id: 'openCloseFolder',
-          initial: 0,
-        },
-        states: [
-          {
-            name: "initialState",
-            type: "PlaybackState",
-            autoplay: true,
-            loop: false,
-            segment: [1.0, 2.0],
-          },
-          {
-            name: "open",
-            type: "PlaybackState",
-            autoplay: true,
-            loop: false,
-            segment: [1.0, 30.0],
-          },
-          {
-            name: "close",
-            type: "PlaybackState",
-            autoplay: true,
-            mode: "Reverse",
-            loop: false,
-            segment: [1.0, 30.0],
-          }
-        ],
-        transitions: [
-          {
-            type: 'Transition',
-            from_state: 0,
-            to_state: 1,
-            string_event: {
-              value: 'open',
-            },
-          },
-          {
-            type: 'Transition',
-            from_state: 1,
-            to_state: 2,
-            string_event: {
-              value: 'close',
-            },
-          },
-          {
-            type: 'Transition',
-            from_state: 2,
-            to_state: 0,
-            on_complete_event: {},
-          },
-        ],
-        listeners: [],
-        context_variables: [],
-      }
-    )
+  // Fetch the dotLottie file and convert it to an ArrayBuffer
+  const res = await fetch('https://lottie.host/7c65acc7-80e7-4bad-8098-6cebd17c8b92/ee8uf2TX6N.lottie');
+  const arrayBuffer = await res.arrayBuffer();
+
+  // Log the image assets on the first import
+  const dotLottie1 = await logImages(arrayBuffer);
+
+  // Rebuild the dotLottie instance (simulating re-import)
+  await dotLottie1.build();
+
+  // Convert the instance back to an ArrayBuffer
+  const buffer = await dotLottie1.toArrayBuffer({});
+
+  // Log the image assets after the second import
+  await logImages(buffer);
+}
+
+async function debugScenario2() {
+  const dotLottie = new DotLottie();
+
+  await dotLottie.addAnimation({
+    id: 'bull',
+    url: 'https://lottie.host/c7d4e60a-102a-4ca1-97f1-f73b2b5f0f7b/s2z6VrPpnn.json',
+  }).addAnimation({
+    id: 'shrek',
+    url: 'https://lottie.host/204e1620-32b7-46a1-8f99-eda64771b781/hYeiO04uqx.json'
+  })
     .build()
     .then((value) => {
       return value.toArrayBuffer();
     })
     .then((value) => {
-      fs.writeFileSync('folder.lottie', Buffer.from(value));
+      fs.writeFileSync('new-issue.lottie', Buffer.from(value));
     });
+
 }
 
 // create_showcase();
 
-// debugScenario();
+debugScenario1();
+// debugScenario2();
 
-createExplodingPigeon();
+// createExplodingPigeon();
 // createListenersAnimation();
 // create_pigeon_fsm_eq_guard();
 // create_pigeon_gt_gte_guard();
@@ -1169,4 +1245,3 @@ createExplodingPigeon();
 /** Coffee drinker sync to scroll. Recreate the animation on the Interactivity homepage */
 /* lottiefiles.com/interactivity */
 // create_sync_animation();
-
