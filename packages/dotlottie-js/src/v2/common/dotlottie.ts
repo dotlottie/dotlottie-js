@@ -109,12 +109,17 @@ export class DotLottieCommon {
    * @param newName - desired id and fileName,
    * @param imageId - The id of the LottieImage to rename
    */
-  private async _renameImage(animation: LottieAnimationCommon, newName: string, imageId: string): Promise<void> {
+  private async _renameImage(
+    animation: LottieAnimationCommon,
+    newLottieAssetId: string,
+    lottieAssetId: string,
+  ): Promise<void> {
     for (const imageAsset of animation.imageAssets) {
-      if (imageAsset.id === imageId) {
+      if (imageAsset.lottieAssetId === lottieAssetId) {
         const oldPath = imageAsset.fileName;
 
-        await imageAsset.renameImage(newName);
+        // Rename image will change the fileName using the newLottieAssetId and append the detected extension
+        await imageAsset.renameImage(newLottieAssetId);
 
         if (!animation.data) throw new DotLottieError('No animation data available.');
 
@@ -143,12 +148,12 @@ export class DotLottieCommon {
 
     this.animations.forEach((animation) => {
       animation.imageAssets.forEach((imageAsset) => {
-        if (dupeMap.has(imageAsset.id)) {
-          const count = dupeMap.get(imageAsset.id) ?? 0;
+        if (dupeMap.has(imageAsset.lottieAssetId)) {
+          const count = dupeMap.get(imageAsset.lottieAssetId) ?? 0;
 
-          dupeMap.set(imageAsset.id, count + 1);
+          dupeMap.set(imageAsset.lottieAssetId, count + 1);
         } else {
-          dupeMap.set(imageAsset.id, 1);
+          dupeMap.set(imageAsset.lottieAssetId, 1);
         }
       });
     });
@@ -158,29 +163,47 @@ export class DotLottieCommon {
 
   /**
    * Renames the image assets in all animations to avoid conflicts.
+   *
+   * Steps:
+   *  - Generate how many times across all animations the same image id has been used.
+   *  - Loop through every animation in reverse order
+   *  - Every time an animation uses an image asset that is also used elsewhere, append the count to the image's asset id and then decrement.
+   *
+   * Result of renaming for every animation:
+   *
+   * - Inside the Lottie's data and it's Asset object:
+   *  - The Asset id stays the same, meaning that every reference to the asset is still valid (refId)
+   *  - The path is changed to the new asset id with the format \{assetId\}_\{count\}
+   *
+   * - On the dotLottie file system scope:
+   *  - The image file name is changed to the new asset id \{assetId\}_\{count\}.\{ext\}
    */
   private async _renameImageAssets(): Promise<void> {
-    const dupeMap = this._generateMapOfOccurencesFromImageIds();
+    const occurenceMap = this._generateMapOfOccurencesFromImageIds();
 
+    // Loop over every animation
     for (let i = this.animations.length - 1; i >= 0; i -= 1) {
       const animation = this.animations.at(i);
 
       if (animation) {
+        // Loop over every image asset of the animation
         for (let j = animation.imageAssets.length - 1; j >= 0; j -= 1) {
           const image = animation.imageAssets.at(j);
 
           if (image) {
-            let count = dupeMap.get(image.id) ?? 0;
+            // Get how many times the same image id has been used
+            let count = occurenceMap.get(image.lottieAssetId) ?? 0;
 
             if (count > 0) {
               count -= 1;
             }
 
-            dupeMap.set(image.id, count);
+            // Decrement the count
+            occurenceMap.set(image.lottieAssetId, count);
 
             if (count > 0) {
-              // Rename the image
-              await this._renameImage(animation, `${image.id}_${count}`, image.id);
+              // Rename the with n-1 count
+              await this._renameImage(animation, `${image.lottieAssetId}_${count}`, image.lottieAssetId);
             }
           }
         }
@@ -193,11 +216,11 @@ export class DotLottieCommon {
    * @param newName - desired id and fileName,
    * @param audioId - The id of the LottieAudio to rename
    */
-  private _renameAudio(animation: LottieAnimationCommon, newName: string, audioId: string): void {
-    animation.audioAssets.forEach((audioAsset) => {
+  private async _renameAudio(animation: LottieAnimationCommon, newName: string, audioId: string): Promise<void> {
+    for (const audioAsset of animation.audioAssets) {
       if (audioAsset.id === audioId) {
         // Rename the LottieImage
-        audioAsset.renameAudio(newName);
+        await audioAsset.renameAudio(newName);
 
         if (!animation.data) throw new DotLottieError('No animation data available.');
 
@@ -214,10 +237,10 @@ export class DotLottieCommon {
           }
         }
       }
-    });
+    }
   }
 
-  private _renameAudioAssets(): void {
+  private async _renameAudioAssets(): Promise<void> {
     const audio: Map<string, LottieAudioCommon[]> = new Map();
 
     this.animations.forEach((animation) => {
@@ -238,7 +261,7 @@ export class DotLottieCommon {
           const audioAsset = animation.audioAssets.at(j);
 
           if (audioAsset) {
-            this._renameAudio(animation, `audio_${size}`, audioAsset.id);
+            await this._renameAudio(animation, `audio_${size}`, audioAsset.id);
             size -= 1;
           }
         }
@@ -419,7 +442,7 @@ export class DotLottieCommon {
     if (this.animations.length > 1) {
       // Rename assets incrementally if there are multiple animations
       await this._renameImageAssets();
-      this._renameAudioAssets();
+      await this._renameAudioAssets();
     }
 
     const parallelPlugins = [];

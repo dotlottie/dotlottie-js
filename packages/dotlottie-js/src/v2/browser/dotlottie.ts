@@ -248,6 +248,7 @@ export class DotLottie extends DotLottieCommon {
               tmpImages.push(
                 new LottieImage({
                   id: imageId,
+                  lottieAssetId: imageId,
                   data: decodedImg,
                   fileName: key.split('/')[1] || '',
                 }),

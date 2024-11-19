@@ -5,7 +5,7 @@
 import type { ZipOptions } from 'fflate';
 
 import type { ImageData } from '../../types';
-import { dataUrlFromU8, DotLottieError, getMimeTypeFromBase64 } from '../../utils';
+import { dataUrlFromU8, DotLottieError, getExtensionTypeFromBase64 } from '../../utils';
 
 import type { LottieAnimationCommon } from './animation';
 
@@ -13,6 +13,7 @@ export interface ImageOptions {
   data?: ImageData;
   fileName: string;
   id: string;
+  lottieAssetId: string;
   parentAnimations?: LottieAnimationCommon[];
   zipOptions?: ZipOptions;
 }
@@ -20,7 +21,15 @@ export interface ImageOptions {
 export class LottieImageCommon {
   protected _data?: ImageData;
 
+  /**
+   * Unique id for the LottieImageCommon object. This is never modified.
+   */
   protected _id: string = '';
+
+  /**
+   * Asset id representing the image asset inside the Lottie animation. This can be modified.
+   */
+  protected _lottieAssetId: string = '';
 
   protected _fileName: string = '';
 
@@ -30,6 +39,7 @@ export class LottieImageCommon {
 
   public constructor(options: ImageOptions) {
     this._requireValidId(options.id);
+    this._requireValidLottieAssetId(options.lottieAssetId);
     this._requireValidFileName(options.fileName);
 
     this._zipOptions = options.zipOptions ?? {};
@@ -40,6 +50,10 @@ export class LottieImageCommon {
 
     if (options.id) {
       this._id = options.id;
+    }
+
+    if (options.lottieAssetId) {
+      this._lottieAssetId = options.lottieAssetId;
     }
 
     if (options.fileName) {
@@ -65,6 +79,16 @@ export class LottieImageCommon {
    */
   private _requireValidId(id: string | undefined): asserts id is string {
     if (!id) throw new DotLottieError('Invalid image id');
+  }
+
+  /**
+   * Ensure that the provided id is a valid string.
+   * The id must be a non-empty string, otherwise an error will be thrown.
+   * @param id - The id to validate.
+   * @throws Error - if the id is not a valid string.
+   */
+  private _requireValidLottieAssetId(id: string | undefined): asserts id is string {
+    if (!id) throw new DotLottieError('Invalid Lottie Image Asset Id');
   }
 
   /**
@@ -95,6 +119,15 @@ export class LottieImageCommon {
     this._requireValidId(id);
 
     this._id = id;
+  }
+
+  public get lottieAssetId(): string {
+    return this._lottieAssetId;
+  }
+
+  public set lottieAssetId(id: string) {
+    this._requireValidLottieAssetId(id);
+    this._lottieAssetId = id;
   }
 
   public get data(): ImageData | undefined {
@@ -129,14 +162,18 @@ export class LottieImageCommon {
    * Renames the id and fileName to newName.
    * @param newName - A new id and filename for the image.
    */
-  public async renameImage(newName: string): Promise<void> {
-    this.id = newName;
+  public async renameImage(newLottieAssetId: string): Promise<void> {
+    this._lottieAssetId = newLottieAssetId;
 
     const data = await this.toDataURL();
 
-    const mimeType = await getMimeTypeFromBase64(data);
+    const ext = await getExtensionTypeFromBase64(data);
 
-    this.fileName = `${newName}.${mimeType ? mimeType.split('/')[1] : 'png'}`;
+    if (!ext) {
+      throw new DotLottieError('File extension type could not be detected from asset file.');
+    }
+
+    this.fileName = `${newLottieAssetId}.${ext}`;
   }
 
   public async toArrayBuffer(): Promise<ArrayBuffer> {

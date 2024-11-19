@@ -23,6 +23,7 @@ describe('LottieImage', () => {
   it('gets and sets the zipOptions', () => {
     const theme = new LottieImage({
       id: 'image_1',
+      lottieAssetId: 'image_1',
       fileName: 'image_1.png',
       zipOptions: {
         level: 9,
@@ -71,7 +72,13 @@ describe('LottieImage', () => {
           'image_3.png',
           'image_4.png',
         ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_2', 'image_3', 'image_4']);
+        expect(uniqueImages.map((image) => image.lottieAssetId)).toEqual([
+          'image_0',
+          'image_1',
+          'image_2',
+          'image_3',
+          'image_4',
+        ]);
       });
   });
 
@@ -111,7 +118,13 @@ describe('LottieImage', () => {
         );
 
         expect(uniqueImages.length).toBe(5);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_2', 'image_3', 'image_4']);
+        expect(uniqueImages.map((image) => image.lottieAssetId)).toEqual([
+          'image_0',
+          'image_1',
+          'image_2',
+          'image_3',
+          'image_4',
+        ]);
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
           'image_0.png',
           'image_1.png',
@@ -145,7 +158,7 @@ describe('LottieImage', () => {
           'image_3.png',
           'image_4.png',
         ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_3', 'image_4']);
+        expect(uniqueImages.map((image) => image.lottieAssetId)).toEqual(['image_0', 'image_1', 'image_3', 'image_4']);
       });
   });
 
@@ -173,7 +186,13 @@ describe('LottieImage', () => {
           'image_3.png',
           'image_4.png',
         ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual(['image_0', 'image_1', 'image_2', 'image_3', 'image_4']);
+        expect(uniqueImages.map((image) => image.lottieAssetId)).toEqual([
+          'image_0',
+          'image_1',
+          'image_2',
+          'image_3',
+          'image_4',
+        ]);
       });
   });
 
@@ -221,7 +240,7 @@ describe('LottieImage', () => {
           'image_4.png',
           'image_1_1.png',
         ]);
-        expect(uniqueImages.map((image) => image.id)).toEqual([
+        expect(uniqueImages.map((image) => image.lottieAssetId)).toEqual([
           'image_0',
           'image_1',
           'image_3',

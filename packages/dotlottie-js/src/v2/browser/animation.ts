@@ -70,6 +70,7 @@ export class LottieAnimation extends LottieAnimationCommon {
             new LottieImage({
               data: asset.p,
               id: asset.id,
+              lottieAssetId: asset.id,
               fileName,
               parentAnimations: [this],
             }),

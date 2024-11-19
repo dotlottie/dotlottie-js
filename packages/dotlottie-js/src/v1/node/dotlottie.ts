@@ -224,12 +224,16 @@ export class DotLottieV1 extends DotLottieCommonV1 {
 
               const ext = await getExtensionTypeFromBase64(base64);
 
+              if (!ext) {
+                throw new DotLottieError('Unrecognized asset file format.');
+              }
               // Push the images in to a temporary array
               const imgDataURL = `data:image/${ext};base64,${base64}`;
 
               tmpImages.push(
                 new LottieImageV1({
                   id: imageId,
+                  lottieAssetId: imageId,
                   data: imgDataURL,
                   fileName: key.split('/')[1] || '',
                 }),

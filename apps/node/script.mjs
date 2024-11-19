@@ -4,7 +4,7 @@
 
 import fs from 'fs';
 
-import { DotLottie } from '@dotlottie/dotlottie-js/node';
+import { DotLottie } from '@dotlottie/dotlottie-js';
 
 async function createDotLottieForTests() {
   const dotLottie = new DotLottie();
@@ -1176,7 +1176,7 @@ async function logImages(arrayBuffer) {
   await dotLottie.build();
 
   // Retrieve and log the image assets' IDs
-  const images = dotLottie.getImages().map((image) => image.id);
+  const images = dotLottie.getImages().map((image) => image.lottieAssetId);
 
   console.log({
     images,
@@ -1228,8 +1228,8 @@ async function debugScenario2() {
 
 // create_showcase();
 
-debugScenario1();
-// debugScenario2();
+// debugScenario1();
+debugScenario2();
 
 // createExplodingPigeon();
 // createListenersAnimation();
