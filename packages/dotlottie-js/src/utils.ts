@@ -7,57 +7,11 @@
 import type { Animation as AnimationData, Asset } from '@lottie-animation-community/lottie-types';
 import type { UnzipFileFilter, Unzipped } from 'fflate';
 import { unzip as fflateUnzip, strFromU8 } from 'fflate';
+import { fileTypeFromBuffer } from 'file-type';
 
 import type { ManifestV1 } from './v1/common/schemas/manifest';
 import type { LottieStateMachine } from './v2/browser';
 import type { Manifest as ManifestV2 } from './v2/common/schemas';
-
-export interface MimeTypes {
-  [key: string]: string;
-}
-
-export interface MimeCodes {
-  [key: string]: number[];
-}
-
-export const MIME_TYPES: MimeTypes = {
-  jpeg: 'image/jpeg',
-  png: 'image/png',
-  gif: 'image/gif',
-  bmp: 'image/bmp',
-  svg: 'image/svg+xml',
-  svgxml: 'image/svg+xml',
-  webp: 'image/webp',
-  mp3: 'audio/mp3',
-};
-
-export const MIME_CODES: MimeCodes = {
-  jpeg: [0xff, 0xd8, 0xff],
-  png: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
-  gif: [0x47, 0x49, 0x46],
-  bmp: [0x42, 0x4d],
-  webp: [0x52, 0x49, 0x46, 0x46, 0x3f, 0x3f, 0x3f, 0x3f, 0x57, 0x45, 0x42, 0x50],
-  // This covers <svg..
-  svg: [0x3c, 0x73, 0x76, 0x67],
-  // This covers <?xml..
-  svgxml: [0x3c, 0x3f, 0x78, 0x6d, 0x6c],
-  mp3: [0x49, 0x44, 0x33],
-};
-
-export interface MimeToExtension {
-  [key: string]: string;
-}
-
-export const MIME_TO_EXTENSION: MimeToExtension = {
-  'image/jpeg': 'jpeg',
-  'image/png': 'png',
-  'image/gif': 'gif',
-  'image/bmp': 'bmp',
-  'image/svg+xml': 'svg',
-  'image/webp': 'webp',
-  'audio/mpeg': 'mpeg',
-  'audio/mp3': 'mp3',
-};
 
 export enum ErrorCodes {
   ASSET_NOT_FOUND = 'ASSET_NOT_FOUND',
@@ -107,6 +61,12 @@ export const base64ToUint8Array = (base64String: string): Uint8Array => {
   return uint8Array;
 };
 
+export const getMimeTypeFromUint8Data = async (file: Uint8Array): Promise<string | undefined> => {
+  const data = await fileTypeFromBuffer(file);
+
+  return data?.mime.toString();
+};
+
 /**
  * Determines the MIME type from a base64-encoded string.
  *
@@ -124,57 +84,12 @@ export const base64ToUint8Array = (base64String: string): Uint8Array => {
  *
  * @public
  */
-export const getMimeTypeFromBase64 = (base64: string): string | undefined => {
-  let data: string | null = null;
-  let bytes: number[] = [];
+export const getMimeTypeFromBase64 = async (base64: string): Promise<string | undefined> => {
+  const data = base64ToUint8Array(base64);
 
-  if (!base64) {
-    throw new DotLottieError(
-      'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotLottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3',
-      ErrorCodes.INVALID_DOTLOTTIE,
-    );
-  }
+  const mime = await fileTypeFromBuffer(data);
 
-  const withoutMeta = base64.substring(base64.indexOf(',') + 1);
-
-  if (typeof window === 'undefined') {
-    data = Buffer.from(withoutMeta, 'base64').toString('binary');
-  } else {
-    data = atob(withoutMeta);
-  }
-
-  const bufData = new Uint8Array(data.length);
-
-  for (let i = 0; i < data.length; i += 1) {
-    bufData[i] = data.charCodeAt(i);
-  }
-
-  for (const mimeType in MIME_CODES) {
-    const dataArr = MIME_CODES[mimeType];
-
-    if (mimeType === 'webp' && dataArr && bufData.length > dataArr.length) {
-      const riffHeader = Array.from(bufData.subarray(0, 4));
-      const webpFormatMarker = Array.from(bufData.subarray(8, 12));
-
-      if (
-        riffHeader.every((byte, index) => byte === dataArr[index]) &&
-        webpFormatMarker.every((byte, index) => byte === dataArr[index + 8])
-      ) {
-        return MIME_TYPES[mimeType];
-      }
-    } else {
-      bytes = Array.from(bufData.subarray(0, dataArr?.length));
-
-      if (dataArr && bytes.every((byte, index) => byte === dataArr[index])) {
-        return MIME_TYPES[mimeType];
-      }
-    }
-  }
-
-  throw new DotLottieError(
-    'Failed to determine the MIME type from the base64 asset string. Please check the input data. Supported asset types for dotLottie-js  are: jpeg, png, gif, bmp, svg, webp, mp3',
-    ErrorCodes.INVALID_DOTLOTTIE,
-  );
+  return mime?.mime.toString();
 };
 
 /**
@@ -194,20 +109,17 @@ export const getMimeTypeFromBase64 = (base64: string): string | undefined => {
  *
  * @public
  */
-export const getExtensionTypeFromBase64 = (base64: string): string | null => {
-  const mimeType = getMimeTypeFromBase64(base64);
+export const getExtensionTypeFromBase64 = async (base64: string): Promise<string | undefined> => {
+  const data = base64ToUint8Array(base64);
 
-  if (!mimeType) {
-    const ext = base64.split(';')[0]?.split('/')[1];
+  const mime = await fileTypeFromBuffer(data);
 
-    if (ext) {
-      return MIME_TO_EXTENSION[ext] || null;
-    }
-
-    return null;
+  // To keep mimetype(jpeg) and extension(jpg) consistent
+  if (mime?.ext.toString() === 'jpg') {
+    return 'jpeg';
   }
 
-  return MIME_TO_EXTENSION[mimeType] || null;
+  return mime?.ext.toString();
 };
 
 /**
@@ -257,7 +169,7 @@ export const isValidURL = (url: string): boolean => {
  * const dataUrl = dataUrlFromU8(uint8Data, fileExtension);
  * ```
  */
-export function dataUrlFromU8(uint8Data: Uint8Array): string {
+export async function dataUrlFromU8(uint8Data: Uint8Array): Promise<string> {
   let base64: string;
 
   if (typeof window === 'undefined') {
@@ -270,7 +182,7 @@ export function dataUrlFromU8(uint8Data: Uint8Array): string {
     base64 = window.btoa(binaryString);
   }
 
-  const mimeType = getMimeTypeFromBase64(base64);
+  const mimeType = await getMimeTypeFromUint8Data(uint8Data);
 
   return `data:${mimeType};base64,${base64}`;
 }
@@ -628,7 +540,7 @@ export async function getAllAudio(dotLottie: Uint8Array, filter?: UnzipFileFilte
     if (unzippedSingleAudio instanceof Uint8Array) {
       const audioId = audioFilename.replace(audioPath, '');
 
-      audio[audioId] = dataUrlFromU8(unzippedSingleAudio);
+      audio[audioId] = await dataUrlFromU8(unzippedSingleAudio);
     }
   }
 
@@ -783,7 +695,7 @@ export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter)
     if (unzippedImage instanceof Uint8Array) {
       const imageId = imagePath.replace(imagePath, '');
 
-      images[imageId] = dataUrlFromU8(unzippedImage);
+      images[imageId] = await dataUrlFromU8(unzippedImage);
     }
   }
 

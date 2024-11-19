@@ -52,7 +52,7 @@ export class DuplicateImageDetectorCommon extends DotLottiePlugin {
       // Now that we have a single image of the image array, compare it to every other image in the arry
       for (const compareImage of images) {
         if (
-          image.image.id !== compareImage.image.id &&
+          image.image.lottieAssetId !== compareImage.image.lottieAssetId &&
           !image.excludeFromExport &&
           !compareImage.excludeFromExport &&
           image.hash &&
@@ -67,7 +67,9 @@ export class DuplicateImageDetectorCommon extends DotLottiePlugin {
             recordOfDuplicates[image.image.fileName] = [compareImage.image];
           } else if (recordOfDuplicates[compareImage.image.fileName]) {
             // Check for duplicates, otherwise push the duplicate image
-            if (!recordOfDuplicates[compareImage.image.fileName]?.find((item) => item.id === image.image.id)) {
+            if (
+              !recordOfDuplicates[compareImage.image.fileName]?.find((item) => item.id === image.image.lottieAssetId)
+            ) {
               image.excludeFromExport = true;
               recordOfDuplicates[compareImage.image.fileName]?.push(image.image);
             }
@@ -139,6 +141,7 @@ export class DuplicateImageDetectorCommon extends DotLottiePlugin {
             clonedImages[key] = new LottieImage({
               data: image.data,
               id: image.id,
+              lottieAssetId: image.lottieAssetId,
               fileName: image.fileName,
             });
           }
