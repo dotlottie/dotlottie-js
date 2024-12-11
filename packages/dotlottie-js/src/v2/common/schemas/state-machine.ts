@@ -141,7 +141,7 @@ const StateType = union([string('PlaybackState'), string('GlobalState')]);
 export const PlaybackStateSchema = object({
   name: string(),
   type: StateType,
-  animationId: string(),
+  animation: string(),
   loop: optional(boolean()),
   autoplay: optional(boolean()),
   final: optional(boolean()),
@@ -186,7 +186,6 @@ export const PointerEnterSchema = object({
 
 export const PointerMoveSchema = object({
   type: string(),
-  layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
@@ -244,13 +243,7 @@ export const TriggerSchema = union([
 
 export const TriggersSchema = array(TriggerSchema);
 
-// Descriptor Schema
-export const DescriptorSchema = object({
-  initial: string(),
-});
-
 export type DotLottieStates = Output<typeof StatesSchema>;
-export type DotLottieDescriptor = Output<typeof DescriptorSchema>;
 export type DotLottieState = Output<typeof StateSchema>;
 export type DotLottieAction = Output<typeof ActionSchema>;
 export type DotLottieNumericEvent = Output<typeof NumericEventSchema>;
@@ -267,7 +260,7 @@ export type DotLottieTransitions = Output<typeof TransitionsSchema>;
 
 // DotLottieStateMachine Schema
 export const DotLottieStateMachineSchema = object({
-  descriptor: DescriptorSchema,
+  initial: string(),
   states: StatesSchema,
   listeners: optional(ListenersSchema),
   triggers: optional(TriggersSchema),

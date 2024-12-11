@@ -6,14 +6,12 @@ export const PigeonState: {
 } = {
   id: "explodingPigeon",
   data: {
-    descriptor: {
-    initial: "pigeonRunning"
-  },
+    initial: "pigeonRunning",
   states: [
     {
       type: "PlaybackState",
       name: "pigeonRunning",
-      animationId: "",
+      animation: "",
       loop: true,
       autoplay: true,
       segment: "bird",
@@ -33,7 +31,7 @@ export const PigeonState: {
     {
       type: "PlaybackState",
       name: "explosion",
-      animationId: "",
+      animation: "",
       loop: false,
       autoplay: true,
       segment: "explosion",
@@ -53,7 +51,7 @@ export const PigeonState: {
     {
       type: "PlaybackState",
       name: "feathersFalling",
-      animationId: "",
+      animation: "",
       loop: false,
       autoplay: true,
       segment: "feathers",
@@ -125,14 +123,12 @@ export const PigeonWithoutExplosion: {
 } = {
   id: "pigeonWithoutExplosion",
   data: {
-    descriptor: {
-      initial: "pigeonRunning"
-    },
+  initial: "pigeonRunning",
   states: [
     {
       type: "PlaybackState",
       name: "pigeonRunning",
-      animationId: "",
+      animation: "",
       loop: true,
       autoplay: true,
       segment: "bird",
@@ -152,7 +148,7 @@ export const PigeonWithoutExplosion: {
     {
       type: "PlaybackState",
       name: "feathersFalling",
-      animationId: "",
+      animation: "",
       loop: false,
       autoplay: true,
       segment: "feathers",
@@ -213,14 +209,12 @@ export const SmileyWifi: {
 } = {
   id: 'simple_click_to_next_prev',
   data: {
-    descriptor: {
     initial: "smiley",
-  },
   states: [
     {
       name: "smiley",
       type: "PlaybackState",
-      animationId: 'smiley',
+      animation: 'smiley',
       autoplay: true,
       loop: true,
       mode: "Reverse",
@@ -241,7 +235,7 @@ export const SmileyWifi: {
     {
       name: "wifi",
       type: "PlaybackState",
-      animationId: 'wifi',
+      animation: 'wifi',
       autoplay: true,
       loop: true,
       mode: "Forward",

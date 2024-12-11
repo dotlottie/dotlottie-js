@@ -8,7 +8,6 @@ import { safeParse, flatten } from 'valibot';
 import { DotLottieError, ErrorCodes } from '../../utils';
 
 import type {
-  DotLottieDescriptor,
   DotLottieListeners,
   DotLottieStateMachine,
   DotLottieStates,
@@ -16,7 +15,7 @@ import type {
   DotLottieTriggers,
   ManifestStateMachine,
 } from './schemas';
-import { DescriptorSchema, ListenersSchema, StatesSchema, TransitionsSchema, TriggersSchema } from './schemas';
+import { ListenersSchema, StatesSchema, TransitionsSchema, TriggersSchema } from './schemas';
 
 export interface DotLottieStateMachineCommonOptions extends ManifestStateMachine {
   data: DotLottieStateMachine;
@@ -28,7 +27,7 @@ export class DotLottieStateMachineCommon {
 
   protected _id: string;
 
-  protected _descriptor: DotLottieDescriptor;
+  protected _initial: string;
 
   protected _zipOptions: ZipOptions;
 
@@ -43,13 +42,13 @@ export class DotLottieStateMachineCommon {
     this._requireValidTriggers(options.data.triggers ?? []);
     this._requireValidListeners(options.data.listeners ?? []);
     this._requireValidStates(options.data.states);
-    this._requireValidDescriptor(options.data.descriptor);
+    this._requireValidInitial(options.data.initial, options.data.states);
 
     this._name = options.name;
 
     this._id = options.id;
 
-    this._descriptor = options.data.descriptor;
+    this._initial = options.data.initial;
 
     this._zipOptions = options.zipOptions ?? {};
 
@@ -111,24 +110,16 @@ export class DotLottieStateMachineCommon {
   }
 
   public get initial(): string {
-    return this._descriptor.initial;
+    return this._initial;
   }
 
   public set initial(initial: string) {
-    this._descriptor.initial = initial;
-  }
-
-  public get descriptor(): DotLottieDescriptor {
-    return this._descriptor;
-  }
-
-  public set descriptor(descriptor: DotLottieDescriptor) {
-    this._descriptor = descriptor;
+    this.initial = initial;
   }
 
   public toString(): string {
     return JSON.stringify({
-      descriptor: this._descriptor,
+      initial: this._initial,
       states: this._states,
       triggers: this._triggers,
       listeners: this._listeners,
@@ -141,13 +132,25 @@ export class DotLottieStateMachineCommon {
     }
   }
 
-  protected _requireValidDescriptor(descriptor: DotLottieDescriptor): void {
-    const result = safeParse(DescriptorSchema, descriptor);
+  protected _requireValidInitial(initial: string, states: DotLottieStates): void {
+    const result = safeParse(StatesSchema, states);
 
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
       throw new DotLottieError(`Invalid descriptor: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+    }
+
+    let found = false;
+
+    for (const state of states) {
+      if (state.name === initial) {
+        found = true;
+      }
+    }
+
+    if (!found) {
+      throw new DotLottieError(`Initial state not found.`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 
