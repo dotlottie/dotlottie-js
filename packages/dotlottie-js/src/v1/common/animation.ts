@@ -330,6 +330,7 @@ export class LottieAnimationCommonV1 {
         for (const asset of animationAssets) {
           if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
             for (const image of images) {
+              // If we only compare paths, we can leave the asset.id alone
               if (image.fileName === asset.p) {
                 // encoded is true
                 asset.e = 1;
