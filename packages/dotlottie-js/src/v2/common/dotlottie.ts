@@ -492,7 +492,7 @@ export class DotLottieCommon {
           name: stateMachine.name,
           data: {
             states: stateMachine.states,
-            descriptor: { initial: stateMachine.initial },
+            initial: stateMachine.initial,
             listeners: stateMachine.listeners,
             triggers: stateMachine.triggers,
           },

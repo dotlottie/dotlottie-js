@@ -15,60 +15,63 @@ async function createDotLottieForTests() {
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
     })
     .addStateMachine({
-      descriptor: {
-        id: 'pigeon_fsm',
-        initial: 0,
-      },
-      states: [
-        {
-          name: "pigeon",
-          animation_id: "pigeon",
-          type: "PlaybackState",
-          autoplay: true,
-          loop: false,
-          marker: "bird"
+      id: "explodingPigeon",
+      name: "Exploding Pigeon",
+      data: {
+        descriptor: {
+          initial: "pigeon",
         },
-        {
-          name: "explosion",
-          animation_id: "pigeon",
-          type: "PlaybackState",
-          autoplay: true,
-          speed: 0.8,
-          loop: false,
-          marker: 'explosion',
-        },
-        {
-          name: "feathers",
-          animation_id: "pigeon",
-          type: "PlaybackState",
-          autoplay: true,
-          speed: 0.8,
-          loop: false,
-          marker: 'feathers',
-        }
-      ],
-      transitions: [
-        {
-          type: "Transition",
-          from_state: 0,
-          to_state: 1,
-          on_complete_event: {},
-        },
-        {
-          type: "Transition",
-          from_state: 1,
-          to_state: 2,
-          on_complete_event: {},
-        },
-        {
-          type: "Transition",
-          from_state: 2,
-          to_state: 0,
-          on_complete_event: {},
-        },
-      ],
-      context_variables: [],
-      listeners: []
+        states: [
+          {
+            name: "pigeon",
+            animation_id: "pigeon",
+            type: "PlaybackState",
+            autoplay: true,
+            loop: false,
+            marker: "bird"
+          },
+          {
+            name: "explosion",
+            animation_id: "pigeon",
+            type: "PlaybackState",
+            autoplay: true,
+            speed: 0.8,
+            loop: false,
+            marker: 'explosion',
+          },
+          {
+            name: "feathers",
+            animation_id: "pigeon",
+            type: "PlaybackState",
+            autoplay: true,
+            speed: 0.8,
+            loop: false,
+            marker: 'feathers',
+          }
+        ],
+        transitions: [
+          {
+            type: "Transition",
+            from_state: 0,
+            to_state: 1,
+            on_complete_event: {},
+          },
+          {
+            type: "Transition",
+            from_state: 1,
+            to_state: 2,
+            on_complete_event: {},
+          },
+          {
+            type: "Transition",
+            from_state: 2,
+            to_state: 0,
+            on_complete_event: {},
+          },
+        ],
+        context_variables: [],
+        listeners: []
+      }
     })
     .addStateMachine({
       descriptor: {
@@ -129,205 +132,126 @@ async function createExplodingPigeon() {
       url: 'https://lottie.host/071a2de9-52ca-4ce4-ba2f-a5befd220bdd/ECzVp4eaMa.json',
     })
     .addStateMachine({
-      descriptor: {
-        id: "explodingPigeon",
-        initial: "pigeonRunning"
-      },
-      states: [
-        {
-          type: "PlaybackState",
-          name: "pigeonRunning",
-          animationId: "",
-          loop: true,
-          autoplay: true,
-          segment: "bird",
-          transitions: [
-            {
-              type: "Transition",
-              toState: "explosion",
-              guards: [
-                {
-                  type: "Event",
-                  triggerName: "explode"
-                }
-              ]
-            }
-          ]
+      id: "explodingPigeon",
+      name: "Exploding Pigeon!! 🤯 🕊️",
+      data: {
+        descriptor: {
+          initial: "pigeonRunning"
         },
-        {
-          type: "PlaybackState",
-          name: "explosion",
-          animationId: "",
-          loop: false,
-          autoplay: true,
-          segment: "explosion",
-          transitions: [
-            {
-              type: "Transition",
-              toState: "feathersFalling",
-              guards: [
-                {
-                  type: "Event",
-                  triggerName: "rainFeathers"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          type: "PlaybackState",
-          name: "feathersFalling",
-          animationId: "",
-          loop: false,
-          autoplay: true,
-          segment: "feathers",
-          transitions: [
-            {
-              type: "Transition",
-              toState: "pigeonRunning",
-              guards: [
-                {
-                  type: "Event",
-                  triggerName: "restart"
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      listeners: [
-        {
-          type: "PointerDown",
-          actions: [
-            {
-              type: "Fire",
-              triggerName: "explode"
-            }
-          ]
-        },
-        {
-          type: "OnComplete",
-          stateName: "explosion",
-          actions: [
-            {
-              type: "Fire",
-              triggerName: "rainFeathers"
-            }
-          ]
-        },
-        {
-          type: "PointerDown",
-          actions: [
-            {
-              type: "Fire",
-              triggerName: "restart"
-            }
-          ]
-        }
-      ],
-      triggers: [
-        {
-          type: "Event",
-          name: "explode"
-        },
-        {
-          type: "Event",
-          name: "rainFeathers"
-        },
-        {
-          type: "Event",
-          name: "restart"
-        }
-      ]
-    })
-    .addStateMachine({
-      descriptor: {
-        id: "pigeonWithoutExplosion",
-        initial: "pigeonRunning"
-      },
-      states: [
-        {
-          type: "PlaybackState",
-          name: "pigeonRunning",
-          animationId: "",
-          loop: true,
-          autoplay: true,
-          segment: "bird",
-          transitions: [
-            {
-              type: "Transition",
-              toState: "feathersFalling",
-              guards: [
-                {
-                  type: "Event",
-                  triggerName: "explode"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          type: "PlaybackState",
-          name: "feathersFalling",
-          animationId: "",
-          loop: false,
-          autoplay: true,
-          segment: "feathers",
-          transitions: [
-            {
-              type: "Transition",
-              toState: "pigeonRunning",
-              guards: [
-                {
-                  type: "Event",
-                  triggerName: "restart"
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      listeners: [
-        {
-          type: "PointerDown",
-          actions: [
-            {
-              type: "Fire",
-              triggerName: "explode"
-            }
-          ]
-        },
-        {
-          type: "PointerDown",
-          actions: [
-            {
-              type: "Fire",
-              triggerName: "restart"
-            }
-          ]
-        }
-      ],
-      triggers: [
-        {
-          type: "Event",
-          name: "explode"
-        },
-        {
-          type: "Event",
-          name: "rainFeathers"
-        },
-        {
-          type: "Event",
-          name: "restart"
-        }
-      ]
+        states: [
+          {
+            type: "PlaybackState",
+            name: "pigeonRunning",
+            animationId: "",
+            loop: true,
+            autoplay: true,
+            segment: "bird",
+            transitions: [
+              {
+                type: "Transition",
+                toState: "explosion",
+                guards: [
+                  {
+                    type: "Event",
+                    triggerName: "explode"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            type: "PlaybackState",
+            name: "explosion",
+            animationId: "",
+            loop: false,
+            autoplay: true,
+            segment: "explosion",
+            transitions: [
+              {
+                type: "Transition",
+                toState: "feathersFalling",
+                guards: [
+                  {
+                    type: "Event",
+                    triggerName: "rainFeathers"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            type: "PlaybackState",
+            name: "feathersFalling",
+            animationId: "",
+            loop: false,
+            autoplay: true,
+            segment: "feathers",
+            transitions: [
+              {
+                type: "Transition",
+                toState: "pigeonRunning",
+                guards: [
+                  {
+                    type: "Event",
+                    triggerName: "restart"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        listeners: [
+          {
+            type: "PointerDown",
+            actions: [
+              {
+                type: "Fire",
+                triggerName: "explode"
+              }
+            ]
+          },
+          {
+            type: "OnComplete",
+            stateName: "explosion",
+            actions: [
+              {
+                type: "Fire",
+                triggerName: "rainFeathers"
+              }
+            ]
+          },
+          {
+            type: "PointerDown",
+            actions: [
+              {
+                type: "Fire",
+                triggerName: "restart"
+              }
+            ]
+          }
+        ],
+        triggers: [
+          {
+            type: "Event",
+            name: "explode"
+          },
+          {
+            type: "Event",
+            name: "rainFeathers"
+          },
+          {
+            type: "Event",
+            name: "restart"
+          }
+        ]
+      }
     })
     .build()
     .then((value) => {
       return value.toArrayBuffer();
     })
     .then((value) => {
-      fs.writeFileSync('exploding_pigeon.lottie', Buffer.from(value));
+      fs.writeFileSync('exploding_pigeon_v2.lottie', Buffer.from(value));
     });
 }
 
