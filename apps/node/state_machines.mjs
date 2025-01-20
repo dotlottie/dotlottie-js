@@ -1039,13 +1039,13 @@ async function createLoader() {
     });
 }
 
-// createStarRating();
-// createSyncToCursor();
-// createHoverButton();
-// createToggleButton();
+createStarRating();
+createSyncToCursor();
+createHoverButton();
+createToggleButton();
 createThemeAction();
-// createExplodingPigeon();
-// createHoldButton();
-// createClickButton();
-// createInteractiveStats();
-// createLoader();
+createExplodingPigeon();
+createHoldButton();
+createClickButton();
+createInteractiveStats();
+createLoader();

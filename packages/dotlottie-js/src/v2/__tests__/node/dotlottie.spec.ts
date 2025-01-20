@@ -868,11 +868,11 @@ describe('theming', () => {
       'manifest.json',
       'a/ball.json',
       'a/bull.json',
+      'i/image_0.png',
       'i/image_1.png',
       'i/image_2.png',
       'i/image_3.png',
       'i/image_4.png',
-      'i/image_5.png',
       't/light.json',
       't/dark.json',
     ]);

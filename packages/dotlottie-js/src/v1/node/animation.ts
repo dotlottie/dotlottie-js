@@ -53,24 +53,27 @@ export class LottieAnimationV1 extends LottieAnimationCommonV1 {
         }
 
         let extType = null;
-        const fileType = getExtensionTypeFromBase64(asset.p);
+        const fileType = await getExtensionTypeFromBase64(asset.p);
 
-        extType = fileType;
+        if (fileType) {
+          extType = fileType;
 
-        const fileName = `${asset.id}.${extType}`;
+          const fileName = `${asset.id}.${extType}`;
 
-        this._imageAssets.push(
-          new LottieImageV1({
-            data: asset.p,
-            id: asset.id,
-            fileName,
-            parentAnimations: [this],
-          }),
-        );
+          this._imageAssets.push(
+            new LottieImageV1({
+              data: asset.p,
+              id: asset.id,
+              lottieAssetId: asset.id,
+              fileName,
+              parentAnimations: [this],
+            }),
+          );
 
-        asset.p = fileName;
-        asset.u = '/images/';
-        asset.e = 0;
+          asset.p = fileName;
+          asset.u = '/images/';
+          asset.e = 0;
+        }
       }
     }
 
@@ -100,7 +103,7 @@ export class LottieAnimationV1 extends LottieAnimationCommonV1 {
         }
 
         let extType = null;
-        const fileType = getExtensionTypeFromBase64(asset.p);
+        const fileType = await getExtensionTypeFromBase64(asset.p);
 
         extType = fileType;
 
