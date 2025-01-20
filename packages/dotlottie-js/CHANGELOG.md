@@ -1,5 +1,31 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0
+
+### Minor Changes
+
+- 9457abf: feat: init dotLottie v2
+- c7749c3: refactor: remove setGenerator method from DotLottieCommonV1 and DotLottieCommon classes
+
+### Patch Changes
+
+- c7749c3: fix: dotLottie v1 <-> v2 conversion
+- c7749c3: fix: dotLottie manifest version format
+- c7749c3: small changes to state machine format.
+- c7749c3: fix: export missing types for dotLottie v1
+- c7749c3: fix: update theme schema slotId
+- c7749c3: refactor: update v2 manifest schema
+- c7749c3: refactor: dotLottie conversion methods
+- c7749c3: fix(conversion): 🐛 never build dotLottie instance before conversion
+- c7749c3: fix: remove themes & stateMachines from manifest if non available
+- f2a1db8: chore: bump lottie-types pkg to v1.2.0
+- c7749c3: refactor: add tests && update LottieThemeCommon toString method
+- c7749c3: image asset ids
+- c7749c3: small fixes
+- c7749c3: fix: getAnimations & getImages & getAudios for v2
+- c7749c3: fix: add theme data schema
+- c7749c3: fix: export missing types
+
 ## 0.9.0-beta.14
 
 ### Minor Changes
