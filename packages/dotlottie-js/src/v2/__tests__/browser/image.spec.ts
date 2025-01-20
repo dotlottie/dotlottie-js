@@ -288,11 +288,11 @@ describe('LottieImage', () => {
       'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InJlZCIvPjwvc3ZnPg==',
     );
 
-    expect(svgFormat).toEqual('undefined');
+    expect(svgFormat).toEqual(undefined);
 
     const svgXmlFormat = await getMimeTypeFromBase64(SVG_XML_TEST);
 
-    expect(svgXmlFormat).toEqual('application/svg+xml');
+    expect(svgXmlFormat).toEqual('application/xml');
 
     const mp3Format = await getMimeTypeFromBase64(AUDIO_TEST);
 

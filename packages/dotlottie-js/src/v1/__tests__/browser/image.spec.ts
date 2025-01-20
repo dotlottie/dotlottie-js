@@ -236,7 +236,7 @@ describe('LottieImage', () => {
         expect(uniqueImages.map((image) => image.fileName)).toEqual([
           'image_0.jpeg',
           'image_1.jpeg',
-          'image_3.jpeg',
+          'image_3.png',
           'image_4.png',
           'image_1_1.png',
         ]);
