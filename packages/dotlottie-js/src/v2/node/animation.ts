@@ -104,7 +104,7 @@ export class LottieAnimation extends LottieAnimationCommon {
         }
 
         let extType = null;
-        const fileType = getExtensionTypeFromBase64(asset.p);
+        const fileType = await getExtensionTypeFromBase64(asset.p);
 
         extType = fileType;
 
