@@ -53,7 +53,7 @@ describe('LottieStateMachine', () => {
     const state = new LottieStateMachine({
       id: 'test',
       data: {
-        descriptor: { initial: 'test' },
+        initial: 'test',
         states: [
           {
             name: 'test',
@@ -81,7 +81,7 @@ describe('LottieStateMachine', () => {
     // assert
     expect(pigeonState.id).toEqual(PigeonState.id);
 
-    expect(pigeonState.initial).toEqual(PigeonState.data.descriptor.initial);
+    expect(pigeonState.initial).toEqual(PigeonState.data.initial);
 
     expect(pigeonState.states).toEqual(PigeonState.data.states);
 
@@ -112,11 +112,11 @@ describe('LottieStateMachine', () => {
     expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.id);
 
     expect(dotlottie.stateMachines[0]?.id).toEqual(PigeonState.id);
-    expect(dotlottie.stateMachines[0]?.initial).toEqual(PigeonState.data.descriptor.initial);
+    expect(dotlottie.stateMachines[0]?.initial).toEqual(PigeonState.data.initial);
     expect(dotlottie.stateMachines[0]?.states).toEqual(PigeonState.data.states);
 
     expect(dotlottie.stateMachines[1]?.id).toEqual(SmileyWifi.id);
-    expect(dotlottie.stateMachines[1]?.initial).toEqual(SmileyWifi.data.descriptor.initial);
+    expect(dotlottie.stateMachines[1]?.initial).toEqual(SmileyWifi.data.initial);
     expect(dotlottie.stateMachines[1]?.states).toEqual(SmileyWifi.data.states);
 
     // Remove a state and check
