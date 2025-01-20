@@ -1,5 +1,125 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0
+
+### Minor Changes
+
+- 9457abf: feat: init dotLottie v2
+- c7749c3: refactor: remove setGenerator method from DotLottieCommonV1 and DotLottieCommon classes
+
+### Patch Changes
+
+- c7749c3: fix: dotLottie v1 <-> v2 conversion
+- c7749c3: fix: dotLottie manifest version format
+- c7749c3: small changes to state machine format.
+- c7749c3: fix: export missing types for dotLottie v1
+- c7749c3: fix: update theme schema slotId
+- c7749c3: refactor: update v2 manifest schema
+- c7749c3: refactor: dotLottie conversion methods
+- c7749c3: fix(conversion): 🐛 never build dotLottie instance before conversion
+- c7749c3: fix: remove themes & stateMachines from manifest if non available
+- f2a1db8: chore: bump lottie-types pkg to v1.2.0
+- c7749c3: refactor: add tests && update LottieThemeCommon toString method
+- c7749c3: image asset ids
+- c7749c3: small fixes
+- c7749c3: fix: getAnimations & getImages & getAudios for v2
+- c7749c3: fix: add theme data schema
+- c7749c3: fix: export missing types
+
+## 0.9.0-beta.14
+
+### Minor Changes
+
+- b2aae20: refactor: remove setGenerator method from DotLottieCommonV1 and DotLottieCommon classes
+
+## 0.9.0-beta.13
+
+### Patch Changes
+
+- c6fa979: refactor: add tests && update LottieThemeCommon toString method
+
+## 0.9.0-beta.12
+
+### Patch Changes
+
+- dc0ce5d: fix: update theme schema slotId
+
+## 0.9.0-beta.11
+
+### Patch Changes
+
+- b167892: refactor: update v2 manifest schema
+
+## 0.9.0-beta.10
+
+### Patch Changes
+
+- 2134d08: fix(conversion): 🐛 never build dotLottie instance before conversion
+
+## 0.9.0-beta.9
+
+### Patch Changes
+
+- 28e6b57: fix: getAnimations & getImages & getAudios for v2
+
+## 0.9.0-beta.8
+
+### Patch Changes
+
+- 926de78: fix: export missing types
+
+## 0.9.0-beta.7
+
+### Patch Changes
+
+- 1611716: fix: add theme data schema
+
+## 0.9.0-beta.6
+
+### Patch Changes
+
+- 74bfed1: fix: dotLottie manifest version format
+
+## 0.9.0-beta.5
+
+### Patch Changes
+
+- df94db0: fix: remove themes & stateMachines from manifest if non available
+
+## 0.9.0-beta.4
+
+### Patch Changes
+
+- 9a32fd4: fix: export missing types for dotLottie v1
+
+## 0.9.0-beta.3
+
+### Patch Changes
+
+- 81014cb: fix: dotLottie v1 <-> v2 conversion
+
+## 0.9.0-beta.2
+
+### Patch Changes
+
+- 9e7fa8b: small fixes
+
+## 0.9.0-beta.1
+
+### Patch Changes
+
+- 5570a8f: refactor: dotLottie conversion methods
+
+## 0.9.0-beta.0
+
+### Minor Changes
+
+- 9457abf: feat: init dotLottie v2
+
+### Patch Changes
+
+- f2a1db8: chore: bump lottie-types pkg to v1.2.0
+
 ## 0.8.1
 
 ### Patch Changes

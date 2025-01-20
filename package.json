@@ -4,9 +4,6 @@
   "homepage": "https://github.com/dotlottie/dotlottie-js#readme",
   "license": "MIT",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "keywords": [
     "dotLottie",
     "Lottie",
@@ -41,7 +38,7 @@
     "type-check": "turbo run type-check"
   },
   "devDependencies": {
-    "@changesets/cli": "2.23.2",
+    "@changesets/cli": "2.27.9",
     "@commitlint/cli": "17.0.3",
     "@lottiefiles/commitlint-config": "2.0.0",
     "@lottiefiles/eslint-plugin": "3.0.0",
@@ -64,5 +61,5 @@
     "typescript": "4.7.4",
     "zx": "7.0.7"
   },
-  "packageManager": "pnpm@8.8.0"
+  "packageManager": "pnpm@9.11.0"
 }

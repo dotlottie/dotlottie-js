@@ -28,8 +28,6 @@ async function createDotLottie() {
   // Can't change to a different animation
   // TODO: MACROS!! START_FRAME / END_FRAME
   const dl = await dotLottie
-    .setAuthor('Sam!')
-    .setVersion('1.0')
     .addAnimation({
       id: 'segments',
       url: 'https://assets2.lottiefiles.com/packages/lf20_4fET62.json',
@@ -608,8 +606,6 @@ async function createSingles() {
   const stateSegments = new DotLottie();
 
   await stateSegments
-    .setAuthor('Sam!')
-    .setVersion('1.0')
     .addAnimation({
       id: 'segments',
       url: 'https://assets2.lottiefiles.com/packages/lf20_4fET62.json',

@@ -20,17 +20,17 @@ const commonConfig = {
 export default defineConfig([
   {
     ...commonConfig,
-    entry: ['./src/node/*.ts'],
-    outDir: './dist/node',
+    entry: ['./src/index.node.ts'],
+    outDir: './dist',
     platform: 'node',
     target: ['es2020', 'node18'],
   },
   {
     ...commonConfig,
-    entry: ['./src/*.ts'],
+    entry: ['./src/index.browser.ts'],
     outDir: './dist',
     platform: 'browser',
     target: ['es2020'],
-    noExternal: ['browser-image-hash'],
+    noExternal: ['browser-image-hash', 'file-type'],
   },
 ]);

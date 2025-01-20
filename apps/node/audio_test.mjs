@@ -18,8 +18,6 @@ import { getAnimation, getAudio, getAllAudio } from '@dotlottie/dotlottie-js/nod
 
 // const dl = await
 //     dotLottie
-//         .setAuthor('Sam!')
-//         .setVersion('1.0')
 //         .addAnimation({
 //             id: 'audio',
 //             // url: 'https://assets10.lottiefiles.com/packages/lf20_tykuirhr.json',
@@ -64,8 +62,6 @@ import { getAnimation, getAudio, getAllAudio } from '@dotlottie/dotlottie-js/nod
 const double = new DotLottie();
 
 const doubleAnimation = await double
-  .setAuthor('Sam!')
-  .setVersion('1.0')
   .addAnimation({
     id: 'audio_0',
     // url: 'https://assets10.lottiefiles.com/packages/lf20_tykuirhr.json',

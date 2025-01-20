@@ -1,5 +1,5 @@
 {
-  "name": "vue",
+  "name": "vue-example",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -13,7 +13,7 @@
     "vue": "^3.2.47"
   },
   "devDependencies": {
-    "@dotlottie/dotlottie-js": "workspace:^",
+    "@dotlottie/dotlottie-js": "workspace:*",
     "@vitejs/plugin-vue": "^4.1.0",
     "typescript": "^5.6.3",
     "vite": "^4.3.0",
