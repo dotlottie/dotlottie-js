@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 0.9.0-beta.15
+
+### Patch Changes
+
+- 60cd5e7: small changes to state machine format.
+
 ## 0.9.0-beta.14
 
 ### Minor Changes
