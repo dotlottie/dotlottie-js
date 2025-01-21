@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.0.1
+
+### Patch Changes
+
+- abc69b3: fixed up test animation's manifest versioning incoherance
+
 ## 1.0.0
 
 ### Major Changes
