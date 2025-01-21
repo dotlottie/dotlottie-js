@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.0.0
+
+### Major Changes
+
+- 55f2a5c: added support for v2 dotLottie files. Added retro-compatibility for v1 dotLotties.
+
 ## 0.9.0
 
 ### Minor Changes
