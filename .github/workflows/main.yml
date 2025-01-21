@@ -16,7 +16,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.9.0
 
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: ⎔ Setup pnpm@9
         uses: pnpm/action-setup@v2
@@ -61,7 +61,7 @@ jobs:
     if: ${{ github.repository == 'dotlottie/dotlottie-js' && github.event_name == 'push' }}
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
 

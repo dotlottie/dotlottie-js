@@ -9,6 +9,7 @@ import { unzipSync } from 'fflate';
 import { Base64 } from 'js-base64';
 import { describe, test, expect, vi } from 'vitest';
 
+import pkg from '../../../../package.json';
 import bullData from '../../../__tests__/__fixtures__/image-asset-optimization/bull.json';
 import IMAGE_ANIMATION_1_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-1.json';
 import IMAGE_ANIMATION_5_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
@@ -652,6 +653,8 @@ describe('fromURL', () => {
 
     const dotLottie = await new DotLottie().fromURL(animationURL);
 
+    manifest.generator = `${pkg.name}@${pkg.version}`;
+
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
     expect(dotLottie.animations.length).toBe(1);
@@ -672,6 +675,8 @@ describe('fromURL', () => {
     let dotlottie = new DotLottie();
 
     dotlottie = await dotlottie.fromURL('https://lottiefiles.fake/animation/animation.lottie');
+
+    editedManifest.generator = `${pkg.name}@${pkg.version}`;
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
