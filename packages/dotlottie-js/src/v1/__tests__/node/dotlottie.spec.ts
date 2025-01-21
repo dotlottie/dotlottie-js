@@ -653,7 +653,7 @@ describe('fromURL', () => {
 
     const dotLottie = await new DotLottie().fromURL(animationURL);
 
-    editedManifest.generator = `${pkg.name}@${pkg.version}`;
+    manifest.generator = `${pkg.name}@${pkg.version}`;
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);

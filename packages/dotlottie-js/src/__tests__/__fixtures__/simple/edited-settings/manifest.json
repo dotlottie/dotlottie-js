@@ -2,7 +2,7 @@
   "version": "1",
   "keywords": "dotLottie",
   "author": "LottieFiles",
-  "generator": "@dotlottie/dotlottie-js@0.9.0",
+  "generator": "@dotlottie/dotlottie-js@1.0.0",
   "animations": [
     {
       "id": "lottie01",
