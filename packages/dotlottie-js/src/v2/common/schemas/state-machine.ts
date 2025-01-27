@@ -224,7 +224,7 @@ export const StringTriggerSchema = object({
 });
 
 export const BooleanTriggerSchema = object({
-  type: string('String'),
+  type: string('Boolean'),
   name: string(),
   value: boolean(),
 });
