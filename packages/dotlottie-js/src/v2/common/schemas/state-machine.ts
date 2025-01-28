@@ -14,10 +14,10 @@ export const StringGuardSchema = object({
   type: string('String'),
   triggerName: string(),
   conditionType: string(),
-  compareTo: union([string(), number(), boolean()]),
+  compareTo: string(),
 });
 export const BooleanGuardSchema = object({
-  type: string('Numeric'),
+  type: string('Boolean'),
   triggerName: string(),
   conditionType: string(),
   compareTo: union([string(), boolean()]),
@@ -224,7 +224,7 @@ export const StringTriggerSchema = object({
 });
 
 export const BooleanTriggerSchema = object({
-  type: string('String'),
+  type: string('Boolean'),
   name: string(),
   value: boolean(),
 });
