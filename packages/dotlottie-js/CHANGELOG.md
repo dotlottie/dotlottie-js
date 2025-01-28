@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.0.2
+
+### Patch Changes
+
+- 9088311: fixed wrong boolean trigger schema type
+
 ## 1.0.1
 
 ### Patch Changes
