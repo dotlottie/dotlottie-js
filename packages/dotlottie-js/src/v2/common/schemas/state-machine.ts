@@ -48,7 +48,7 @@ export const TransitionSchema = object({
 export const TransitionsSchema = array(TransitionSchema);
 
 // Entry/Exit Action Schema
-const URLActionSchema = object({ type: string(), url: string() });
+const URLActionSchema = object({ type: string(), url: string(), target: string() });
 const ThemeActionSchema = object({ type: string(), themeId: string() });
 const IncrementSchema = object({
   type: string(),
@@ -201,6 +201,12 @@ export const OnCompleteSchema = object({
   actions: array(ActionSchema),
 });
 
+export const OnLoopCompleteSchema = object({
+  type: string(),
+  stateName: string(),
+  actions: array(ActionSchema),
+});
+
 export const ListenerSchema = union([
   PointerUpSchema,
   PointerDownSchema,
@@ -208,6 +214,7 @@ export const ListenerSchema = union([
   PointerMoveSchema,
   PointerExitSchema,
   OnCompleteSchema,
+  OnLoopCompleteSchema,
 ]);
 export const ListenersSchema = array(ListenerSchema);
 
