@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.1.0
+
+### Minor Changes
+
+- 838f5c2: adds loop complete listener to state machines and openurl target
+
 ## 1.0.2
 
 ### Patch Changes
