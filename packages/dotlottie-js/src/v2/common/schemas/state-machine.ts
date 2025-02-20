@@ -47,75 +47,83 @@ export const TransitionSchema = object({
 
 export const TransitionsSchema = array(TransitionSchema);
 
+const OpenUrlModes = union([
+  string('_blank'),
+  string('_self'),
+  string('_parent'),
+  string('_top'),
+  string('_unfencedTop'),
+]);
+
 // Entry/Exit Action Schema
-const URLActionSchema = object({ type: string(), url: string() });
-const ThemeActionSchema = object({ type: string(), themeId: string() });
+const URLActionSchema = object({ type: string('OpenUrl'), url: string(), target: OpenUrlModes });
+const ThemeActionSchema = object({ type: string('SetTheme'), value: string() });
 const IncrementSchema = object({
-  type: string(),
+  type: string('Increment'),
   triggerName: string(),
   value: optional(union([string(), number()])),
 });
 const DecrementSchema = object({
-  type: string(),
+  type: string('Decrement'),
   triggerName: string(),
   value: optional(union([string(), number()])),
 });
 const ToggleSchema = object({
-  type: string(),
+  type: string('Toggle'),
   triggerName: string(),
 });
 const SetBooleanSchema = object({
-  type: string(),
+  type: string('SetBoolean'),
   triggerName: string(),
   value: optional(boolean()),
 });
 const SetStringSchema = object({
-  type: string(),
+  type: string('SetString'),
   triggerName: string(),
   value: optional(string()),
 });
 const SetNumericSchema = object({
-  type: string(),
+  type: string('SetNumeric'),
   triggerName: string(),
   value: optional(number()),
 });
 const FireSchema = object({
-  type: string(),
+  type: string('Fire'),
   triggerName: string(),
 });
 const ResetSchema = object({
-  type: string(),
+  type: string('Reset'),
   triggerName: string(),
 });
 const SetExpressionSchema = object({
-  type: string(),
+  type: string('SetExpression'),
   layerName: string(),
   propertyIndex: number(),
   varName: string(),
   value: number(),
 });
 const SetThemeSchema = object({
-  type: string(),
+  type: string('SetTheme'),
   themeId: string(),
 });
 const SetFrameSchema = object({
-  type: string(),
+  type: string('SetFrame'),
   value: union([string(), number()]),
 });
 const SetProgressSchema = object({
-  type: string(),
+  type: string('SetProgress'),
   value: union([string(), number()]),
 });
 const SetSlotSchema = object({
-  type: string(),
+  type: string('SetSlot'),
   value: string(),
 });
 const FireCustomEventSchema = object({
-  type: string(),
+  type: string('FireCustomEvent'),
   value: string(),
 });
 
-const ActionSchema = union([
+export const ActionSchema = union([
   URLActionSchema,
   ThemeActionSchema,
   IncrementSchema,
@@ -167,36 +175,48 @@ export const StateSchema = union([PlaybackStateSchema, GlobalStateSchema]);
 export const StatesSchema = array(StateSchema);
 
 export const PointerUpSchema = object({
-  type: string(),
+  type: string('PointerUp'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const PointerDownSchema = object({
-  type: string(),
+  type: string('PointerDown'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const PointerEnterSchema = object({
-  type: string(),
+  type: string('PointerEnter'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const PointerMoveSchema = object({
-  type: string(),
+  type: string('PointerMove'),
   actions: array(ActionSchema),
 });
 
 export const PointerExitSchema = object({
-  type: string(),
+  type: string('PointerExit'),
+  layerName: optional(string()),
+  actions: array(ActionSchema),
+});
+
+export const ClickSchema = object({
+  type: string('Click'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const OnCompleteSchema = object({
-  type: string(),
+  type: string('OnComplete'),
+  stateName: string(),
+  actions: array(ActionSchema),
+});
+
+export const OnLoopCompleteSchema = object({
+  type: string('OnLoopComplete'),
   stateName: string(),
   actions: array(ActionSchema),
 });
@@ -207,7 +227,9 @@ export const ListenerSchema = union([
   PointerEnterSchema,
   PointerMoveSchema,
   PointerExitSchema,
+  ClickSchema,
   OnCompleteSchema,
+  OnLoopCompleteSchema,
 ]);
 export const ListenersSchema = array(ListenerSchema);
 

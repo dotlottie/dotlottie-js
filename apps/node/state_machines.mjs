@@ -198,7 +198,19 @@ async function createStarRating() {
     .then((value) => {
       return value.toArrayBuffer();
     })
-    .then((value) => {
+    .then(async (value) => {
+      let dotLottie = new DotLottie();
+      dotLottie = await dotLottie.fromArrayBuffer(value);
+
+      for (let statemachine of dotLottie.stateMachines) {
+        console.log(statemachine.name);
+        console.log(statemachine.states);
+        console.log(statemachine.listeners);
+        console.log(statemachine.triggers);
+        console.log(statemachine.initial);
+      }
+
+
       fs.writeFileSync('sm_star_rating.lottie', Buffer.from(value));
     });
 }
@@ -980,52 +992,70 @@ async function createLoader() {
       id: "loader",
       name: "Pretty Loader ⌛",
       data: {
-        initial: "Start",
-        states: [
+        "initial": "pigeonRunning",
+        "states": [
           {
-            animation: "stats",
-            type: "PlaybackState",
-            name: "Start",
-            transitions: [
+            "type": "PlaybackState",
+            "name": "pigeonRunning",
+            "animation": "",
+            "loop": true,
+            "autoplay": true,
+            "segment": "bird",
+            "transitions": [
               {
-                type: "Transition",
-                toState: "Start",
-                guards: [
+                "type": "Transition",
+                "toState": "explosion",
+                "guards": [
                   {
-                    type: "Event",
-                    triggerName: "Step"
+                    "type": "Numeric",
+                    "triggerName": "loopCount",
+                    "conditionType": "GreaterThanOrEqual",
+                    "compareTo": 4
                   }
                 ]
               }
-            ],
-            entryActions: [
-              {
-                type: "SetProgress",
-                value: "$Progress"
-              }
             ]
-          }
-        ],
-        listeners: [
-          {
-            type: "PointerDown",
-            actions: [
-              {
-                type: "Increment",
-                triggerName: "Progress"
-              }
-            ]
-          }
-        ],
-        triggers: [
-          {
-            type: "Numeric",
-            name: "Progress",
-            value: 0
           },
           {
-            type: "Event",
-            name: "Step"
+            "type": "PlaybackState",
+            "name": "explosion",
+            "animation": "",
+            "final": true,
+            "loop": false,
+            "autoplay": true,
+            "segment": "explosion",
+            "transitions": []
+          }
+        ],
+        "triggers": [
+          {
+            "type": "Event",
+            "name": "explode"
+          },
+          {
+            "type": "Event",
+            "name": "rainFeathers"
+          },
+          {
+            "type": "Event",
+            "name": "restart"
+          },
+          {
+            "type": "Numeric",
+            "name": "loopCount",
+            "value": 0
+          }
+        ],
+        "listeners": [
+          {
+            "type": "OnLoopComplete",
+            "stateName": "pigeonRunning",
+            "actions": [
+              {
+                "type": "Increment",
+                "triggerName": "loopCount"
+              }
+            ]
           }
         ]
       }
@@ -1043,9 +1073,9 @@ async function createLoader() {
 // createSyncToCursor();
 // createHoverButton();
 // createToggleButton();
-createThemeAction();
+// createThemeAction();
 // createExplodingPigeon();
 // createHoldButton();
 // createClickButton();
 // createInteractiveStats();
-// createLoader();
+createLoader();
