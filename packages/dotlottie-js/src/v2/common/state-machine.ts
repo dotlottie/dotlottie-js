@@ -15,7 +15,7 @@ import type {
   DotLottieTriggers,
   ManifestStateMachine,
 } from './schemas';
-import { ListenersSchema, StatesSchema, TransitionsSchema, TriggersSchema } from './schemas';
+import { ListenersSchema, StatesSchema, ActionSchema, TransitionsSchema, TriggersSchema } from './schemas';
 
 export interface DotLottieStateMachineCommonOptions extends ManifestStateMachine {
   data: DotLottieStateMachine;
@@ -183,6 +183,22 @@ export class DotLottieStateMachineCommon {
 
   protected _requireValidListeners(listeners: DotLottieListeners): void {
     const result = safeParse(ListenersSchema, listeners);
+
+    for (const listener of listeners) {
+      for (const action of listener.actions) {
+        const actionResult = safeParse(ActionSchema, action);
+
+        if (!actionResult.success) {
+          const error = `Invalid state machine declaration, ${JSON.stringify(
+            flatten(actionResult.issues).nested,
+            null,
+            2,
+          )}`;
+
+          throw new DotLottieError(`Invalid listeners: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+        }
+      }
+    }
 
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
