@@ -22,7 +22,7 @@ export const PigeonState: {
           guards: [
             {
               type: "Event",
-              triggerName: "explode"
+              inputName: "explode"
             }
           ]
         }
@@ -42,7 +42,7 @@ export const PigeonState: {
           guards: [
             {
               type: "Event",
-              triggerName: "rainFeathers"
+              inputName: "rainFeathers"
             }
           ]
         }
@@ -62,20 +62,20 @@ export const PigeonState: {
           guards: [
             {
               type: "Event",
-              triggerName: "restart"
+              inputName: "restart"
             }
           ]
         }
       ]
     }
   ],
-  listeners: [
+  interactions: [
     {
       type: "PointerDown",
       actions: [
         {
           type: "Fire",
-          triggerName: "explode"
+          inputName: "explode"
         }
       ]
     },
@@ -85,7 +85,7 @@ export const PigeonState: {
       actions: [
         {
           type: "Fire",
-          triggerName: "rainFeathers"
+          inputName: "rainFeathers"
         }
       ]
     },
@@ -94,12 +94,12 @@ export const PigeonState: {
       actions: [
         {
           type: "Fire",
-          triggerName: "restart"
+          inputName: "restart"
         }
       ]
     }
   ],
-  triggers: [
+  inputs: [
     {
       type: "Event",
       name: "explode"
@@ -139,7 +139,7 @@ export const PigeonWithoutExplosion: {
           guards: [
             {
               type: "Event",
-              triggerName: "explode"
+              inputName: "explode"
             }
           ]
         }
@@ -159,20 +159,20 @@ export const PigeonWithoutExplosion: {
           guards: [
             {
               type: "Event",
-              triggerName: "restart"
+              inputName: "restart"
             }
           ]
         }
       ]
     }
   ],
-  listeners: [
+  interactions: [
     {
       type: "PointerDown",
       actions: [
         {
           type: "Fire",
-          triggerName: "explode"
+          inputName: "explode"
         }
       ]
     },
@@ -181,12 +181,12 @@ export const PigeonWithoutExplosion: {
       actions: [
         {
           type: "Fire",
-          triggerName: "restart"
+          inputName: "restart"
         }
       ]
     }
   ],
-  triggers: [
+  inputs: [
     {
       type: "Event",
       name: "explode"
@@ -226,7 +226,7 @@ export const SmileyWifi: {
           guards: [
             {
               type: "Event",
-              triggerName: "click"
+              inputName: "click"
             }
           ]
         }
@@ -241,8 +241,8 @@ export const SmileyWifi: {
       mode: "Forward",
     },
   ],
-  listeners: [],
-  triggers: [{
+  interactions: [],
+  inputs: [{
     type: "Event",
     name: "click"
     }]

@@ -8,14 +8,14 @@ import { safeParse, flatten } from 'valibot';
 import { DotLottieError, ErrorCodes } from '../../utils';
 
 import type {
-  DotLottieListeners,
   DotLottieStateMachine,
   DotLottieStates,
   DotLottieTransitions,
-  DotLottieTriggers,
+  DotLottieInputs,
   ManifestStateMachine,
+  DotLottieInteractions,
 } from './schemas';
-import { ListenersSchema, StatesSchema, ActionSchema, TransitionsSchema, TriggersSchema } from './schemas';
+import { InteractionsSchema, StatesSchema, ActionSchema, TransitionsSchema, InputsSchema } from './schemas';
 
 export interface DotLottieStateMachineCommonOptions extends ManifestStateMachine {
   data: DotLottieStateMachine;
@@ -33,14 +33,18 @@ export class DotLottieStateMachineCommon {
 
   protected _states: DotLottieStates;
 
-  protected _listeners: DotLottieListeners;
+  protected _interactions: DotLottieInteractions;
 
-  protected _triggers: DotLottieTriggers;
+  protected _inputs: DotLottieInputs;
 
   public constructor(options: DotLottieStateMachineCommonOptions) {
     this._requireValidId(options.id);
-    this._requireValidTriggers(options.data.triggers ?? []);
-    this._requireValidListeners(options.data.listeners ?? []);
+    if (options.data.inputs) {
+      this._requireValidInputs(options.data.inputs);
+    }
+    if (options.data.interactions) {
+      this._requireValidInteractions(options.data.interactions);
+    }
     this._requireValidStates(options.data.states);
     this._requireValidInitial(options.data.initial, options.data.states);
 
@@ -54,9 +58,9 @@ export class DotLottieStateMachineCommon {
 
     this._states = options.data.states;
 
-    this._listeners = options.data.listeners ?? [];
+    this._interactions = options.data.interactions ?? [];
 
-    this._triggers = options.data.triggers ?? [];
+    this._inputs = options.data.inputs ?? [];
   }
 
   public get zipOptions(): ZipOptions {
@@ -93,20 +97,20 @@ export class DotLottieStateMachineCommon {
     this._states = states;
   }
 
-  public get listeners(): DotLottieListeners {
-    return this._listeners;
+  public get interactions(): DotLottieInteractions {
+    return this._interactions;
   }
 
-  public set listeners(listeners: DotLottieListeners) {
-    this._listeners = listeners;
+  public set interactions(interactions: DotLottieInteractions) {
+    this._interactions = interactions;
   }
 
-  public get triggers(): DotLottieTriggers {
-    return this._triggers;
+  public get inputs(): DotLottieInputs {
+    return this._inputs;
   }
 
-  public set triggers(triggers: DotLottieTriggers) {
-    this._triggers = triggers;
+  public set inputs(inputs: DotLottieInputs) {
+    this._inputs = inputs;
   }
 
   public get initial(): string {
@@ -121,8 +125,8 @@ export class DotLottieStateMachineCommon {
     return JSON.stringify({
       initial: this._initial,
       states: this._states,
-      triggers: this._triggers,
-      listeners: this._listeners,
+      inputs: this._inputs,
+      interactions: this._interactions,
     });
   }
 
@@ -171,8 +175,8 @@ export class DotLottieStateMachineCommon {
     }
   }
 
-  protected _requireValidTriggers(triggers: DotLottieTriggers): void {
-    const result = safeParse(TriggersSchema, triggers);
+  protected _requireValidInputs(inputs: DotLottieInputs): void {
+    const result = safeParse(InputsSchema, inputs);
 
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
@@ -181,11 +185,11 @@ export class DotLottieStateMachineCommon {
     }
   }
 
-  protected _requireValidListeners(listeners: DotLottieListeners): void {
-    const result = safeParse(ListenersSchema, listeners);
+  protected _requireValidInteractions(interactions: DotLottieInteractions): void {
+    const result = safeParse(InteractionsSchema, interactions);
 
-    for (const listener of listeners) {
-      for (const action of listener.actions) {
+    for (const interaction of interactions) {
+      for (const action of interaction.actions) {
         const actionResult = safeParse(ActionSchema, action);
 
         if (!actionResult.success) {
@@ -195,7 +199,7 @@ export class DotLottieStateMachineCommon {
             2,
           )}`;
 
-          throw new DotLottieError(`Invalid listeners: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+          throw new DotLottieError(`Invalid interaction actions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
         }
       }
     }
@@ -203,7 +207,7 @@ export class DotLottieStateMachineCommon {
     if (!result.success) {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
-      throw new DotLottieError(`Invalid listeners: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+      throw new DotLottieError(`Invalid interactions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 

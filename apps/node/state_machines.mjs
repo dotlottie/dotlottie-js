@@ -32,7 +32,7 @@ async function createStarRating() {
                   {
                     type: "Numeric",
                     conditionType: "Equal",
-                    triggerName: "rating",
+                    inputName: "rating",
                     compareTo: 1
                   }
                 ]
@@ -44,7 +44,7 @@ async function createStarRating() {
                   {
                     type: "Numeric",
                     conditionType: "Equal",
-                    triggerName: "rating",
+                    inputName: "rating",
                     compareTo: 2
                   }
                 ]
@@ -56,7 +56,7 @@ async function createStarRating() {
                   {
                     type: "Numeric",
                     conditionType: "Equal",
-                    triggerName: "rating",
+                    inputName: "rating",
                     compareTo: 3
                   }
                 ]
@@ -68,7 +68,7 @@ async function createStarRating() {
                   {
                     type: "Numeric",
                     conditionType: "Equal",
-                    triggerName: "rating",
+                    inputName: "rating",
                     compareTo: 4
                   }
                 ]
@@ -80,7 +80,7 @@ async function createStarRating() {
                   {
                     type: "Numeric",
                     conditionType: "Equal",
-                    triggerName: "rating",
+                    inputName: "rating",
                     compareTo: 5
                   }
                 ]
@@ -128,14 +128,14 @@ async function createStarRating() {
             transitions: []
           }
         ],
-        listeners: [
+        interactions: [
           {
             type: "PointerDown",
             layerName: "star1",
             actions: [
               {
                 type: "SetNumeric",
-                triggerName: "rating",
+                inputName: "rating",
                 value: 1
               }
             ]
@@ -146,7 +146,7 @@ async function createStarRating() {
             actions: [
               {
                 type: "SetNumeric",
-                triggerName: "rating",
+                inputName: "rating",
                 value: 2
               }
             ]
@@ -157,7 +157,7 @@ async function createStarRating() {
             actions: [
               {
                 type: "SetNumeric",
-                triggerName: "rating",
+                inputName: "rating",
                 value: 3
               }
             ]
@@ -168,7 +168,7 @@ async function createStarRating() {
             actions: [
               {
                 type: "SetNumeric",
-                triggerName: "rating",
+                inputName: "rating",
                 value: 4
               }
             ]
@@ -179,13 +179,13 @@ async function createStarRating() {
             actions: [
               {
                 type: "SetNumeric",
-                triggerName: "rating",
+                inputName: "rating",
                 value: 5
               }
             ]
           }
         ],
-        triggers: [
+        inputs: [
           {
             type: "Numeric",
             name: "rating",
@@ -203,11 +203,11 @@ async function createStarRating() {
       dotLottie = await dotLottie.fromArrayBuffer(value);
 
       for (let statemachine of dotLottie.stateMachines) {
-        console.log(statemachine.name);
-        console.log(statemachine.states);
-        console.log(statemachine.listeners);
-        console.log(statemachine.triggers);
-        console.log(statemachine.initial);
+        // console.log(statemachine.name);
+        // console.log(statemachine.states);
+        // console.log(statemachine.interactions);
+        // console.log(statemachine.inputs);
+        // console.log(statemachine.initial);
       }
 
 
@@ -240,7 +240,7 @@ async function createSyncToCursor() {
                 guards: [
                   {
                     type: "Event",
-                    triggerName: "Step"
+                    inputName: "Step"
                   }
                 ]
               }
@@ -253,16 +253,16 @@ async function createSyncToCursor() {
             ]
           }
         ],
-        listeners: [{
+        interactions: [{
           type: "PointerDown",
           actions: [
             {
               type: "Increment",
-              triggerName: "Progress"
+              inputName: "Progress"
             }
           ]
         }],
-        triggers: [
+        inputs: [
           {
             type: "Numeric",
             name: "Progress",
@@ -309,7 +309,7 @@ async function createHoverButton() {
                 guards: [
                   {
                     type: "Event",
-                    triggerName: "Forward"
+                    inputName: "Forward"
                   }
                 ]
               },
@@ -319,7 +319,7 @@ async function createHoverButton() {
                 guards: [
                   {
                     type: "Event",
-                    triggerName: "Reverse"
+                    inputName: "Reverse"
                   }
                 ]
               }
@@ -342,13 +342,13 @@ async function createHoverButton() {
             transitions: []
           }
         ],
-        listeners: [
+        interactions: [
           {
             type: "PointerEnter",
             actions: [
               {
                 type: "Fire",
-                triggerName: "Forward"
+                inputName: "Forward"
               }
             ]
           },
@@ -357,12 +357,12 @@ async function createHoverButton() {
             actions: [
               {
                 type: "Fire",
-                triggerName: "Reverse"
+                inputName: "Reverse"
               }
             ]
           }
         ],
-        triggers: [
+        inputs: [
           {
             type: "Event",
             name: "Forward"
@@ -409,7 +409,7 @@ async function createToggleButton() {
                   {
                     type: "Boolean",
                     conditionType: "Equal",
-                    triggerName: "OnOffSwitch",
+                    inputName: "OnOffSwitch",
                     compareTo: true
                   }
                 ]
@@ -430,7 +430,7 @@ async function createToggleButton() {
                   {
                     type: "Boolean",
                     conditionType: "Equal",
-                    triggerName: "OnOffSwitch",
+                    inputName: "OnOffSwitch",
                     compareTo: false
                   }
                 ]
@@ -452,7 +452,7 @@ async function createToggleButton() {
                   {
                     type: "Boolean",
                     conditionType: "Equal",
-                    triggerName: "OnOffSwitch",
+                    inputName: "OnOffSwitch",
                     compareTo: true
                   }
                 ]
@@ -460,18 +460,18 @@ async function createToggleButton() {
             ]
           }
         ],
-        listeners: [
+        interactions: [
           {
             type: "PointerDown",
             actions: [
               {
                 type: "Toggle",
-                triggerName: "OnOffSwitch"
+                inputName: "OnOffSwitch"
               }
             ]
           }
         ],
-        triggers: [
+        inputs: [
           {
             type: "Boolean",
             name: "OnOffSwitch",
@@ -511,7 +511,7 @@ async function createThemeAction() {
                   {
                     type: "Boolean",
                     conditionType: "Equal",
-                    triggerName: "OnOffSwitch",
+                    inputName: "OnOffSwitch",
                     compareTo: true
                   }
                 ]
@@ -538,7 +538,7 @@ async function createThemeAction() {
                   {
                     type: "Boolean",
                     conditionType: "Equal",
-                    triggerName: "OnOffSwitch",
+                    inputName: "OnOffSwitch",
                     compareTo: false
                   }
                 ]
@@ -566,7 +566,7 @@ async function createThemeAction() {
                   {
                     type: "Boolean",
                     conditionType: "Equal",
-                    triggerName: "OnOffSwitch",
+                    inputName: "OnOffSwitch",
                     compareTo: true
                   }
                 ]
@@ -580,18 +580,18 @@ async function createThemeAction() {
             ]
           }
         ],
-        listeners: [
+        interactions: [
           {
             type: "PointerDown",
             actions: [
               {
                 type: "Toggle",
-                triggerName: "OnOffSwitch"
+                inputName: "OnOffSwitch"
               }
             ]
           }
         ],
-        triggers: [
+        inputs: [
           {
             type: "Boolean",
             name: "OnOffSwitch",
@@ -619,116 +619,116 @@ async function createExplodingPigeon() {
       url: 'https://lottie.host/899f8fbb-55db-4a51-8a64-96f1bc4e45d7/9BiY1S0tDm.json',
     })
     .addStateMachine({
-      id: "explodingPigeon",
-      name: "Exploding Pigeon 💥",
-      data: {
-        initial: "Pigeon Running",
-        states: [
+      "id": "Exploding Pigeon",
+      "name": "Pigeon Running",
+      "data": {
+        "initial": "Pigeon Running",
+        "states": [
           {
-            animation: "pigeon",
-            type: "PlaybackState",
-            name: "Pigeon Running",
-            loop: true,
-            autoplay: true,
-            segment: "bird",
-            transitions: [
+            "animation": "pigeon",
+            "type": "PlaybackState",
+            "name": "Pigeon Running",
+            "loop": true,
+            "autoplay": true,
+            "segment": "bird",
+            "transitions": [
               {
-                type: "Transition",
-                toState: "Explosion",
-                guards: [
+                "type": "Transition",
+                "toState": "Explosion",
+                "guards": [
                   {
-                    type: "Event",
-                    triggerName: "Explode"
+                    "type": "Event",
+                    "inputName": "Explode"
                   }
                 ]
               }
             ]
           },
           {
-            animation: "pigeon",
-            type: "PlaybackState",
-            name: "Explosion",
-            loop: false,
-            autoplay: true,
-            segment: "explosion",
-            speed: 0.1,
-            transitions: [
+            "animation": "pigeon",
+            "type": "PlaybackState",
+            "name": "Explosion",
+            "loop": false,
+            "autoplay": true,
+            "segment": "explosion",
+            "speed": 0.1,
+            "transitions": [
               {
-                type: "Transition",
-                toState: "Feathers falling",
-                guards: [
+                "type": "Transition",
+                "toState": "Feathers falling",
+                "guards": [
                   {
-                    type: "Event",
-                    triggerName: "Rain feathers"
+                    "type": "Event",
+                    "inputName": "Rain feathers"
                   }
                 ]
               }
             ]
           },
           {
-            animation: "pigeon",
-            type: "PlaybackState",
-            name: "Feathers falling",
-            loop: false,
-            autoplay: true,
-            segment: "feather",
-            transitions: [
+            "animation": "pigeon",
+            "type": "PlaybackState",
+            "name": "Feathers falling",
+            "loop": false,
+            "autoplay": true,
+            "segment": "feather",
+            "transitions": [
               {
-                type: "Transition",
-                toState: "Pigeon Running",
-                guards: [
+                "type": "Transition",
+                "toState": "Pigeon Running",
+                "guards": [
                   {
-                    type: "Event",
-                    triggerName: "Restart"
+                    "type": "Event",
+                    "inputName": "Restart"
                   }
                 ]
               }
             ]
           }
         ],
-        listeners: [
+        "inputs": [
           {
-            type: "PointerDown",
-            actions: [
-              {
-                type: "Fire",
-                triggerName: "Explode"
-              }
-            ]
+            "type": "Event",
+            "name": "Explode"
           },
           {
-            type: "OnComplete",
-            stateName: "Explosion",
-            actions: [
-              {
-                type: "Fire",
-                triggerName: "Rain feathers"
-              }
-            ]
+            "type": "Event",
+            "name": "Rain feathers"
           },
           {
-            type: "OnComplete",
-            stateName: "Feathers falling",
-            actions: [
-              {
-                type: "Fire",
-                triggerName: "Restart"
-              }
-            ]
+            "type": "Event",
+            "name": "Restart"
           }
         ],
-        triggers: [
+        "interactions": [
           {
-            type: "Event",
-            name: "Explode"
+            "type": "PointerDown",
+            "actions": [
+              {
+                "type": "Fire",
+                "inputName": "Explode"
+              }
+            ]
           },
           {
-            type: "Event",
-            name: "Rain feathers"
+            "type": "OnComplete",
+            "stateName": "Explosion",
+            "actions": [
+              {
+                "type": "Fire",
+                "inputName": "Rain feathers"
+              }
+            ]
           },
           {
-            type: "Event",
-            name: "Restart"
+            "type": "OnComplete",
+            "stateName": "Feathers falling",
+            "actions": [
+              {
+                "type": "Fire",
+                "inputName": "Restart"
+              }
+            ]
           }
         ]
       }
@@ -767,7 +767,7 @@ async function createHoldButton() {
                 guards: [
                   {
                     type: "Event",
-                    triggerName: "Forward"
+                    inputName: "Forward"
                   }
                 ]
               },
@@ -777,7 +777,7 @@ async function createHoldButton() {
                 guards: [
                   {
                     type: "Event",
-                    triggerName: "Reverse"
+                    inputName: "Reverse"
                   }
                 ]
               }
@@ -800,13 +800,13 @@ async function createHoldButton() {
             transitions: []
           }
         ],
-        listeners: [
+        interactions: [
           {
             type: "PointerDown",
             actions: [
               {
                 type: "Fire",
-                triggerName: "Forward"
+                inputName: "Forward"
               }
             ]
           },
@@ -815,12 +815,12 @@ async function createHoldButton() {
             actions: [
               {
                 type: "Fire",
-                triggerName: "Reverse"
+                inputName: "Reverse"
               }
             ]
           }
         ],
-        triggers: [
+        inputs: [
           {
             type: "Event",
             name: "Forward"
@@ -866,7 +866,7 @@ async function createClickButton() {
                 guards: [
                   {
                     type: "Event",
-                    triggerName: "Forward"
+                    inputName: "Forward"
                   }
                 ]
               }
@@ -881,18 +881,18 @@ async function createClickButton() {
             transitions: []
           }
         ],
-        listeners: [
+        interactions: [
           {
             type: "PointerDown",
             actions: [
               {
                 type: "Fire",
-                triggerName: "Forward"
+                inputName: "Forward"
               }
             ]
           }
         ],
-        triggers: [
+        inputs: [
           {
             type: "Event",
             name: "Forward"
@@ -934,7 +934,7 @@ async function createInteractiveStats() {
                 guards: [
                   {
                     type: "Event",
-                    triggerName: "Step"
+                    inputName: "Step"
                   }
                 ]
               }
@@ -947,18 +947,18 @@ async function createInteractiveStats() {
             ]
           }
         ],
-        listeners: [
+        interactions: [
           {
             type: "PointerDown",
             actions: [
               {
                 type: "Increment",
-                triggerName: "Progress"
+                inputName: "Progress"
               }
             ]
           }
         ],
-        triggers: [
+        inputs: [
           {
             type: "Numeric",
             name: "Progress",
@@ -1008,7 +1008,7 @@ async function createLoader() {
                 "guards": [
                   {
                     "type": "Numeric",
-                    "triggerName": "loopCount",
+                    "inputName": "loopCount",
                     "conditionType": "GreaterThanOrEqual",
                     "compareTo": 4
                   }
@@ -1027,7 +1027,7 @@ async function createLoader() {
             "transitions": []
           }
         ],
-        "triggers": [
+        "inputs": [
           {
             "type": "Event",
             "name": "explode"
@@ -1046,14 +1046,14 @@ async function createLoader() {
             "value": 0
           }
         ],
-        "listeners": [
+        "interactions": [
           {
             "type": "OnLoopComplete",
             "stateName": "pigeonRunning",
             "actions": [
               {
                 "type": "Increment",
-                "triggerName": "loopCount"
+                "inputName": "loopCount"
               }
             ]
           }
@@ -1069,13 +1069,13 @@ async function createLoader() {
     });
 }
 
-// createStarRating();
-// createSyncToCursor();
-// createHoverButton();
-// createToggleButton();
-// createThemeAction();
-// createExplodingPigeon();
-// createHoldButton();
-// createClickButton();
-// createInteractiveStats();
+createStarRating();
+createSyncToCursor();
+createHoverButton();
+createToggleButton();
+createThemeAction();
+createExplodingPigeon();
+createHoldButton();
+createClickButton();
+createInteractiveStats();
 createLoader();
