@@ -6,25 +6,25 @@ import { type Output, boolean, number, object, optional, string, array, union } 
 
 export const NumericGuardSchema = object({
   type: string('Numeric'),
-  triggerName: string(),
+  inputName: string(),
   conditionType: string(),
   compareTo: union([string(), number(), boolean()]),
 });
 export const StringGuardSchema = object({
   type: string('String'),
-  triggerName: string(),
+  inputName: string(),
   conditionType: string(),
   compareTo: string(),
 });
 export const BooleanGuardSchema = object({
   type: string('Boolean'),
-  triggerName: string(),
+  inputName: string(),
   conditionType: string(),
   compareTo: union([string(), boolean()]),
 });
 export const EventGuardSchema = object({
   type: string('Event'),
-  triggerName: string(),
+  inputName: string(),
 });
 
 export const GuardSchema = union([NumericGuardSchema, StringGuardSchema, BooleanGuardSchema, EventGuardSchema]);
@@ -35,8 +35,7 @@ const BooleanEventSchema = object({ value: boolean() });
 const StringEventSchema = object({ value: string() });
 const PointerEventSchema = object({ target: optional(string()) });
 
-// const TransitionType = union([string('Transition')]);
-const TransitionType = string('Transition');
+const TransitionType = union([string('Transition'), string('Tweened')]);
 
 // Transition Schema
 export const TransitionSchema = object({
@@ -60,40 +59,40 @@ const URLActionSchema = object({ type: string('OpenUrl'), url: string(), target:
 const ThemeActionSchema = object({ type: string('SetTheme'), value: string() });
 const IncrementSchema = object({
   type: string('Increment'),
-  triggerName: string(),
+  inputName: string(),
   value: optional(union([string(), number()])),
 });
 const DecrementSchema = object({
   type: string('Decrement'),
-  triggerName: string(),
+  inputName: string(),
   value: optional(union([string(), number()])),
 });
 const ToggleSchema = object({
   type: string('Toggle'),
-  triggerName: string(),
+  inputName: string(),
 });
 const SetBooleanSchema = object({
   type: string('SetBoolean'),
-  triggerName: string(),
+  inputName: string(),
   value: optional(boolean()),
 });
 const SetStringSchema = object({
   type: string('SetString'),
-  triggerName: string(),
+  inputName: string(),
   value: optional(string()),
 });
 const SetNumericSchema = object({
   type: string('SetNumeric'),
-  triggerName: string(),
+  inputName: string(),
   value: optional(number()),
 });
 const FireSchema = object({
   type: string('Fire'),
-  triggerName: string(),
+  inputName: string(),
 });
 const ResetSchema = object({
   type: string('Reset'),
-  triggerName: string(),
+  inputName: string(),
 });
 const SetExpressionSchema = object({
   type: string('SetExpression'),
@@ -221,7 +220,7 @@ export const OnLoopCompleteSchema = object({
   actions: array(ActionSchema),
 });
 
-export const ListenerSchema = union([
+export const InteractionSchema = union([
   PointerUpSchema,
   PointerDownSchema,
   PointerEnterSchema,
@@ -231,39 +230,34 @@ export const ListenerSchema = union([
   OnCompleteSchema,
   OnLoopCompleteSchema,
 ]);
-export const ListenersSchema = array(ListenerSchema);
+export const InteractionsSchema = array(InteractionSchema);
 
-export const NumericTriggerSchema = object({
+export const NumericInputSchema = object({
   type: string('Numeric'),
   name: string(),
   value: number(),
 });
 
-export const StringTriggerSchema = object({
+export const StringInputSchema = object({
   type: string('String'),
   name: string(),
   value: string(),
 });
 
-export const BooleanTriggerSchema = object({
+export const BooleanInputSchema = object({
   type: string('Boolean'),
   name: string(),
   value: boolean(),
 });
 
-export const EventTriggerSchema = object({
+export const EventInputSchema = object({
   type: string('Event'),
   name: string(),
 });
 
-export const TriggerSchema = union([
-  NumericTriggerSchema,
-  StringTriggerSchema,
-  BooleanTriggerSchema,
-  EventTriggerSchema,
-]);
+export const InputSchema = union([NumericInputSchema, StringInputSchema, BooleanInputSchema, EventInputSchema]);
 
-export const TriggersSchema = array(TriggerSchema);
+export const InputsSchema = array(InputSchema);
 
 export type DotLottieStates = Output<typeof StatesSchema>;
 export type DotLottieState = Output<typeof StateSchema>;
@@ -273,10 +267,10 @@ export type DotLottieBooleanEvent = Output<typeof BooleanEventSchema>;
 export type DotLottieStringEvent = Output<typeof StringEventSchema>;
 export type DotLottiePointerEvent = Output<typeof PointerEventSchema>;
 export type DotLottieGuard = Output<typeof GuardSchema>;
-export type DotLottieTrigger = Output<typeof TriggerSchema>;
-export type DotLottieTriggers = Output<typeof TriggersSchema>;
-export type DotLottieListener = Output<typeof ListenerSchema>;
-export type DotLottieListeners = Output<typeof ListenersSchema>;
+export type DotLottieInput = Output<typeof InputSchema>;
+export type DotLottieInputs = Output<typeof InputsSchema>;
+export type DotLottieInteraction = Output<typeof InteractionSchema>;
+export type DotLottieInteractions = Output<typeof InteractionsSchema>;
 export type DotLottieTransition = Output<typeof TransitionSchema>;
 export type DotLottieTransitions = Output<typeof TransitionsSchema>;
 
@@ -284,7 +278,7 @@ export type DotLottieTransitions = Output<typeof TransitionsSchema>;
 export const DotLottieStateMachineSchema = object({
   initial: string(),
   states: StatesSchema,
-  listeners: optional(ListenersSchema),
-  triggers: optional(TriggersSchema),
+  interactions: optional(InteractionsSchema),
+  inputs: optional(InputsSchema),
 });
 export type DotLottieStateMachine = Output<typeof DotLottieStateMachineSchema>;

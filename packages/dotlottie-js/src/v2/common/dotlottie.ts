@@ -542,8 +542,8 @@ export class DotLottieCommon {
           data: {
             states: stateMachine.states,
             initial: stateMachine.initial,
-            listeners: stateMachine.listeners,
-            triggers: stateMachine.triggers,
+            interactions: stateMachine.interactions,
+            inputs: stateMachine.inputs,
           },
           zipOptions: stateMachine.zipOptions,
         };
