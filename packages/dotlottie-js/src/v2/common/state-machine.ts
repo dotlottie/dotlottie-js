@@ -15,7 +15,17 @@ import type {
   ManifestStateMachine,
   DotLottieInteractions,
 } from './schemas';
-import { InteractionsSchema, StatesSchema, ActionSchema, TransitionsSchema, InputsSchema } from './schemas';
+import {
+  InteractionsSchema,
+  StatesSchema,
+  ActionSchema,
+  TransitionsSchema,
+  InputsSchema,
+  TweenedTransitionSchema,
+  TransitionTransitionSchema,
+  PlaybackStateSchema,
+  GlobalStateSchema,
+} from './schemas';
 
 export interface DotLottieStateMachineCommonOptions extends ManifestStateMachine {
   data: DotLottieStateMachine;
@@ -167,6 +177,38 @@ export class DotLottieStateMachineCommon {
       throw new DotLottieError(`Invalid states: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
 
+    for (const state of states) {
+      if (state.type === 'PlaybackState') {
+        const stateResult = safeParse(PlaybackStateSchema, state);
+
+        if (!stateResult.success) {
+          const error = `Invalid state machine declaration, ${JSON.stringify(
+            flatten(stateResult.issues).nested,
+            null,
+            2,
+          )}`;
+
+          throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+        }
+      } else if (state.type === 'GlobalState') {
+        const stateResult = safeParse(GlobalStateSchema, state);
+
+        if (!stateResult.success) {
+          const error = `Invalid state machine declaration, ${JSON.stringify(
+            flatten(stateResult.issues).nested,
+            null,
+            2,
+          )}`;
+
+          throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+        }
+      } else {
+        const error = `Invalid state machine declaration, type: ${state.type} does not match any known State types.`;
+
+        throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+      }
+    }
+
     // loop over every transition and validate it
     for (const state of states) {
       if (state.transitions) {
@@ -218,6 +260,38 @@ export class DotLottieStateMachineCommon {
       const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
       throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+    }
+
+    for (const transition of transitions) {
+      if (transition.type === 'Tweened') {
+        const transitionResult = safeParse(TweenedTransitionSchema, transition);
+
+        if (!transitionResult.success) {
+          const error = `Invalid state machine declaration, ${JSON.stringify(
+            flatten(transitionResult.issues).nested,
+            null,
+            2,
+          )}`;
+
+          throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+        }
+      } else if (transition.type === 'Transition') {
+        const transitionResult = safeParse(TransitionTransitionSchema, transition);
+
+        if (!transitionResult.success) {
+          const error = `Invalid state machine declaration, ${JSON.stringify(
+            flatten(transitionResult.issues).nested,
+            null,
+            2,
+          )}`;
+
+          throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+        }
+      } else {
+        const error = `Invalid state machine declaration, type: ${transition.type} does not match any known Transition types.`;
+
+        throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+      }
     }
   }
 }

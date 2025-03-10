@@ -35,16 +35,23 @@ const BooleanEventSchema = object({ value: boolean() });
 const StringEventSchema = object({ value: string() });
 const PointerEventSchema = object({ target: optional(string()) });
 
-const TransitionType = union([string('Transition'), string('Tweened')]);
-
 // Transition Schema
-export const TransitionSchema = object({
-  type: TransitionType,
+export const TransitionTransitionSchema = object({
+  type: string('Transition'),
   toState: string(),
   guards: optional(array(GuardSchema)),
 });
 
-export const TransitionsSchema = array(TransitionSchema);
+export const TweenedTransitionSchema = object({
+  type: string('Tweened'),
+  toState: string(),
+  guards: optional(array(GuardSchema)),
+  duration: number(),
+  easing: array(number()),
+});
+
+export const TransitionsSchema = array(union([TransitionTransitionSchema, TweenedTransitionSchema]));
+export const TransitionSchema = union([TransitionTransitionSchema, TweenedTransitionSchema]);
 
 const OpenUrlModes = union([
   string('_blank'),
