@@ -2,28 +2,28 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { type Output, boolean, number, object, optional, string, array, union } from 'valibot';
+import { type Output, boolean, number, object, optional, string, array, union, literal } from 'valibot';
 
 export const NumericGuardSchema = object({
-  type: string('Numeric'),
+  type: literal('Numeric'),
   inputName: string(),
   conditionType: string(),
   compareTo: union([string(), number(), boolean()]),
 });
 export const StringGuardSchema = object({
-  type: string('String'),
+  type: literal('String'),
   inputName: string(),
   conditionType: string(),
   compareTo: string(),
 });
 export const BooleanGuardSchema = object({
-  type: string('Boolean'),
+  type: literal('Boolean'),
   inputName: string(),
   conditionType: string(),
   compareTo: union([string(), boolean()]),
 });
 export const EventGuardSchema = object({
-  type: string('Event'),
+  type: literal('Event'),
   inputName: string(),
 });
 
@@ -37,13 +37,13 @@ const PointerEventSchema = object({ target: optional(string()) });
 
 // Transition Schema
 export const TransitionTransitionSchema = object({
-  type: string('Transition'),
+  type: literal('Transition'),
   toState: string(),
   guards: optional(array(GuardSchema)),
 });
 
 export const TweenedTransitionSchema = object({
-  type: string('Tweened'),
+  type: literal('Tweened'),
   toState: string(),
   guards: optional(array(GuardSchema)),
   duration: number(),
@@ -62,70 +62,70 @@ const OpenUrlModes = union([
 ]);
 
 // Entry/Exit Action Schema
-const URLActionSchema = object({ type: string('OpenUrl'), url: string(), target: OpenUrlModes });
-const ThemeActionSchema = object({ type: string('SetTheme'), value: string() });
+const URLActionSchema = object({ type: literal('OpenUrl'), url: string(), target: OpenUrlModes });
+const ThemeActionSchema = object({ type: literal('SetTheme'), value: string() });
 const IncrementSchema = object({
-  type: string('Increment'),
+  type: literal('Increment'),
   inputName: string(),
   value: optional(union([string(), number()])),
 });
 const DecrementSchema = object({
-  type: string('Decrement'),
+  type: literal('Decrement'),
   inputName: string(),
   value: optional(union([string(), number()])),
 });
 const ToggleSchema = object({
-  type: string('Toggle'),
+  type: literal('Toggle'),
   inputName: string(),
 });
 const SetBooleanSchema = object({
-  type: string('SetBoolean'),
+  type: literal('SetBoolean'),
   inputName: string(),
   value: optional(boolean()),
 });
 const SetStringSchema = object({
-  type: string('SetString'),
+  type: literal('SetString'),
   inputName: string(),
   value: optional(string()),
 });
 const SetNumericSchema = object({
-  type: string('SetNumeric'),
+  type: literal('SetNumeric'),
   inputName: string(),
   value: optional(number()),
 });
 const FireSchema = object({
-  type: string('Fire'),
+  type: literal('Fire'),
   inputName: string(),
 });
 const ResetSchema = object({
-  type: string('Reset'),
+  type: literal('Reset'),
   inputName: string(),
 });
 const SetExpressionSchema = object({
-  type: string('SetExpression'),
+  type: literal('SetExpression'),
   layerName: string(),
   propertyIndex: number(),
   varName: string(),
   value: number(),
 });
 const SetThemeSchema = object({
-  type: string('SetTheme'),
+  type: literal('SetTheme'),
   themeId: string(),
 });
 const SetFrameSchema = object({
-  type: string('SetFrame'),
+  type: literal('SetFrame'),
   value: union([string(), number()]),
 });
 const SetProgressSchema = object({
-  type: string('SetProgress'),
+  type: literal('SetProgress'),
   value: union([string(), number()]),
 });
 const SetSlotSchema = object({
-  type: string('SetSlot'),
+  type: literal('SetSlot'),
   value: string(),
 });
 const FireCustomEventSchema = object({
-  type: string('FireCustomEvent'),
+  type: literal('FireCustomEvent'),
   value: string(),
 });
 
@@ -148,13 +148,11 @@ export const ActionSchema = union([
   FireCustomEventSchema,
 ]);
 
-const Modes = union([string('Forward'), string('Reverse'), string('Bounce'), string('ReverseBounce')]);
-
-const StateType = union([string('PlaybackState'), string('GlobalState')]);
+const Modes = union([literal('Forward'), literal('Reverse'), literal('Bounce'), literal('ReverseBounce')]);
 
 export const PlaybackStateSchema = object({
   name: string(),
-  type: StateType,
+  type: literal('PlaybackState'),
   animation: string(),
   loop: optional(boolean()),
   autoplay: optional(boolean()),
@@ -171,7 +169,7 @@ export const PlaybackStateSchema = object({
 
 export const GlobalStateSchema = object({
   name: string(),
-  type: StateType,
+  type: literal('GlobalState'),
   entryActions: optional(array(ActionSchema)),
   exitActions: optional(array(ActionSchema)),
   transitions: optional(TransitionsSchema),
@@ -181,48 +179,48 @@ export const StateSchema = union([PlaybackStateSchema, GlobalStateSchema]);
 export const StatesSchema = array(StateSchema);
 
 export const PointerUpSchema = object({
-  type: string('PointerUp'),
+  type: literal('PointerUp'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const PointerDownSchema = object({
-  type: string('PointerDown'),
+  type: literal('PointerDown'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const PointerEnterSchema = object({
-  type: string('PointerEnter'),
+  type: literal('PointerEnter'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const PointerMoveSchema = object({
-  type: string('PointerMove'),
+  type: literal('PointerMove'),
   actions: array(ActionSchema),
 });
 
 export const PointerExitSchema = object({
-  type: string('PointerExit'),
+  type: literal('PointerExit'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const ClickSchema = object({
-  type: string('Click'),
+  type: literal('Click'),
   layerName: optional(string()),
   actions: array(ActionSchema),
 });
 
 export const OnCompleteSchema = object({
-  type: string('OnComplete'),
+  type: literal('OnComplete'),
   stateName: string(),
   actions: array(ActionSchema),
 });
 
 export const OnLoopCompleteSchema = object({
-  type: string('OnLoopComplete'),
+  type: literal('OnLoopComplete'),
   stateName: string(),
   actions: array(ActionSchema),
 });
@@ -240,25 +238,25 @@ export const InteractionSchema = union([
 export const InteractionsSchema = array(InteractionSchema);
 
 export const NumericInputSchema = object({
-  type: string('Numeric'),
+  type: literal('Numeric'),
   name: string(),
   value: number(),
 });
 
 export const StringInputSchema = object({
-  type: string('String'),
+  type: literal('String'),
   name: string(),
   value: string(),
 });
 
 export const BooleanInputSchema = object({
-  type: string('Boolean'),
+  type: literal('Boolean'),
   name: string(),
   value: boolean(),
 });
 
 export const EventInputSchema = object({
-  type: string('Event'),
+  type: literal('Event'),
   name: string(),
 });
 

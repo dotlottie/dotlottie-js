@@ -23,7 +23,6 @@ async function createStarRating() {
           {
             name: "global",
             type: "GlobalState",
-            animation: "",
             transitions: [
               {
                 type: "Transition",
