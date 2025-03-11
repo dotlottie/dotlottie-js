@@ -23,7 +23,6 @@ async function createStarRating() {
           {
             name: "global",
             type: "GlobalState",
-            animation: "",
             transitions: [
               {
                 type: "Transition",
@@ -137,6 +136,19 @@ async function createStarRating() {
                 type: "SetNumeric",
                 inputName: "rating",
                 value: 1
+              },
+              {
+                type: "SetTheme",
+                value: "air"
+              },
+              {
+                type: "FireCustomEvent",
+                value: "CustomEvent!"
+              },
+              {
+                type: "OpenUrl",
+                url: "https://www.lottiefiles.com",
+                target: "_blank"
               }
             ]
           },
@@ -856,7 +868,6 @@ async function createClickButton() {
         initial: "Start",
         states: [
           {
-            animation: "",
             type: "GlobalState",
             name: "Start",
             transitions: [
@@ -1069,6 +1080,398 @@ async function createLoader() {
     });
 }
 
+
+async function createFairy() {
+  const dotLottie = new DotLottie();
+
+  await dotLottie
+    .addAnimation({
+      id: 'fairy',
+      url: 'https://lottie.host/bcac9d8b-3fd8-4e95-9351-6a2323f741cb/dUFIHfi40C.json',
+    })
+    .addStateMachine({
+      id: "fairy",
+      name: "fairy",
+      data: {
+        "initial": "Idle",
+        "states": [
+          {
+            "name": "global",
+            "type": "GlobalState",
+            "animation": "",
+            "transitions": [
+              {
+                "type": "Tweened",
+                "toState": "Idle",
+                "duration": 0.5,
+                "easing": [
+                  0.76,
+                  0.0,
+                  0.24,
+                  1.0
+                ],
+                "guards": [
+                  {
+                    "type": "Event",
+                    "inputName": "Idle"
+                  }
+                ]
+              },
+              {
+                "type": "Tweened",
+                "toState": "Run",
+                "duration": 0.5,
+                "easing": [
+                  0.76,
+                  0.0,
+                  0.24,
+                  1.0
+                ],
+                "guards": [
+                  {
+                    "type": "Event",
+                    "inputName": "Run"
+                  }
+                ]
+              },
+              {
+                "type": "Tweened",
+                "toState": "Jump",
+                "duration": 0.5,
+                "easing": [
+                  0.76,
+                  0.0,
+                  0.24,
+                  1.0
+                ],
+                "guards": [
+                  {
+                    "type": "Event",
+                    "inputName": "Jump"
+                  }
+                ]
+              },
+              {
+                "type": "Tweened",
+                "toState": "Dodge",
+                "duration": 0.5,
+                "easing": [
+                  0.76,
+                  0.0,
+                  0.24,
+                  1.0
+                ],
+                "guards": [
+                  {
+                    "type": "Event",
+                    "inputName": "Dodge"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "PlaybackState",
+            "name": "Idle",
+            "animation": "",
+            "autoplay": true,
+            "loop": true,
+            "segment": "Idle",
+            "transitions": []
+          },
+          {
+            "type": "PlaybackState",
+            "name": "Run",
+            "animation": "",
+            "autoplay": true,
+            "loop": true,
+            "segment": "Run",
+            "transitions": []
+          },
+          {
+            "type": "PlaybackState",
+            "name": "Jump",
+            "animation": "",
+            "autoplay": true,
+            "segment": "Jump",
+            "transitions": []
+          },
+          {
+            "type": "PlaybackState",
+            "name": "Dodge",
+            "animation": "",
+            "autoplay": true,
+            "loop": false,
+            "segment": "Dodge",
+            "transitions": []
+          },
+          {
+            "type": "PlaybackState",
+            "name": "star_5",
+            "animation": "",
+            "autoplay": true,
+            "segment": "star_5",
+            "transitions": []
+          }
+        ],
+        "inputs": [
+          {
+            "type": "Event",
+            "name": "Idle"
+          },
+          {
+            "type": "Event",
+            "name": "Run"
+          },
+          {
+            "type": "Event",
+            "name": "Jump"
+          },
+          {
+            "type": "Event",
+            "name": "Dodge"
+          }
+        ],
+        "interactions": []
+      }
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then((value) => {
+      fs.writeFileSync('fairy.lottie', Buffer.from(value));
+    });
+}
+
+async function createTweenedSmileySlider() {
+  const dotLottie = new DotLottie();
+
+  await dotLottie
+    .addAnimation({
+      id: 'smiley_slider',
+      url: 'https://lottie.host/285601bf-385c-40f8-92b6-1937d2b3abe5/7XOxzsu1Qz.json',
+    })
+    .addStateMachine({
+      id: "smiley_slider",
+      name: "smiley_slider",
+      data: {
+        "initial": "star_1",
+        "states": [
+          {
+            "name": "global",
+            "type": "GlobalState",
+            "animation": "",
+            "transitions": [
+              {
+                "type": "Tweened",
+                "toState": "star_1",
+                "duration": 2.0,
+                "easing": [
+                  0.76,
+                  0.0,
+                  0.24,
+                  1.0
+                ],
+                "guards": [
+                  {
+                    "type": "Numeric",
+                    "conditionType": "Equal",
+                    "inputName": "rating",
+                    "compareTo": 1
+                  }
+                ]
+              },
+              {
+                "type": "Tweened",
+                "toState": "star_2",
+                "duration": 2.0,
+                "easing": [
+                  0.76,
+                  0.0,
+                  0.24,
+                  1.0
+                ],
+                "guards": [
+                  {
+                    "type": "Numeric",
+                    "conditionType": "Equal",
+                    "inputName": "rating",
+                    "compareTo": 2
+                  }
+                ]
+              },
+              {
+                "type": "Tweened",
+                "toState": "star_3",
+                "duration": 2.0,
+                "easing": [
+                  0.76,
+                  0.0,
+                  0.24,
+                  1.0
+                ],
+                "guards": [
+                  {
+                    "type": "Numeric",
+                    "conditionType": "Equal",
+                    "inputName": "rating",
+                    "compareTo": 3
+                  }
+                ]
+              },
+              {
+                "type": "Transition",
+                "toState": "star_4",
+                "guards": [
+                  {
+                    "type": "Numeric",
+                    "conditionType": "Equal",
+                    "inputName": "rating",
+                    "compareTo": 4
+                  }
+                ]
+              },
+              {
+                "type": "Transition",
+                "toState": "star_5",
+                "guards": [
+                  {
+                    "type": "Numeric",
+                    "conditionType": "Equal",
+                    "inputName": "rating",
+                    "compareTo": 5
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "PlaybackState",
+            "name": "star_1",
+            "animation": "",
+            "autoplay": false,
+            "loop": false,
+            "segment": "angry",
+            "transitions": [],
+          },
+          {
+            "type": "PlaybackState",
+            "name": "star_2",
+            "animation": "",
+            "autoplay": false,
+            "loop": false,
+            "segment": "sad",
+            "transitions": [],
+          },
+          {
+            "type": "PlaybackState",
+            "name": "star_3",
+            "animation": "",
+            "autoplay": false,
+            "loop": false,
+            "segment": "mourn",
+            "transitions": [],
+          },
+          {
+            "type": "PlaybackState",
+            "name": "star_4",
+            "animation": "",
+            "autoplay": false,
+            "loop": false,
+            "segment": "wink",
+            "transitions": [],
+          },
+          {
+            "type": "PlaybackState",
+            "name": "star_5",
+            "animation": "",
+            "autoplay": false,
+            "loop": false,
+            "segment": "laughing",
+            "transitions": [],
+          }
+        ],
+        "interactions": [
+          {
+            "type": "PointerDown",
+            "layerName": "angry",
+            "actions": [
+              {
+                "type": "SetNumeric",
+                "inputName": "rating",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "type": "PointerDown",
+            "layerName": "sad",
+            "actions": [
+              {
+                "type": "SetNumeric",
+                "inputName": "rating",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "type": "PointerDown",
+            "layerName": "mourn",
+            "actions": [
+              {
+                "type": "SetNumeric",
+                "inputName": "rating",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "type": "PointerDown",
+            "layerName": "wink",
+            "actions": [
+              {
+                "type": "SetNumeric",
+                "inputName": "rating",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "type": "PointerDown",
+            "layerName": "laughing",
+            "actions": [
+              {
+                "type": "SetNumeric",
+                "inputName": "rating",
+                "value": 5
+              }
+            ]
+          }
+        ],
+        "inputs": [
+          {
+            "type": "Numeric",
+            "name": "rating",
+            "value": 0
+          },
+          {
+            "type": "Numeric",
+            "name": "Progress",
+            "value": 0.0
+          }
+        ]
+      }
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then((value) => {
+      fs.writeFileSync('sm_smiley_slider.lottie', Buffer.from(value));
+    });
+}
+
 createStarRating();
 createSyncToCursor();
 createHoverButton();
@@ -1079,3 +1482,5 @@ createHoldButton();
 createClickButton();
 createInteractiveStats();
 createLoader();
+createFairy();
+createTweenedSmileySlider();

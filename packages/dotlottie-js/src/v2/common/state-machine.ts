@@ -15,7 +15,7 @@ import type {
   ManifestStateMachine,
   DotLottieInteractions,
 } from './schemas';
-import { InteractionsSchema, StatesSchema, ActionSchema, TransitionsSchema, InputsSchema } from './schemas';
+import { InteractionsSchema, StatesSchema, TransitionsSchema, InputsSchema } from './schemas';
 
 export interface DotLottieStateMachineCommonOptions extends ManifestStateMachine {
   data: DotLottieStateMachine;
@@ -140,7 +140,7 @@ export class DotLottieStateMachineCommon {
     const result = safeParse(StatesSchema, states);
 
     if (!result.success) {
-      const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
+      const error = `${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
       throw new DotLottieError(`Invalid initial state: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
@@ -162,16 +162,9 @@ export class DotLottieStateMachineCommon {
     const result = safeParse(StatesSchema, states);
 
     if (!result.success) {
-      const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
+      const error = `${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
-      throw new DotLottieError(`Invalid states: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
-    }
-
-    // loop over every transition and validate it
-    for (const state of states) {
-      if (state.transitions) {
-        this._requireValidTransitions(state.transitions);
-      }
+      throw new DotLottieError(`Invalid states declaration: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 
@@ -179,33 +172,17 @@ export class DotLottieStateMachineCommon {
     const result = safeParse(InputsSchema, inputs);
 
     if (!result.success) {
-      const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
+      const error = `${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
-      throw new DotLottieError(`Invalid context variables: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
+      throw new DotLottieError(`Invalid inputs: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
   }
 
   protected _requireValidInteractions(interactions: DotLottieInteractions): void {
     const result = safeParse(InteractionsSchema, interactions);
 
-    for (const interaction of interactions) {
-      for (const action of interaction.actions) {
-        const actionResult = safeParse(ActionSchema, action);
-
-        if (!actionResult.success) {
-          const error = `Invalid state machine declaration, ${JSON.stringify(
-            flatten(actionResult.issues).nested,
-            null,
-            2,
-          )}`;
-
-          throw new DotLottieError(`Invalid interaction actions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
-        }
-      }
-    }
-
     if (!result.success) {
-      const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
+      const error = `${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
       throw new DotLottieError(`Invalid interactions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
@@ -215,7 +192,7 @@ export class DotLottieStateMachineCommon {
     const result = safeParse(TransitionsSchema, transitions);
 
     if (!result.success) {
-      const error = `Invalid state machine declaration, ${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
+      const error = `${JSON.stringify(flatten(result.issues).nested, null, 2)}`;
 
       throw new DotLottieError(`Invalid transitions: ${error}`, ErrorCodes.INVALID_STATEMACHINE);
     }
