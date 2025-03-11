@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.3.0
+
+### Minor Changes
+
+- 4287478: added tweened transitions to state machine schema
+
 ## 1.2.0
 
 ### Minor Changes
