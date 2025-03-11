@@ -58,6 +58,7 @@ describe('LottieStateMachine', () => {
           {
             name: 'test',
             type: 'PlaybackState',
+            animation: '',
             mode: 'Forward',
             autoplay: true,
           },
