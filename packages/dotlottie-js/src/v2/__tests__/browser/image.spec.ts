@@ -323,14 +323,14 @@ describe('LottieImage', () => {
   it('Returns all image assets from a dotLottie file.', async () => {
     const dotLottie = new DotLottie();
 
-    await dotLottie.fromArrayBuffer(bulkImages).then(async (value) => {
-      const buffer = new Uint8Array(await value.toArrayBuffer());
+    const value = await dotLottie.fromArrayBuffer(bulkImages);
 
-      const images = await getImages(buffer);
+    const buffer = new Uint8Array(await value.toArrayBuffer());
 
-      const keys = Object.keys(images);
+    const images = await getImages(buffer);
 
-      expect(keys.length).toBe(2295);
-    });
+    const keys = Object.keys(images);
+
+    expect(keys.length).toBe(2295);
   });
 });
