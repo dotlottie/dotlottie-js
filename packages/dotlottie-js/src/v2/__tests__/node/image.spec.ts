@@ -15,7 +15,6 @@ import DUPES_DATA from '../../../__tests__/__fixtures__/image-asset-optimization
 import SIMPLE_IMAGE_ANIMATION from '../../../__tests__/__fixtures__/image-asset-optimization/simple-image-animation.json';
 import AUDIO_TEST from '../../../__tests__/__fixtures__/mimetype-tests/mp-3-test.txt?raw';
 import SVG_XML_TEST from '../../../__tests__/__fixtures__/mimetype-tests/svg-xml-test.txt?raw';
-import bulkImages from '../../../__tests__/__fixtures__/simple/bulk-images.lottie?arraybuffer';
 import VIDEO_DOTLOTTIE from '../../../__tests__/__fixtures__/simple/video-embedded.lottie?arraybuffer';
 import { getImages, getMimeTypeFromBase64 } from '../../../utils';
 import { DotLottie, LottieImage } from '../../index.node';
@@ -323,14 +322,17 @@ describe('LottieImage', () => {
   it('Returns all image assets from a dotLottie file.', async () => {
     const dotLottie = new DotLottie();
 
-    const value = await dotLottie.fromArrayBuffer(bulkImages);
+    dotLottie.addAnimation({
+      id: 'animation_1',
+      data: structuredClone(DUPES_DATA) as unknown as AnimationType,
+    });
 
-    const buffer = new Uint8Array(await value.toArrayBuffer());
+    const buffer = new Uint8Array(await dotLottie.toArrayBuffer());
 
     const images = await getImages(buffer);
 
     const keys = Object.keys(images);
 
-    expect(keys.length).toBe(2295);
+    expect(keys.length).toBe(5);
   });
 });
