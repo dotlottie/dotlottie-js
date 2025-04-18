@@ -278,7 +278,7 @@ export class DotLottie extends DotLottieCommon {
               const stateId = /s\/(.+)\.json/u.exec(key)?.[1];
 
               if (!stateId) {
-                throw new DotLottieError('Invalid theme id');
+                throw new DotLottieError('Invalid statemachine id');
               }
 
               manifest.stateMachines?.forEach((stateMachine) => {

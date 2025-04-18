@@ -469,7 +469,7 @@ export async function loadFromURL(src: string): Promise<Uint8Array> {
  * ```typescript
  * const dotLottie = new Uint8Array(...);
  * const filename = 'alarm.mp3';
- * const imageData = await getAudio(dotLottie, filename);
+ * const audioData = await getAudio(dotLottie, filename);
  * ```
  *
  * @public
@@ -653,6 +653,21 @@ export async function getImage(
   return dataUrlFromU8(unzipped);
 }
 
+const extractImageId = (path: string): string | undefined => {
+  const segments = path.split('/');
+
+  if (segments.length < 2) return undefined;
+
+  // Get the last segment which should be the filename
+  const filename = segments[segments.length - 1];
+
+  if (!filename) return undefined;
+
+  const [imageName] = filename.split('.');
+
+  return imageName || undefined;
+};
+
 /**
  * Retrieves all images from the given dotLottie object.
  *
@@ -692,9 +707,9 @@ export async function getImages(dotLottie: Uint8Array, filter?: UnzipFileFilter)
   for (const imagePath in unzippedImages) {
     const unzippedImage = unzippedImages[imagePath];
 
-    if (unzippedImage instanceof Uint8Array) {
-      const imageId = imagePath.replace(imagePath, '');
+    const imageId = extractImageId(imagePath);
 
+    if (imageId && unzippedImage instanceof Uint8Array) {
       images[imageId] = await dataUrlFromU8(unzippedImage);
     }
   }
