@@ -16,7 +16,7 @@ import SIMPLE_IMAGE_ANIMATION from '../../../__tests__/__fixtures__/image-asset-
 import AUDIO_TEST from '../../../__tests__/__fixtures__/mimetype-tests/mp-3-test.txt?raw';
 import SVG_XML_TEST from '../../../__tests__/__fixtures__/mimetype-tests/svg-xml-test.txt?raw';
 import VIDEO_DOTLOTTIE from '../../../__tests__/__fixtures__/simple/video-embedded.lottie?arraybuffer';
-import { getMimeTypeFromBase64 } from '../../../utils';
+import { getMimeTypeFromBase64, getImages } from '../../../utils';
 import { DotLottie, LottieImage } from '../../index.browser';
 
 describe('LottieImage', () => {
@@ -317,5 +317,22 @@ describe('LottieImage', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
+  });
+
+  it('Returns all image assets from a dotLottie file.', async () => {
+    const dotLottie = new DotLottie();
+
+    dotLottie.addAnimation({
+      id: 'animation_1',
+      data: structuredClone(DUPES_DATA) as unknown as AnimationType,
+    });
+
+    const buffer = new Uint8Array(await dotLottie.toArrayBuffer());
+
+    const images = await getImages(buffer);
+
+    const keys = Object.keys(images);
+
+    expect(keys.length).toBe(5);
   });
 });
