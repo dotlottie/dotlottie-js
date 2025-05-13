@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 1.3.1
+
+### Patch Changes
+
+- 65dc3c0: imageId fix in getImages util function
+- dfea96e: fix: add VectorRule and VectorKeyframe schemas to theme
+
 ## 1.3.0
 
 ### Minor Changes
