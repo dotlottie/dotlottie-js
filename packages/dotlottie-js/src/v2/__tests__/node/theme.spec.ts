@@ -51,7 +51,7 @@ describe('LottieTheme', () => {
     });
 
     it('should create a theme with color rule', () => {
-      const themeOptions = {
+      const theme = new LottieTheme({
         id: 'theme-with-color',
         data: {
           rules: [
@@ -62,15 +62,16 @@ describe('LottieTheme', () => {
             },
           ],
         },
-      };
-
-      const theme = new LottieTheme(themeOptions);
+      });
 
       expect(theme.id).toBe('theme-with-color');
       expect(theme.data.rules).toHaveLength(1);
-      expect(theme.data.rules[0].id).toBe('color-rule');
-      expect(theme.data.rules[0].type).toBe('Color');
-      expect(theme.data.rules[0].value).toEqual([1, 0, 0, 1]);
+      expect(theme.data.rules[0]?.id).toBe('color-rule');
+
+      const rule = theme.data.rules[0] as { type: 'Color'; value: number[] };
+
+      expect(rule.type).toBe('Color');
+      expect(rule.value).toEqual([1, 0, 0, 1]);
     });
   });
 
@@ -91,8 +92,10 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Color');
-        expect(theme.data.rules[0].value).toEqual([0.5, 0.4, 0.3, 1]);
+        const rule = theme.data.rules[0] as { type: 'Color'; value: number[] };
+
+        expect(rule.type).toBe('Color');
+        expect(rule.value).toEqual([0.5, 0.4, 0.3, 1]);
       });
 
       it('creates a theme with a Color rule and keyframes', () => {
@@ -120,10 +123,12 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Color');
-        expect(theme.data.rules[0].keyframes).toHaveLength(2);
-        expect(theme.data.rules[0].keyframes?.[0].frame).toBe(0);
-        expect(theme.data.rules[0].keyframes?.[1].value).toEqual([0, 1, 0, 1]);
+        const rule = theme.data.rules[0] as { keyframes: Array<{ frame: number; value: number[] }>; type: 'Color' };
+
+        expect(rule.type).toBe('Color');
+        expect(rule.keyframes).toHaveLength(2);
+        expect(rule.keyframes[0]?.frame).toBe(0);
+        expect(rule.keyframes[1]?.value).toEqual([0, 1, 0, 1]);
       });
 
       it('creates a theme with a Color rule and expression', () => {
@@ -140,8 +145,10 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Color');
-        expect(theme.data.rules[0].expression).toBe('rgb(255, 0, 0)');
+        const rule = theme.data.rules[0] as { expression: string; type: 'Color' };
+
+        expect(rule.type).toBe('Color');
+        expect(rule.expression).toBe('rgb(255, 0, 0)');
       });
     });
 
@@ -161,8 +168,10 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Scalar');
-        expect(theme.data.rules[0].value).toBe(42);
+        const rule = theme.data.rules[0] as { type: 'Scalar'; value: number };
+
+        expect(rule.type).toBe('Scalar');
+        expect(rule.value).toBe(42);
       });
 
       it('creates a theme with a Scalar rule and keyframes', () => {
@@ -189,11 +198,16 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Scalar');
-        expect(theme.data.rules[0].keyframes).toHaveLength(2);
-        expect(theme.data.rules[0].keyframes?.[0].frame).toBe(0);
-        expect(theme.data.rules[0].keyframes?.[1].value).toBe(50);
-        expect(theme.data.rules[0].keyframes?.[1].hold).toBe(true);
+        const rule = theme.data.rules[0] as {
+          keyframes: Array<{ frame: number; hold?: boolean; value: number }>;
+          type: 'Scalar';
+        };
+
+        expect(rule.type).toBe('Scalar');
+        expect(rule.keyframes).toHaveLength(2);
+        expect(rule.keyframes[0]?.frame).toBe(0);
+        expect(rule.keyframes[1]?.value).toBe(50);
+        expect(rule.keyframes[1]?.hold).toBe(true);
       });
 
       it('creates a theme with a Scalar rule and expression', () => {
@@ -210,8 +224,10 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Scalar');
-        expect(theme.data.rules[0].expression).toBe('time * 2');
+        const rule = theme.data.rules[0] as { expression: string; type: 'Scalar' };
+
+        expect(rule.type).toBe('Scalar');
+        expect(rule.expression).toBe('time * 2');
       });
     });
 
@@ -243,11 +259,17 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Position');
-        expect(theme.data.rules[0].keyframes).toHaveLength(2);
-        expect(theme.data.rules[0].keyframes?.[0].value).toEqual([100, 200]);
-        expect(theme.data.rules[0].keyframes?.[1].valueInTangent).toBe(0.5);
-        expect(theme.data.rules[0].split).toBe(true);
+        const rule = theme.data.rules[0] as {
+          keyframes: Array<{ frame: number; value: number[]; valueInTangent?: number }>;
+          split?: boolean;
+          type: 'Position';
+        };
+
+        expect(rule.type).toBe('Position');
+        expect(rule.keyframes).toHaveLength(2);
+        expect(rule.keyframes[0]?.value).toEqual([100, 200]);
+        expect(rule.keyframes[1]?.valueInTangent).toBe(0.5);
+        expect(rule.split).toBe(true);
       });
 
       it('creates a theme with a Position rule and expression', () => {
@@ -264,8 +286,10 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Position');
-        expect(theme.data.rules[0].expression).toBe('[100 + time, 200 + time]');
+        const rule = theme.data.rules[0] as { expression: string; type: 'Position' };
+
+        expect(rule.type).toBe('Position');
+        expect(rule.expression).toBe('[100 + time, 200 + time]');
       });
     });
 
@@ -285,8 +309,10 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Vector');
-        expect(theme.data.rules[0].value).toEqual([10, 20, 30]);
+        const rule = theme.data.rules[0] as { type: 'Vector'; value: number[] };
+
+        expect(rule.type).toBe('Vector');
+        expect(rule.value).toEqual([10, 20, 30]);
       });
 
       it('creates a theme with a Vector rule and keyframes', () => {
@@ -313,10 +339,19 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Vector');
-        expect(theme.data.rules[0].keyframes).toHaveLength(2);
-        expect(theme.data.rules[0].keyframes?.[0].value).toEqual([10, 20]);
-        expect(theme.data.rules[0].keyframes?.[1].inTangent?.x).toEqual([1, 2]);
+        const rule = theme.data.rules[0] as {
+          keyframes: Array<{
+            frame: number;
+            inTangent?: { x: number | number[]; y: number | number[] };
+            value: number[];
+          }>;
+          type: 'Vector';
+        };
+
+        expect(rule.type).toBe('Vector');
+        expect(rule.keyframes).toHaveLength(2);
+        expect(rule.keyframes[0]?.value).toEqual([10, 20]);
+        expect(rule.keyframes[1]?.inTangent?.x).toEqual([1, 2]);
       });
     });
 
@@ -341,11 +376,21 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Image');
-        expect(theme.data.rules[0].value.id).toBe('image1');
-        expect(theme.data.rules[0].value.width).toBe(200);
-        expect(theme.data.rules[0].value.height).toBe(150);
-        expect(theme.data.rules[0].value.url).toBe('https://example.com/image.png');
+        const rule = theme.data.rules[0] as {
+          type: 'Image';
+          value: {
+            height?: number;
+            id?: string;
+            url?: string;
+            width?: number;
+          };
+        };
+
+        expect(rule.type).toBe('Image');
+        expect(rule.value.id).toBe('image1');
+        expect(rule.value.width).toBe(200);
+        expect(rule.value.height).toBe(150);
+        expect(rule.value.url).toBe('https://example.com/image.png');
       });
 
       it('creates a theme with a minimal Image rule', () => {
@@ -362,8 +407,10 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Image');
-        expect(theme.data.rules[0].value).toEqual({});
+        const rule = theme.data.rules[0] as { type: 'Image'; value: Record<string, unknown> };
+
+        expect(rule.type).toBe('Image');
+        expect(rule.value).toEqual({});
       });
     });
 
@@ -392,10 +439,15 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Gradient');
-        expect(theme.data.rules[0].value).toHaveLength(2);
-        expect(theme.data.rules[0].value?.[0].color).toEqual([1, 0, 0, 1]);
-        expect(theme.data.rules[0].value?.[1].offset).toBe(1);
+        const rule = theme.data.rules[0] as {
+          type: 'Gradient';
+          value: Array<{ color: number[]; offset: number }>;
+        };
+
+        expect(rule.type).toBe('Gradient');
+        expect(rule.value).toHaveLength(2);
+        expect(rule.value[0]?.color).toEqual([1, 0, 0, 1]);
+        expect(rule.value[1]?.offset).toBe(1);
       });
 
       it('creates a theme with a Gradient rule and keyframes', () => {
@@ -439,10 +491,18 @@ describe('LottieTheme', () => {
           },
         });
 
-        expect(theme.data.rules[0].type).toBe('Gradient');
-        expect(theme.data.rules[0].keyframes).toHaveLength(2);
-        expect(theme.data.rules[0].keyframes?.[0].value).toHaveLength(2);
-        expect(theme.data.rules[0].keyframes?.[1].value[0].color).toEqual([0, 0, 1, 1]);
+        const rule = theme.data.rules[0] as {
+          keyframes: Array<{
+            frame: number;
+            value: Array<{ color: number[]; offset: number }>;
+          }>;
+          type: 'Gradient';
+        };
+
+        expect(rule.type).toBe('Gradient');
+        expect(rule.keyframes).toHaveLength(2);
+        expect(rule.keyframes[0]?.value).toHaveLength(2);
+        expect(rule.keyframes[1]?.value[0]?.color).toEqual([0, 0, 1, 1]);
       });
     });
 
@@ -476,9 +536,13 @@ describe('LottieTheme', () => {
         });
 
         expect(theme.data.rules).toHaveLength(3);
-        expect(theme.data.rules[0].type).toBe('Color');
-        expect(theme.data.rules[1].type).toBe('Scalar');
-        expect(theme.data.rules[2].type).toBe('Position');
+        const colorRule = theme.data.rules[0] as { type: 'Color' };
+        const scalarRule = theme.data.rules[1] as { type: 'Scalar' };
+        const positionRule = theme.data.rules[2] as { type: 'Position' };
+
+        expect(colorRule.type).toBe('Color');
+        expect(scalarRule.type).toBe('Scalar');
+        expect(positionRule.type).toBe('Position');
       });
 
       it('creates a theme with rules that have animations specified', () => {
@@ -502,8 +566,11 @@ describe('LottieTheme', () => {
         });
 
         expect(theme.data.rules).toHaveLength(2);
-        expect(theme.data.rules[0].animations).toEqual(['animation1', 'animation2']);
-        expect(theme.data.rules[1].animations).toBeUndefined();
+        const rule1 = theme.data.rules[0] as { animations?: string[] };
+        const rule2 = theme.data.rules[1] as { animations?: string[] };
+
+        expect(rule1.animations).toEqual(['animation1', 'animation2']);
+        expect(rule2.animations).toBeUndefined();
       });
     });
   });
@@ -547,7 +614,7 @@ describe('LottieTheme', () => {
         rules: [
           {
             id: 'scalar-rule',
-            type: 'Scalar',
+            type: 'Scalar' as const,
             value: 42,
           },
         ],
@@ -578,7 +645,7 @@ describe('LottieTheme', () => {
         rules: [
           {
             id: 'color-rule',
-            type: 'Color',
+            type: 'Color' as const,
             value: [0, 0, 1, 1],
           },
         ],
