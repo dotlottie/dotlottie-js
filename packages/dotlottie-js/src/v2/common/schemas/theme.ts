@@ -55,6 +55,19 @@ const PositionRuleSchema = object({
   expression: optional(string()),
 });
 
+const VectorKeyframeSchema = object({
+  ...BaseKeyframeSchema,
+  value: array(number()),
+});
+
+const VectorRuleSchema = object({
+  ...BaseRuleSchema,
+  type: literal('Vector'),
+  value: optional(array(number())),
+  keyframes: optional(array(VectorKeyframeSchema)),
+  expression: optional(string()),
+});
+
 const ColorRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Color'),
@@ -98,7 +111,14 @@ const GradientRuleSchema = object({
   keyframes: optional(array(GradientKeyframeSchema)),
 });
 
-const RuleSchema = union([ColorRuleSchema, ScalarRuleSchema, PositionRuleSchema, ImageRuleSchema, GradientRuleSchema]);
+const RuleSchema = union([
+  ColorRuleSchema,
+  ScalarRuleSchema,
+  PositionRuleSchema,
+  VectorRuleSchema,
+  ImageRuleSchema,
+  GradientRuleSchema,
+]);
 
 export const RulesSchema = array(RuleSchema);
 
