@@ -155,6 +155,7 @@ export const PlaybackStateSchema = object({
   type: literal('PlaybackState'),
   animation: string(),
   loop: optional(boolean()),
+  loopCount: optional(number()),
   autoplay: optional(boolean()),
   final: optional(boolean()),
   mode: optional(Modes),
