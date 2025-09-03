@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.4.0
+
+### Minor Changes
+
+- 4011cc4: adds loopCount to playback config
+
 ## 1.3.1
 
 ### Patch Changes
