@@ -23,6 +23,7 @@ import type { Manifest } from '../common/schemas';
 
 import { LottieAnimation } from './animation';
 import { LottieAudio } from './audio';
+import { LottieFont } from './font';
 import { LottieImage } from './image';
 import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
 
@@ -143,6 +144,14 @@ export class DotLottie extends DotLottieCommon {
 
         dotlottie[`u/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
       }
+
+      const fontAssets = animation.fontAssets;
+
+      for (const font of fontAssets) {
+        const dataAsString = await font.toDataURL();
+
+        dotlottie[`f/${font.fileName}`] = [base64ToUint8Array(dataAsString), font.zipOptions];
+      }
     }
 
     for (const theme of this.themes) {
@@ -165,7 +174,7 @@ export class DotLottie extends DotLottieCommon {
           return;
         }
 
-        resolve(data.buffer);
+        resolve(data.buffer as ArrayBuffer);
       });
     });
 
@@ -200,6 +209,7 @@ export class DotLottie extends DotLottieCommon {
 
       const tmpImages = [];
       const tmpAudio = [];
+      const tmpFonts = [];
 
       if (contentObj['manifest.json'] instanceof Uint8Array) {
         // valid buffer
@@ -274,6 +284,26 @@ export class DotLottie extends DotLottieCommon {
                   fileName: key.split('/')[1] || '',
                 }),
               );
+            } else if (key.startsWith('f/')) {
+              // extract fontId from key as the key = `f/${fontId}.${ext}`
+              const fontId = /f\/(.+)\./u.exec(key)?.[1];
+
+              if (!fontId) {
+                throw new DotLottieError('Invalid font id');
+              }
+
+              let decodedFont = btoa(decodedStr);
+
+              const ext = await getExtensionTypeFromBase64(decodedFont);
+
+              decodedFont = `data:font/${ext};base64,${decodedFont}`;
+              tmpFonts.push(
+                new LottieFont({
+                  id: fontId,
+                  data: decodedFont,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
             } else if (key.startsWith('t/') && key.endsWith('.json')) {
               // extract themeId from key as the key = `t/${themeId}.json`
               const themeId = /t\/(.+)\.json/u.exec(key)?.[1];
@@ -344,6 +374,23 @@ export class DotLottie extends DotLottieCommon {
                         audio.parentAnimations.push(parentAnimation);
                         parentAnimation.audioAssets.push(audio);
                       }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          for (const font of tmpFonts) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const fontsList = parentAnimation.data.fonts?.list;
+
+                if (fontsList) {
+                  for (const fontDef of fontsList) {
+                    if (fontDef.fPath === `/f/${font.fileName}`) {
+                      font.parentAnimations.push(parentAnimation);
+                      parentAnimation.fontAssets.push(font);
                     }
                   }
                 }

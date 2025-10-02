@@ -9,6 +9,7 @@ import type { AnimationData, ExportOptions } from '../../types';
 import { DotLottieError, isAudioAsset } from '../../utils';
 
 import type { LottieAudioCommon } from './audio';
+import type { LottieFontCommon } from './font';
 import type { LottieImageCommon } from './image';
 import type { ManifestAnimation } from './schemas';
 import type { LottieThemeCommon } from './theme';
@@ -37,6 +38,8 @@ export class LottieAnimationCommon {
   protected _imageAssets: LottieImageCommon[] = [];
 
   protected _audioAssets: LottieAudioCommon[] = [];
+
+  protected _fontAssets: LottieFontCommon[] = [];
 
   protected _themesMap: Map<string, LottieThemeCommon> = new Map();
 
@@ -133,6 +136,14 @@ export class LottieAnimationCommon {
     this._audioAssets = audioAssets;
   }
 
+  public get fontAssets(): LottieFontCommon[] {
+    return this._fontAssets;
+  }
+
+  public set fontAssets(fontAssets: LottieFontCommon[]) {
+    this._fontAssets = fontAssets;
+  }
+
   public get data(): AnimationData | undefined {
     return this._data;
   }
@@ -190,6 +201,10 @@ export class LottieAnimationCommon {
     throw new DotLottieError('_extractAudioAssets(): Promise<boolean> method not implemented in concrete class');
   }
 
+  protected async _extractFontAssets(): Promise<boolean> {
+    throw new DotLottieError('_extractFontAssets(): Promise<boolean> method not implemented in concrete class');
+  }
+
   /**
    * Return the animation data as a blob.
    * @returns blob - The animation data as a Blob.
@@ -216,6 +231,10 @@ export class LottieAnimationCommon {
     }
 
     this._requireValidLottieData(this._data);
+
+    if (this._data.fonts?.list?.length) {
+      await this._extractFontAssets();
+    }
 
     if (this._data.assets?.length) {
       // Even if the user wants to inline the assets, we still need to extract them

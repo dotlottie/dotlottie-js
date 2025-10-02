@@ -10,6 +10,7 @@ import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../ut
 
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
+import type { LottieFontCommon } from './font';
 import type { LottieImageCommon } from './image';
 import type { DotLottiePlugin } from './plugin';
 import type { Manifest } from './schemas';
@@ -269,6 +270,68 @@ export class DotLottieCommon {
     }
   }
 
+  /**
+   * Renames the underlying LottieFont, as well as updating the font path inside the animation data.
+   * @param animation - The animation containing the font
+   * @param newFileName - desired new fileName (without extension),
+   * @param oldFileName - The current fileName of the LottieFont to rename
+   */
+  private async _renameFont(
+    animation: LottieAnimationCommon,
+    newFileName: string,
+    oldFileName: string,
+  ): Promise<void> {
+    for (const fontAsset of animation.fontAssets) {
+      if (fontAsset.fileName === oldFileName) {
+        // Rename font will change the fileName
+        await fontAsset.renameFont(newFileName);
+
+        if (!animation.data) throw new DotLottieError('No animation data available.');
+
+        const fontsList = animation.data.fonts?.list;
+
+        if (!fontsList) throw new DotLottieError('No font list to rename.');
+
+        for (const font of fontsList) {
+          if (font.fPath === `/f/${oldFileName}`) {
+            font.fPath = `/f/${fontAsset.fileName}`;
+          }
+        }
+      }
+    }
+  }
+
+  private async _renameFontAssets(): Promise<void> {
+    const fonts: Map<string, LottieFontCommon[]> = new Map();
+
+    this.animations.forEach((animation) => {
+      fonts.set(animation.id, animation.fontAssets);
+    });
+
+    let size = 0;
+
+    fonts.forEach((value) => {
+      size += value.length;
+    });
+
+    for (let i = this.animations.length - 1; i >= 0; i -= 1) {
+      const animation = this.animations.at(i);
+
+      if (animation) {
+        for (let j = animation.fontAssets.length - 1; j >= 0; j -= 1) {
+          const fontAsset = animation.fontAssets.at(j);
+
+          if (fontAsset) {
+            const oldFileName = fontAsset.fileName;
+
+            await this._renameFont(animation, `font_${size}`, oldFileName);
+            size -= 1;
+          }
+        }
+      }
+    }
+  }
+
   protected _addLottieAnimation(animation: LottieAnimationCommon): DotLottieCommon {
     if (this._animationsMap.get(animation.id)) {
       throw new DotLottieError('Duplicate animation id detected, aborting.');
@@ -291,6 +354,7 @@ export class DotLottieCommon {
 
     const images = this.getImages();
     const audios = this.getAudio();
+    const fonts = this.getFonts();
 
     for (const asset of animationAssets) {
       if (isImageAsset(asset)) {
@@ -309,6 +373,20 @@ export class DotLottieCommon {
             asset.e = 1;
             asset.u = '';
             asset.p = await audio.toDataURL();
+          }
+        }
+      }
+    }
+
+    // Inline fonts from fonts.list
+    const fontsList = animation.data?.fonts?.list;
+
+    if (fontsList) {
+      for (const fontDef of fontsList) {
+        for (const font of fonts) {
+          if (fontDef.fPath === `/f/${font.fileName}`) {
+            fontDef.fPath = await font.toDataURL();
+            fontDef.origin = 3;
           }
         }
       }
@@ -381,6 +459,16 @@ export class DotLottieCommon {
     return audio;
   }
 
+  public getFonts(): LottieFontCommon[] {
+    const fonts: LottieFontCommon[] = [];
+
+    this.animations.map((animation) => {
+      return fonts.push(...animation.fontAssets);
+    });
+
+    return fonts;
+  }
+
   public getTheme(themeId: string): LottieThemeCommon | undefined {
     return this._themesMap.get(themeId);
   }
@@ -443,6 +531,7 @@ export class DotLottieCommon {
       // Rename assets incrementally if there are multiple animations
       await this._renameImageAssets();
       await this._renameAudioAssets();
+      await this._renameFontAssets();
     }
 
     const parallelPlugins = [];
