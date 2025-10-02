@@ -276,11 +276,7 @@ export class DotLottieCommon {
    * @param newFileName - desired new fileName (without extension),
    * @param oldFileName - The current fileName of the LottieFont to rename
    */
-  private async _renameFont(
-    animation: LottieAnimationCommon,
-    newFileName: string,
-    oldFileName: string,
-  ): Promise<void> {
+  private async _renameFont(animation: LottieAnimationCommon, newFileName: string, oldFileName: string): Promise<void> {
     for (const fontAsset of animation.fontAssets) {
       if (fontAsset.fileName === oldFileName) {
         // Rename font will change the fileName

@@ -250,8 +250,8 @@ describe('LottieFont', () => {
 
         expect(fonts.length).toBe(2);
 
-        expect(fonts[0]?.fileName).toBe("Ubuntu Light Italic.ttf");
-        expect(fonts[1]?.fileName).toBe("cartoon.ttf");
+        expect(fonts[0]?.fileName).toBe('Ubuntu Light Italic.ttf');
+        expect(fonts[1]?.fileName).toBe('cartoon.ttf');
       });
   });
 
