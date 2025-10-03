@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.5.0
+
+### Minor Changes
+
+- 8702f38: feat: Add LottieFont support for handling font assets in dotLottie v2
+
 ## 1.4.0
 
 ### Minor Changes
