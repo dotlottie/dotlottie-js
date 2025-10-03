@@ -21,3 +21,4 @@ export interface ExportOptions {
 
 export type ImageData = string | ArrayBuffer | Blob;
 export type AudioData = string | ArrayBuffer | Blob;
+export type FontData = string | ArrayBuffer | Blob;

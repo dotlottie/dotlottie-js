@@ -4,11 +4,12 @@
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
-import { DotLottieError, getExtensionTypeFromBase64, isAudioAsset } from '../../utils';
+import { DotLottieError, getExtensionTypeFromBase64, isAudioAsset, isFontDataUrl } from '../../utils';
 import type { AnimationOptions } from '../common';
 import { LottieAnimationCommon } from '../common';
 
 import { LottieAudio } from './audio';
+import { LottieFont } from './font';
 import { LottieImage } from './image';
 
 export class LottieAnimation extends LottieAnimationCommon {
@@ -122,6 +123,49 @@ export class LottieAnimation extends LottieAnimationCommon {
         asset.p = fileName;
         asset.u = '/u/';
         asset.e = 0;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   *
+   * Extract font assets from the animation.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
+  protected override async _extractFontAssets(): Promise<boolean> {
+    if (!this._data) throw new DotLottieError('Failed to extract font assets: Animation data does not exist');
+
+    const fontsList = this._data.fonts?.list;
+
+    if (!fontsList) throw new DotLottieError('Failed to extract font assets: No fonts found inside animation');
+
+    for (const font of fontsList) {
+      if (font.fPath && isFontDataUrl(font.fPath)) {
+        const fontData = font.fPath;
+
+        let extType = null;
+        const fileType = await getExtensionTypeFromBase64(font.fPath);
+
+        if (fileType) {
+          extType = fileType;
+
+          const fileName = `${font.fName}.${extType}`;
+
+          this._fontAssets.push(
+            new LottieFont({
+              data: fontData,
+              id: font.fName,
+              fileName,
+              parentAnimations: [this],
+            }),
+          );
+
+          font.fPath = `/f/${fileName}`;
+          font.origin = 3;
+        }
       }
     }
 

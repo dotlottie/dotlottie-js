@@ -232,6 +232,50 @@ export function isAudioAsset(asset: Asset.Value): asset is Asset.Image {
 }
 
 /**
+ * Checks if a font path indicates a packaged font asset.
+ *
+ * @remarks
+ * This function accepts a font path string and determines whether it represents a font packaged within the .lottie file.
+ * It returns `true` if the path uses the `/f/` prefix for packaged fonts, `false` otherwise.
+ *
+ * @param fPath - The font path to check.
+ * @returns `true` if it's a packaged font, `false` otherwise.
+ *
+ * @example
+ * ```typescript
+ * const fontPath = '/f/roboto-bold.ttf';
+ * const isPackaged = isFontAsset(fontPath); // true
+ * ```
+ *
+ * @public
+ */
+export function isFontAsset(fPath: string): boolean {
+  return fPath.startsWith('/f/') || /\.(ttf|otf|woff|woff2)$/iu.test(fPath);
+}
+
+/**
+ * Checks if a font path is a data URI.
+ *
+ * @remarks
+ * This function accepts a font path string and determines whether it represents a data URI font.
+ * It returns `true` if the path is a data URI, `false` otherwise.
+ *
+ * @param fPath - The font path to check.
+ * @returns `true` if it's a data URI, `false` otherwise.
+ *
+ * @example
+ * ```typescript
+ * const fontPath = 'data:font/ttf;base64,AAEAAAANAIAAAwBQ...';
+ * const isDataUri = isFontDataUrl(fontPath); // true
+ * ```
+ *
+ * @public
+ */
+export function isFontDataUrl(fPath: string): boolean {
+  return typeof fPath === 'string' && fPath.startsWith('data:font/');
+}
+
+/**
  * Unzips the .lottie file.
  *
  * @remarks
