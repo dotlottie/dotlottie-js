@@ -11,6 +11,8 @@ import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../ut
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
 import type { LottieFontCommon } from './font';
+import type { GlobalVariablesOptions} from './global-variables';
+import { LottieGlobalVariablesCommon   } from './global-variables';
 import type { LottieImageCommon } from './image';
 import type { DotLottiePlugin } from './plugin';
 import type { Manifest } from './schemas';
@@ -32,6 +34,8 @@ export class DotLottieCommon {
   protected readonly _themesMap: Map<string, LottieThemeCommon> = new Map();
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
+
+  protected readonly _globalVariables: Map<string, LottieGlobalVariablesCommon> = new Map();
 
   protected _generator: string = PACKAGE_NAME;
 
@@ -103,6 +107,10 @@ export class DotLottieCommon {
 
   public get stateMachines(): DotLottieStateMachineCommon[] {
     return Array.from(this._stateMachinesMap.values());
+  }
+
+  public get globalVariables(): LottieGlobalVariablesCommon[] {
+    return Array.from(this._globalVariables.values());
   }
 
   /**
@@ -473,6 +481,7 @@ export class DotLottieCommon {
     const animationsList = Array.from(this._animationsMap.values());
     const themesList = Array.from(this._themesMap.values());
     const stateMachinesList = Array.from(this._stateMachinesMap.values());
+    const globalVariablesList = Array.from(this._globalVariables.values());
     const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
@@ -501,12 +510,20 @@ export class DotLottieCommon {
       }));
     }
 
+    if (this.globalVariables.length > 0) {
+      manifest.globalVariables = globalVariablesList.map((globalVar) => ({
+        id: globalVar.id,
+        ...(globalVar.name ? { name: globalVar.name } : {}),
+      }));
+    }
+
     if (activeAnimationId) {
       manifest.initial = {
         animation: activeAnimationId,
       };
     }
 
+    
     return manifest;
   }
 
@@ -635,6 +652,15 @@ export class DotLottieCommon {
 
         mergedDotlottie.addStateMachine(stateOption);
       });
+
+      dotlottie.globalVariables.forEach((variables) => {
+        mergedDotlottie.addGlobalVariables({
+          id: variables.id,
+          name: variables.name,
+          data: variables.data,
+          zipOptions: variables.zipOptions,
+        });
+      });
     }
 
     return mergedDotlottie;
@@ -702,6 +728,30 @@ export class DotLottieCommon {
 
   public getStateMachine(stateId: string): DotLottieStateMachineCommon | undefined {
     return this._stateMachinesMap.get(stateId);
+  }
+
+  public addGlobalVariables(bindingsOptions: GlobalVariablesOptions): DotLottieCommon {
+    const newBindings = new LottieGlobalVariablesCommon(bindingsOptions);
+
+    this._globalVariables.set(bindingsOptions.id, newBindings);
+
+    return this;
+  }
+
+  public getGlobalVariables(): LottieGlobalVariablesCommon[] {
+    const globalVariables: LottieGlobalVariablesCommon[] = [];
+    
+    this.globalVariables.map((gvs) => {
+      return globalVariables.push(gvs);
+    });
+
+
+    return globalVariables
+  }
+
+  // Returns the full file data
+  public getGlobalVariablesById(id: string): LottieGlobalVariablesCommon | undefined {
+    return this._globalVariables.get(id)
   }
 
   public removeStateMachine(stateMachineId: string): DotLottieCommon {

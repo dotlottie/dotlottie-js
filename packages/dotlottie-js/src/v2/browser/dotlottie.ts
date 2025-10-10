@@ -166,6 +166,12 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`s/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
     }
 
+    for (const variables of this.globalVariables) {
+      const globalVariablesString = variables.toString();
+
+      dotlottie[`v/${variables.id}.json`] = [strToU8(globalVariablesString), variables.zipOptions];
+    }
+
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
       zip(dotlottie, options?.zipOptions || {}, (err, data) => {
         if (err) {
@@ -338,6 +344,23 @@ export class DotLottie extends DotLottieCommon {
                   });
                 }
               });
+            } else if (key.startsWith('v/') && key.endsWith('.json')) {
+              const globalVariableFileId = /v\/(.+)\.json/u.exec(key)?.[1];
+
+              
+              if (!globalVariableFileId) {
+                throw new DotLottieError('Invalid global variables id');
+              }
+
+              manifest.globalVariables?.forEach((variable) => {
+                if (variable.id === globalVariableFileId) {
+                  dotlottie.addGlobalVariables({
+                    id: variable.id,
+                    data: JSON.parse(decodedStr),
+                    name: variable.name
+                  });                
+                }
+              });
             }
           }
 
@@ -399,6 +422,7 @@ export class DotLottie extends DotLottieCommon {
           }
         } catch (err) {
           if (err instanceof Error) {
+            
             throw new DotLottieError(`Invalid manifest inside buffer! ${err.message}`);
           }
         }

@@ -25,9 +25,16 @@ export const ManifestStateMachineSchema = object({
 });
 export type ManifestStateMachine = Output<typeof ManifestStateMachineSchema>;
 
+export const ManifestGlobalVariablesSchema = object({
+  id: string(),
+  name: optional(string()),
+});
+export type ManifestGlobalVariables = Output<typeof ManifestGlobalVariablesSchema>;
+
 export const InitialObjectSchema = object({
   animation: optional(string()),
   stateMachine: optional(string()),
+  globalVariables: optional(string()),
 });
 
 export const ManifestSchema = object({
@@ -37,6 +44,7 @@ export const ManifestSchema = object({
   animations: array(ManifestAnimationSchema),
   themes: optional(array(ManifestThemeSchema)),
   stateMachines: optional(array(ManifestStateMachineSchema)),
+  globalVariables: optional(array(ManifestGlobalVariablesSchema)),
 });
 
 export type Manifest = Output<typeof ManifestSchema>;

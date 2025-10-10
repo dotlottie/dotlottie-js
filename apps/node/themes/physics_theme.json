@@ -1,0 +1,9 @@
+{
+  "rules": [
+    { "id": "sq_l", "type": "Vector", "value": "@sq_l" },
+    { "id": "sq_r", "type": "Vector", "value": "@sq_r" },
+    { "id": "sq_l_rot", "type": "Scalar", "value": "@sq_l_rot" },
+    { "id": "sq_r_rot", "type": "Scalar", "value": "@sq_r_rot" },
+    { "id": "ball", "type": "Vector", "value": "@ball" }
+  ]
+}
