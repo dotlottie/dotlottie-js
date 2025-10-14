@@ -11,11 +11,11 @@ import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../ut
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
 import type { LottieFontCommon } from './font';
-import type { GlobalVariablesOptions} from './global-variables';
-import { LottieGlobalVariablesCommon   } from './global-variables';
+import type { GlobalInputsOptions} from './global-inputs';
+import { LottieGlobalInputsCommon } from './global-inputs';
 import type { LottieImageCommon } from './image';
 import type { DotLottiePlugin } from './plugin';
-import type { Manifest } from './schemas';
+import type {  Manifest } from './schemas';
 import type { DotLottieStateMachineCommonOptions } from './state-machine';
 import { DotLottieStateMachineCommon } from './state-machine';
 import type { ThemeOptions } from './theme';
@@ -35,7 +35,7 @@ export class DotLottieCommon {
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
 
-  protected readonly _globalVariables: Map<string, LottieGlobalVariablesCommon> = new Map();
+  protected readonly _globalInputs: Map<string, LottieGlobalInputsCommon> = new Map();
 
   protected _generator: string = PACKAGE_NAME;
 
@@ -109,8 +109,8 @@ export class DotLottieCommon {
     return Array.from(this._stateMachinesMap.values());
   }
 
-  public get globalVariables(): LottieGlobalVariablesCommon[] {
-    return Array.from(this._globalVariables.values());
+  public get globalInputs(): LottieGlobalInputsCommon[] {
+    return Array.from(this._globalInputs.values());
   }
 
   /**
@@ -481,7 +481,7 @@ export class DotLottieCommon {
     const animationsList = Array.from(this._animationsMap.values());
     const themesList = Array.from(this._themesMap.values());
     const stateMachinesList = Array.from(this._stateMachinesMap.values());
-    const globalVariablesList = Array.from(this._globalVariables.values());
+    const globalInputsList = Array.from(this._globalInputs.values());
     const activeAnimationId = animationsList.find((value) => value.defaultActiveAnimation)?.id ?? '';
 
     const manifest: Manifest = {
@@ -510,10 +510,10 @@ export class DotLottieCommon {
       }));
     }
 
-    if (this.globalVariables.length > 0) {
-      manifest.globalVariables = globalVariablesList.map((globalVar) => ({
-        id: globalVar.id,
-        ...(globalVar.name ? { name: globalVar.name } : {}),
+    if (this.globalInputs.length > 0) {
+      manifest.globalInputs = globalInputsList.map((globalInput) => ({
+        id: globalInput.id,
+        ...(globalInput.name ? { name: globalInput.name } : {}),
       }));
     }
 
@@ -653,8 +653,8 @@ export class DotLottieCommon {
         mergedDotlottie.addStateMachine(stateOption);
       });
 
-      dotlottie.globalVariables.forEach((variables) => {
-        mergedDotlottie.addGlobalVariables({
+      dotlottie.globalInputs.forEach((variables) => {
+        mergedDotlottie.addGlobalInputs({
           id: variables.id,
           name: variables.name,
           data: variables.data,
@@ -730,28 +730,28 @@ export class DotLottieCommon {
     return this._stateMachinesMap.get(stateId);
   }
 
-  public addGlobalVariables(bindingsOptions: GlobalVariablesOptions): DotLottieCommon {
-    const newBindings = new LottieGlobalVariablesCommon(bindingsOptions);
+  public addGlobalInputs(bindingsOptions: GlobalInputsOptions): DotLottieCommon {
+    const newBindings = new LottieGlobalInputsCommon(bindingsOptions);
 
-    this._globalVariables.set(bindingsOptions.id, newBindings);
+    this._globalInputs.set(bindingsOptions.id, newBindings);
 
     return this;
   }
 
-  public getGlobalVariables(): LottieGlobalVariablesCommon[] {
-    const globalVariables: LottieGlobalVariablesCommon[] = [];
+  public getGlobalInputs(): LottieGlobalInputsCommon[] {
+    const globalInputs: LottieGlobalInputsCommon[] = [];
     
-    this.globalVariables.map((gvs) => {
-      return globalVariables.push(gvs);
+    this.globalInputs.map((gis) => {
+      return globalInputs.push(gis);
     });
 
 
-    return globalVariables
+    return globalInputs
   }
 
   // Returns the full file data
-  public getGlobalVariablesById(id: string): LottieGlobalVariablesCommon | undefined {
-    return this._globalVariables.get(id)
+  public getGlobalInputsById(id: string): LottieGlobalInputsCommon | undefined {
+    return this._globalInputs.get(id)
   }
 
   public removeStateMachine(stateMachineId: string): DotLottieCommon {

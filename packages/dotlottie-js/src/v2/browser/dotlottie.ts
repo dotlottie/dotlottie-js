@@ -166,10 +166,10 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`s/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
     }
 
-    for (const variables of this.globalVariables) {
-      const globalVariablesString = variables.toString();
+    for (const inputs of this.globalInputs) {
+      const globalInputsString = inputs.toString();
 
-      dotlottie[`v/${variables.id}.json`] = [strToU8(globalVariablesString), variables.zipOptions];
+      dotlottie[`g/${inputs.id}.json`] = [strToU8(globalInputsString), inputs.zipOptions];
     }
 
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
@@ -344,17 +344,17 @@ export class DotLottie extends DotLottieCommon {
                   });
                 }
               });
-            } else if (key.startsWith('v/') && key.endsWith('.json')) {
-              const globalVariableFileId = /v\/(.+)\.json/u.exec(key)?.[1];
+            } else if (key.startsWith('g/') && key.endsWith('.json')) {
+              const globalInputFileId = /g\/(.+)\.json/u.exec(key)?.[1];
 
               
-              if (!globalVariableFileId) {
-                throw new DotLottieError('Invalid global variables id');
+              if (!globalInputFileId) {
+                throw new DotLottieError('Invalid global inputs id');
               }
 
-              manifest.globalVariables?.forEach((variable) => {
-                if (variable.id === globalVariableFileId) {
-                  dotlottie.addGlobalVariables({
+              manifest.globalInputs?.forEach((variable) => {
+                if (variable.id === globalInputFileId) {
+                  dotlottie.addGlobalInputs({
                     id: variable.id,
                     data: JSON.parse(decodedStr),
                     name: variable.name

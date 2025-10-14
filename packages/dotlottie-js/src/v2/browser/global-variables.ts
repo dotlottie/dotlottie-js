@@ -2,11 +2,11 @@
  * Copyright 2025 Design Barn Inc.
  */
 
-import type { GlobalVariablesOptions} from '../../../dist/index.node';
-import { LottieGlobalVariablesCommon } from '../../../dist/index.node';
+import type { GlobalInputsOptions} from '../common';
+import { LottieGlobalInputsCommon } from '../common';
 
-export class LottieGlobalVariables extends LottieGlobalVariablesCommon {
-  public constructor(options: GlobalVariablesOptions) {
+export class LottieGlobalInputs extends LottieGlobalInputsCommon {
+  public constructor(options: GlobalInputsOptions) {
     super(options);
   }
 }

@@ -42,7 +42,7 @@ async function createMagicWand() {
       data: parsed_red_theme,
       id: "Red",
     })
-    .addGlobalVariables({
+    .addGlobalInputs({
       data: parsed_magic_wand_binding,
       id: 'wand_binding'
     })
@@ -76,7 +76,7 @@ async function createFallingSquares() {
       data: parsed_physics_theme,
       id: "physics_theme",
     })
-    .addGlobalVariables({
+    .addGlobalInputs({
       data: parsed_physics_binding,
       id: 'physics_binding'
     })
@@ -109,7 +109,7 @@ async function testFromToArrayBuffer() {
       data: parsed_physics_theme,
       id: "physics_theme",
     })
-    .addGlobalVariables({
+    .addGlobalInputs({
       data: parsed_physics_binding,
       id: 'physics_binding',
       name: "sam"
@@ -125,7 +125,7 @@ async function testFromToArrayBuffer() {
 
       loadedDotLottie = await loadedDotLottie.fromArrayBuffer(value);
   
-      const globalVarsList = loadedDotLottie.getGlobalVariables();
+      const globalVarsList = loadedDotLottie.getGlobalInputs();
 
       console.log(">> Global vars: ", globalVarsList);
       

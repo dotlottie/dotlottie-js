@@ -9,128 +9,129 @@ import { describe, it, expect } from 'vitest';
 
 import MAGIC_WAND_ANIMATION_DATA from '../../../__tests__/__fixtures__/magic-wand.json';
 import { DotLottie } from '../../browser';
-import { LottieGlobalVariables } from '../../browser/global-variables';
+import { LottieGlobalInputs } from '../../browser/global-variables';
+import type { GlobalInputs } from '../../common';
 
-describe('LottieGlobalVariables', () => {
-  const validGlobalVariablesData = {
-      primaryColor: {
-        type: 'Color' as const,
-        value: [1, 0, 0, 1],
+describe('LottieGlobalInputs', () => {
+  const validGlobalInputsData: GlobalInputs = {
+    primaryColor: {
+      type: 'Color',
+      value: [1, 0, 0, 1],
+    },
+    opacity: {
+      type: 'Scalar',
+      value: 0.5,
+    },
+    position: {
+      type: 'Vector',
+      value: [100, 200],
+    },
+    isVisible: {
+      type: 'Boolean',
+      value: true,
+    },
+    backgroundImage: {
+      type: 'Image',
+      value: {
+        id: 'img_1',
+        width: 1920,
+        height: 1080,
+        url: 'https://example.com/image.png',
       },
-      opacity: {
-        type: 'Scalar' as const,
-        value: 0.5,
-      },
-      position: {
-        type: 'Vector' as const,
-        value: [100, 200],
-      },
-      isVisible: {
-        type: 'Boolean' as const,
-        value: true,
-      },
-      backgroundImage: {
-        type: 'Image' as const,
-        value: {
-          id: 'img_1',
-          width: 1920,
-          height: 1080,
-          url: 'https://example.com/image.png',
-        },
-      },
+    },
   };
 
   it('gets and sets the zipOptions', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
       zipOptions: {
         level: 9,
         mem: 1,
       },
     });
 
-    expect(globalVars.zipOptions).toEqual({
+    expect(globalInputs.zipOptions).toEqual({
       level: 9,
       mem: 1,
     });
 
-    globalVars.zipOptions = {
+    globalInputs.zipOptions = {
       level: 1,
     };
 
-    expect(globalVars.zipOptions).toEqual({
+    expect(globalInputs.zipOptions).toEqual({
       level: 1,
     });
   });
 
   it('throws an error if it receives an invalid id when constructed', () => {
     expect(() => {
-      new LottieGlobalVariables({
+      new LottieGlobalInputs({
         id: '',
-        data: validGlobalVariablesData,
+        data: validGlobalInputsData,
       });
     }).toThrow('Invalid bindings id');
   });
 
   it('throws an error if it receives invalid data when constructed', () => {
     expect(() => {
-      new LottieGlobalVariables({
+      new LottieGlobalInputs({
         id: 'global_vars_1',
-        data: { variables: { invalid: { type: 'InvalidType', value: 123 } } } as any,
+        data:  { invalid: { type: 'InvalidType', value: 123 } } as any,
       });
     }).toThrow('Invalid bindings data');
   });
 
   it('gets and sets the id', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
-    expect(globalVars.id).toEqual('global_vars_1');
+    expect(globalInputs.id).toEqual('global_vars_1');
 
-    globalVars.id = 'global_vars_2';
+    globalInputs.id = 'global_vars_2';
 
-    expect(globalVars.id).toEqual('global_vars_2');
+    expect(globalInputs.id).toEqual('global_vars_2');
   });
 
   it('throws an error when setting an invalid id', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
     expect(() => {
-      globalVars.id = '';
+      globalInputs.id = '';
     }).toThrow('Invalid bindings id');
   });
 
   it('gets and sets the name', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
       name: 'Theme Variables',
     });
 
-    expect(globalVars.name).toEqual('Theme Variables');
+    expect(globalInputs.name).toEqual('Theme Variables');
 
-    globalVars.name = 'Updated Theme';
+    globalInputs.name = 'Updated Theme';
 
-    expect(globalVars.name).toEqual('Updated Theme');
+    expect(globalInputs.name).toEqual('Updated Theme');
 
-    globalVars.name = undefined;
+    globalInputs.name = undefined;
 
-    expect(globalVars.name).toBeUndefined();
+    expect(globalInputs.name).toBeUndefined();
   });
 
   it('gets and sets the data', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
-    expect(globalVars.data).toEqual(validGlobalVariablesData);
+    expect(globalInputs.data).toEqual(validGlobalInputsData);
 
     const newData = {
         secondaryColor: {
@@ -139,51 +140,49 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    globalVars.data = newData;
+    globalInputs.data = newData;
 
-    expect(globalVars.data).toEqual(newData);
+    expect(globalInputs.data).toEqual(newData);
   });
 
   it('throws an error when setting invalid data', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
     expect(() => {
-      globalVars.data = { variables: { invalid: { type: 'InvalidType', value: 123 } } } as any;
+      globalInputs.data = { variables: { invalid: { type: 'InvalidType', value: 123 } } } as any;
     }).toThrow('Invalid bindings data');
   });
 
   it('converts global variables to string', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
-    const stringified = globalVars.toString();
+    const stringified = globalInputs.toString();
     const parsed = JSON.parse(stringified);
 
     expect(parsed).toHaveProperty('bindings');
-    expect(parsed.bindings).toEqual(validGlobalVariablesData);
+    expect(parsed.bindings).toEqual(validGlobalInputsData);
   });
 
   it('handles Color variable type', () => {
     const data = {
-      variables: {
         color: {
           type: 'Color' as const,
           value: [0.2, 0.4, 0.6, 0.8],
         },
-      },
     };
 
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
       data,
     });
 
-    expect(globalVars.data['color']).toEqual({
+    expect(globalInputs.data['color']).toEqual({
       type: 'Color',
       value: [0.2, 0.4, 0.6, 0.8],
     });
@@ -197,12 +196,12 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
       data,
     });
 
-    expect(globalVars.data['scale']).toEqual({
+    expect(globalInputs.data['scale']).toEqual({
       type: 'Scalar',
       value: 1.5,
     });
@@ -216,12 +215,12 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
       data,
     });
 
-    expect(globalVars.data['offset']).toEqual({
+    expect(globalInputs.data['offset']).toEqual({
       type: 'Vector',
       value: [50, 100, 150],
     });
@@ -235,12 +234,12 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
       data,
     });
 
-    expect(globalVars.data['enabled']).toEqual({
+    expect(globalInputs.data['enabled']).toEqual({
       type: 'Boolean',
       value: false,
     });
@@ -259,12 +258,12 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
       data,
     });
 
-    expect(globalVars.data['logo']).toEqual({
+    expect(globalInputs.data['logo']).toEqual({
       type: 'Image',
       value: {
         id: 'logo_1',
@@ -283,29 +282,29 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
       data,
     });
 
-    expect(globalVars.data['logo']).toEqual({
+    expect(globalInputs.data['logo']).toEqual({
       type: 'Image',
       value: {},
     });
   });
 
   it('handles multiple variables of different types', () => {
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
-    expect(Object.keys(globalVars.data)).toHaveLength(5);
-    expect(globalVars.data['primaryColor']?.type).toBe('Color');
-    expect(globalVars.data['opacity']?.type).toBe('Scalar');
-    expect(globalVars.data['position']?.type).toBe('Vector');
-    expect(globalVars.data['isVisible']?.type).toBe('Boolean');
-    expect(globalVars.data['backgroundImage']?.type).toBe('Image');
+    expect(Object.keys(globalInputs.data)).toHaveLength(5);
+    expect(globalInputs.data['primaryColor']?.type).toBe('Color');
+    expect(globalInputs.data['opacity']?.type).toBe('Scalar');
+    expect(globalInputs.data['position']?.type).toBe('Vector');
+    expect(globalInputs.data['isVisible']?.type).toBe('Boolean');
+    expect(globalInputs.data['backgroundImage']?.type).toBe('Image');
   });
 
   it('handles empty variables object', () => {
@@ -313,20 +312,20 @@ describe('LottieGlobalVariables', () => {
 
     };
 
-    const globalVars = new LottieGlobalVariables({
+    const globalInputs = new LottieGlobalInputs({
       id: 'global_vars_1',
       data,
     });
 
-    expect(globalVars.data).toEqual({});
+    expect(globalInputs.data).toEqual({});
   });
 
   it('builds dotLottie with global variables asset', async () => {
     const dotLottie = new DotLottie();
 
-    dotLottie.addGlobalVariables({
+    dotLottie.addGlobalInputs({
       id: 'theme_vars',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
     dotLottie.addAnimation({
@@ -341,19 +340,19 @@ describe('LottieGlobalVariables', () => {
     expect(arrayBuffer).toBeInstanceOf(ArrayBuffer);
     expect(arrayBuffer.byteLength).toBeGreaterThan(0);
 
-    const globalVarsList = dotLottie.getGlobalVariables();
+    const globalInputsList = dotLottie.getGlobalInputs();
 
-    expect(globalVarsList.length).toBe(1);
-    expect(globalVarsList[0]?.id).toBe('theme_vars');
+    expect(globalInputsList.length).toBe(1);
+    expect(globalInputsList[0]?.id).toBe('theme_vars');
   });
 
   it('loads dotLottie with global variables from ArrayBuffer', async () => {
     // First, create and build a dotLottie with global variables
     const dotLottie = new DotLottie();
 
-    dotLottie.addGlobalVariables({
+    dotLottie.addGlobalInputs({
       id: 'theme_vars',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
     dotLottie.addAnimation({
@@ -368,17 +367,17 @@ describe('LottieGlobalVariables', () => {
 
     loadedDotLottie = await loadedDotLottie.fromArrayBuffer(arrayBuffer);
 
-    const globalVarsList = loadedDotLottie.getGlobalVariables();
+    const globalInputsList = loadedDotLottie.getGlobalInputs();
 
-    expect(globalVarsList.length).toBe(1);
-    expect(globalVarsList[0]?.id).toBe('theme_vars');
-    expect(globalVarsList[0]?.data).toEqual(validGlobalVariablesData);
+    expect(globalInputsList.length).toBe(1);
+    expect(globalInputsList[0]?.id).toBe('theme_vars');
+    expect(globalInputsList[0]?.data).toEqual(validGlobalInputsData);
   });
 
   it('handles multiple global variables assets', async () => {
     const dotLottie = new DotLottie();
 
-    const secondGlobalVarsData = {
+    const secondglobalInputsData = {
         accentColor: {
           type: 'Color' as const,
           value: [0, 0, 1, 1],
@@ -389,14 +388,14 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    dotLottie.addGlobalVariables({
+    dotLottie.addGlobalInputs({
       id: 'theme_vars_1',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
-    dotLottie.addGlobalVariables({
+    dotLottie.addGlobalInputs({
       id: 'theme_vars_2',
-      data: secondGlobalVarsData,
+      data: secondglobalInputsData,
     });
 
     dotLottie.addAnimation({
@@ -406,20 +405,20 @@ describe('LottieGlobalVariables', () => {
 
     await dotLottie.build();
 
-    const globalVarsList = dotLottie.getGlobalVariables();
+    const globalInputsList = dotLottie.getGlobalInputs();
 
-    expect(globalVarsList.length).toBe(2);
-    expect(globalVarsList[0]?.id).toBe('theme_vars_1');
-    expect(globalVarsList[1]?.id).toBe('theme_vars_2');
+    expect(globalInputsList.length).toBe(2);
+    expect(globalInputsList[0]?.id).toBe('theme_vars_1');
+    expect(globalInputsList[1]?.id).toBe('theme_vars_2');
   });
 
   it('retrieves specific global variables by id', async () => {
     const dotLottie = new DotLottie();
 
-    dotLottie.addGlobalVariables({
+    dotLottie.addGlobalInputs({
       id: 'theme_vars',
       name: 'Theme Variables',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
     dotLottie.addAnimation({
@@ -429,12 +428,12 @@ describe('LottieGlobalVariables', () => {
 
     await dotLottie.build();
 
-    const globalVars = dotLottie.getGlobalVariablesById('theme_vars');
+    const globalInputs = dotLottie.getGlobalInputsById('theme_vars');
 
-    expect(globalVars).toBeDefined();
-    expect(globalVars?.id).toBe('theme_vars');
-    expect(globalVars?.name).toBe('Theme Variables');
-    expect(globalVars?.data).toEqual(validGlobalVariablesData);
+    expect(globalInputs).toBeDefined();
+    expect(globalInputs?.id).toBe('theme_vars');
+    expect(globalInputs?.name).toBe('Theme Variables');
+    expect(globalInputs?.data).toEqual(validGlobalInputsData);
   });
 
   it('persists global variables after toArrayBuffer and fromArrayBuffer round-trip', async () => {
@@ -451,7 +450,7 @@ describe('LottieGlobalVariables', () => {
         },
     };
 
-    dotLottie.addGlobalVariables({
+    dotLottie.addGlobalInputs({
       id: 'brand_vars',
       name: 'Brand Variables',
       data: originalData,
@@ -470,20 +469,20 @@ describe('LottieGlobalVariables', () => {
     
     loadedDotLottie = await loadedDotLottie.fromArrayBuffer(arrayBuffer);
 
-    const loadedGlobalVars = loadedDotLottie.getGlobalVariablesById('brand_vars');
+    const loadedglobalInputs = loadedDotLottie.getGlobalInputsById('brand_vars');
 
-    expect(loadedGlobalVars).toBeDefined();
-    expect(loadedGlobalVars?.id).toBe('brand_vars');
-    expect(loadedGlobalVars?.name).toBe('Brand Variables');
-    expect(loadedGlobalVars?.data).toEqual(originalData);
+    expect(loadedglobalInputs).toBeDefined();
+    expect(loadedglobalInputs?.id).toBe('brand_vars');
+    expect(loadedglobalInputs?.name).toBe('Brand Variables');
+    expect(loadedglobalInputs?.data).toEqual(originalData);
   });
 
   it('handles global variables with animations referencing them', async () => {
     const dotLottie = new DotLottie();
 
-    dotLottie.addGlobalVariables({
+    dotLottie.addGlobalInputs({
       id: 'animation_vars',
-      data: validGlobalVariablesData,
+      data: validGlobalInputsData,
     });
 
     dotLottie.addAnimation({
@@ -508,6 +507,6 @@ describe('LottieGlobalVariables', () => {
     reloadedDotLottie = await reloadedDotLottie.fromArrayBuffer(arrayBuffer);
 
     expect(reloadedDotLottie.animations.length).toBe(2);
-    expect(reloadedDotLottie.getGlobalVariables().length).toBe(1);
+    expect(reloadedDotLottie.getGlobalInputs().length).toBe(1);
   });
 });

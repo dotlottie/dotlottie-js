@@ -26,8 +26,13 @@ export const BooleanSchema = object({
 });
 
 export const GradientSchema = object({
-  type: literal('Boolean'),
-  value: boolean()
+  type: literal('Gradient'),
+  value: array(
+    object({
+      value: optional(union([string(), array(number())])),
+      offset: number(),
+    }),
+  ),
 });
 
 export const ImageSchema = object({
@@ -41,13 +46,14 @@ export const ImageSchema = object({
 });
 
 const RuleSchema = union([
-  ColorSchema,
-  ScalarSchema,
-  VectorSchema,
-  ImageSchema,
+  BooleanSchema, 
+  ScalarSchema,  
+  ColorSchema,   
+  VectorSchema,  
+  ImageSchema,   
   GradientSchema,
 ]);
 
-export const GlobalVariablesSchema = record(string(), RuleSchema);
+export const GlobalInputsSchema = record(string(), RuleSchema);
 
-export type GlobalVariables = Output<typeof GlobalVariablesSchema>;
+export type GlobalInputs = Output<typeof GlobalInputsSchema>;

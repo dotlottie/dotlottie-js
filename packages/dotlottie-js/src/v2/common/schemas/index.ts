@@ -5,4 +5,4 @@
 export * from './manifest';
 export * from './state-machine';
 export * from './theme';
-export * from './global-variables';
+export * from './global-inputs';
