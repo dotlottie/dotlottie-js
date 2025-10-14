@@ -32,7 +32,7 @@ const BaseRuleSchema = {
   id: string(),
 };
 
-export const ScalarRuleSchema = object({
+const ScalarRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Scalar'),
   value: optional(union([string(), number()])),
@@ -92,7 +92,7 @@ const GradientKeyframeSchema = object({
   ...BaseKeyframeSchema,
   value: array(
     object({
-      value: optional(union([string(), array(number())])),
+      color: optional(union([string(), array(number())])),
       offset: number(),
     }),
   ),
@@ -104,7 +104,7 @@ const GradientRuleSchema = object({
   value: optional(
     array(
       object({
-        value: optional(union([string(), array(number())])),
+        color: optional(union([string(), array(number())])),
         offset: number(),
       }),
     ),

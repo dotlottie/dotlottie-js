@@ -15,7 +15,7 @@ import type { GlobalInputsOptions} from './global-inputs';
 import { LottieGlobalInputsCommon } from './global-inputs';
 import type { LottieImageCommon } from './image';
 import type { DotLottiePlugin } from './plugin';
-import type {  Manifest } from './schemas';
+import type { Manifest } from './schemas';
 import type { DotLottieStateMachineCommonOptions } from './state-machine';
 import { DotLottieStateMachineCommon } from './state-machine';
 import type { ThemeOptions } from './theme';
