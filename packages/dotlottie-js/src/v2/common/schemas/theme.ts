@@ -101,15 +101,55 @@ const GradientKeyframeSchema = object({
 const GradientRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Gradient'),
-  value: optional(
+  value: union([optional(
     array(
       object({
         color: optional(union([string(), array(number())])),
         offset: number(),
       }),
     ),
-  ),
+  ), string()]),
   keyframes: optional(array(GradientKeyframeSchema)),
+});
+
+const TextDocumentSchema = object({
+  text: optional(string()),
+  fontFamily: optional(string()),
+  fontSize: optional(number()),
+  fillColor: optional(array(number())),
+  strokeColor: optional(array(number())),
+  strokeWidth: optional(number()),
+  strokeOverFill: optional(boolean()),
+  lineHeight: optional(number()),
+  tracking: optional(number()),
+  justify: optional(
+    union([
+      literal('Left'),
+      literal('Right'),
+      literal('Center'),
+      literal('JustifyLastLeft'),
+      literal('JustifyLastRight'),
+      literal('JustifyLastCenter'),
+      literal('JustifyLastFull'),
+    ]),
+  ),
+  textCaps: optional(union([literal('Regular'), literal('AllCaps'), literal('SmallCaps')])),
+  baselineShift: optional(number()),
+  wrapSize: optional(array(number())),
+  wrapPosition: optional(array(number())),
+});
+
+const TextKeyframeSchema = object({
+  frame: number(),
+  value: TextDocumentSchema,
+});
+
+const TextRuleSchema = object({
+  ...BaseRuleSchema,
+  type: literal('Text'),
+  value: optional(TextDocumentSchema),
+  keyframes: optional(array(TextKeyframeSchema)),
+  expression: optional(string()),
 });
 
 const RuleSchema = union([
@@ -119,6 +159,7 @@ const RuleSchema = union([
   VectorRuleSchema,
   ImageRuleSchema,
   GradientRuleSchema,
+  TextRuleSchema,
 ]);
 
 export const RulesSchema = array(RuleSchema);

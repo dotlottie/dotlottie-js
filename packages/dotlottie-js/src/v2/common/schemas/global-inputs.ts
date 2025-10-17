@@ -29,7 +29,7 @@ export const GradientSchema = object({
   type: literal('Gradient'),
   value: array(
     object({
-      value: optional(union([string(), array(number())])),
+      color: array(number()),
       offset: number(),
     }),
   ),
@@ -45,6 +45,11 @@ export const ImageSchema = object({
   }),
 });
 
+export const TextSchema = object({
+  type: literal('Text'),
+  value: string(),
+});
+
 const RuleSchema = union([
   BooleanSchema, 
   ScalarSchema,  
@@ -52,6 +57,7 @@ const RuleSchema = union([
   VectorSchema,  
   ImageSchema,   
   GradientSchema,
+  TextSchema
 ]);
 
 export const GlobalInputsSchema = record(string(), RuleSchema);

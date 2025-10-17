@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "id": "ball",
+      "type": "Gradient",
+      "text": "@ball"
+    }
+  ]
+}
