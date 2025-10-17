@@ -1,0 +1,55 @@
+{
+  "initial": "yellow_state",
+  "states": [
+    {
+      "name": "GLOBALSTATE",
+      "type": "GlobalState",
+      "transitions": [
+        {
+          "guards": [{ "inputName": "yellow_clicked", "type": "Event" }],
+          "toState": "yellow_state",
+          "type": "Transition"
+        },
+        { "guards": [{ "inputName": "red_clicked", "type": "Event" }], "toState": "red_state", "type": "Transition" },
+        { "guards": [{ "inputName": "blue_clicked", "type": "Event" }], "toState": "blue_state", "type": "Transition" }
+      ]
+    },
+    {
+      "name": "yellow_state",
+      "animation": "",
+      "type": "PlaybackState",
+      "transitions": [],
+      "entryActions": [{ "type": "SetTheme", "value": "Yellow", "inputName": "" }],
+      "autoplay": true,
+      "loop": true
+    },
+    {
+      "name": "red_state",
+      "animation": "",
+      "type": "PlaybackState",
+      "transitions": [],
+      "entryActions": [{ "type": "SetTheme", "value": "Red", "inputName": "" }],
+      "autoplay": true,
+      "loop": true
+    },
+    {
+      "name": "blue_state",
+      "animation": "",
+      "type": "PlaybackState",
+      "transitions": [],
+      "entryActions": [{ "type": "SetTheme", "value": "Blue", "inputName": "" }],
+      "autoplay": true,
+      "loop": true
+    }
+  ],
+  "inputs": [
+    { "name": "yellow_clicked", "type": "Event" },
+    { "name": "red_clicked", "type": "Event" },
+    { "name": "blue_clicked", "type": "Event" }
+  ],
+  "interactions": [
+    { "type": "Click", "layerName": "yellow", "actions": [{ "type": "Fire", "inputName": "yellow_clicked" }] },
+    { "type": "Click", "layerName": "red", "actions": [{ "type": "Fire", "inputName": "red_clicked" }] },
+    { "type": "Click", "layerName": "blue", "actions": [{ "type": "Fire", "inputName": "blue_clicked" }] }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "rules": [
+    { "id": "triangle", "type": "Color", "value": [0, 0.8, 1] },
+    { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+    { "id": "wand_pos", "type": "Vector", "value": "@wand_pos" }
+  ]
+}
