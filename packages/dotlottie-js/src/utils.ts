@@ -823,6 +823,157 @@ export async function inlineImageAssets(
 }
 
 /**
+ * Retrieves a font from the given dotLottie object by its filename.
+ *
+ * @remarks
+ * This function accepts a dotLottie object as a Uint8Array, the filename of the font to retrieve, and an optional filter function.
+ * It returns a Promise that resolves to the font data URL or `undefined` if not found.
+ *
+ * @param dotLottie - The Uint8Array of dotLottie data.
+ * @param filename - The filename of the font to get.
+ * @param filter - An optional filter function to apply on the unzipping process.
+ * @returns A Promise that resolves with the font data URL or `undefined` if not found.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const filename = 'Roboto-Bold.ttf';
+ * const fontData = await getFont(dotLottie, filename);
+ * ```
+ *
+ * @public
+ */
+export async function getFont(
+  dotLottie: Uint8Array,
+  filename: string,
+  filter?: UnzipFileFilter,
+): Promise<string | undefined> {
+  const fontsPath = 'f/';
+  const fontFilename = `${fontsPath}${filename}`;
+
+  const unzipped = await unzipDotLottieFile(dotLottie, fontFilename, filter);
+
+  if (typeof unzipped === 'undefined') {
+    return undefined;
+  }
+
+  return dataUrlFromU8(unzipped);
+}
+
+/**
+ * Retrieves all fonts from the given dotLottie object.
+ *
+ * @remarks
+ * This function accepts a dotLottie object as a Uint8Array and an optional filter function to further refine the extraction.
+ * It returns a Promise that resolves to a record containing the font data URLs mapped by their filename.
+ *
+ * @param dotLottie - The Uint8Array of dotLottie data.
+ * @param filter - An optional filter function to apply on the unzipping process.
+ * @returns A Promise that resolves to a record containing the font data URLs mapped by their filename.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const fonts = await getFonts(dotLottie);
+ * ```
+ *
+ * @public
+ */
+export async function getFonts(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
+  const fontsPath = 'f/';
+
+  const unzippedFonts = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace(fontsPath, '');
+
+    return file.name.startsWith(fontsPath) && (!filter || filter({ ...file, name }));
+  });
+
+  const fonts: Record<string, string> = {};
+
+  for (const fontPath in unzippedFonts) {
+    const unzippedFont = unzippedFonts[fontPath];
+    const fontFileName = fontPath.replace(fontsPath, '');
+
+    if (fontFileName && unzippedFont instanceof Uint8Array) {
+      fonts[fontFileName] = await dataUrlFromU8(unzippedFont);
+    }
+  }
+
+  return fonts;
+}
+
+/**
+ * Inlines font assets for the given animations within a dotLottie object.
+ *
+ * @remarks
+ * This function accepts a dotLottie object as a Uint8Array and a record containing the animations to process.
+ * It identifies the fonts used in the animations and replaces their file path references with the actual font data URIs.
+ * This operation is performed asynchronously, and the function returns a Promise that resolves when the operation is complete.
+ *
+ * Note: This is only used for dotLottie format imports, as standard Lottie JSON doesn't support font data URIs in fPath.
+ * The dotLottie spec extension allows data URIs in fPath for fonts.
+ *
+ * @param dotLottie - The dotLottie object containing the animations.
+ * @param animations - A record containing the animations to process.
+ * @returns A Promise that resolves when the operation is complete, returning nothing.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const animations = { animation1: {...}, animation2: {...} };
+ * await inlineFontAssets(dotLottie, animations);
+ * ```
+ *
+ * @public
+ */
+export async function inlineFontAssets(
+  dotLottie: Uint8Array,
+  animations: Record<string, AnimationData>,
+): Promise<void> {
+  const fontsMap = new Map<string, Set<string>>();
+
+  for (const [animationId, animationData] of Object.entries(animations)) {
+    const fontsList = (animationData as AnimationData & { fonts?: { list: Array<{ fPath?: string }> } }).fonts?.list;
+
+    if (fontsList) {
+      for (const font of fontsList) {
+        if (font.fPath && isFontAsset(font.fPath) && !isFontDataUrl(font.fPath)) {
+          // Extract filename from path like "/f/FontName.ttf"
+          const fontFileName = font.fPath.replace('/f/', '');
+
+          if (!fontsMap.has(fontFileName)) {
+            fontsMap.set(fontFileName, new Set());
+          }
+          fontsMap.get(fontFileName)?.add(animationId);
+        }
+      }
+    }
+  }
+
+  const unzippedFonts = await getFonts(dotLottie, (file) => fontsMap.has(file.name));
+
+  for (const [fontFileName, animationIdsSet] of fontsMap) {
+    const fontDataURL = unzippedFonts[fontFileName];
+
+    if (fontDataURL) {
+      for (const animationId of animationIdsSet) {
+        const animationData = animations[animationId];
+        const fontsList = (animationData as AnimationData & { fonts?: { list: Array<{ fPath?: string }> } }).fonts
+          ?.list;
+
+        if (fontsList) {
+          for (const font of fontsList) {
+            if (font.fPath && font.fPath.includes(fontFileName)) {
+              font.fPath = fontDataURL;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
  * Retrieves an animation from the given dotLottie object by its ID.
  *
  * @remarks
@@ -869,8 +1020,8 @@ export async function getAnimation(
   };
 
   await inlineImageAssets(dotLottie, animationsMap);
-
   await inlineAudioAssets(dotLottie, animationsMap);
+  await inlineFontAssets(dotLottie, animationsMap);
 
   return animationData;
 }
@@ -932,6 +1083,8 @@ export async function getAnimations(
   }
 
   await inlineImageAssets(dotLottie, animationsMap);
+  await inlineAudioAssets(dotLottie, animationsMap);
+  await inlineFontAssets(dotLottie, animationsMap);
 
   return animationsMap;
 }
