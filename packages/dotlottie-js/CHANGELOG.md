@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.5.1
+
+### Patch Changes
+
+- d6ea98f: Add font loader utils
+
 ## 1.5.0
 
 ### Minor Changes
