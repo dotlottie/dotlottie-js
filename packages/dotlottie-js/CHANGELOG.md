@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.6.0
+
+### Minor Changes
+
+- 349fb7b: feat: add experimental Text theming rule in dotLottie v2
+
 ## 1.5.1
 
 ### Patch Changes
