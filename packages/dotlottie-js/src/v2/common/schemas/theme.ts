@@ -113,7 +113,7 @@ const GradientRuleSchema = object({
 
 const TextDocumentSchema = object({
   text: optional(string()),
-  fontFamily: optional(string()),
+  fontName: optional(string()),
   fontSize: optional(number()),
   fillColor: optional(array(number())),
   strokeColor: optional(array(number())),

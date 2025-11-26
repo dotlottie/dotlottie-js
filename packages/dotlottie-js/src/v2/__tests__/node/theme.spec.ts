@@ -517,7 +517,7 @@ describe('LottieTheme', () => {
                 type: 'Text',
                 value: {
                   text: 'Hello World',
-                  fontFamily: 'Arial',
+                  fontName: 'Arial',
                   fontSize: 24,
                   fillColor: [1, 0, 0, 1],
                 },
@@ -530,7 +530,7 @@ describe('LottieTheme', () => {
           type: 'Text';
           value: {
             fillColor?: number[];
-            fontFamily?: string;
+            fontName?: string;
             fontSize?: number;
             text?: string;
           };
@@ -538,7 +538,7 @@ describe('LottieTheme', () => {
 
         expect(rule.type).toBe('Text');
         expect(rule.value.text).toBe('Hello World');
-        expect(rule.value.fontFamily).toBe('Arial');
+        expect(rule.value.fontName).toBe('Arial');
         expect(rule.value.fontSize).toBe(24);
         expect(rule.value.fillColor).toEqual([1, 0, 0, 1]);
       });
@@ -553,7 +553,7 @@ describe('LottieTheme', () => {
                 type: 'Text',
                 value: {
                   text: 'Full Text',
-                  fontFamily: 'Helvetica',
+                  fontName: 'Helvetica',
                   fontSize: 32,
                   fillColor: [0, 1, 0, 1],
                   strokeColor: [1, 0, 0],
@@ -577,7 +577,7 @@ describe('LottieTheme', () => {
           value: {
             baselineShift?: number;
             fillColor?: number[];
-            fontFamily?: string;
+            fontName?: string;
             fontSize?: number;
             justify?: string;
             lineHeight?: number;
@@ -594,7 +594,7 @@ describe('LottieTheme', () => {
 
         expect(rule.type).toBe('Text');
         expect(rule.value.text).toBe('Full Text');
-        expect(rule.value.fontFamily).toBe('Helvetica');
+        expect(rule.value.fontName).toBe('Helvetica');
         expect(rule.value.fontSize).toBe(32);
         expect(rule.value.fillColor).toEqual([0, 1, 0, 1]);
         expect(rule.value.strokeColor).toEqual([1, 0, 0]);
