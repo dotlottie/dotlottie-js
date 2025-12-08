@@ -35,15 +35,14 @@ const BaseRuleSchema = {
 const ScalarRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Scalar'),
-  value: optional(union([string(), number()])),
-
+  value: optional(number()),
   keyframes: optional(array(ScalarKeyframeSchema)),
   expression: optional(string()),
 });
 
 const PositionKeyframeSchema = object({
   ...BaseKeyframeSchema,
-  value: optional(union([string(), array(number())])),
+  value: array(number()),
   valueInTangent: optional(number()),
   valueOutTangent: optional(number()),
 });
@@ -64,7 +63,7 @@ const VectorKeyframeSchema = object({
 const VectorRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Vector'),
-  value: optional(union([string(), array(number())])),
+  value: optional(array(number())),
   keyframes: optional(array(VectorKeyframeSchema)),
   expression: optional(string()),
 });
@@ -72,7 +71,7 @@ const VectorRuleSchema = object({
 const ColorRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Color'),
-  value: optional(union([string(), array(number())])),
+  value: optional(array(number())),
   keyframes: optional(array(ColorKeyframeSchema)),
   expression: optional(string()),
 });
@@ -92,7 +91,7 @@ const GradientKeyframeSchema = object({
   ...BaseKeyframeSchema,
   value: array(
     object({
-      color: optional(union([string(), array(number())])),
+      color: array(number()),
       offset: number(),
     }),
   ),
@@ -101,20 +100,20 @@ const GradientKeyframeSchema = object({
 const GradientRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Gradient'),
-  value: union([optional(
+  value: optional(
     array(
       object({
-        color: optional(union([string(), array(number())])),
+        color: array(number()),
         offset: number(),
       }),
     ),
-  ), string()]),
+  ),
   keyframes: optional(array(GradientKeyframeSchema)),
 });
 
 const TextDocumentSchema = object({
   text: optional(string()),
-  fontFamily: optional(string()),
+  fontName: optional(string()),
   fontSize: optional(number()),
   fillColor: optional(array(number())),
   strokeColor: optional(array(number())),

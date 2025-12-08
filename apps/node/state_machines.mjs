@@ -1472,15 +1472,19 @@ async function createTweenedSmileySlider() {
     });
 }
 
-createStarRating();
-createSyncToCursor();
-createHoverButton();
-createToggleButton();
-createThemeAction();
-createExplodingPigeon();
-createHoldButton();
-createClickButton();
-createInteractiveStats();
-createLoader();
-createFairy();
-createTweenedSmileySlider();
+// createStarRating();
+// createSyncToCursor();
+// createHoverButton();
+// createToggleButton();
+// createThemeAction();
+// createExplodingPigeon();
+// createHoldButton();
+// createClickButton();
+// createInteractiveStats();
+// createLoader();
+// createFairy();
+// createTweenedSmileySlider();
+
+// createThemedDotLottie();
+// createMagicWand();
+// createFallingSquares();

@@ -1,0 +1,14 @@
+{
+  "curr_star": {
+    "type": "Numeric",
+    "value": 0,
+    "bindings": {
+      "stateMachines": [
+        {
+          "stateMachineId": "starRating",
+          "inputName": ["rating"]
+        }
+      ]
+    }
+  }
+}

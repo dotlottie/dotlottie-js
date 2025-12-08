@@ -1,0 +1,17 @@
+{
+  "image": {
+    "type": "Image",
+    "value": {
+      "id": "test"
+    },
+    "bindings": [
+      {
+        "themes": {
+          "themeId": "theme",
+          "ruleId": "image",
+          "path": "id"
+        }
+      }
+    ]
+  }
+}

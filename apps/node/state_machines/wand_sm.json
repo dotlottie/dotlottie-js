@@ -10,7 +10,7 @@
           "toState": "yellow_state",
           "type": "Transition"
         },
-        { "guards": [{ "inputName": "red_clicked", "type": "Event" }], "toState": "red_state", "type": "Transition" },
+        { "guards": [], "toState": "red_state", "type": "Transition" },
         { "guards": [{ "inputName": "blue_clicked", "type": "Event" }], "toState": "blue_state", "type": "Transition" }
       ]
     },

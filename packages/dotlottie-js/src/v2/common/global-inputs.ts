@@ -7,7 +7,7 @@ import { safeParse } from 'valibot';
 
 import { DotLottieError } from '../../utils';
 
-import type { GlobalInputs } from './schemas';
+import type { GlobalInput, GlobalInputs } from './schemas';
 import { GlobalInputsSchema} from './schemas';
 
 export interface GlobalInputsOptions {
@@ -23,7 +23,7 @@ export class LottieGlobalInputsCommon {
   protected _name: string | undefined;
 
   protected _data: GlobalInputs;
-
+  
   protected _zipOptions: ZipOptions;
 
   public constructor(options: GlobalInputsOptions) {
@@ -61,7 +61,11 @@ export class LottieGlobalInputsCommon {
     this._requireValidData(data);
     this._data = data;
   }
-
+  
+  public getGlobalInput(id: string): GlobalInput | undefined {
+    return this.data[id];
+  }
+  
   public get zipOptions(): ZipOptions {
     return this._zipOptions;
   }
@@ -82,12 +86,9 @@ export class LottieGlobalInputsCommon {
     const result = safeParse(GlobalInputsSchema, data);
 
     if (!result.success) {
-      console.log(result)
       const issues = JSON.stringify(result.issues, null, 2);
 
       throw new DotLottieError(`Invalid bindings data: ${issues}`);
     }
   }
 }
-
-

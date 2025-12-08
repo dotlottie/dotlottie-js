@@ -5,24 +5,44 @@
 import type { Output} from "valibot";
 import { array, boolean, literal, number, object, optional, record, string, union } from "valibot";
 
+export const ThemeBindingSchema = object({
+  themeId: string(),
+  ruleId: string(),
+  path: string()
+});
+
+export const StateMachineBindingSchema = object({
+  stateMachineId: string(),
+  inputName: array(string())
+});
+
+export const BindingsSchema = object({
+  themes: optional(array(ThemeBindingSchema)),
+  stateMachines: optional(array(StateMachineBindingSchema))
+});
+
 export const ColorSchema = object({
   type: literal('Color'),
-  value: array(number())
+  value: array(number()),
+  bindings: optional(BindingsSchema)
 });
 
 export const VectorSchema = object({
   type: literal('Vector'),
-  value: array(number())
+  value: array(number()),
+  bindings: optional(BindingsSchema)
 });
 
-export const ScalarSchema = object({
-  type: literal('Scalar'),
-  value: number()
+export const NumericSchema = object({
+  type: literal('Numeric'),
+  value: number(),
+  bindings: optional(BindingsSchema)
 });
 
 export const BooleanSchema = object({
   type: literal('Boolean'),
-  value: boolean()
+  value: boolean(),
+  bindings: optional(BindingsSchema)
 });
 
 export const GradientSchema = object({
@@ -33,6 +53,7 @@ export const GradientSchema = object({
       offset: number(),
     }),
   ),
+  bindings: optional(BindingsSchema)
 });
 
 export const ImageSchema = object({
@@ -43,23 +64,27 @@ export const ImageSchema = object({
     height: optional(number()),
     url: optional(string()),
   }),
+  bindings: optional(BindingsSchema)
 });
 
-export const TextSchema = object({
-  type: literal('Text'),
+export const StringSchema = object({
+  type: literal('String'),
   value: string(),
+  bindings: optional(BindingsSchema)
 });
 
 const RuleSchema = union([
-  BooleanSchema, 
-  ScalarSchema,  
-  ColorSchema,   
-  VectorSchema,  
-  ImageSchema,   
+  BooleanSchema,
+  NumericSchema,
+  ColorSchema,
+  VectorSchema,
+  ImageSchema,
   GradientSchema,
-  TextSchema
+  StringSchema
 ]);
 
 export const GlobalInputsSchema = record(string(), RuleSchema);
 
 export type GlobalInputs = Output<typeof GlobalInputsSchema>;
+export type GlobalInput = Output<typeof RuleSchema>;
+export type Bindings = Output<typeof BindingsSchema>;

@@ -1,17 +1,13 @@
 {
-  "ball": {
+  "start_0": {
     "type": "Gradient",
     "value": [
       {
-        "color": [0, 1, 1, 1],
+        "color": [0, 0, 0, 1.0],
         "offset": 0
       },
       {
-        "color": [1, 0, 1, 1],
-        "offset": 0.5
-      },
-      {
-        "color": [1, 0, 1, 1],
+        "color": [1, 1, 1, 1.0],
         "offset": 1
       }
     ],
@@ -19,7 +15,7 @@
       "themes": [
         {
           "themeId": "theme",
-          "ruleId": "ball",
+          "ruleId": "gradient_color",
           "path": "value"
         }
       ]

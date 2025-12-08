@@ -510,10 +510,10 @@ export class DotLottieCommon {
       }));
     }
 
-    if (this.globalInputs.length > 0) {
+    if (globalInputsList.length > 0) {
       manifest.globalInputs = globalInputsList.map((globalInput) => ({
         id: globalInput.id,
-        ...(globalInput.name ? { name: globalInput.name } : {}),
+        name: globalInput.name,
       }));
     }
 
@@ -752,6 +752,12 @@ export class DotLottieCommon {
   // Returns the full file data
   public getGlobalInputsById(id: string): LottieGlobalInputsCommon | undefined {
     return this._globalInputs.get(id)
+  }
+
+  public removeGlobalInputs(globalInputsId: string): DotLottieCommon {
+    this._globalInputs.delete(globalInputsId);
+
+    return this;
   }
 
   public removeStateMachine(stateMachineId: string): DotLottieCommon {

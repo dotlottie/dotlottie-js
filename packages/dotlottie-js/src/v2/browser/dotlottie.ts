@@ -357,7 +357,7 @@ export class DotLottie extends DotLottieCommon {
                   dotlottie.addGlobalInputs({
                     id: variable.id,
                     data: JSON.parse(decodedStr),
-                    name: variable.name
+                    name: variable.name,
                   });                
                 }
               });

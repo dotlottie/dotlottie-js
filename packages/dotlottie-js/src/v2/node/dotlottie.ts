@@ -19,7 +19,7 @@ import {
 import { DotLottieV1 } from '../../v1/node';
 import type { DotLottieOptions, AnimationOptions } from '../common';
 import { DotLottieCommon } from '../common';
-import type { Manifest } from '../common/schemas';
+import type {  Manifest } from '../common/schemas';
 
 import { LottieAnimation } from './animation';
 import { LottieAudio } from './audio';
@@ -342,8 +342,8 @@ export class DotLottie extends DotLottieCommon {
                   dotlottie.addGlobalInputs({
                     id: variable.id,
                     data: JSON.parse(decodedStr),
-                    name: variable.name
-                  });                
+                    name: variable.name,
+                  }); 
                 }
               });
             }

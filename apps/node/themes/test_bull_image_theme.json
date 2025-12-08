@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "id": "image",
+      "type": "Image",
+      "value": {}
+    }
+  ]
+}
