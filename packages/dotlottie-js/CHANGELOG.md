@@ -1,5 +1,23 @@
 # @dotlottie/dotlottie-js
 
+## 1.6.1
+
+### Patch Changes
+
+- 772d010: fix: rename fontFamily to fontName in TextDocumentSchema
+
+## 1.6.0
+
+### Minor Changes
+
+- 349fb7b: feat: add experimental Text theming rule in dotLottie v2
+
+## 1.5.1
+
+### Patch Changes
+
+- d6ea98f: Add font loader utils
+
 ## 1.5.0
 
 ### Minor Changes
