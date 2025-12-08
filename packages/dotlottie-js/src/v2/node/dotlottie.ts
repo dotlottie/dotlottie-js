@@ -19,7 +19,7 @@ import {
 import { DotLottieV1 } from '../../v1/node';
 import type { DotLottieOptions, AnimationOptions } from '../common';
 import { DotLottieCommon } from '../common';
-import type {  Manifest } from '../common/schemas';
+import type { Manifest } from '../common/schemas';
 
 import { LottieAnimation } from './animation';
 import { LottieAudio } from './audio';
@@ -332,7 +332,6 @@ export class DotLottie extends DotLottieCommon {
             } else if (key.startsWith('g/') && key.endsWith('.json')) {
               const globalInputsFileId = /g\/(.+)\.json/u.exec(key)?.[1];
 
-              
               if (!globalInputsFileId) {
                 throw new DotLottieError('Invalid global inputs id');
               }
@@ -343,7 +342,7 @@ export class DotLottie extends DotLottieCommon {
                     id: variable.id,
                     data: JSON.parse(decodedStr),
                     name: variable.name,
-                  }); 
+                  });
                 }
               });
             }

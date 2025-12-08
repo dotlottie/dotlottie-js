@@ -2,47 +2,47 @@
  * Copyright 2025 Design Barn Inc.
  */
 
-import type { Output} from "valibot";
-import { array, boolean, literal, number, object, optional, record, string, union } from "valibot";
+import type { Output } from 'valibot';
+import { array, boolean, literal, number, object, optional, record, string, union } from 'valibot';
 
 export const ThemeBindingSchema = object({
   themeId: string(),
   ruleId: string(),
-  path: string()
+  path: string(),
 });
 
 export const StateMachineBindingSchema = object({
   stateMachineId: string(),
-  inputName: array(string())
+  inputName: array(string()),
 });
 
 export const BindingsSchema = object({
   themes: optional(array(ThemeBindingSchema)),
-  stateMachines: optional(array(StateMachineBindingSchema))
+  stateMachines: optional(array(StateMachineBindingSchema)),
 });
 
 export const ColorSchema = object({
   type: literal('Color'),
   value: array(number()),
-  bindings: optional(BindingsSchema)
+  bindings: optional(BindingsSchema),
 });
 
 export const VectorSchema = object({
   type: literal('Vector'),
   value: array(number()),
-  bindings: optional(BindingsSchema)
+  bindings: optional(BindingsSchema),
 });
 
 export const NumericSchema = object({
   type: literal('Numeric'),
   value: number(),
-  bindings: optional(BindingsSchema)
+  bindings: optional(BindingsSchema),
 });
 
 export const BooleanSchema = object({
   type: literal('Boolean'),
   value: boolean(),
-  bindings: optional(BindingsSchema)
+  bindings: optional(BindingsSchema),
 });
 
 export const GradientSchema = object({
@@ -53,7 +53,7 @@ export const GradientSchema = object({
       offset: number(),
     }),
   ),
-  bindings: optional(BindingsSchema)
+  bindings: optional(BindingsSchema),
 });
 
 export const ImageSchema = object({
@@ -64,13 +64,13 @@ export const ImageSchema = object({
     height: optional(number()),
     url: optional(string()),
   }),
-  bindings: optional(BindingsSchema)
+  bindings: optional(BindingsSchema),
 });
 
 export const StringSchema = object({
   type: literal('String'),
   value: string(),
-  bindings: optional(BindingsSchema)
+  bindings: optional(BindingsSchema),
 });
 
 const RuleSchema = union([
@@ -80,7 +80,7 @@ const RuleSchema = union([
   VectorSchema,
   ImageSchema,
   GradientSchema,
-  StringSchema
+  StringSchema,
 ]);
 
 export const GlobalInputsSchema = record(string(), RuleSchema);

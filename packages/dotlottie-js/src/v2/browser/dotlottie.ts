@@ -347,7 +347,6 @@ export class DotLottie extends DotLottieCommon {
             } else if (key.startsWith('g/') && key.endsWith('.json')) {
               const globalInputFileId = /g\/(.+)\.json/u.exec(key)?.[1];
 
-              
               if (!globalInputFileId) {
                 throw new DotLottieError('Invalid global inputs id');
               }
@@ -358,7 +357,7 @@ export class DotLottie extends DotLottieCommon {
                     id: variable.id,
                     data: JSON.parse(decodedStr),
                     name: variable.name,
-                  });                
+                  });
                 }
               });
             }
@@ -422,7 +421,6 @@ export class DotLottie extends DotLottieCommon {
           }
         } catch (err) {
           if (err instanceof Error) {
-            
             throw new DotLottieError(`Invalid manifest inside buffer! ${err.message}`);
           }
         }

@@ -11,7 +11,7 @@ import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../ut
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
 import type { LottieFontCommon } from './font';
-import type { GlobalInputsOptions} from './global-inputs';
+import type { GlobalInputsOptions } from './global-inputs';
 import { LottieGlobalInputsCommon } from './global-inputs';
 import type { LottieImageCommon } from './image';
 import type { DotLottiePlugin } from './plugin';
@@ -523,7 +523,6 @@ export class DotLottieCommon {
       };
     }
 
-    
     return manifest;
   }
 
@@ -740,18 +739,17 @@ export class DotLottieCommon {
 
   public getGlobalInputs(): LottieGlobalInputsCommon[] {
     const globalInputs: LottieGlobalInputsCommon[] = [];
-    
+
     this.globalInputs.map((gis) => {
       return globalInputs.push(gis);
     });
 
-
-    return globalInputs
+    return globalInputs;
   }
 
   // Returns the full file data
   public getGlobalInputsById(id: string): LottieGlobalInputsCommon | undefined {
-    return this._globalInputs.get(id)
+    return this._globalInputs.get(id);
   }
 
   public removeGlobalInputs(globalInputsId: string): DotLottieCommon {

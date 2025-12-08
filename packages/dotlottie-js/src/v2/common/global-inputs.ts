@@ -8,7 +8,7 @@ import { safeParse } from 'valibot';
 import { DotLottieError } from '../../utils';
 
 import type { GlobalInput, GlobalInputs } from './schemas';
-import { GlobalInputsSchema} from './schemas';
+import { GlobalInputsSchema } from './schemas';
 
 export interface GlobalInputsOptions {
   data: GlobalInputs;
@@ -23,7 +23,7 @@ export class LottieGlobalInputsCommon {
   protected _name: string | undefined;
 
   protected _data: GlobalInputs;
-  
+
   protected _zipOptions: ZipOptions;
 
   public constructor(options: GlobalInputsOptions) {
@@ -61,11 +61,11 @@ export class LottieGlobalInputsCommon {
     this._requireValidData(data);
     this._data = data;
   }
-  
+
   public getGlobalInput(id: string): GlobalInput | undefined {
     return this.data[id];
   }
-  
+
   public get zipOptions(): ZipOptions {
     return this._zipOptions;
   }
