@@ -1,0 +1,6 @@
+{
+  "ball": {
+    "type": "Boolean",
+    "value": false
+  }
+}

@@ -128,6 +128,35 @@ const FireCustomEventSchema = object({
   type: literal('FireCustomEvent'),
   value: string(),
 });
+const SetGlobalColor = object({
+  type: literal('SetGlobalColor'),
+  value: array(number()),
+});
+const SetGlobalGradient = object({
+  type: literal('SetGlobalGradient'),
+  value: array(
+    object({
+      color: array(number()),
+      offset: number(),
+    }),
+  ),
+});
+const SetGlobalString = object({
+  type: literal('SetGlobalString'),
+  value: string(),
+});
+const SetGlobalNumeric = object({
+  type: literal('SetGlobalNumeric'),
+  value: number(),
+});
+const SetGlobalBoolean = object({
+  type: literal('SetGlobalBoolean'),
+  value: boolean(),
+});
+const SetGlobalVector = object({
+  type: literal('SetGlobalVector'),
+  value: array(number()),
+});
 
 export const ActionSchema = union([
   URLActionSchema,
@@ -146,6 +175,13 @@ export const ActionSchema = union([
   SetProgressSchema,
   SetSlotSchema,
   FireCustomEventSchema,
+  SetGlobalColor,
+  SetGlobalGradient,
+  SetGlobalString,
+  SetGlobalNumeric,
+  SetGlobalBoolean,
+  SetGlobalVector,
+  // SetGlobalImage,
 ]);
 
 const Modes = union([literal('Forward'), literal('Reverse'), literal('Bounce'), literal('ReverseBounce')]);

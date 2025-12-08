@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "id": "gradient_color",
+      "type": "Gradient",
+      "value": [
+        {
+          "color": [1, 0, 1, 1.0],
+          "offset": 0
+        },
+        {
+          "color": [0, 1, 0, 0.2],
+          "offset": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "rules": [
+    {
+      "id": "ball",
+      "type": "Scalar",
+      "keyframes": [
+        {
+          "frame": 0,
+          "value": 0,
+          "outTangent": {
+            "x": 0.167,
+            "y": 0.167
+          },
+          "inTangent": {
+            "x": 0.833,
+            "y": 0.833
+          }
+        },
+        {
+          "frame": 20,
+          "value": 100
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "rules": [
+    {
+      "id": "my_text",
+      "type": "Text",
+      "value": {
+        "text": "Goodbye",
+        "fontName": "Arial",
+        "fillColor": [0, 0, 1],
+        "fontSize": 50
+      }
+    }
+  ]
+}

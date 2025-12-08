@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "id": "my_text",
+      "type": "Text",
+      "keyframes": [
+        {
+          "frame": 0,
+          "value": {
+            "text": "Start",
+            "fillColor": [1, 0, 0],
+            "fontName": "Arial",
+            "fontSize": 25
+          }
+        },
+        {
+          "frame": 30,
+          "value": {
+            "text": "End",
+            "fillColor": [0, 1, 0],
+            "fontName": "Arial",
+            "fontSize": 15
+          }
+        }
+      ]
+    }
+  ]
+}

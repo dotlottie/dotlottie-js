@@ -1,0 +1,28 @@
+{
+  "ball_start": {
+    "type": "Color",
+    "value": [0, 0, 0],
+    "bindings": {
+      "themes": [
+        {
+          "ruleId": "ball",
+          "themeId": "theme",
+          "path": "value/1/color"
+        }
+      ]
+    }
+  },
+  "ball_end": {
+    "type": "Color",
+    "value": [0.7, 0.7, 0.7],
+    "bindings": {
+      "themes": [
+        {
+          "themeId": "theme",
+          "ruleId": "ball",
+          "path": "value/2/color"
+        }
+      ]
+    }
+  }
+}

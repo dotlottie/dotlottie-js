@@ -166,6 +166,12 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`s/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
     }
 
+    for (const inputs of this.globalInputs) {
+      const globalInputsString = inputs.toString();
+
+      dotlottie[`g/${inputs.id}.json`] = [strToU8(globalInputsString), inputs.zipOptions];
+    }
+
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
       zip(dotlottie, options?.zipOptions || {}, (err, data) => {
         if (err) {
@@ -335,6 +341,22 @@ export class DotLottie extends DotLottieCommon {
                     id: stateMachine.id,
                     name: stateMachine.name,
                     data: JSON.parse(decodedStr),
+                  });
+                }
+              });
+            } else if (key.startsWith('g/') && key.endsWith('.json')) {
+              const globalInputFileId = /g\/(.+)\.json/u.exec(key)?.[1];
+
+              if (!globalInputFileId) {
+                throw new DotLottieError('Invalid global inputs id');
+              }
+
+              manifest.globalInputs?.forEach((variable) => {
+                if (variable.id === globalInputFileId) {
+                  dotlottie.addGlobalInputs({
+                    id: variable.id,
+                    data: JSON.parse(decodedStr),
+                    name: variable.name,
                   });
                 }
               });

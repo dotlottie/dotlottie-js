@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {
+      "id": "my_text",
+      "type": "Text",
+      "value": {
+        "text": "@text_input"
+      }
+    }
+  ]
+}

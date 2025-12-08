@@ -1,0 +1,3 @@
+{
+  "rules": [{ "id": "triangle", "type": "Color", "value": [1, 0.4, 0.6] }]
+}
