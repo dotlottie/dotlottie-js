@@ -11,7 +11,6 @@ import MAGIC_WAND_ANIMATION_DATA from '../../../__tests__/__fixtures__/magic-wan
 import { DotLottie } from '../../browser';
 import { LottieGlobalInputs } from '../../browser/global-inputs';
 import type { GlobalInputs } from '../../common';
-import { GlobalInputsOptions } from '../../../../dist/index.node';
 
 describe('LottieGlobalInputs', () => {
   const validGlobalInputsData: GlobalInputs = {
