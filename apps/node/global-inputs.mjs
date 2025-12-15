@@ -348,17 +348,45 @@ async function createMagicWand() {
 
   const wand_state_machine_data = fs.readFileSync('state_machines/wand_sm.json', 'utf8'); 
 
-  const yellow_theme_data = fs.readFileSync('themes/Yellow.json', 'utf8');
-  const parsed_yellow_theme = JSON.parse(yellow_theme_data);
+  const yellow_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0.7451, 0] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0, 0, 0] }
+    ]
+  }
+  
+  const parsed_yellow_theme = (yellow_theme_data);
 
-  const red_theme_data = fs.readFileSync('themes/Red.json', 'utf8');
-  const parsed_red_theme = JSON.parse(red_theme_data);
+  const red_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0, 0] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0, 0, 0] }
+    ]
+  }
+  
+  const parsed_red_theme = (red_theme_data);
 
-  const blue_theme_data = fs.readFileSync('themes/Blue.json', 'utf8');
-  const parsed_blue_theme = JSON.parse(blue_theme_data);
+  const blue_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [0, 0.8, 1] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0,0,0] }
+    ]
+  }
+  
+  const parsed_blue_theme = (blue_theme_data);
 
-  const wand_theme_data = fs.readFileSync('themes/wand.json', 'utf8');
-  const parsed_wand_theme = JSON.parse(wand_theme_data);
+  const wand_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0.4, 0.6] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0,0] }
+    ]
+  }
+  
+  const parsed_wand_theme = (wand_theme_data);
 
 
   await dotLottie
@@ -632,24 +660,23 @@ async function createTestFilesForDotlottieRs() {
   await createMagicWand();
 
     // --- Start color
-    // await packageAnimThemeBinding("test_ball_color", "test_ball_color_theme_animated", "binding_tests_ball_color_animated", "test_inputs_ball_color_animated");
-    await packageAnimThemeBinding("test_sheet_gradient", "test_sheet_color_theme_animated", "binding_tests_sheet_color_animated", "test_inputs_sheet_color_animated");
-    await packageAnimThemeBinding("test_sheet_gradient", "test_sheet_color_theme_static", "binding_tests_sheet_color_static", "test_inputs_sheet_color_static");
+    await packageAnimThemeBinding("sheet_gradient", "sheet_color_theme_animated", "sheet_color_animated", "test_inputs_sheet_color_animated");
+    await packageAnimThemeBinding("sheet_gradient", "sheet_color_theme_static", "sheet_color_static", "test_inputs_sheet_color_static");
     // --- End color
 
     // --- Start gradient
-    await packageAnimThemeBinding("test_sheet_gradient", "test_sheet_gradient_theme_animated", "binding_tests_sheet_gradient_animated", "test_inputs_sheet_gradient_animated");
-    await packageAnimThemeBinding("test_sheet_gradient", "test_sheet_gradient_theme_static", "binding_tests_sheet_gradient_static", "test_inputs_sheet_gradient_static");
+    await packageAnimThemeBinding("sheet_gradient", "sheet_gradient_theme_animated", "sheet_gradient_animated", "test_inputs_sheet_gradient_animated");
+    await packageAnimThemeBinding("sheet_gradient", "sheet_gradient_theme_static", "sheet_gradient_static", "test_inputs_sheet_gradient_static");
     // --- End color
 
     // --- Start vector
-    await packageAnimThemeBinding("test_ball_vector", "test_ball_vector_theme", "binding_tests_ball_vector", "test_inputs_ball_vector");
+    await packageAnimThemeBinding("ball_vector", "ball_vector_theme", "ball_vector", "test_inputs_ball_vector");
     // --- End vector
     
   
     // --- Start numeric
-    await packageAnimThemeBinding("test_ball_numeric", "test_ball_numeric_theme_static", "binding_tests_ball_numeric_static", "test_inputs_ball_numeric_static");
-    await packageAnimThemeBinding("test_ball_numeric", "test_ball_numeric_theme_animated", "binding_tests_ball_numeric_animated", "test_inputs_ball_numeric_animated");
+    await packageAnimThemeBinding("ball_numeric", "ball_numeric_theme_static", "ball_numeric_static", "test_inputs_ball_numeric_static");
+    await packageAnimThemeBinding("ball_numeric", "ball_numeric_theme_animated", "ball_numeric_animated", "test_inputs_ball_numeric_animated");
     // --- End color
     
     // --- Add and image to the dotLottie package 
@@ -661,8 +688,8 @@ async function createTestFilesForDotlottieRs() {
     // --- End boolean
   
     // --- Start text
-    await packageAnimThemeBinding("text", "test_text_theme_static", "binding_tests_text_static", "test_inputs_text_static");
-    await packageAnimThemeBinding("text", "test_text_theme_animated", "binding_tests_text_animated", "test_inputs_text_animated");
+    await packageAnimThemeBinding("text", "text_theme_static", "text_static", "test_inputs_text_static");
+    await packageAnimThemeBinding("text", "text_theme_animated", "text_animated", "test_inputs_text_animated");
     // --- End color
 
     await createStarRating();

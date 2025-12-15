@@ -79,7 +79,7 @@ describe('LottieGlobalInputs', () => {
       expect(() => {
         new LottieGlobalInputs({
           id: 'global_vars_1',
-          data: { variables: { invalid: { type: 'InvalidType', value: 123 } } } as any,
+          data: { variables: { invalid: { type: 'InvalidType', value: 123 } } } as unknown as GlobalInputs,
         });
       }).toThrow('Invalid bindings data');
     });
@@ -153,7 +153,7 @@ describe('LottieGlobalInputs', () => {
       });
 
       expect(() => {
-        globalInputs.data = { variables: { invalid: { type: 'InvalidType', value: 123 } } } as any;
+        globalInputs.data = { variables: { invalid: { type: 'InvalidType', value: 123 } } } as unknown as GlobalInputs;
       }).toThrow('Invalid bindings data');
     });
 
@@ -510,7 +510,9 @@ describe('LottieGlobalInputs', () => {
           type: 'Color' as const,
           value: [1, 0, 0, 1],
           bindings: {
-            themes: [{ themeId: 'dark-theme', ruleId: 'rule-1', path: '$.layers[0].color' }],
+            themes: [
+              { themeId: 'dark-theme', ruleId: 'rule-1', path: '$.layers[0].color' },
+            ],
           },
         },
       };
@@ -554,7 +556,9 @@ describe('LottieGlobalInputs', () => {
           type: 'Numeric' as const,
           value: 0.5,
           bindings: {
-            stateMachines: [{ stateMachineId: 'hover-sm', inputName: ['opacity', 'fadeLevel'] }],
+            stateMachines: [
+              { stateMachineId: 'hover-sm', inputName: ['opacity', 'fadeLevel'] },
+            ],
           },
         },
       };
@@ -575,8 +579,12 @@ describe('LottieGlobalInputs', () => {
           type: 'Color' as const,
           value: [1, 0, 0, 1],
           bindings: {
-            themes: [{ themeId: 'dark-theme', ruleId: 'rule-1', path: '$.layers[0].color' }],
-            stateMachines: [{ stateMachineId: 'hover-sm', inputName: ['colorInput'] }],
+            themes: [
+              { themeId: 'dark-theme', ruleId: 'rule-1', path: '$.layers[0].color' },
+            ],
+            stateMachines: [
+              { stateMachineId: 'hover-sm', inputName: ['colorInput'] },
+            ],
           },
         },
       };
@@ -596,14 +604,18 @@ describe('LottieGlobalInputs', () => {
           type: 'Color' as const,
           value: [1, 0, 0, 1],
           bindings: {
-            themes: [{ themeId: 'dark-theme', ruleId: 'color-rule', path: '$.layers[0].color' }],
+            themes: [
+              { themeId: 'dark-theme', ruleId: 'color-rule', path: '$.layers[0].color' },
+            ],
           },
         },
         opacity: {
           type: 'Numeric' as const,
           value: 0.5,
           bindings: {
-            stateMachines: [{ stateMachineId: 'hover-sm', inputName: ['opacity'] }],
+            stateMachines: [
+              { stateMachineId: 'hover-sm', inputName: ['opacity'] },
+            ],
           },
         },
         position: {
@@ -825,15 +837,21 @@ describe('LottieGlobalInputs', () => {
           type: 'Color' as const,
           value: [1, 0, 0, 1],
           bindings: {
-            themes: [{ themeId: 'main-theme', ruleId: 'global-rule', path: '$.global' }],
-            stateMachines: [{ stateMachineId: 'global-sm', inputName: ['globalInput'] }],
+            themes: [
+              { themeId: 'main-theme', ruleId: 'global-rule', path: '$.global' },
+            ],
+            stateMachines: [
+              { stateMachineId: 'global-sm', inputName: ['globalInput'] },
+            ],
           },
         },
         opacity: {
           type: 'Numeric' as const,
           value: 0.5,
           bindings: {
-            stateMachines: [{ stateMachineId: 'hover-sm', inputName: ['opacity'] }],
+            stateMachines: [
+              { stateMachineId: 'hover-sm', inputName: ['opacity'] },
+            ],
           },
         },
       };

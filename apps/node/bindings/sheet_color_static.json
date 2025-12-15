@@ -1,26 +1,26 @@
 {
-  "ball_start": {
+  "start_0": {
     "type": "Color",
-    "value": [0, 0, 0],
+    "value": [0.9, 0.9, 0.9],
     "bindings": {
       "themes": [
         {
           "themeId": "theme",
-          "ruleId": "ball",
-          "path": "keyframes/0/value"
+          "ruleId": "gradient_color",
+          "path": "value/0/color"
         }
       ]
     }
   },
-  "ball_end": {
+  "end_0": {
     "type": "Color",
-    "value": [1, 1, 1],
+    "value": [0.1, 0.1, 0.1],
     "bindings": {
       "themes": [
         {
           "themeId": "theme",
-          "ruleId": "ball",
-          "path": "keyframes/1/value"
+          "ruleId": "gradient_color",
+          "path": "value/1/color"
         }
       ]
     }
