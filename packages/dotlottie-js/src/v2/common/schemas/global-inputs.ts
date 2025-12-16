@@ -83,8 +83,8 @@ const RuleSchema = union([
   StringSchema,
 ]);
 
-export const GlobalInputsSchema = record(string(), RuleSchema);
+export const DotLottieGlobalInputsSchema = record(string(), RuleSchema);
 
-export type GlobalInputs = Output<typeof GlobalInputsSchema>;
-export type GlobalInput = Output<typeof RuleSchema>;
-export type Bindings = Output<typeof BindingsSchema>;
+export type DotLottieGlobalInputs = Output<typeof DotLottieGlobalInputsSchema>;
+export type DotLottieGlobalInput = Output<typeof RuleSchema>;
+export type DotLottieGlobalInputBindings = Output<typeof BindingsSchema>;

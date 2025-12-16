@@ -7,11 +7,11 @@ import { safeParse } from 'valibot';
 
 import { DotLottieError } from '../../utils';
 
-import type { GlobalInput, GlobalInputs } from './schemas';
-import { GlobalInputsSchema } from './schemas';
+import type { DotLottieGlobalInput, DotLottieGlobalInputs } from './schemas';
+import { DotLottieGlobalInputsSchema } from './schemas';
 
 export interface GlobalInputsOptions {
-  data: GlobalInputs;
+  data: DotLottieGlobalInputs;
   id: string;
   name?: string | undefined;
   zipOptions?: ZipOptions | undefined;
@@ -22,7 +22,7 @@ export class LottieGlobalInputsCommon {
 
   protected _name: string | undefined;
 
-  protected _data: GlobalInputs;
+  protected _data: DotLottieGlobalInputs;
 
   protected _zipOptions: ZipOptions;
 
@@ -53,16 +53,16 @@ export class LottieGlobalInputsCommon {
     this._name = name;
   }
 
-  public get data(): GlobalInputs {
+  public get data(): DotLottieGlobalInputs {
     return this._data;
   }
 
-  public set data(data: GlobalInputs) {
+  public set data(data: DotLottieGlobalInputs) {
     this._requireValidData(data);
     this._data = data;
   }
 
-  public getGlobalInput(id: string): GlobalInput | undefined {
+  public getGlobalInput(id: string): DotLottieGlobalInput | undefined {
     return this.data[id];
   }
 
@@ -82,8 +82,8 @@ export class LottieGlobalInputsCommon {
     if (typeof id !== 'string' || !id) throw new DotLottieError('Invalid bindings id');
   }
 
-  private _requireValidData(data: GlobalInputs): asserts data is GlobalInputs {
-    const result = safeParse(GlobalInputsSchema, data);
+  private _requireValidData(data: DotLottieGlobalInputs): asserts data is DotLottieGlobalInputs {
+    const result = safeParse(DotLottieGlobalInputsSchema, data);
 
     if (!result.success) {
       const issues = JSON.stringify(result.issues, null, 2);

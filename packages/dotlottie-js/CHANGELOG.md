@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.7.0-pre.2
+
+### Patch Changes
+
+- fix: renamed global input schema to DotLottieGlobalInputs..
+
 ## 1.7.0-pre.1
 
 ### Patch Changes
