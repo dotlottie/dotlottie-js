@@ -10,10 +10,10 @@ import { describe, it, expect } from 'vitest';
 import MAGIC_WAND_ANIMATION_DATA from '../../../__tests__/__fixtures__/magic-wand.json';
 import { DotLottie } from '../../browser';
 import { LottieGlobalInputs } from '../../browser/global-inputs';
-import type { GlobalInputs } from '../../common';
+import type { DotLottieGlobalInputs } from '../../common';
 
 describe('LottieGlobalInputs', () => {
-  const validGlobalInputsData: GlobalInputs = {
+  const validGlobalInputsData: DotLottieGlobalInputs = {
     primaryColor: {
       type: 'Color',
       value: [1, 0, 0, 1],

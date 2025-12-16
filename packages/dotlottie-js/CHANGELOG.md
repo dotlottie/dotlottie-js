@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.7.0-pre.3
+
+### Patch Changes
+
+- fix: test types
+
 ## 1.7.0-pre.2
 
 ### Patch Changes
