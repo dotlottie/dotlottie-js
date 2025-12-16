@@ -154,7 +154,9 @@ describe('LottieGlobalInputs', () => {
       });
 
       expect(() => {
-        globalInputs.data = { variables: { invalid: { type: 'InvalidType', value: 123 } } } as unknown as DotLottieGlobalInputs;
+        globalInputs.data = {
+          variables: { invalid: { type: 'InvalidType', value: 123 } },
+        } as unknown as DotLottieGlobalInputs;
       }).toThrow('Invalid bindings data');
     });
 
