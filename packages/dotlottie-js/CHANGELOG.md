@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.7.0-pre.0
+
+### Minor Changes
+
+- 0c0f2cc: feat: global inputs support
+
 ## 1.6.1
 
 ### Patch Changes
