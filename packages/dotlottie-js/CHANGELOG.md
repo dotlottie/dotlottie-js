@@ -1,5 +1,11 @@
 # @dotlottie/dotlottie-js
 
+## 1.7.0-pre.1
+
+### Patch Changes
+
+- feat: added getGlobalInputs utility
+
 ## 1.7.0-pre.0
 
 ### Minor Changes

@@ -1209,6 +1209,48 @@ export async function getStateMachines(
 }
 
 /**
+ * Retrieves the global inputs from the given DotLottie object.
+ *
+ * @remarks
+ * This function accepts a DotLottie object as a Uint8Array and an optional filter function to refine the extraction of global inputs.
+ * It returns a Promise that resolves to a record containing the global inputs mapped by their ID.
+ *
+ * @param dotLottie - The DotLottie object containing the global inputs.
+ * @param filter - An optional function to filter the files to be unzipped.
+ * @returns A Promise that resolves to a record containing the global inputs mapped by their ID.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const globalInputs = await getGlobalInputs(dotLottie);
+ * ```
+ */
+export async function getGlobalInputs(
+  dotLottie: Uint8Array,
+  filter?: UnzipFileFilter,
+): Promise<Record<string, string>> {
+  const globalInputsMap: Record<string, string> = {};
+
+  const unzippedGlobalInputs = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace('g/', '').replace('.json', '');
+
+    return file.name.startsWith('g/') && (!filter || filter({ ...file, name }));
+  });
+
+  for (const globalInputsPath in unzippedGlobalInputs) {
+    const data = unzippedGlobalInputs[globalInputsPath];
+
+    if (data instanceof Uint8Array) {
+      const globalInputsId = globalInputsPath.replace('g/', '').replace('.json', '');
+
+      globalInputsMap[globalInputsId] = strFromU8(data, false);
+    }
+  }
+
+  return globalInputsMap;
+}
+
+/**
  * Retrieves a specific state machine by ID from the given DotLottie object.
  *
  * @remarks

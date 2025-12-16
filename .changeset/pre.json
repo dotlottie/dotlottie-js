@@ -9,6 +9,7 @@
     "@dotlottie/dotlottie-js": "1.6.1"
   },
   "changesets": [
+    "funny-melons-beg",
     "happy-roses-jog"
   ]
 }
