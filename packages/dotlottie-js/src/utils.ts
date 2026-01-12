@@ -709,9 +709,10 @@ const extractImageId = (path: string): string | undefined => {
 
   const lastDotIndex = filename.lastIndexOf('.');
 
-  if (lastDotIndex <= 0) return filename;
+  if (lastDotIndex === -1) return filename;
+  if (lastDotIndex === 0) return undefined;
 
-  return filename.slice(0, lastDotIndex) || undefined;
+  return filename.slice(0, lastDotIndex);
 };
 
 /**
