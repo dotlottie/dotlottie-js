@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 1.6.2
+
+### Patch Changes
+
+- 7e93bdf: fixes an issue with the merge function, the original dotLottie was getting overwritten
+- aac141a: Fix image ID extraction for filenames containing multiple dots
+
 ## 1.6.1
 
 ### Patch Changes
