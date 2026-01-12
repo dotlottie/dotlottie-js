@@ -1,0 +1,25 @@
+{
+  "wand_pos": {
+    "type": "Vector",
+    "value": [50.0, 50.0],
+    "bindings": {
+      "themes": [
+        {
+          "themeId": "Red",
+          "ruleId": "wand_pos",
+          "path": "value"
+        },
+        {
+          "themeId": "Yellow",
+          "ruleId": "wand_pos",
+          "path": "value"
+        },
+        {
+          "themeId": "Blue",
+          "ruleId": "wand_pos",
+          "path": "value"
+        }
+      ]
+    }
+  }
+}

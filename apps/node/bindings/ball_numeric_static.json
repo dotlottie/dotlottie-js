@@ -1,0 +1,15 @@
+{
+  "ball": {
+    "type": "Numeric",
+    "value": 50.0,
+    "bindings": {
+      "themes": [
+        {
+          "themeId": "theme",
+          "ruleId": "ball",
+          "path": "value"
+        }
+      ]
+    }
+  }
+}

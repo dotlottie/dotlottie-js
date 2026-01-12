@@ -1,0 +1,21 @@
+{
+  "toggle_global_input": {
+    "type": "Boolean",
+    "value": false,
+    "bindings": {
+      "themes": [
+        {
+        "themeId": "theme",
+        "ruleId": "toggle",
+        "path": "keyframe/0/color"
+        }
+      ],
+      "stateMachines": [
+        {
+          "stateMachineId": "toggleButton",
+          "inputName": ["OnOffSwitch"]
+        }
+      ]
+    }
+  }
+}

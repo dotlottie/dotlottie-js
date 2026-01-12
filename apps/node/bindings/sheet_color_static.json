@@ -1,0 +1,28 @@
+{
+  "start_0": {
+    "type": "Color",
+    "value": [0.9, 0.9, 0.9],
+    "bindings": {
+      "themes": [
+        {
+          "themeId": "theme",
+          "ruleId": "gradient_color",
+          "path": "value/0/color"
+        }
+      ]
+    }
+  },
+  "end_0": {
+    "type": "Color",
+    "value": [0.1, 0.1, 0.1],
+    "bindings": {
+      "themes": [
+        {
+          "themeId": "theme",
+          "ruleId": "gradient_color",
+          "path": "value/1/color"
+        }
+      ]
+    }
+  }
+}
