@@ -588,7 +588,7 @@ export class DotLottieCommon {
   public merge(...dotlotties: DotLottieCommon[]): DotLottieCommon {
     const mergedDotlottie = this.create();
 
-    for (const dotlottie of dotlotties) {
+    for (const dotlottie of [this, ...dotlotties]) {
       dotlottie.themes.forEach((theme) => {
         mergedDotlottie.addTheme({
           id: theme.id,
