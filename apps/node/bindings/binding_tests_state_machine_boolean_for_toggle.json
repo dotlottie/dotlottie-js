@@ -3,18 +3,13 @@
     "type": "Boolean",
     "value": false,
     "bindings": {
-      "stateMachines": [
+      "themes": [
         {
-          "stateMachineId": "toggleButton",
-          "inputName": ["OnOffSwitch"]
+        "themeId": "theme",
+        "ruleId": "toggle",
+        "path": "keyframe/0/color"
         }
-      ]
-    }
-  },
-  "test": {
-    "type": "String",
-    "value": "initial",
-    "bindings": {
+      ],
       "stateMachines": [
         {
           "stateMachineId": "toggleButton",

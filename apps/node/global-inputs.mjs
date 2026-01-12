@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import { DotLottie, LottieImageCommon } from '@dotlottie/dotlottie-js';
+import { DotLottie, LottieImageCommon, getGlobalInputs, getThemes, getAnimations } from '@dotlottie/dotlottie-js';
 
 async function createStarRating() {
   const dotLottie = new DotLottie();
@@ -427,6 +427,432 @@ async function createMagicWand() {
     });
 }
 
+async function createAllBindingTypes() {
+  const dotLottie = new DotLottie();
+  // --- Start vector
+  const wand_animation_data = fs.readFileSync('animations/magic_wand.json', 'utf8');
+
+  // Global inputs
+  // const vector_global_input = fs.readFileSync('bindings/vector_global_input.json', 'utf8');
+  // const parsed_vector_global_input = JSON.parse(vector_global_input);
+  // const wand_state_machine_data = fs.readFileSync('state_machines/wand_sm.json', 'utf8'); 
+
+  const yellow_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0.7451, 0] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0, 0, 0] }
+    ]
+  }
+  
+  const parsed_yellow_theme = (yellow_theme_data);
+
+  const red_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0, 0] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0, 0, 0] }
+    ]
+  }
+  
+  const parsed_red_theme = (red_theme_data);
+
+  const blue_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [0, 0.8, 1] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0,0,0] }
+    ]
+  }
+  
+  const parsed_blue_theme = (blue_theme_data);
+
+  const wand_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0.4, 0.6] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0,0] }
+    ]
+  }
+  
+  const parsed_wand_theme = (wand_theme_data);
+
+  let toggle_binding =  fs.readFileSync('bindings/binding_tests_state_machine_boolean_for_toggle.json', 'utf8');
+  const parsed_toggle_binding = JSON.parse(toggle_binding);
+
+  await dotLottie
+    .addAnimation({
+      id: 'wand',
+      data: JSON.parse(wand_animation_data),
+    })
+    .addTheme({
+      data: parsed_blue_theme,
+      id: "theme",
+    })
+    .addTheme({
+      data: parsed_wand_theme,
+      id: "wand",
+    })
+    .addTheme({
+      data: parsed_yellow_theme,
+      id: "Yellow",
+    })
+    .addTheme({
+      data: parsed_red_theme,
+      id: "Red",
+    })
+    .addGlobalInputs({
+      id: "big_inputs_file",
+      data: {
+        "numeric_static": {
+          "type": "Numeric",
+          "value": 50.0,
+          "bindings": {
+            "themes": [
+              {
+                "themeId": "*",
+                "ruleId": "ball",
+                "path": "value"
+              }
+            ]
+          }
+        },  
+        "numeric_animated": {
+          "type": "Numeric",
+          "value": 100,
+          "bindings": {
+            "themes": [
+              {
+                "themeId": "*",
+                "ruleId": "ball",
+                "path": "keyframes/0/value"
+              }
+            ]
+          }
+        },
+        "color_static": {
+          "type": "Color",
+          "value": [0.9, 0.9, 0.9],
+          "bindings": {
+            "themes": [
+              {
+                "themeId": "*",
+                "ruleId": "gradient_color",
+                "path": "value/0/color"
+              }
+            ]
+          }
+        },
+        "color_animated": {
+          "type": "Color",
+          "value": [0.1, 0.1, 0.1],
+          "bindings": {
+            "themes": [
+              {
+                "themeId": "*",
+                "ruleId": "gradient_color",
+                "path": "keyframes/0/value/0/color"
+              }
+            ]
+          }
+        },
+        "gradient_static": {
+          "type": "Gradient",
+          "value": [
+            {
+              "color": [0, 0, 0, 1.0],
+              "offset": 0
+            },
+            {
+              "color": [1, 1, 1, 1.0],
+              "offset": 1
+            }
+          ],
+          "bindings": {
+            "themes": [
+              {
+                "themeId": "*",
+                "ruleId": "gradient_color",
+                "path": "value"
+              }
+            ]
+          }
+        },
+      "gradient_animated": {
+        "type": "Gradient",
+        "value": [
+          {
+            "color": [0.1, 0.1, 0.1, 1.0],
+            "offset": 0.1
+          }
+        ],
+        "bindings": {
+          "themes": [
+            {
+              "themeId": "*",
+              "ruleId": "gradient_color",
+              "path": "keyframes/0/value"
+            }
+          ]
+        }
+      },
+      "string_static": {
+        "type": "String",
+        "value": "First Try!",
+        "bindings": {
+          "themes": [
+            {
+              "themeId": "*",
+              "ruleId": "my_text",
+              "path": "value/text"
+            }
+          ]
+        }
+      },
+      "string_animated": {
+        "type": "String",
+        "value": "START REPLACED WITH BINDING",
+        "bindings": {
+          "themes": [
+            {
+              "themeId": "*",
+              "ruleId": "my_text",
+              "path": "keyframes/0/value/text"
+            }
+          ]
+        }
+      },
+      "boolean_static": {
+        "type": "Boolean",
+        "value": false,
+        "bindings": {
+          "themes": [
+            {
+              "themeId": "*",
+              "ruleId": "my_text",
+              "path": "value"
+            }
+          ]
+        }
+      },
+      "vector_static": {
+        "type": "Vector",
+        "value": [50.0, 50.0],
+        "bindings": {
+            "themes": [
+              {
+                "themeId": "*",
+                "ruleId": "ball",
+                "path": "value"
+              }
+            ]
+          }
+      }
+    }})
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then((value) => {
+      fs.writeFileSync('exports/all-global-inputs.lottie', Buffer.from(value));
+    });
+}
+
+async function createMultiAnimationMultiGlobalInput() {
+  const dotLottie = new DotLottie();
+  // --- Start vector
+  const wand_animation_data = fs.readFileSync('animations/magic_wand.json', 'utf8');
+
+  // Global inputs
+  const vector_global_input = fs.readFileSync('bindings/vector_global_input.json', 'utf8');
+  const parsed_vector_global_input = JSON.parse(vector_global_input);
+
+  const wand_state_machine_data = fs.readFileSync('state_machines/wand_sm.json', 'utf8'); 
+
+  const yellow_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0.7451, 0] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0, 0, 0] }
+    ]
+  }
+  
+  const parsed_yellow_theme = (yellow_theme_data);
+
+  const red_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0, 0] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0, 0, 0] }
+    ]
+  }
+  
+  const parsed_red_theme = (red_theme_data);
+
+  const blue_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [0, 0.8, 1] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0,0,0] }
+    ]
+  }
+  
+  const parsed_blue_theme = (blue_theme_data);
+
+  const wand_theme_data = {
+    "rules": [
+      { "id": "triangle", "type": "Color", "value": [1, 0.4, 0.6] },
+      { "id": "Wand", "type": "Color", "value": [0, 1, 0.4863] },
+      { "id": "wand_pos", "type": "Vector", "value": [0,0] }
+    ]
+  }
+  
+  const parsed_wand_theme = (wand_theme_data);
+
+  let toggle_binding =  fs.readFileSync('bindings/binding_tests_state_machine_boolean_for_toggle.json', 'utf8');
+  const parsed_toggle_binding = JSON.parse(toggle_binding);
+
+  await dotLottie
+    .addAnimation({
+      id: 'wand',
+      data: JSON.parse(wand_animation_data),
+    })
+    .addStateMachine({
+      id: "wand_sm",
+      data: JSON.parse(wand_state_machine_data)
+    })
+    .addTheme({
+      data: parsed_blue_theme,
+      id: "Blue",
+    })
+    .addTheme({
+      data: parsed_wand_theme,
+      id: "wand",
+    })
+    .addTheme({
+      data: parsed_yellow_theme,
+      id: "Yellow",
+    })
+    .addTheme({
+      data: parsed_red_theme,
+      id: "Red",
+    })
+    .addGlobalInputs({
+      data: parsed_vector_global_input,
+      id: 'inputs'
+    })
+    .addAnimation({
+      id: 'toggleBtn',
+      url: 'https://lottie.host/8c2590c3-3aaa-4d47-b6cd-1ef979e284f4/2ykhbXYDAc.json',
+    })
+    .addGlobalInputs({
+      id: "parsed_toggle_binding",
+      data: parsed_toggle_binding
+    })
+    .addStateMachine({
+      id: "toggleButton",
+      name: "Toggle Button",
+      data: {
+        initial: "initial-wait",
+        states: [
+          {
+            name: "initial-wait",
+            type: "PlaybackState",
+            animation: "",
+            transitions: [
+              {
+                type: "Transition",
+                toState: "a",
+                guards: [
+                  {
+                    type: "Boolean",
+                    conditionType: "Equal",
+                    inputName: "OnOffSwitch",
+                    compareTo: true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            name: "a",
+            type: "PlaybackState",
+            animation: "",
+            autoplay: true,
+            speed: 2.0,
+            transitions: [
+              {
+                type: "Transition",
+                toState: "b",
+                guards: [
+                  {
+                    type: "Boolean",
+                    conditionType: "Equal",
+                    inputName: "OnOffSwitch",
+                    compareTo: false
+                  }
+                ]
+              },
+            ],
+            entryActions: [
+              {
+                type: "SetGlobalString",
+                globalInputId: "test",
+                value: "new value!"
+              },
+            ]
+          },
+          {
+            name: "b",
+            type: "PlaybackState",
+            animation: "",
+            autoplay: true,
+            speed: 2.0,
+            mode: "Reverse",
+            transitions: [
+              {
+                type: "Transition",
+                toState: "a",
+                guards: [
+                  {
+                    type: "Boolean",
+                    conditionType: "Equal",
+                    inputName: "OnOffSwitch",
+                    compareTo: true
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        interactions: [
+          {
+            type: "PointerDown",
+            actions: [
+              {
+                type: "Toggle",
+                inputName: "OnOffSwitch"
+              }
+            ]
+          }
+        ],
+        inputs: [
+          {
+            type: "Boolean",
+            name: "OnOffSwitch",
+            value: false
+          }
+        ]
+      }
+    })
+    .build()
+    .then((value) => {
+      return value.toArrayBuffer();
+    })
+    .then((value) => {
+      fs.writeFileSync('exports/multi-global-inputs.lottie', Buffer.from(value));
+    });
+}
 
 async function createFallingSquares() {
   const dotLottie = new DotLottie();
@@ -515,28 +941,89 @@ async function packageAnimThemeBinding(animationFilename, themeFilename, binding
   
   const dotLottie = new DotLottie(); 
 
-  await dotLottie
-  .addAnimation({
-    id: animationFilename,
-    data: JSON.parse(animation_data),
-  })
-   .addTheme({
-    data: JSON.parse(theme_data),
-    id: 'theme',
-  })
-  .addGlobalInputs({
-    data: JSON.parse(global_input_data),
-    id: 'inputs'
-  })
-  .build()
-  .then((value) => {
-    return value.toArrayBuffer();
-  })
-  .then((value) => {
-    fs.writeFileSync(`exports/${exportFilename}.lottie`, Buffer.from(value));
-    
-    console.log(`>> Finished creating ${exportFilename}`);
+  const arrayBuffer = await dotLottie
+    .addAnimation({
+      id: animationFilename,
+      data: JSON.parse(animation_data),
+    })
+    .addTheme({
+      data: JSON.parse(theme_data),
+      id: 'theme',
+    })
+    .addGlobalInputs({
+      data: JSON.parse(global_input_data),
+      id: 'inputs'
+    })
+    .addGlobalInputs({
+      data: JSON.parse(global_input_data),
+      id: 'second_inputs'
+    })
+    .build()
+    .then((value) => value.toArrayBuffer());
+
+  fs.writeFileSync(`exports/${exportFilename}.lottie`, Buffer.from(arrayBuffer));
+  console.log(`>> Finished creating ${exportFilename}`);
+
+  // Test: Verify the global inputs were correctly added
+  await verifyDotLottieContents(arrayBuffer, {
+    animationId: animationFilename,
+    themeId: 'theme',
+    globalInputsId: 'inputs',
+    expectedGlobalInputs: JSON.parse(global_input_data),
+    expectedTheme: JSON.parse(theme_data),
   });
+  await verifyDotLottieContents(arrayBuffer, {
+    animationId: animationFilename,
+    themeId: 'theme',
+    globalInputsId: 'second_inputs',
+    expectedGlobalInputs: JSON.parse(global_input_data),
+    expectedTheme: JSON.parse(theme_data),
+  });
+}
+
+async function verifyDotLottieContents(arrayBuffer, expected) {
+  console.log(`>> Verifying .lottie contents...`);
+  
+  const uint8Array = new Uint8Array(arrayBuffer);
+
+  // Test getGlobalInputs
+  const globalInputsMap = await getGlobalInputs(uint8Array);
+  console.log(`   Found global inputs:`, Object.keys(globalInputsMap));
+  
+  if (!globalInputsMap[expected.globalInputsId]) {
+    throw new Error(`Global inputs '${expected.globalInputsId}' not found in .lottie file`);
+  }
+
+  const extractedGlobalInputs = JSON.parse(globalInputsMap[expected.globalInputsId]);
+  
+  console.log(extractedGlobalInputs);
+
+  if (JSON.stringify(extractedGlobalInputs) !== JSON.stringify(expected.expectedGlobalInputs)) {
+    console.error('Expected:', expected.expectedGlobalInputs);
+    console.error('Got:', extractedGlobalInputs);
+    throw new Error('Global inputs data does not match');
+  }
+  console.log(`   ✓ Global inputs '${expected.globalInputsId}' verified`);
+
+  // Test getThemes
+  const themesMap = await getThemes(uint8Array);
+  console.log(`   Found themes:`, Object.keys(themesMap));
+  
+  if (!themesMap[expected.themeId]) {
+    throw new Error(`Theme '${expected.themeId}' not found in .lottie file`);
+  }
+  console.log(`   ✓ Theme '${expected.themeId}' verified`);
+
+  // Test getAnimations
+  const animationsMap = await getAnimations(uint8Array);
+  console.log(`   Found animations:`, Object.keys(animationsMap));
+  
+  if (!animationsMap[expected.animationId]) {
+    throw new Error(`Animation '${expected.animationId}' not found in .lottie file`);
+  }
+  console.log(`   ✓ Animation '${expected.animationId}' verified`);
+
+  console.log(`>> All verifications passed!`);
 }
 
 // async function createAnimationWithImages() {
@@ -658,6 +1145,8 @@ async function packageAnimThemeBinding(animationFilename, themeFilename, binding
         
 async function createTestFilesForDotlottieRs() {
   await createMagicWand();
+  await createMultiAnimationMultiGlobalInput();
+  await createAllBindingTypes();
 
     // --- Start color
     await packageAnimThemeBinding("sheet_gradient", "sheet_color_theme_animated", "sheet_color_animated", "test_inputs_sheet_color_animated");
@@ -695,4 +1184,5 @@ async function createTestFilesForDotlottieRs() {
     await createStarRating();
     await createToggleButton();
   }
+  
   await createTestFilesForDotlottieRs();
