@@ -157,6 +157,7 @@ describe('toJSON', () => {
     // Verify sizes are consistent for same options
     const size1 = JSON.stringify(withoutInline1).length;
     const size2 = JSON.stringify(withoutInline2).length;
+    
     expect(size1).toBe(size2);
   });
 
