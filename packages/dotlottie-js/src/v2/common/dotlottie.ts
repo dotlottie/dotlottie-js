@@ -6,7 +6,7 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 
 import { PACKAGE_NAME } from '../../constants';
 import type { ConversionOptions, GetAnimationOptions } from '../../types';
-import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
+import { DotLottieError, isAudioAsset, isValidURL } from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
@@ -344,51 +344,28 @@ export class DotLottieCommon {
    * @returns LottieAnimationCommon with inlined assets
    */
   private async _findAssetsAndInline(animation: LottieAnimationCommon): Promise<LottieAnimationCommon> {
-    const animationAssets = animation.data?.assets as AnimationType['assets'];
+    // Delegate to animation.toJSON with inlineAssets option
+    // This handles cloning and inlining of images, audio, and fonts
+    const inlinedData = await animation.toJSON({ inlineAssets: true });
 
-    if (!animationAssets) throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
+    // Create a new animation instance with the fully inlined data
+    // We need to preserve the animation's metadata while using the inlined data
+    const LottieAnimationClass = animation.constructor as new (options: AnimationOptions) => LottieAnimationCommon;
+    const inlinedAnimation = new LottieAnimationClass({
+      id: animation.id,
+      name: animation.name,
+      data: inlinedData,
+      background: animation.background ?? undefined,
+      initialTheme: animation.initialTheme ?? undefined,
+    });
 
-    const images = this.getImages();
-    const audios = this.getAudio();
-    const fonts = this.getFonts();
+    // Copy over the asset references
+    inlinedAnimation.imageAssets = animation.imageAssets;
+    inlinedAnimation.audioAssets = animation.audioAssets;
+    inlinedAnimation.fontAssets = animation.fontAssets;
+    inlinedAnimation.themes = animation.themes;
 
-    for (const asset of animationAssets) {
-      if (isImageAsset(asset)) {
-        for (const image of images) {
-          if (image.fileName === asset.p) {
-            // encoded is true
-            asset.e = 1;
-            asset.u = '';
-            asset.p = await image.toDataURL();
-          }
-        }
-      } else if (isAudioAsset(asset)) {
-        for (const audio of audios) {
-          if (audio.fileName === asset.p) {
-            // encoded is true
-            asset.e = 1;
-            asset.u = '';
-            asset.p = await audio.toDataURL();
-          }
-        }
-      }
-    }
-
-    // Inline fonts from fonts.list
-    const fontsList = animation.data?.fonts?.list;
-
-    if (fontsList) {
-      for (const fontDef of fontsList) {
-        for (const font of fonts) {
-          if (fontDef.fPath === `/f/${font.fileName}`) {
-            fontDef.fPath = await font.toDataURL();
-            fontDef.origin = 3;
-          }
-        }
-      }
-    }
-
-    return animation;
+    return inlinedAnimation;
   }
 
   /**
