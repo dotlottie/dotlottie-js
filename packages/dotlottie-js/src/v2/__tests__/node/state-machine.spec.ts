@@ -49,7 +49,6 @@ describe('LottieStateMachine', () => {
   });
 
   it('gets and sets the id', () => {
-    // arrange
     const state = new LottieStateMachine({
       id: 'test',
       data: {
@@ -165,5 +164,160 @@ describe('LottieStateMachine', () => {
         return false;
       });
     }
+  });
+
+  it('throws an error when a state references a non-existent animation at build time', async () => {
+    // arrange
+    const dotlottie = new DotLottie();
+
+    dotlottie
+      .addAnimation({
+        id: 'pigeon',
+        data: animationData as unknown as AnimationData,
+      })
+      .addStateMachine({
+        id: 'testState',
+        data: {
+          initial: 'state1',
+          states: [
+            {
+              name: 'state1',
+              type: 'PlaybackState',
+              animation: 'nonExistentAnimation',
+              autoplay: true,
+            },
+          ],
+        },
+      });
+
+    await expect(dotlottie.build()).rejects.toThrowError(
+      'State machine "testState": State "state1" references animation "nonExistentAnimation" which does not exist in the bundle. Available animations: pigeon',
+    );
+  });
+
+  it('allows empty animation IDs in states', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie
+      .addAnimation({
+        id: 'pigeon',
+        data: animationData as unknown as AnimationData,
+      })
+      .addStateMachine({
+        id: 'testState',
+        data: {
+          initial: 'state1',
+          states: [
+            {
+              name: 'state1',
+              type: 'PlaybackState',
+              // Empty animation is allowed
+              animation: '',
+              autoplay: true,
+            },
+          ],
+        },
+      });
+
+    await expect(dotlottie.build()).resolves.toBeDefined();
+  });
+
+  it('validates animation IDs when state machine is added before animations', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie
+      .addStateMachine({
+        id: 'testState',
+        data: {
+          initial: 'state1',
+          states: [
+            {
+              name: 'state1',
+              type: 'PlaybackState',
+              animation: 'pigeon',
+              autoplay: true,
+            },
+          ],
+        },
+      })
+      .addAnimation({
+        id: 'pigeon',
+        data: animationData as unknown as AnimationData,
+      });
+
+    await expect(dotlottie.build()).resolves.toBeDefined();
+  });
+
+  it('throws an error when state machine is added before animations and references invalid ID', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie
+      .addStateMachine({
+        id: 'testState',
+        data: {
+          initial: 'state1',
+          states: [
+            {
+              name: 'state1',
+              type: 'PlaybackState',
+              animation: 'invalidAnimation',
+              autoplay: true,
+            },
+          ],
+        },
+      })
+      .addAnimation({
+        id: 'pigeon',
+        data: animationData as unknown as AnimationData,
+      });
+
+    await expect(dotlottie.build()).rejects.toThrowError(
+      'State machine "testState": State "state1" references animation "invalidAnimation" which does not exist in the bundle. Available animations: pigeon',
+    );
+  });
+
+  it('validates multiple states with different animation references', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie
+      .addAnimation({
+        id: 'pigeon',
+        data: animationData as unknown as AnimationData,
+      })
+      .addAnimation({
+        id: 'wifi',
+        data: wifiAnimationData as unknown as AnimationData,
+      })
+      .addStateMachine({
+        id: 'testState',
+        data: {
+          initial: 'state1',
+          states: [
+            {
+              name: 'state1',
+              type: 'PlaybackState',
+              // Valid
+              animation: 'pigeon',
+              autoplay: true,
+            },
+            {
+              name: 'state2',
+              type: 'PlaybackState',
+              // Valid
+              animation: 'wifi',
+              autoplay: true,
+            },
+            {
+              name: 'state3',
+              type: 'PlaybackState',
+              // Empty is valid
+              animation: '',
+              autoplay: true,
+            },
+          ],
+        },
+      });
+
+    await expect(dotlottie.build()).resolves.toBeDefined();
   });
 });

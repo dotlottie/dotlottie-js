@@ -511,6 +511,26 @@ export class DotLottieCommon {
   }
 
   /**
+   * Validates that all animation IDs referenced in state machines exist in the bundle.
+   * @throws DotLottieError if a state references an animation that doesn't exist
+   */
+  private _validateStateMachineAnimations(): void {
+    const availableAnimationIds = Array.from(this._animationsMap.keys());
+
+    for (const stateMachine of this.stateMachines) {
+      for (const state of stateMachine.states) {
+        if ('animation' in state && state.animation && state.animation.trim() !== '') {
+          if (!availableAnimationIds.includes(state.animation)) {
+            throw new DotLottieError(
+              `State machine "${stateMachine.id}": State "${state.name}" references animation "${state.animation}" which does not exist in the bundle. Available animations: ${availableAnimationIds.join(', ')}`,
+            );
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * Constructs the manifest and calls toJSON on the animations
    * so the data is fetched for every animation.
    *
@@ -518,6 +538,9 @@ export class DotLottieCommon {
    */
   public async build(): Promise<DotLottieCommon> {
     this._buildManifest();
+
+    // Validate state machine animation references
+    this._validateStateMachineAnimations();
 
     for (const animation of this.animations) {
       await animation.toJSON();
