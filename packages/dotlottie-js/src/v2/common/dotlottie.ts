@@ -522,7 +522,9 @@ export class DotLottieCommon {
         if ('animation' in state && state.animation && state.animation.trim() !== '') {
           if (!availableAnimationIds.includes(state.animation)) {
             throw new DotLottieError(
-              `State machine "${stateMachine.id}": State "${state.name}" references animation "${state.animation}" which does not exist in the bundle. Available animations: ${availableAnimationIds.join(', ')}`,
+              `State machine "${stateMachine.id}": State "${state.name}" references animation "${
+                state.animation
+              }" which does not exist in the bundle. Available animations: ${availableAnimationIds.join(', ')}`,
             );
           }
         }
