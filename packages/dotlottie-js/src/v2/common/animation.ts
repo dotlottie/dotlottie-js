@@ -275,6 +275,21 @@ export class LottieAnimationCommon {
       }
     }
 
+    if (options?.inlineAssets) {
+      const fontsList = this._data.fonts?.list;
+
+      if (fontsList) {
+        for (const fontDef of fontsList) {
+          for (const font of this.fontAssets) {
+            if (fontDef.fPath === `/f/${font.fileName}`) {
+              fontDef.fPath = await font.toDataURL();
+              fontDef.origin = 3;
+            }
+          }
+        }
+      }
+    }
+
     return this._data;
   }
 

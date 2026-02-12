@@ -282,4 +282,30 @@ describe('LottieFont', () => {
       }
     }
   });
+
+  it('inlines font assets when animation toJSON called with inlineAssets option', async () => {
+    let dotLottie = new DotLottie();
+
+    dotLottie = await dotLottie.fromArrayBuffer(textDotLottie as ArrayBuffer);
+
+    expect(dotLottie.animations.length).toBeGreaterThan(0);
+
+    const animation = dotLottie.animations[0];
+
+    expect(animation).toBeDefined();
+
+    const jsonData = await animation?.toJSON({ inlineAssets: true });
+
+    const fontsList = jsonData?.fonts?.list;
+
+    expect(fontsList).toBeDefined();
+    expect(fontsList?.length).toBeGreaterThan(0);
+
+    for (const fontDef of fontsList || []) {
+      if (fontDef.fPath) {
+        expect(fontDef.fPath).toMatch(/^data:/u);
+        expect(fontDef.origin).toBe(3);
+      }
+    }
+  });
 });
