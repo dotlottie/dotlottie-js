@@ -6,7 +6,7 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 
 import { PACKAGE_NAME } from '../../constants';
 import type { ConversionOptions, GetAnimationOptions } from '../../types';
-import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
+import { DotLottieError, isAudioAsset, isValidURL } from '../../utils';
 
 import type { AnimationOptionsV1, LottieAnimationCommonV1 } from './animation';
 import type { LottieAudioCommonV1 } from './audio';
@@ -350,36 +350,31 @@ export class DotLottieCommonV1 {
    * @returns LottieAnimationCommonV1 with inlined assets
    */
   private async _findAssetsAndInline(animation: LottieAnimationCommonV1): Promise<LottieAnimationCommonV1> {
-    const animationAssets = animation.data?.assets as AnimationType['assets'];
+    // Delegate to animation.toJSON with inlineAssets option
+    // This ensures we use the cloning logic to avoid mutation
+    const inlinedData = await animation.toJSON({ inlineAssets: true });
 
-    if (!animationAssets) throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
+    // Create a new animation instance with the inlined data
+    // We need to preserve the animation's metadata while using the inlined data
+    const LottieAnimationClass = animation.constructor as new (options: AnimationOptionsV1) => LottieAnimationCommonV1;
+    const inlinedAnimation = new LottieAnimationClass({
+      id: animation.id,
+      data: inlinedData,
+      autoplay: animation.autoplay,
+      direction: animation.direction,
+      hover: animation.hover,
+      intermission: animation.intermission,
+      loop: animation.loop,
+      playMode: animation.playMode,
+      speed: animation.speed,
+      themeColor: animation.themeColor,
+    });
 
-    const images = this.getImages();
-    const audios = this.getAudio();
+    // Copy over the asset references
+    inlinedAnimation.imageAssets = animation.imageAssets;
+    inlinedAnimation.audioAssets = animation.audioAssets;
 
-    for (const asset of animationAssets) {
-      if (isImageAsset(asset)) {
-        for (const image of images) {
-          if (image.fileName === asset.p) {
-            // encoded is true
-            asset.e = 1;
-            asset.u = '';
-            asset.p = await image.toDataURL();
-          }
-        }
-      } else if (isAudioAsset(asset)) {
-        for (const audio of audios) {
-          if (audio.fileName === asset.p) {
-            // encoded is true
-            asset.e = 1;
-            asset.u = '';
-            asset.p = await audio.toDataURL();
-          }
-        }
-      }
-    }
-
-    return animation;
+    return inlinedAnimation;
   }
 
   /**
