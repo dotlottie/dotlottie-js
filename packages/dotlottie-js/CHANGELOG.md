@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 1.6.3
+
+### Patch Changes
+
+- 48353a8: added blocker if state machine builds with invalid animation ids
+- 7a8736e: fix: font inlining
+
 ## 1.6.2
 
 ### Patch Changes
