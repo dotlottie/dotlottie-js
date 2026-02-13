@@ -25,11 +25,11 @@ jobs:
         with:
           version: 9
 
-      - name: ⎔ Setup Node@18
+      - name: ⎔ Setup Node@20
         uses: actions/setup-node@v3
         with:
           cache: 'pnpm'
-          node-version: 18
+          node-version: 20
 
       - name: 📥 Download deps
         run: pnpm install
@@ -72,11 +72,11 @@ jobs:
         with:
           version: 9
 
-      - name: ⎔ Setup Node@18
+      - name: ⎔ Setup Node@20
         uses: actions/setup-node@v3
         with:
           cache: 'pnpm'
-          node-version: 18
+          node-version: 20
 
       - name: 📥 Download deps
         run: pnpm install
