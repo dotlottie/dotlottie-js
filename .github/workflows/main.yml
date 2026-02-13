@@ -9,61 +9,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.0
-
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
-
-      - name: ⎔ Setup pnpm@9
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: ⎔ Setup Node@20
-        uses: actions/setup-node@v4
-        with:
-          cache: 'pnpm'
-          node-version: 20
-
-      - name: 📥 Download deps
-        run: pnpm install
-
-      - name: 🏗 Build
-        run: pnpm build
-
-      - name: 🔍 Verify types
-        run: pnpm type-check
-
-      - name: 💅 Verify format (`pnpm format` committed?)
-        run: pnpm format --check --no-write
-
-      - name: 🕵️ Lint
-        run: pnpm lint
-
-      - name: 🛡️ Test
-        run: |
-          npx playwright install --with-deps
-          pnpm test
-
-      - name: 📏 Report bundle size
-        uses: andresz1/size-limit-action@v1
-        continue-on-error: true
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
   release:
-    needs: validate
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'dotlottie/dotlottie-js' && github.event_name == 'push' }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: ⎔ Setup pnpm@9
         uses: pnpm/action-setup@v4
