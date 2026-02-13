@@ -20,10 +20,8 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: ⎔ Setup pnpm@9
+      - name: ⎔ Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: ⎔ Setup Node@20
         uses: actions/setup-node@v4
@@ -67,10 +65,8 @@ jobs:
         with:
           token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
 
-      - name: ⎔ Setup pnpm@9
+      - name: ⎔ Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: ⎔ Setup Node@20
         uses: actions/setup-node@v4
