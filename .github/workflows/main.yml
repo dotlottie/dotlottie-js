@@ -13,6 +13,9 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -27,6 +30,7 @@ jobs:
         with:
           cache: 'pnpm'
           node-version: 20
+          registry-url: 'https://registry.npmjs.org'
 
       - name: 📥 Download deps
         run: pnpm install
@@ -34,9 +38,6 @@ jobs:
       - name: 🏗 Build
         run: pnpm build
         working-directory: packages/dotlottie-js
-
-      - name: ⬆️ Update npm for OIDC trusted publishing
-        run: npm install -g npm@latest
 
       - name: 🚀 Release
         uses: changesets/action@v1
