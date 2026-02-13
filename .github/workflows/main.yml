@@ -83,6 +83,9 @@ jobs:
         run: pnpm build
         working-directory: packages/dotlottie-js
 
+      - name: ⬆️ Update npm for OIDC trusted publishing
+        run: npm install -g npm@latest
+
       - name: 🚀 Release
         uses: changesets/action@v1
         with:
@@ -91,6 +94,4 @@ jobs:
           publish: pnpm release:publish
           version: pnpm release:version
         env:
-          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
