@@ -1,35 +1,40 @@
 name: main
+run-name: ${{ github.workflow }} (${{ github.ref_name }})
+
 on:
-  push:
-    branches:
-      - 'main'
   pull_request:
+    branches: [main]
+  push:
+    branches: [main]
 
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       id-token: write
+
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: ⎔ Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: ⎔ Setup Node@20
-        uses: actions/setup-node@v4
+      - name: ⎔ Setup Node@lts
+        uses: actions/setup-node@v6
         with:
           cache: 'pnpm'
-          node-version: 20
+          node-version: lts/*
           registry-url: 'https://registry.npmjs.org'
 
       - name: 📥 Download deps
