@@ -1,24 +1,20 @@
 name: main
-run-name: ${{ github.workflow }} (${{ github.ref_name }})
 
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
 
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     permissions:
-      contents: read
+      contents: write
       id-token: write
 
     steps:
