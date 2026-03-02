@@ -25,6 +25,12 @@ export const ManifestStateMachineSchema = object({
 });
 export type ManifestStateMachine = Output<typeof ManifestStateMachineSchema>;
 
+export const ManifestScriptSchema = object({
+  id: string(),
+  name: optional(string()),
+});
+export type ManifestScript = Output<typeof ManifestScriptSchema>;
+
 export const InitialObjectSchema = object({
   animation: optional(string()),
   stateMachine: optional(string()),
@@ -37,6 +43,7 @@ export const ManifestSchema = object({
   animations: array(ManifestAnimationSchema),
   themes: optional(array(ManifestThemeSchema)),
   stateMachines: optional(array(ManifestStateMachineSchema)),
+  scripts: optional(array(ManifestScriptSchema)),
 });
 
 export type Manifest = Output<typeof ManifestSchema>;

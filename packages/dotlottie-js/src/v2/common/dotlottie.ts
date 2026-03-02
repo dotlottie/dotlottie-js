@@ -16,6 +16,8 @@ import type { DotLottiePlugin } from './plugin';
 import type { Manifest } from './schemas';
 import type { DotLottieStateMachineCommonOptions } from './state-machine';
 import { DotLottieStateMachineCommon } from './state-machine';
+import type { ScriptOptions } from './script';
+import { DotLottieScriptCommon } from './script';
 import type { ThemeOptions } from './theme';
 import { LottieThemeCommon } from './theme';
 
@@ -32,6 +34,8 @@ export class DotLottieCommon {
   protected readonly _themesMap: Map<string, LottieThemeCommon> = new Map();
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
+
+  protected readonly _scriptsMap: Map<string, DotLottieScriptCommon> = new Map();
 
   protected _generator: string = PACKAGE_NAME;
 
@@ -103,6 +107,10 @@ export class DotLottieCommon {
 
   public get stateMachines(): DotLottieStateMachineCommon[] {
     return Array.from(this._stateMachinesMap.values());
+  }
+
+  public get scripts(): DotLottieScriptCommon[] {
+    return Array.from(this._scriptsMap.values());
   }
 
   /**
@@ -501,6 +509,15 @@ export class DotLottieCommon {
       }));
     }
 
+    const scriptsList = Array.from(this._scriptsMap.values());
+
+    if (scriptsList.length > 0) {
+      manifest.scripts = scriptsList.map((script) => ({
+        id: script.id,
+        ...(script.name ? { name: script.name } : {}),
+      }));
+    }
+
     if (activeAnimationId) {
       manifest.initial = {
         animation: activeAnimationId,
@@ -660,6 +677,15 @@ export class DotLottieCommon {
 
         mergedDotlottie.addStateMachine(stateOption);
       });
+
+      dotlottie.scripts.forEach((script) => {
+        mergedDotlottie.addScript({
+          id: script.id,
+          name: script.name,
+          data: script.data,
+          zipOptions: script.zipOptions,
+        });
+      });
     }
 
     return mergedDotlottie;
@@ -731,6 +757,24 @@ export class DotLottieCommon {
 
   public removeStateMachine(stateMachineId: string): DotLottieCommon {
     this._stateMachinesMap.delete(stateMachineId);
+
+    return this;
+  }
+
+  public addScript(scriptOptions: ScriptOptions): DotLottieCommon {
+    const script = new DotLottieScriptCommon(scriptOptions);
+
+    this._scriptsMap.set(script.id, script);
+
+    return this;
+  }
+
+  public getScript(scriptId: string): DotLottieScriptCommon | undefined {
+    return this._scriptsMap.get(scriptId);
+  }
+
+  public removeScript(scriptId: string): DotLottieCommon {
+    this._scriptsMap.delete(scriptId);
 
     return this;
   }

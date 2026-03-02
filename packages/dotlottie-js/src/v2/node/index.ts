@@ -9,3 +9,4 @@ export * from './audio';
 export * from './font';
 export * from './theme';
 export * from './state-machine';
+export * from './script';

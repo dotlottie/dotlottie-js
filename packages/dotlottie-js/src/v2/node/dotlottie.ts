@@ -144,6 +144,12 @@ export class DotLottie extends DotLottieCommon {
       dotlottie[`s/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
     }
 
+    for (const script of this.scripts) {
+      const scriptData = script.toString();
+
+      dotlottie[`j/${script.id}.js`] = [strToU8(scriptData), script.zipOptions];
+    }
+
     const dotlottieArrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
       zip(dotlottie, options?.zipOptions || {}, (err, data) => {
         if (err) {
@@ -320,6 +326,23 @@ export class DotLottie extends DotLottieCommon {
                     id: stateMachine.id,
                     name: stateMachine.name,
                     data: decodedStateMachine,
+                  });
+                }
+              });
+            } else if (key.startsWith('j/') && key.endsWith('.js')) {
+              // extract scriptId from key as the key = `j/${scriptId}.js`
+              const scriptId = /j\/(.+)\.js/u.exec(key)?.[1];
+
+              if (!scriptId) {
+                throw new DotLottieError('Invalid script id');
+              }
+
+              manifest.scripts?.forEach((script) => {
+                if (script.id === scriptId) {
+                  dotlottie.addScript({
+                    id: script.id,
+                    name: script.name,
+                    data: decodedStr,
                   });
                 }
               });
