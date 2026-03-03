@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Design Barn Inc.
+ * Copyright 2026 Design Barn Inc.
  */
 
 import type { ZipOptions } from 'fflate';

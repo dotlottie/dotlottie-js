@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 Design Barn Inc.
+ * Copyright 2026 Design Barn Inc.
  */
 
 /* eslint-disable no-new */
