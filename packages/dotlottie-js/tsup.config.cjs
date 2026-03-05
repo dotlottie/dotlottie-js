@@ -4,6 +4,8 @@
 
 import { defineConfig } from 'tsup';
 
+import pkg from "./package.json";
+
 const commonConfig = {
   bundle: true,
   clean: true,
@@ -11,7 +13,7 @@ const commonConfig = {
   format: ['esm'],
   metafile: false,
   minify: false,
-  sourcemap: true,
+  sourcemap: false,
   splitting: false,
   tsconfig: 'tsconfig.build.json',
   treeshake: true,
@@ -31,6 +33,6 @@ export default defineConfig([
     outDir: './dist',
     platform: 'browser',
     target: ['es2020'],
-    noExternal: ['browser-image-hash', 'file-type'],
+    noExternal: Object.keys(pkg.dependencies || {}),
   },
 ]);
