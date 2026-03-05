@@ -343,6 +343,7 @@ export class DotLottie extends DotLottieCommon {
                     id: script.id,
                     name: script.name,
                     data: decodedStr,
+                    ...(script.env ? { env: script.env } : {}),
                   });
                 }
               });

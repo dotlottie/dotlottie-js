@@ -6,7 +6,7 @@ import type { ZipOptions } from 'fflate';
 
 import { DotLottieError } from '../../utils';
 
-import type { ManifestScript } from './schemas';
+import type { EnvVariable, ManifestScript } from './schemas';
 
 export interface ScriptOptions extends ManifestScript {
   data: string;
@@ -21,6 +21,8 @@ export class DotLottieScriptCommon {
 
   protected _name: string | undefined;
 
+  protected _env: Record<string, EnvVariable> | undefined;
+
   protected _zipOptions: ZipOptions;
 
   public constructor(options: ScriptOptions) {
@@ -30,6 +32,7 @@ export class DotLottieScriptCommon {
     this._name = options.name;
     this._data = options.data;
     this._id = options.id;
+    this._env = options.env;
 
     this._zipOptions = options.zipOptions ?? {};
   }
@@ -58,6 +61,14 @@ export class DotLottieScriptCommon {
 
   public set name(name: string | undefined) {
     this._name = name;
+  }
+
+  public get env(): Record<string, EnvVariable> | undefined {
+    return this._env;
+  }
+
+  public set env(env: Record<string, EnvVariable> | undefined) {
+    this._env = env;
   }
 
   public get data(): string {

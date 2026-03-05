@@ -2,7 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import { type Output, string, array, optional, object } from 'valibot';
+import { type Output, string, array, optional, object, record, union, literal } from 'valibot';
 
 export const ManifestAnimationSchema = object({
   id: string(),
@@ -25,9 +25,20 @@ export const ManifestStateMachineSchema = object({
 });
 export type ManifestStateMachine = Output<typeof ManifestStateMachineSchema>;
 
+export const EnvVariableTypeSchema = union([literal('String'), literal('Boolean'), literal('Number')]);
+export type EnvVariableType = Output<typeof EnvVariableTypeSchema>;
+
+export const EnvVariableSchema = object({
+  name: string(),
+  value: string(),
+  type: EnvVariableTypeSchema,
+});
+export type EnvVariable = Output<typeof EnvVariableSchema>;
+
 export const ManifestScriptSchema = object({
   id: string(),
   name: optional(string()),
+  env: optional(record(string(), EnvVariableSchema)),
 });
 export type ManifestScript = Output<typeof ManifestScriptSchema>;
 

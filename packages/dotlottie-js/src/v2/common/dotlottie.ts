@@ -515,6 +515,7 @@ export class DotLottieCommon {
       manifest.scripts = scriptsList.map((script) => ({
         id: script.id,
         ...(script.name ? { name: script.name } : {}),
+        ...(script.env ? { env: script.env } : {}),
       }));
     }
 
@@ -684,6 +685,7 @@ export class DotLottieCommon {
           name: script.name,
           data: script.data,
           zipOptions: script.zipOptions,
+          ...(script.env ? { env: script.env } : {}),
         });
       });
     }
