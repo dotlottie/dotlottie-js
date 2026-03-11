@@ -227,7 +227,7 @@ export function isImageAsset(asset: Asset.Value): asset is Asset.Image {
  *
  * @public
  */
-export function isAudioAsset(asset: Asset.Value): asset is Asset.Image {
+export function isAudioAsset(asset: Asset.Value): asset is Asset.Sound {
   return !('h' in asset) && !('w' in asset) && 'p' in asset && 'e' in asset && 'u' in asset && 'id' in asset;
 }
 
@@ -273,6 +273,18 @@ export function isFontAsset(fPath: string): boolean {
  */
 export function isFontDataUrl(fPath: string): boolean {
   return typeof fPath === 'string' && fPath.startsWith('data:font/');
+}
+
+/**
+ * Checks if the given path is a data URI for audio.
+ *
+ * @param p - The path to check.
+ * @returns true if the path is a data URI for audio.
+ *
+ * @public
+ */
+export function isAudioDataUrl(data: string): boolean {
+  return typeof data === 'string' && data.startsWith('data:audio/');
 }
 
 /**
