@@ -98,7 +98,7 @@ export class LottieAnimation extends LottieAnimationCommon {
 
     const animationAssets = this._data.assets as AnimationType['assets'];
 
-    if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
+    if (!animationAssets) throw new DotLottieError('Failed to extract audio assets: No assets found inside animation');
 
     for (const asset of animationAssets) {
       if (isAudioAsset(asset)) {
