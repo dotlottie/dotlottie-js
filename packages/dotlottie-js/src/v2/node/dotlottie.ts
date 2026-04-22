@@ -39,11 +39,13 @@ export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie
 
     for (const animationId of animationIds) {
       const animation = await dotLottieV1.getAnimation(animationId, { inlineAssets: true });
+      const v1Settings = dotLottieV1.animations.find((anim) => anim.id === animationId);
 
       if (animation && animation.data) {
         dotLottieV2.addAnimation({
           data: animation.data,
           id: animationId,
+          defaultActiveAnimation: v1Settings?.defaultActiveAnimation ?? false,
         });
       }
     }
@@ -323,6 +325,20 @@ export class DotLottie extends DotLottieCommon {
                   });
                 }
               });
+            }
+          }
+
+          // Restore manifest.initial.animation → per-animation defaultActiveAnimation
+          // so that toArrayBuffer() → fromArrayBuffer() is a lossless roundtrip.
+          // _buildManifest() derives `manifest.initial` from this flag on write;
+          // without this, any parse → serialize cycle drops the initial marker.
+          if (manifest.initial?.animation) {
+            const initialAnimation = dotlottie.animations.find(
+              (anim) => anim.id === manifest.initial?.animation,
+            );
+
+            if (initialAnimation) {
+              initialAnimation.defaultActiveAnimation = true;
             }
           }
 
