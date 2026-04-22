@@ -605,6 +605,52 @@ describe('fromArrayBuffer', () => {
   });
 });
 
+describe('manifest.initial roundtrip', () => {
+  test('preserves manifest.initial.animation when the initial animation is not at index 0', async () => {
+    const source = new DotLottie()
+      .addAnimation({
+        id: 'first',
+        data: structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationType,
+      })
+      .addAnimation({
+        id: 'second',
+        data: structuredClone(BULL_ANIMATION_DATA) as unknown as AnimationType,
+        defaultActiveAnimation: true,
+      })
+      .addAnimation({
+        id: 'third',
+        data: structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationType,
+      });
+
+    const bytes = await source.toArrayBuffer();
+    const restored = await new DotLottie().fromArrayBuffer(bytes);
+
+    expect(restored.animations.map((anim) => anim.id)).toEqual(['first', 'second', 'third']);
+    expect(restored.manifest.initial?.animation).toBe('second');
+    expect(restored.animations.find((anim) => anim.id === 'first')?.defaultActiveAnimation).toBe(false);
+    expect(restored.animations.find((anim) => anim.id === 'second')?.defaultActiveAnimation).toBe(true);
+    expect(restored.animations.find((anim) => anim.id === 'third')?.defaultActiveAnimation).toBe(false);
+  });
+
+  test('omits manifest.initial when no animation is marked as default', async () => {
+    const source = new DotLottie()
+      .addAnimation({
+        id: 'a',
+        data: structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationType,
+      })
+      .addAnimation({
+        id: 'b',
+        data: structuredClone(BULL_ANIMATION_DATA) as unknown as AnimationType,
+      });
+
+    const bytes = await source.toArrayBuffer();
+    const restored = await new DotLottie().fromArrayBuffer(bytes);
+
+    expect(restored.manifest.initial).toBeUndefined();
+    expect(restored.animations.every((anim) => anim.defaultActiveAnimation === false)).toBe(true);
+  });
+});
+
 describe('imageAssets', () => {
   test('Adds the Bull animation and checks number of images.', async () => {
     const dotlottie = await new DotLottie()

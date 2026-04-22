@@ -341,6 +341,20 @@ export class DotLottie extends DotLottieCommon {
             }
           }
 
+          // Restore manifest.initial.animation → per-animation defaultActiveAnimation
+          // so that toArrayBuffer() → fromArrayBuffer() is a lossless roundtrip.
+          // _buildManifest() derives `manifest.initial` from this flag on write;
+          // without this, any parse → serialize cycle drops the initial marker.
+          if (manifest.initial?.animation) {
+            const initialAnimation = dotlottie.animations.find(
+              (anim) => anim.id === manifest.initial?.animation,
+            );
+
+            if (initialAnimation) {
+              initialAnimation.defaultActiveAnimation = true;
+            }
+          }
+
           // Go through the images and find to which animation they belong
           for (const image of tmpImages) {
             for (const parentAnimation of dotlottie.animations) {
