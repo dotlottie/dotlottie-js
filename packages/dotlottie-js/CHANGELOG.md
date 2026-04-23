@@ -1,5 +1,12 @@
 # @dotlottie/dotlottie-js
 
+## 1.6.4
+
+### Patch Changes
+
+- 3595ad4: small cleanup for audio assets
+- ca7105f: Preserve `manifest.initial.animation` across v2 parse/serialize roundtrips and v1→v2 migration
+
 ## 1.6.3
 
 ### Patch Changes
