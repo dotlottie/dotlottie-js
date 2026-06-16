@@ -4,6 +4,7 @@
 
 /* eslint-disable no-new */
 
+import { safeParse } from 'valibot';
 import { describe, it, expect } from 'vitest';
 
 import animationData from '../../../__tests__/__fixtures__/simple/animation/animations/pigeon.json';
@@ -11,6 +12,7 @@ import smileyAnimationData from '../../../__tests__/__fixtures__/simple/animatio
 import wifiAnimationData from '../../../__tests__/__fixtures__/simple/animation/animations/wifi.json';
 import { SmileyWifi, PigeonState } from '../../../__tests__/__fixtures__/simple/state/pigeon-state';
 import type { AnimationData } from '../../../types';
+import { ActionSchema } from '../../common/schemas/state-machine';
 import { DotLottie, LottieStateMachine } from '../../index.browser';
 
 describe('LottieStateMachine', () => {
@@ -319,5 +321,23 @@ describe('LottieStateMachine', () => {
       });
 
     await expect(dotlottie.build()).resolves.toBeDefined();
+  });
+});
+
+describe('RNG and math actions', () => {
+  it('validates SetRandom, Multiply, Floor and Clamp actions', () => {
+    expect(safeParse(ActionSchema, { type: 'SetRandom', inputName: 'x' }).success).toBe(true);
+
+    expect(safeParse(ActionSchema, { type: 'Multiply', inputName: 'x', value: 6 }).success).toBe(true);
+    // value may reference another numeric input
+    expect(safeParse(ActionSchema, { type: 'Multiply', inputName: 'x', value: '$factor' }).success).toBe(true);
+
+    expect(safeParse(ActionSchema, { type: 'Floor', inputName: 'x' }).success).toBe(true);
+
+    // Clamp: both bounds, only min, only max, and neither
+    expect(safeParse(ActionSchema, { type: 'Clamp', inputName: 'x', min: 0, max: 9 }).success).toBe(true);
+    expect(safeParse(ActionSchema, { type: 'Clamp', inputName: 'x', min: '$lo' }).success).toBe(true);
+    expect(safeParse(ActionSchema, { type: 'Clamp', inputName: 'x', max: 9 }).success).toBe(true);
+    expect(safeParse(ActionSchema, { type: 'Clamp', inputName: 'x' }).success).toBe(true);
   });
 });
