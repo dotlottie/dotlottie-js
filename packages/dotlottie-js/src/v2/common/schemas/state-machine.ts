@@ -96,6 +96,9 @@ const SetNumericSchema = object({
 const SetRandomSchema = object({
   type: literal('SetRandom'),
   inputName: string(),
+  min: optional(union([string(), number()])),
+  max: optional(union([string(), number()])),
+  integer: optional(boolean()),
 });
 const MultiplySchema = object({
   type: literal('Multiply'),
