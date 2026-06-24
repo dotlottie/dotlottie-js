@@ -10,7 +10,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v6
@@ -39,10 +39,19 @@ jobs:
       - name: 🕵️ Lint
         run: pnpm lint
 
+      - name: 🎭 Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: 🎭 Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: 🛡️ Test
-        run: |
-          npx playwright install --with-deps chromium
-          pnpm test
+        run: pnpm test
 
       - name: 📏 Report bundle size
         uses: andresz1/size-limit-action@v1
