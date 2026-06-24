@@ -1,0 +1,51 @@
+name: validate PR
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v6
+
+      - name: ⎔ Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: ⎔ Setup Node@lts
+        uses: actions/setup-node@v6
+        with:
+          cache: 'pnpm'
+          node-version: lts/*
+
+      - name: 📥 Download deps
+        run: pnpm install
+
+      - name: 🏗 Build
+        run: pnpm build
+
+      - name: 🔍 Verify types
+        run: pnpm type-check
+
+      - name: 💅 Verify format (`pnpm format` committed?)
+        run: pnpm format --check --no-write
+
+      - name: 🕵️ Lint
+        run: pnpm lint
+
+      - name: 🛡️ Test
+        run: |
+          npx playwright install --with-deps
+          pnpm test
+
+      - name: 📏 Report bundle size
+        uses: andresz1/size-limit-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
