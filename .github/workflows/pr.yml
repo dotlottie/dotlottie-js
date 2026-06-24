@@ -10,7 +10,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v6
@@ -41,7 +41,7 @@ jobs:
 
       - name: 🛡️ Test
         run: |
-          npx playwright install --with-deps
+          npx playwright install --with-deps chromium
           pnpm test
 
       - name: 📏 Report bundle size
