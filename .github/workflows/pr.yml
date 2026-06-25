@@ -48,7 +48,22 @@ jobs:
             playwright-${{ runner.os }}-
 
       - name: 🎭 Install Playwright
-        run: pnpm exec playwright install --with-deps chromium
+        # playwright is pinned to a current release (see package.json) that
+        # downloads from the live cdn.playwright.dev by default. As insurance
+        # against an occasional stalled download on a CI runner, cap each attempt
+        # and retry so it can never silently burn the whole 15-min job budget.
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::Install Playwright (attempt $attempt)"
+            if timeout --kill-after=15s 240s pnpm exec playwright install --with-deps chromium; then
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "::endgroup::"
+            echo "Attempt $attempt stalled or failed; retrying on a fresh connection..."
+          done
+          echo "::error::Playwright install failed after 3 attempts"
+          exit 1
 
       - name: 🛡️ Test
         run: pnpm test
