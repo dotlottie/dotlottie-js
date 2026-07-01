@@ -93,6 +93,28 @@ const SetNumericSchema = object({
   inputName: string(),
   value: optional(number()),
 });
+const SetRandomSchema = object({
+  type: literal('SetRandom'),
+  inputName: string(),
+  min: optional(union([string(), number()])),
+  max: optional(union([string(), number()])),
+  integer: optional(boolean()),
+});
+const MultiplySchema = object({
+  type: literal('Multiply'),
+  inputName: string(),
+  value: union([string(), number()]),
+});
+const FloorSchema = object({
+  type: literal('Floor'),
+  inputName: string(),
+});
+const ClampSchema = object({
+  type: literal('Clamp'),
+  inputName: string(),
+  min: optional(union([string(), number()])),
+  max: optional(union([string(), number()])),
+});
 const FireSchema = object({
   type: literal('Fire'),
   inputName: string(),
@@ -138,6 +160,10 @@ export const ActionSchema = union([
   SetBooleanSchema,
   SetStringSchema,
   SetNumericSchema,
+  SetRandomSchema,
+  MultiplySchema,
+  FloorSchema,
+  ClampSchema,
   FireSchema,
   ResetSchema,
   SetExpressionSchema,

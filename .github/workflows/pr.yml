@@ -1,0 +1,75 @@
+name: validate PR
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v6
+
+      - name: ⎔ Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: ⎔ Setup Node@lts
+        uses: actions/setup-node@v6
+        with:
+          cache: 'pnpm'
+          node-version: lts/*
+
+      - name: 📥 Download deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: 🏗 Build
+        run: pnpm build
+
+      - name: 🔍 Verify types
+        run: pnpm type-check
+
+      - name: 💅 Verify format (`pnpm format` committed?)
+        run: pnpm format --check --no-write
+
+      - name: 🕵️ Lint
+        run: pnpm lint
+
+      - name: 🎭 Cache Playwright browsers
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: 🎭 Install Playwright
+        # playwright is pinned to a current release (see package.json) that
+        # downloads from the live cdn.playwright.dev by default. As insurance
+        # against an occasional stalled download on a CI runner, cap each attempt
+        # and retry so it can never silently burn the whole 15-min job budget.
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::Install Playwright (attempt $attempt)"
+            if timeout --kill-after=15s 240s pnpm exec playwright install --with-deps chromium; then
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "::endgroup::"
+            echo "Attempt $attempt stalled or failed; retrying on a fresh connection..."
+          done
+          echo "::error::Playwright install failed after 3 attempts"
+          exit 1
+
+      - name: 🛡️ Test
+        run: pnpm test
+
+      - name: 📏 Report bundle size
+        uses: andresz1/size-limit-action@v1
+        continue-on-error: true
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

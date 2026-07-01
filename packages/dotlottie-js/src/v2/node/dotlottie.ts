@@ -333,9 +333,7 @@ export class DotLottie extends DotLottieCommon {
           // _buildManifest() derives `manifest.initial` from this flag on write;
           // without this, any parse → serialize cycle drops the initial marker.
           if (manifest.initial?.animation) {
-            const initialAnimation = dotlottie.animations.find(
-              (anim) => anim.id === manifest.initial?.animation,
-            );
+            const initialAnimation = dotlottie.animations.find((anim) => anim.id === manifest.initial?.animation);
 
             if (initialAnimation) {
               initialAnimation.defaultActiveAnimation = true;
