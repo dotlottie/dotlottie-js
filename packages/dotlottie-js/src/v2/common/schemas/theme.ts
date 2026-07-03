@@ -80,10 +80,9 @@ const ImageRuleSchema = object({
   ...BaseRuleSchema,
   type: literal('Image'),
   value: object({
-    id: optional(string()),
+    src: string(),
     width: optional(number()),
     height: optional(number()),
-    url: optional(string()),
   }),
 });
 

@@ -366,10 +366,9 @@ describe('LottieTheme', () => {
                 id: 'image-rule',
                 type: 'Image',
                 value: {
-                  id: 'image1',
+                  src: 'https://example.com/image.png',
                   width: 200,
                   height: 150,
-                  url: 'https://example.com/image.png',
                 },
               },
             ],
@@ -380,17 +379,15 @@ describe('LottieTheme', () => {
           type: 'Image';
           value: {
             height?: number;
-            id?: string;
-            url?: string;
+            src: string;
             width?: number;
           };
         };
 
         expect(rule.type).toBe('Image');
-        expect(rule.value.id).toBe('image1');
+        expect(rule.value.src).toBe('https://example.com/image.png');
         expect(rule.value.width).toBe(200);
         expect(rule.value.height).toBe(150);
-        expect(rule.value.url).toBe('https://example.com/image.png');
       });
 
       it('creates a theme with a minimal Image rule', () => {
@@ -401,7 +398,9 @@ describe('LottieTheme', () => {
               {
                 id: 'minimal-image-rule',
                 type: 'Image',
-                value: {},
+                value: {
+                  src: 'logo_dark.png',
+                },
               },
             ],
           },
@@ -410,7 +409,7 @@ describe('LottieTheme', () => {
         const rule = theme.data.rules[0] as { type: 'Image'; value: Record<string, unknown> };
 
         expect(rule.type).toBe('Image');
-        expect(rule.value).toEqual({});
+        expect(rule.value).toEqual({ src: 'logo_dark.png' });
       });
     });
 
