@@ -1,5 +1,17 @@
 # @dotlottie/dotlottie-js
 
+## 1.7.0
+
+### Minor Changes
+
+- 18a06b9: Add `SetRandom`, `Multiply`, `Floor` and `Clamp` state-machine actions
+
+### Patch Changes
+
+- 3595ad4: small cleanup for audio assets
+- ca7105f: Preserve `manifest.initial.animation` across v2 parse/serialize roundtrips and v1→v2 migration
+- c3eb8cf: align theme Image slot schema with dotLottie 2.0 spec
+
 ## 1.6.3
 
 ### Patch Changes
