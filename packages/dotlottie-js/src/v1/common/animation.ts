@@ -319,7 +319,9 @@ export class LottieAnimationCommonV1 {
       await this._extractAudioAssets();
 
       if (options?.inlineAssets) {
-        const animationAssets = this.data?.assets as AnimationData['assets'];
+        // Clone the data to avoid mutating the original
+        const clonedData = structuredClone(this._data) as AnimationData;
+        const animationAssets = clonedData.assets as AnimationData['assets'];
 
         if (!animationAssets)
           throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
@@ -350,6 +352,9 @@ export class LottieAnimationCommonV1 {
             }
           }
         }
+
+        // Return the cloned data with inlined assets
+        return clonedData;
       }
     }
 

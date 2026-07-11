@@ -240,9 +240,15 @@ export class LottieAnimationCommon {
       // Even if the user wants to inline the assets, we still need to extract them
       await this._extractImageAssets();
       await this._extractAudioAssets();
+    }
 
-      if (options?.inlineAssets) {
-        const animationAssets = this.data?.assets as AnimationType['assets'];
+    if (options?.inlineAssets) {
+      // Clone the data to avoid mutating the original
+      const clonedData = structuredClone(this._data) as AnimationType;
+
+      // Inline image and audio assets
+      if (clonedData.assets?.length) {
+        const animationAssets = clonedData.assets as AnimationType['assets'];
 
         if (!animationAssets)
           throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
@@ -273,6 +279,24 @@ export class LottieAnimationCommon {
           }
         }
       }
+
+      // Inline fonts
+      if (clonedData.fonts?.list?.length) {
+        const fontsList = clonedData.fonts.list;
+        const fonts = this.fontAssets;
+
+        for (const fontDef of fontsList) {
+          for (const font of fonts) {
+            if (fontDef.fPath === `/f/${font.fileName}`) {
+              fontDef.fPath = await font.toDataURL();
+              fontDef.origin = 3;
+            }
+          }
+        }
+      }
+
+      // Return the cloned data with all inlined assets
+      return clonedData;
     }
 
     if (options?.inlineAssets) {

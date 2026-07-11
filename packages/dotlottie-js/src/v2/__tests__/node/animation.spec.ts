@@ -115,6 +115,79 @@ describe('toJSON', () => {
     expect(jsonData).toEqual(BULL_DATA as unknown as unknown as AnimationType);
   });
 
+  test('does not mutate original animation data when inlineAssets is true', async () => {
+    const animation = new LottieAnimation({
+      id: 'test',
+      data: structuredClone(BULL_DATA) as unknown as unknown as AnimationType,
+    });
+
+    // Get the original data size
+    const originalData = await animation.toJSON({ inlineAssets: false });
+    const originalSize = JSON.stringify(originalData).length;
+
+    // Call toJSON with inlineAssets
+    const inlinedData = await animation.toJSON({ inlineAssets: true });
+
+    // Check if original is still the same size after inlining
+    const afterData = await animation.toJSON({ inlineAssets: false });
+    const afterSize = JSON.stringify(afterData).length;
+
+    // Original data should not be mutated
+    expect(afterSize).toBe(originalSize);
+
+    // Inlined and original should be different objects
+    expect(inlinedData).not.toBe(originalData);
+    expect(inlinedData).not.toBe(afterData);
+  });
+
+  test('returns different object references for different inlineAssets options', async () => {
+    const animation = new LottieAnimation({
+      id: 'test',
+      data: structuredClone(BULL_DATA) as unknown as unknown as AnimationType,
+    });
+
+    const withoutInline1 = await animation.toJSON({ inlineAssets: false });
+    const withInline = await animation.toJSON({ inlineAssets: true });
+    const withoutInline2 = await animation.toJSON({ inlineAssets: false });
+
+    // Each call should return a different object when inlineAssets is true
+    expect(withInline).not.toBe(withoutInline1);
+    expect(withInline).not.toBe(withoutInline2);
+
+    // Verify sizes are consistent for same options
+    const size1 = JSON.stringify(withoutInline1).length;
+    const size2 = JSON.stringify(withoutInline2).length;
+
+    expect(size1).toBe(size2);
+  });
+
+  test('multiple calls to toJSON with inlineAssets return independent clones', async () => {
+    const animation = new LottieAnimation({
+      id: 'test',
+      data: structuredClone(BULL_DATA) as unknown as unknown as AnimationType,
+    });
+
+    const clone1 = await animation.toJSON({ inlineAssets: true });
+    const clone2 = await animation.toJSON({ inlineAssets: true });
+
+    // Should be different objects
+    expect(clone1).not.toBe(clone2);
+
+    // Should have the same content
+    expect(JSON.stringify(clone1)).toEqual(JSON.stringify(clone2));
+
+    // Modifying one should not affect the other
+    if (clone1.assets && clone1.assets[0]) {
+      // @ts-expect-error - Modifying for test purposes
+      clone1.assets[0].testProp = 'modified';
+    }
+
+    if (clone2.assets && clone2.assets[0]) {
+      // @ts-expect-error - Accessing test property
+      expect(clone2.assets[0].testProp).toBeUndefined();
+    }
+  });
+
   test('resolves the animation data from the provided url and returns the animation data as a JSON object', async () => {
     const fetchSpy = vi
       .spyOn(typeof window === 'undefined' ? global : window, 'fetch')
