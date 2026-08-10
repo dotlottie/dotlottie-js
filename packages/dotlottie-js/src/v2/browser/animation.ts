@@ -4,13 +4,22 @@
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
-import { DotLottieError, getExtensionTypeFromBase64, isAudioAsset, isFontDataUrl } from '../../utils';
+import {
+  DotLottieError,
+  getExtensionTypeFromBase64,
+  isAudioAsset,
+  isFontDataUrl,
+  isImageAsset,
+  isVideoAsset,
+  isVideoDataUrl,
+} from '../../utils';
 import type { AnimationOptions } from '../common';
 import { LottieAnimationCommon } from '../common';
 
 import { LottieAudio } from './audio';
 import { LottieFont } from './font';
 import { LottieImage } from './image';
+import { LottieVideo } from './video';
 
 export class LottieAnimation extends LottieAnimationCommon {
   public constructor(options: AnimationOptions) {
@@ -50,7 +59,7 @@ export class LottieAnimation extends LottieAnimationCommon {
     if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
 
     for (const asset of animationAssets) {
-      if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+      if (isImageAsset(asset)) {
         const imageData = asset.p.split(',');
 
         // Image data is invalid
@@ -128,6 +137,51 @@ export class LottieAnimation extends LottieAnimationCommon {
         asset.p = fileName;
         asset.u = '/u/';
         asset.e = 0;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   *
+   * Extract video assets from the animation.
+   *
+   * Video assets are authored as image assets carrying a `data:video/...` payload, which is the
+   * marker ThorVG uses to tell the two apart.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
+  protected override async _extractVideoAssets(): Promise<boolean> {
+    if (!this._data) throw new DotLottieError('Failed to extract video assets: Animation data does not exist');
+
+    const animationAssets = this._data.assets as AnimationType['assets'];
+
+    if (!animationAssets) throw new DotLottieError('Failed to extract video assets: No assets found inside animation');
+
+    for (const asset of animationAssets) {
+      // Only inlined videos need extracting, an already packaged one has nothing left to unpack.
+      if (isVideoAsset(asset) && isVideoDataUrl(asset.p)) {
+        const fileType = await getExtensionTypeFromBase64(asset.p);
+
+        // If we don't recognize the file type, we leave it inside the animation as is.
+        if (fileType) {
+          const fileName = `${asset.id}.${fileType}`;
+
+          this._videoAssets.push(
+            new LottieVideo({
+              data: asset.p,
+              id: asset.id,
+              lottieAssetId: asset.id,
+              fileName,
+              parentAnimations: [this],
+            }),
+          );
+
+          asset.p = fileName;
+          asset.u = '/v/';
+          asset.e = 0;
+        }
       }
     }
 

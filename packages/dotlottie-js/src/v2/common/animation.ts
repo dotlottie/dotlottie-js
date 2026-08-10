@@ -6,13 +6,14 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 import type { ZipOptions } from 'fflate';
 
 import type { AnimationData, ExportOptions } from '../../types';
-import { DotLottieError, isAudioAsset } from '../../utils';
+import { DotLottieError, isAudioAsset, isImageAsset, isVideoAsset } from '../../utils';
 
 import type { LottieAudioCommon } from './audio';
 import type { LottieFontCommon } from './font';
 import type { LottieImageCommon } from './image';
 import type { ManifestAnimation } from './schemas';
 import type { LottieThemeCommon } from './theme';
+import type { LottieVideoCommon } from './video';
 
 export interface AnimationOptions extends ManifestAnimation {
   data?: AnimationData | undefined;
@@ -38,6 +39,8 @@ export class LottieAnimationCommon {
   protected _imageAssets: LottieImageCommon[] = [];
 
   protected _audioAssets: LottieAudioCommon[] = [];
+
+  protected _videoAssets: LottieVideoCommon[] = [];
 
   protected _fontAssets: LottieFontCommon[] = [];
 
@@ -136,6 +139,14 @@ export class LottieAnimationCommon {
     this._audioAssets = audioAssets;
   }
 
+  public get videoAssets(): LottieVideoCommon[] {
+    return this._videoAssets;
+  }
+
+  public set videoAssets(videoAssets: LottieVideoCommon[]) {
+    this._videoAssets = videoAssets;
+  }
+
   public get fontAssets(): LottieFontCommon[] {
     return this._fontAssets;
   }
@@ -201,6 +212,10 @@ export class LottieAnimationCommon {
     throw new DotLottieError('_extractAudioAssets(): Promise<boolean> method not implemented in concrete class');
   }
 
+  protected async _extractVideoAssets(): Promise<boolean> {
+    throw new DotLottieError('_extractVideoAssets(): Promise<boolean> method not implemented in concrete class');
+  }
+
   protected async _extractFontAssets(): Promise<boolean> {
     throw new DotLottieError('_extractFontAssets(): Promise<boolean> method not implemented in concrete class');
   }
@@ -238,6 +253,8 @@ export class LottieAnimationCommon {
 
     if (this._data.assets?.length) {
       // Even if the user wants to inline the assets, we still need to extract them
+      // Videos share the shape of an image asset, so they're extracted first
+      await this._extractVideoAssets();
       await this._extractImageAssets();
       await this._extractAudioAssets();
 
@@ -249,9 +266,19 @@ export class LottieAnimationCommon {
 
         const images = this.imageAssets;
         const audios = this.audioAssets;
+        const videos = this.videoAssets;
 
         for (const asset of animationAssets) {
-          if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+          if (isVideoAsset(asset)) {
+            for (const video of videos) {
+              if (video.fileName === asset.p) {
+                // encoded is true
+                asset.e = 1;
+                asset.u = '';
+                asset.p = await video.toDataURL();
+              }
+            }
+          } else if (isImageAsset(asset)) {
             for (const image of images) {
               if (image.fileName === asset.p) {
                 // encoded is true

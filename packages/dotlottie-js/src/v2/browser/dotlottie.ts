@@ -15,6 +15,8 @@ import {
   getDotLottieVersion,
   getExtensionTypeFromBase64,
   isAudioAsset,
+  isImageAsset,
+  isVideoAsset,
 } from '../../utils';
 import { DotLottieV1 } from '../../v1/browser';
 import type { AnimationOptions, DotLottieOptions } from '../common';
@@ -26,6 +28,7 @@ import { LottieAudio } from './audio';
 import { LottieFont } from './font';
 import { LottieImage } from './image';
 import { DuplicateImageDetector } from './plugins/duplicate-image-detector';
+import { LottieVideo } from './video';
 
 export async function toDotLottieV2(arrayBuffer: ArrayBuffer): Promise<DotLottie> {
   const version = await getDotLottieVersion(new Uint8Array(arrayBuffer));
@@ -130,6 +133,7 @@ export class DotLottie extends DotLottieCommon {
 
       const imageAssets = animation.imageAssets;
       const audioAssets = animation.audioAssets;
+      const videoAssets = animation.videoAssets;
 
       for (const asset of imageAssets) {
         // Assure we have a base64 encoded version of the image
@@ -143,6 +147,13 @@ export class DotLottie extends DotLottieCommon {
         const dataAsString = await asset.toDataURL();
 
         dotlottie[`u/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
+      }
+
+      for (const asset of videoAssets) {
+        // Assure we have a base64 encoded version of the video
+        const dataAsString = await asset.toDataURL();
+
+        dotlottie[`v/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
       }
 
       const fontAssets = animation.fontAssets;
@@ -209,6 +220,7 @@ export class DotLottie extends DotLottieCommon {
 
       const tmpImages = [];
       const tmpAudio = [];
+      const tmpVideos = [];
       const tmpFonts = [];
 
       if (contentObj['manifest.json'] instanceof Uint8Array) {
@@ -281,6 +293,28 @@ export class DotLottie extends DotLottieCommon {
                 new LottieAudio({
                   id: audioId,
                   data: decodedAudio,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
+            } else if (key.startsWith('v/')) {
+              // extract videoId from key as the key = `v/${videoId}.${ext}`
+              const videoId = /v\/(.+)\./u.exec(key)?.[1];
+
+              if (!videoId) {
+                throw new DotLottieError('Invalid video id');
+              }
+
+              let decodedVideo = btoa(decodedStr);
+
+              const ext = await getExtensionTypeFromBase64(decodedVideo);
+
+              // Push the video in to a temporary array
+              decodedVideo = `data:video/${ext};base64,${decodedVideo}`;
+              tmpVideos.push(
+                new LottieVideo({
+                  id: videoId,
+                  lottieAssetId: videoId,
+                  data: decodedVideo,
                   fileName: key.split('/')[1] || '',
                 }),
               );
@@ -361,7 +395,7 @@ export class DotLottie extends DotLottieCommon {
 
                 if (animationAssets) {
                   for (const asset of animationAssets) {
-                    if ('w' in asset && 'h' in asset) {
+                    if (isImageAsset(asset)) {
                       if (asset.p === image.fileName) {
                         image.parentAnimations.push(parentAnimation);
                         parentAnimation.imageAssets.push(image);
@@ -385,6 +419,26 @@ export class DotLottie extends DotLottieCommon {
                       if (asset.p.includes(audio.id)) {
                         audio.parentAnimations.push(parentAnimation);
                         parentAnimation.audioAssets.push(audio);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Go through the videos and find to which animation they belong
+          for (const video of tmpVideos) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const animationAssets = parentAnimation.data.assets as AnimationType['assets'];
+
+                if (animationAssets) {
+                  for (const asset of animationAssets) {
+                    if (isVideoAsset(asset)) {
+                      if (asset.p === video.fileName) {
+                        video.parentAnimations.push(parentAnimation);
+                        parentAnimation.videoAssets.push(video);
                       }
                     }
                   }

@@ -188,11 +188,89 @@ export async function dataUrlFromU8(uint8Data: Uint8Array): Promise<string> {
 }
 
 /**
+ * Folder holding the video assets inside a .lottie file.
+ *
+ * @internal
+ */
+const VIDEOS_PATH = 'v/';
+
+/**
+ * Checks whether an asset has the shape of a Lottie image asset.
+ *
+ * @remarks
+ * Video assets are structurally identical to image assets: both are referenced by an image layer
+ * and carry `w`, `h` and `p`. This predicate matches both, and is used as the common starting point
+ * for {@link isImageAsset} and {@link isVideoAsset}.
+ *
+ * @param asset - The asset object to check.
+ * @returns `true` if the asset has the shape of an image asset, `false` otherwise.
+ *
+ * @internal
+ */
+function hasImageAssetShape(asset: Asset.Value): asset is Asset.Image {
+  return 'w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset;
+}
+
+/**
+ * Checks if the given path is a data URI for a video.
+ *
+ * @remarks
+ * This is the same marker ThorVG uses to tell a video asset apart from an image asset, see
+ * {@link https://github.com/thorvg/thorvg/pull/4645 | thorvg#4645}.
+ *
+ * @param data - The path to check.
+ * @returns `true` if the path is a data URI for a video, `false` otherwise.
+ *
+ * @example
+ * ```typescript
+ * const isVideo = isVideoDataUrl('data:video/mp4;base64,...'); // true
+ * ```
+ *
+ * @public
+ */
+export function isVideoDataUrl(data: string): boolean {
+  return typeof data === 'string' && data.startsWith('data:video/');
+}
+
+/**
+ * Checks if an asset is a video asset.
+ *
+ * @remarks
+ * A video asset is authored exactly like an image asset — it is referenced by an image layer and
+ * carries `w`, `h` and `p` — so it is identified by its payload rather than by its shape: either an
+ * inlined `data:video/...` URI, or a packaged reference to the `/v/` folder of a .lottie file.
+ *
+ * The file extension is deliberately not considered: ThorVG only recognizes a video by its
+ * `data:video/` prefix, and an asset packaged as `i/name.mp4` by an older release of this library
+ * must keep round-tripping through the image path.
+ *
+ * @param asset - The asset object to check.
+ * @returns `true` if it's a video asset, `false` otherwise.
+ *
+ * @example
+ * ```typescript
+ * const asset = { id: 'video_0', w: 512, h: 512, e: 0, u: '/v/', p: 'video_0.mp4' };
+ * const isVideo = isVideoAsset(asset); // true
+ * ```
+ *
+ * @public
+ */
+export function isVideoAsset(asset: Asset.Value): asset is Asset.Image {
+  if (!hasImageAssetShape(asset)) return false;
+
+  if (isVideoDataUrl(asset.p)) return true;
+
+  // A packaged video asset points at the `/v/` folder of the .lottie file.
+  return typeof asset.u === 'string' && asset.u.replace(/^\//u, '') === VIDEOS_PATH;
+}
+
+/**
  * Checks if an asset is an image asset.
  *
  * @remarks
  * This function accepts an asset object and determines whether it represents an image asset.
- * It returns `true` if it's an image asset, `false` otherwise.
+ * It returns `true` if it's an image asset, `false` otherwise. Video assets share the shape of an
+ * image asset and are explicitly excluded, see {@link isVideoAsset}.
  *
  * @param asset - The asset object to check.
  * @returns `true` if it's an image asset, `false` otherwise.
@@ -206,7 +284,7 @@ export async function dataUrlFromU8(uint8Data: Uint8Array): Promise<string> {
  * @public
  */
 export function isImageAsset(asset: Asset.Value): asset is Asset.Image {
-  return 'w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset;
+  return hasImageAssetShape(asset) && !isVideoAsset(asset);
 }
 
 /**
@@ -838,6 +916,146 @@ export async function inlineImageAssets(
 }
 
 /**
+ * Retrieves a video from the given dotLottie object by its filename.
+ *
+ * @remarks
+ * Videos are a dotLottie v2 only feature and always live in the `v/` folder of the archive.
+ *
+ * @param dotLottie - The Uint8Array of dotLottie data.
+ * @param filename - The filename of the video to get.
+ * @param filter - An optional filter function to apply on the unzipping process.
+ * @returns A Promise that resolves with the video data URL or `undefined` if not found.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const filename = 'video_0.mp4';
+ * const videoData = await getVideo(dotLottie, filename);
+ * ```
+ *
+ * @public
+ */
+export async function getVideo(
+  dotLottie: Uint8Array,
+  filename: string,
+  filter?: UnzipFileFilter,
+): Promise<string | undefined> {
+  const videoFilename = `${VIDEOS_PATH}${filename}`;
+
+  const unzipped = await unzipDotLottieFile(dotLottie, videoFilename, filter);
+
+  if (typeof unzipped === 'undefined') {
+    return undefined;
+  }
+
+  return dataUrlFromU8(unzipped);
+}
+
+/**
+ * Retrieves all videos from the given dotLottie object.
+ *
+ * @remarks
+ * This function accepts a dotLottie object as a Uint8Array and an optional filter function to further refine the extraction.
+ * It returns a Promise that resolves to a record containing the video data URLs mapped by their filename.
+ *
+ * @param dotLottie - The Uint8Array of dotLottie data.
+ * @param filter - An optional filter function to apply on the unzipping process.
+ * @returns A Promise that resolves to a record containing the video data URLs mapped by their filename.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const videos = await getAllVideos(dotLottie);
+ * ```
+ *
+ * @public
+ */
+export async function getAllVideos(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
+  const unzippedVideos = await unzipDotLottie(dotLottie, (file) => {
+    const name = file.name.replace(VIDEOS_PATH, '');
+
+    return file.name.startsWith(VIDEOS_PATH) && (!filter || filter({ ...file, name }));
+  });
+
+  const videos: Record<string, string> = {};
+
+  for (const videoPath in unzippedVideos) {
+    const unzippedVideo = unzippedVideos[videoPath];
+
+    if (unzippedVideo instanceof Uint8Array) {
+      const videoId = videoPath.replace(VIDEOS_PATH, '');
+
+      videos[videoId] = await dataUrlFromU8(unzippedVideo);
+    }
+  }
+
+  return videos;
+}
+
+/**
+ * Inlines video assets for the given animations within a dotLottie object.
+ *
+ * @remarks
+ * This function accepts a dotLottie object as a Uint8Array and a record containing the animations to process.
+ * It identifies the videos used in the animations and replaces their references with the actual video data URIs.
+ *
+ * Inlining matters more for video than for the other asset types: ThorVG only recognizes a video
+ * asset by its `data:video/` data URI, so a packaged reference is invisible to the renderer.
+ *
+ * @param dotLottie - The dotLottie object containing the animations.
+ * @param animations - A record containing the animations to process.
+ * @returns A Promise that resolves when the operation is complete, returning nothing.
+ *
+ * @example
+ * ```typescript
+ * const dotLottie = new Uint8Array(...);
+ * const animations = { animation1: {...}, animation2: {...} };
+ * await inlineVideoAssets(dotLottie, animations);
+ * ```
+ *
+ * @public
+ */
+export async function inlineVideoAssets(
+  dotLottie: Uint8Array,
+  animations: Record<string, AnimationData>,
+): Promise<void> {
+  const videosMap = new Map<string, Set<string>>();
+
+  for (const [animationId, animationData] of Object.entries(animations)) {
+    for (const asset of animationData.assets || []) {
+      if (isVideoAsset(asset) && !isVideoDataUrl(asset.p)) {
+        const videoId = asset.p;
+
+        if (!videosMap.has(videoId)) {
+          videosMap.set(videoId, new Set());
+        }
+        videosMap.get(videoId)?.add(animationId);
+      }
+    }
+  }
+
+  const unzippedVideos = await getAllVideos(dotLottie, (file) => videosMap.has(file.name));
+
+  for (const [videoId, animationIdsSet] of videosMap) {
+    const videoDataURL = unzippedVideos[videoId];
+
+    if (videoDataURL) {
+      for (const animationId of animationIdsSet) {
+        const animationData = animations[animationId];
+
+        for (const asset of animationData?.assets || []) {
+          if (isVideoAsset(asset) && asset.p === videoId) {
+            asset.p = videoDataURL;
+            asset.u = '';
+            asset.e = 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
  * Retrieves a font from the given dotLottie object by its filename.
  *
  * @remarks
@@ -1036,6 +1254,7 @@ export async function getAnimation(
 
   await inlineImageAssets(dotLottie, animationsMap);
   await inlineAudioAssets(dotLottie, animationsMap);
+  await inlineVideoAssets(dotLottie, animationsMap);
   await inlineFontAssets(dotLottie, animationsMap);
 
   return animationData;
@@ -1099,6 +1318,7 @@ export async function getAnimations(
 
   await inlineImageAssets(dotLottie, animationsMap);
   await inlineAudioAssets(dotLottie, animationsMap);
+  await inlineVideoAssets(dotLottie, animationsMap);
   await inlineFontAssets(dotLottie, animationsMap);
 
   return animationsMap;

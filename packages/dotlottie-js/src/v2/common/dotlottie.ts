@@ -6,7 +6,7 @@ import type { Animation as AnimationType } from '@lottie-animation-community/lot
 
 import { PACKAGE_NAME } from '../../constants';
 import type { ConversionOptions, GetAnimationOptions } from '../../types';
-import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
+import { DotLottieError, isAudioAsset, isImageAsset, isValidURL, isVideoAsset } from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
 import type { LottieAudioCommon } from './audio';
@@ -18,6 +18,7 @@ import type { DotLottieStateMachineCommonOptions } from './state-machine';
 import { DotLottieStateMachineCommon } from './state-machine';
 import type { ThemeOptions } from './theme';
 import { LottieThemeCommon } from './theme';
+import type { LottieVideoCommon } from './video';
 
 export interface DotLottieOptions {
   enableDuplicateImageOptimization?: boolean;
@@ -130,7 +131,7 @@ export class DotLottieCommon {
 
         // Find the image asset inside the animation data and rename its path
         for (const asset of animationAssets) {
-          if ('w' in asset && 'h' in asset) {
+          if (isImageAsset(asset)) {
             if (asset.p === oldPath) {
               asset.p = imageAsset.fileName;
             }
@@ -271,6 +272,80 @@ export class DotLottieCommon {
   }
 
   /**
+   * Renames the underlying LottieVideo, as well as updating the video asset path inside the animation data.
+   * @param animation - The animation containing the video
+   * @param newLottieAssetId - desired id and fileName
+   * @param lottieAssetId - The Lottie asset id of the LottieVideo to rename
+   */
+  private async _renameVideo(
+    animation: LottieAnimationCommon,
+    newLottieAssetId: string,
+    lottieAssetId: string,
+  ): Promise<void> {
+    for (const videoAsset of animation.videoAssets) {
+      if (videoAsset.lottieAssetId === lottieAssetId) {
+        const oldPath = videoAsset.fileName;
+
+        // Rename video will change the fileName using the newLottieAssetId and append the detected extension
+        await videoAsset.renameVideo(newLottieAssetId);
+
+        if (!animation.data) throw new DotLottieError('No animation data available.');
+
+        const animationAssets = animation.data.assets as AnimationType['assets'];
+
+        if (!animationAssets) throw new DotLottieError('No video assets to rename.');
+
+        // Find the video asset inside the animation data and rename its path
+        for (const asset of animationAssets) {
+          if (isVideoAsset(asset) && asset.p === oldPath) {
+            asset.p = videoAsset.fileName;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Renames the video assets in all animations to avoid conflicts.
+   *
+   * Follows the same scheme as {@link DotLottieCommon._renameImageAssets}: the Lottie asset id is left
+   * untouched so that every layer referencing it stays valid, only the packaged file name changes.
+   */
+  private async _renameVideoAssets(): Promise<void> {
+    const occurenceMap = new Map<string, number>();
+
+    this.animations.forEach((animation) => {
+      animation.videoAssets.forEach((videoAsset) => {
+        occurenceMap.set(videoAsset.lottieAssetId, (occurenceMap.get(videoAsset.lottieAssetId) ?? 0) + 1);
+      });
+    });
+
+    for (let i = this.animations.length - 1; i >= 0; i -= 1) {
+      const animation = this.animations.at(i);
+
+      if (animation) {
+        for (let j = animation.videoAssets.length - 1; j >= 0; j -= 1) {
+          const video = animation.videoAssets.at(j);
+
+          if (video) {
+            let count = occurenceMap.get(video.lottieAssetId) ?? 0;
+
+            if (count > 0) {
+              count -= 1;
+            }
+
+            occurenceMap.set(video.lottieAssetId, count);
+
+            if (count > 0) {
+              await this._renameVideo(animation, `${video.lottieAssetId}_${count}`, video.lottieAssetId);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * Renames the underlying LottieFont, as well as updating the font path inside the animation data.
    * @param animation - The animation containing the font
    * @param newFileName - desired new fileName (without extension),
@@ -350,10 +425,20 @@ export class DotLottieCommon {
 
     const images = this.getImages();
     const audios = this.getAudio();
+    const videos = this.getVideos();
     const fonts = this.getFonts();
 
     for (const asset of animationAssets) {
-      if (isImageAsset(asset)) {
+      if (isVideoAsset(asset)) {
+        for (const video of videos) {
+          if (video.fileName === asset.p) {
+            // encoded is true
+            asset.e = 1;
+            asset.u = '';
+            asset.p = await video.toDataURL();
+          }
+        }
+      } else if (isImageAsset(asset)) {
         for (const image of images) {
           if (image.fileName === asset.p) {
             // encoded is true
@@ -455,6 +540,16 @@ export class DotLottieCommon {
     return audio;
   }
 
+  public getVideos(): LottieVideoCommon[] {
+    const videos: LottieVideoCommon[] = [];
+
+    this.animations.map((animation) => {
+      return videos.push(...animation.videoAssets);
+    });
+
+    return videos;
+  }
+
   public getFonts(): LottieFontCommon[] {
     const fonts: LottieFontCommon[] = [];
 
@@ -552,6 +647,7 @@ export class DotLottieCommon {
       // Rename assets incrementally if there are multiple animations
       await this._renameImageAssets();
       await this._renameAudioAssets();
+      await this._renameVideoAssets();
       await this._renameFontAssets();
     }
 
