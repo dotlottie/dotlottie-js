@@ -196,7 +196,11 @@ describe('DotLottie with video assets', () => {
     expect(Object.keys(contents)).toContain('i/image_0.png');
 
     // The packaged file must hold the decoded video bytes
-    expect(Buffer.from(contents['v/video_0.mp4'] as Uint8Array).subarray(4, 8).toString('ascii')).toEqual('ftyp');
+    expect(
+      Buffer.from(contents['v/video_0.mp4'] as Uint8Array)
+        .subarray(4, 8)
+        .toString('ascii'),
+    ).toEqual('ftyp');
 
     const videos = dotLottie.getVideos();
 
