@@ -3,11 +3,11 @@
  */
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
-import type { Zippable } from 'fflate';
+import type { ZipOptions, Zippable } from 'fflate';
 import { strToU8, strFromU8, unzip, zip } from 'fflate';
 
 import { PACKAGE_NAME } from '../../constants';
-import type { ConversionOptions, GetAnimationOptions } from '../../types';
+import type { ConversionOptions, GetAnimationOptions, ImageData } from '../../types';
 import {
   base64ToUint8Array,
   DotLottieError,
@@ -42,6 +42,14 @@ export interface DotLottieOptions {
   generator?: string;
 }
 
+// `logo.png` to `logo`. Adding an image and parsing one back must agree, or an image loses its id
+// on a roundtrip.
+function imageIdFromFileName(fileName: string): string {
+  const dotIndex = fileName.lastIndexOf('.');
+
+  return dotIndex > 0 ? fileName.slice(0, dotIndex) : fileName;
+}
+
 export class DotLottieCommon {
   protected readonly _animationsMap: Map<string, LottieAnimationCommon> = new Map();
 
@@ -50,6 +58,8 @@ export class DotLottieCommon {
   protected readonly _themesMap: Map<string, LottieThemeCommon> = new Map();
 
   protected readonly _stateMachinesMap: Map<string, DotLottieStateMachineCommon> = new Map();
+
+  protected readonly _extraImagesMap: Map<string, LottieImageCommon> = new Map();
 
   protected _generator: string = PACKAGE_NAME;
 
@@ -160,8 +170,8 @@ export class DotLottieCommon {
                 ...animationSettings,
               });
             } else if (key.startsWith('i/')) {
-              // extract imageId from key as the key = `i/${imageId}.${ext}`
-              const imageId = /i\/(.+)\./u.exec(key)?.[1];
+              const fileName = key.split('/')[1] || '';
+              const imageId = imageIdFromFileName(fileName);
 
               if (!imageId) {
                 throw new DotLottieError('Invalid image id');
@@ -171,18 +181,21 @@ export class DotLottieCommon {
 
               const ext = await getExtensionTypeFromBase64(base64);
 
-              if (!ext) {
+              // The sniffer reads binary magic numbers, which SVG text never matches.
+              const isSvg = !ext && fileName.toLowerCase().endsWith('.svg');
+
+              if (!ext && !isSvg) {
                 throw new DotLottieError('Unrecognized asset file format.');
               }
 
-              const imgDataURL = `data:image/${ext};base64,${base64}`;
+              const imgDataURL = isSvg ? `data:image/svg+xml;base64,${base64}` : `data:image/${ext};base64,${base64}`;
 
               tmpImages.push(
                 new LottieImage({
                   id: imageId,
                   lottieAssetId: imageId,
                   data: imgDataURL,
-                  fileName: key.split('/')[1] || '',
+                  fileName,
                 }),
               );
             } else if (key.startsWith('u/')) {
@@ -318,6 +331,13 @@ export class DotLottieCommon {
             }
           }
 
+          // An image no animation claimed is still part of the bundle — a theme may target it.
+          for (const image of tmpImages) {
+            if (image.parentAnimations.length === 0) {
+              dotlottie._extraImagesMap.set(image.fileName, image);
+            }
+          }
+
           // Go through the audio and find to which animation they belong
           for (const audio of tmpAudio) {
             for (const parentAnimation of dotlottie.animations) {
@@ -426,6 +446,18 @@ export class DotLottieCommon {
 
         dotlottie[`f/${font.fileName}`] = [base64ToUint8Array(dataAsString), font.zipOptions];
       }
+    }
+
+    // After the animation loop, so an extra image cannot silently clobber a renamed animation asset.
+    for (const image of this.extraImages) {
+      const path = `i/${image.fileName}`;
+      const dataAsString = await image.toDataURL();
+
+      if (dotlottie[path]) {
+        throw new DotLottieError(`Cannot package image "${path}": an animation asset already uses that file name.`);
+      }
+
+      dotlottie[path] = [base64ToUint8Array(dataAsString), image.zipOptions];
     }
 
     for (const theme of this.themes) {
@@ -895,6 +927,7 @@ export class DotLottieCommon {
     return this;
   }
 
+  /** Images referenced by an animation's assets. See `extraImages` for the ones added directly. */
   public getImages(): LottieImageCommon[] {
     const images: LottieImageCommon[] = [];
 
@@ -903,6 +936,11 @@ export class DotLottieCommon {
     });
 
     return images;
+  }
+
+  /** Images packaged in the bundle that no animation references, e.g. images a theme targets. */
+  public get extraImages(): LottieImageCommon[] {
+    return Array.from(this._extraImagesMap.values());
   }
 
   public getAudio(): LottieAudioCommon[] {
@@ -1116,6 +1154,10 @@ export class DotLottieCommon {
         });
       });
 
+      dotlottie.extraImages.forEach((image) => {
+        mergedDotlottie._extraImagesMap.set(image.fileName, image);
+      });
+
       dotlottie.stateMachines.forEach((stateMachine) => {
         const stateOption = {
           id: stateMachine.id,
@@ -1184,6 +1226,36 @@ export class DotLottieCommon {
     if (!animation) throw new DotLottieError(`Failed to find animation with id ${animationId}`);
 
     animation.unscopeTheme(theme.id);
+
+    return this;
+  }
+
+  /**
+   * Packages an image into the bundle without any animation referencing it, e.g. an image a theme
+   * points at through an `Image` rule.
+   *
+   * @param fileName - written to `i/\{fileName\}` verbatim and never renamed, so it is the name a
+   * theme targets and the identity of the image within the bundle.
+   * @param data - the image itself, as a data URL, an ArrayBuffer or a Blob.
+   * @param zipOptions - fflate options for this entry.
+   * @returns DotLottie context
+   */
+  public addImage(fileName: string, data: ImageData, zipOptions: ZipOptions = {}): this {
+    const id = imageIdFromFileName(fileName);
+
+    this._extraImagesMap.set(fileName, new LottieImage({ id, lottieAssetId: id, fileName, data, zipOptions }));
+
+    return this;
+  }
+
+  /** Looks up an image by file name, whether an animation references it or `addImage()` added it. */
+  public getImage(fileName: string): LottieImageCommon | undefined {
+    return this._extraImagesMap.get(fileName) ?? this.getImages().find((image) => image.fileName === fileName);
+  }
+
+  /** Removes an image added through `addImage()`. Animation-referenced images go with the animation. */
+  public removeImage(fileName: string): this {
+    this._extraImagesMap.delete(fileName);
 
     return this;
   }

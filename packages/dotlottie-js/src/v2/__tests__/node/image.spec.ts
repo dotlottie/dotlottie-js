@@ -17,6 +17,7 @@ import AUDIO_TEST from '../../../__tests__/__fixtures__/mimetype-tests/mp-3-test
 import SVG_XML_TEST from '../../../__tests__/__fixtures__/mimetype-tests/svg-xml-test.txt?raw';
 import VIDEO_DOTLOTTIE from '../../../__tests__/__fixtures__/simple/video-embedded.lottie?arraybuffer';
 import { getImages, getMimeTypeFromBase64 } from '../../../utils';
+import type { ThemeOptions } from '../../index.node';
 import { DotLottie, LottieImage } from '../../index.node';
 
 describe('LottieImage', () => {
@@ -334,5 +335,145 @@ describe('LottieImage', () => {
     const keys = Object.keys(images);
 
     expect(keys.length).toBe(5);
+  });
+});
+
+describe('extra images', () => {
+  // 1x1 transparent PNG, used as an image that only a theme references.
+  // eslint-disable-next-line no-secrets/no-secrets
+  const LOGO_PNG = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==`;
+
+  // eslint-disable-next-line no-secrets/no-secrets
+  const SVG_LOGO = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InJlZCIvPjwvc3ZnPg==`;
+
+  const themeTargeting = (src: string): ThemeOptions => ({
+    id: 'theme_1',
+    data: {
+      rules: [
+        {
+          id: 'logo-rule',
+          type: 'Image',
+          value: { src },
+        },
+      ],
+    },
+  });
+
+  it('packages an image that no animation references', async () => {
+    const dotLottie = new DotLottie();
+
+    dotLottie
+      .addAnimation({
+        id: 'animation_1',
+        data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationType,
+      })
+      .addImage('logo.png', LOGO_PNG)
+      .addTheme(themeTargeting('logo.png'));
+
+    await dotLottie.build();
+
+    const buffer = new Uint8Array(await dotLottie.toArrayBuffer());
+    const images = await getImages(buffer);
+
+    // getImages() from utils keys by asset id, i.e. the file name without its extension.
+    expect(images['logo']).toEqual(LOGO_PNG);
+    // The animation's own assets are untouched by the extra image.
+    expect(dotLottie.getImages()).toHaveLength(5);
+    expect(dotLottie.extraImages).toHaveLength(1);
+  });
+
+  it('exposes extra images by file name', () => {
+    const dotLottie = new DotLottie().addImage('logo.png', LOGO_PNG);
+
+    expect(dotLottie.getImage('logo.png')?.data).toEqual(LOGO_PNG);
+    // getImages() stays scoped to animation-referenced assets.
+    expect(dotLottie.getImages()).toHaveLength(0);
+
+    dotLottie.removeImage('logo.png');
+
+    expect(dotLottie.getImage('logo.png')).toBeUndefined();
+    expect(dotLottie.extraImages).toHaveLength(0);
+  });
+
+  it('finds an animation-referenced image by file name too', async () => {
+    const dotLottie = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationType,
+    });
+
+    await dotLottie.build();
+
+    const [animationImage] = dotLottie.getImages();
+
+    expect(dotLottie.getImage(animationImage?.fileName ?? '')).toBe(animationImage);
+  });
+
+  it('survives a toArrayBuffer -> fromArrayBuffer roundtrip without attaching to an animation', async () => {
+    const dotLottie = new DotLottie();
+
+    dotLottie
+      .addAnimation({
+        id: 'animation_1',
+        data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationType,
+      })
+      .addImage('logo.png', LOGO_PNG)
+      .addTheme(themeTargeting('logo.png'));
+
+    await dotLottie.build();
+
+    const buffer = await dotLottie.toArrayBuffer();
+    const parsed = await new DotLottie().fromArrayBuffer(buffer);
+
+    expect(parsed.extraImages).toHaveLength(1);
+
+    const logo = parsed.getImage('logo.png');
+
+    expect(logo?.fileName).toEqual('logo.png');
+    expect(logo?.id).toEqual('logo');
+    expect(await logo?.toDataURL()).toEqual(LOGO_PNG);
+    // It must not have been adopted by the animation that happens to sit alongside it.
+    expect(logo?.parentAnimations).toHaveLength(0);
+    expect(parsed.getImages()).toHaveLength(5);
+  });
+
+  it('roundtrips an svg, whose format the byte sniffer cannot detect', async () => {
+    const dotLottie = new DotLottie().addImage('logo.svg', SVG_LOGO);
+
+    const parsed = await new DotLottie().fromArrayBuffer(await dotLottie.toArrayBuffer());
+
+    expect(parsed.extraImages).toHaveLength(1);
+    expect(await parsed.getImage('logo.svg')?.toDataURL()).toEqual(SVG_LOGO);
+  });
+
+  it('carries extra images through merge()', async () => {
+    const withImage = new DotLottie().addImage('logo.png', LOGO_PNG);
+
+    const withAnimation = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationType,
+    });
+
+    const merged = withAnimation.merge(withImage);
+
+    expect(merged.extraImages).toHaveLength(1);
+    expect(await merged.getImage('logo.png')?.toDataURL()).toEqual(LOGO_PNG);
+  });
+
+  it('throws when an extra image would overwrite an animation asset', async () => {
+    const dotLottie = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationType,
+    });
+
+    await dotLottie.build();
+
+    const [animationImage] = dotLottie.getImages();
+    const conflictingFileName = animationImage?.fileName ?? '';
+
+    dotLottie.addImage(conflictingFileName, LOGO_PNG);
+
+    await expect(dotLottie.toArrayBuffer()).rejects.toThrow(
+      `Cannot package image "i/${conflictingFileName}": an animation asset already uses that file name.`,
+    );
   });
 });
