@@ -110,6 +110,26 @@ const GradientRuleSchema = object({
   keyframes: optional(array(GradientKeyframeSchema)),
 });
 
+const BezierPathValueSchema = object({
+  vertices: array(array(number())),
+  inTangents: optional(array(array(number()))),
+  outTangents: optional(array(array(number()))),
+  closed: optional(boolean()),
+});
+
+const BezierPathKeyframeSchema = object({
+  ...BaseKeyframeSchema,
+  value: BezierPathValueSchema,
+});
+
+const BezierPathRuleSchema = object({
+  ...BaseRuleSchema,
+  type: literal('BezierPath'),
+  value: optional(BezierPathValueSchema),
+  keyframes: optional(array(BezierPathKeyframeSchema)),
+  expression: optional(string()),
+});
+
 const TextDocumentSchema = object({
   text: optional(string()),
   fontName: optional(string()),
@@ -158,6 +178,7 @@ const RuleSchema = union([
   ImageRuleSchema,
   GradientRuleSchema,
   TextRuleSchema,
+  BezierPathRuleSchema,
 ]);
 
 export const RulesSchema = array(RuleSchema);
