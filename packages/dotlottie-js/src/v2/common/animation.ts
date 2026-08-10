@@ -2,15 +2,26 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable max-classes-per-file -- bare concrete alias of the base class below. */
+
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
 import type { AnimationData, ExportOptions } from '../../types';
-import { DotLottieError, isAudioAsset } from '../../utils';
+import {
+  DotLottieError,
+  getExtensionTypeFromBase64,
+  isAudioAsset,
+  isFontDataUrl,
+  uint8ArrayToBase64,
+} from '../../utils';
 
 import type { LottieAudioCommon } from './audio';
+import { LottieAudio } from './audio';
 import type { LottieFontCommon } from './font';
+import { LottieFont } from './font';
 import type { LottieImageCommon } from './image';
+import { LottieImage } from './image';
 import type { ManifestAnimation } from './schemas';
 import type { LottieThemeCommon } from './theme';
 
@@ -63,8 +74,16 @@ export class LottieAnimationCommon {
     this._defaultActiveAnimation = options.defaultActiveAnimation ?? false;
   }
 
+  /**
+   * Return the animation data as a base64 encoded string.
+   *
+   * @returns data - The animation data as a base64 encoded string.
+   * @throws Error - if the animation data is not set and the url is not provided.
+   * @throws Error - if the animation data is not a valid Lottie animation data object.
+   * @throws Error - if the fetch request fails.
+   */
   public async toBase64(): Promise<string> {
-    throw new DotLottieError('lottie animation controls tobase64 not implemented!');
+    return uint8ArrayToBase64(await this.toArrayBuffer());
   }
 
   public get zipOptions(): ZipOptions {
@@ -193,16 +212,145 @@ export class LottieAnimationCommon {
     return new TextEncoder().encode(JSON.stringify(dataJson)).buffer;
   }
 
+  /**
+   *
+   * Extract image assets from the animation.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
   protected async _extractImageAssets(): Promise<boolean> {
-    throw new DotLottieError('_extractImageAssets(): Promise<boolean> method not implemented in concrete class');
+    if (!this._data) throw new DotLottieError('Failed to extract image assets: Animation data does not exist');
+
+    const animationAssets = this._data.assets as AnimationType['assets'];
+
+    if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
+
+    for (const asset of animationAssets) {
+      if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+        const imageData = asset.p.split(',');
+
+        // Image data is invalid
+        if (!imageData.length || !imageData[0] || !imageData[1]) {
+          break;
+        }
+
+        let extType = null;
+        const fileType = await getExtensionTypeFromBase64(asset.p);
+
+        // If we don't recognize the file type, we leave it inside the animation as is.
+        if (fileType) {
+          extType = fileType;
+
+          const fileName = `${asset.id}.${extType}`;
+
+          this._imageAssets.push(
+            new LottieImage({
+              data: asset.p,
+              id: asset.id,
+              lottieAssetId: asset.id,
+              fileName,
+              parentAnimations: [this],
+            }),
+          );
+
+          asset.p = fileName;
+          asset.u = '/i/';
+          asset.e = 0;
+        }
+      }
+    }
+
+    return false;
   }
 
+  /**
+   *
+   * Extract audio assets from the animation.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
   protected async _extractAudioAssets(): Promise<boolean> {
-    throw new DotLottieError('_extractAudioAssets(): Promise<boolean> method not implemented in concrete class');
+    if (!this._data) throw new DotLottieError('Failed to extract audio assets: Animation data does not exist');
+
+    const animationAssets = this._data.assets as AnimationType['assets'];
+
+    if (!animationAssets) throw new DotLottieError('Failed to extract audio assets: No assets found inside animation');
+
+    for (const asset of animationAssets) {
+      if (isAudioAsset(asset)) {
+        const audioData = asset.p.split(',');
+
+        // Audio data is invalid
+        if (!audioData.length || !audioData[0] || !audioData[1]) {
+          break;
+        }
+
+        let extType = null;
+        const fileType = await getExtensionTypeFromBase64(asset.p);
+
+        extType = fileType;
+
+        const fileName = `${asset.id}.${extType}`;
+
+        this._audioAssets.push(
+          new LottieAudio({
+            data: asset.p,
+            id: asset.id,
+            fileName,
+            parentAnimations: [this],
+          }),
+        );
+
+        asset.p = fileName;
+        asset.u = '/u/';
+        asset.e = 0;
+      }
+    }
+
+    return false;
   }
 
+  /**
+   *
+   * Extract font assets from the animation.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
   protected async _extractFontAssets(): Promise<boolean> {
-    throw new DotLottieError('_extractFontAssets(): Promise<boolean> method not implemented in concrete class');
+    if (!this._data) throw new DotLottieError('Failed to extract font assets: Animation data does not exist');
+
+    const fontsList = this._data.fonts?.list;
+
+    if (!fontsList) throw new DotLottieError('Failed to extract font assets: No fonts found inside animation');
+
+    for (const font of fontsList) {
+      if (font.fPath && isFontDataUrl(font.fPath)) {
+        const fontData = font.fPath;
+
+        let extType = null;
+        const fileType = await getExtensionTypeFromBase64(font.fPath);
+
+        if (fileType) {
+          extType = fileType;
+
+          const fileName = `${font.fName}.${extType}`;
+
+          this._fontAssets.push(
+            new LottieFont({
+              data: fontData,
+              id: font.fName,
+              fileName,
+              parentAnimations: [this],
+            }),
+          );
+
+          font.fPath = `/f/${fileName}`;
+          font.origin = 3;
+        }
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -303,6 +451,10 @@ export class LottieAnimationCommon {
   private async _fromUrl(url: string): Promise<AnimationType> {
     const response = await fetch(url);
 
+    if (!response.ok) {
+      throw new DotLottieError(`Failed to fetch animation from ${url}: ${response.status} ${response.statusText}`);
+    }
+
     const text = await response.text();
 
     let json;
@@ -392,3 +544,6 @@ export class LottieAnimationCommon {
     }
   }
 }
+
+// Platform-agnostic; the subclass only keeps `LottieAnimation` a stable exported name.
+export class LottieAnimation extends LottieAnimationCommon {}

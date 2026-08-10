@@ -5,7 +5,7 @@
 import type { ZipOptions } from 'fflate';
 import { describe, expect, it, beforeEach } from 'vitest';
 
-import { LottieTheme } from '../../browser';
+import { LottieTheme } from '../../index.browser';
 
 describe('LottieTheme', () => {
   describe('constructor', () => {
