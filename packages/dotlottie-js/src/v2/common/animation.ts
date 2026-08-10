@@ -13,6 +13,9 @@ import {
   getExtensionTypeFromBase64,
   isAudioAsset,
   isFontDataUrl,
+  isImageAsset,
+  isVideoAsset,
+  isVideoDataUrl,
   uint8ArrayToBase64,
 } from '../../utils';
 
@@ -24,6 +27,8 @@ import type { LottieImageCommon } from './image';
 import { LottieImage } from './image';
 import type { ManifestAnimation } from './schemas';
 import type { LottieThemeCommon } from './theme';
+import type { LottieVideoCommon } from './video';
+import { LottieVideo } from './video';
 
 export interface AnimationOptions extends ManifestAnimation {
   data?: AnimationData | undefined;
@@ -49,6 +54,8 @@ export class LottieAnimationCommon {
   protected _imageAssets: LottieImageCommon[] = [];
 
   protected _audioAssets: LottieAudioCommon[] = [];
+
+  protected _videoAssets: LottieVideoCommon[] = [];
 
   protected _fontAssets: LottieFontCommon[] = [];
 
@@ -155,6 +162,14 @@ export class LottieAnimationCommon {
     this._audioAssets = audioAssets;
   }
 
+  public get videoAssets(): LottieVideoCommon[] {
+    return this._videoAssets;
+  }
+
+  public set videoAssets(videoAssets: LottieVideoCommon[]) {
+    this._videoAssets = videoAssets;
+  }
+
   public get fontAssets(): LottieFontCommon[] {
     return this._fontAssets;
   }
@@ -226,7 +241,7 @@ export class LottieAnimationCommon {
     if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
 
     for (const asset of animationAssets) {
-      if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+      if (isImageAsset(asset)) {
         const imageData = asset.p.split(',');
 
         // Image data is invalid
@@ -312,6 +327,51 @@ export class LottieAnimationCommon {
 
   /**
    *
+   * Extract video assets from the animation.
+   *
+   * Video assets are authored as image assets carrying a `data:video/...` payload, which is the
+   * marker ThorVG uses to tell the two apart.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
+  protected async _extractVideoAssets(): Promise<boolean> {
+    if (!this._data) throw new DotLottieError('Failed to extract video assets: Animation data does not exist');
+
+    const animationAssets = this._data.assets as AnimationType['assets'];
+
+    if (!animationAssets) throw new DotLottieError('Failed to extract video assets: No assets found inside animation');
+
+    for (const asset of animationAssets) {
+      // Only inlined videos need extracting, an already packaged one has nothing left to unpack.
+      if (isVideoAsset(asset) && isVideoDataUrl(asset.p)) {
+        const fileType = await getExtensionTypeFromBase64(asset.p);
+
+        // If we don't recognize the file type, we leave it inside the animation as is.
+        if (fileType) {
+          const fileName = `${asset.id}.${fileType}`;
+
+          this._videoAssets.push(
+            new LottieVideo({
+              data: asset.p,
+              id: asset.id,
+              lottieAssetId: asset.id,
+              fileName,
+              parentAnimations: [this],
+            }),
+          );
+
+          asset.p = fileName;
+          asset.u = '/v/';
+          asset.e = 0;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   *
    * Extract font assets from the animation.
    *
    * @returns boolean - true on error otherwise false on success
@@ -386,6 +446,8 @@ export class LottieAnimationCommon {
 
     if (this._data.assets?.length) {
       // Even if the user wants to inline the assets, we still need to extract them
+      // Videos share the shape of an image asset, so they're extracted first
+      await this._extractVideoAssets();
       await this._extractImageAssets();
       await this._extractAudioAssets();
 
@@ -397,9 +459,19 @@ export class LottieAnimationCommon {
 
         const images = this.imageAssets;
         const audios = this.audioAssets;
+        const videos = this.videoAssets;
 
         for (const asset of animationAssets) {
-          if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+          if (isVideoAsset(asset)) {
+            for (const video of videos) {
+              if (video.fileName === asset.p) {
+                // encoded is true
+                asset.e = 1;
+                asset.u = '';
+                asset.p = await video.toDataURL();
+              }
+            }
+          } else if (isImageAsset(asset)) {
             for (const image of images) {
               if (image.fileName === asset.p) {
                 // encoded is true
