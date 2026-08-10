@@ -6,9 +6,9 @@
 /* eslint-disable @lottiefiles/import-filename-format */
 
 import type { Animation as AnimationType, Asset } from '@lottie-animation-community/lottie-types';
+import { unzipSync } from 'fflate';
 import { describe, it, expect } from 'vitest';
 
-import audioDotLottie from '../../../__tests__/__fixtures__/audio/2_instrument_animations.lottie?arraybuffer';
 import AUDIO_ANIMATION_1_DATA from '../../../__tests__/__fixtures__/audio/instruments_1.json';
 import AUDIO_ANIMATION_2_DATA from '../../../__tests__/__fixtures__/audio/instruments_2.json';
 import { isAudioAsset } from '../../../utils';
@@ -18,6 +18,17 @@ import { DotLottie, LottieAudio } from '../../index.node';
 const AUDIO_DATA = 'data:audio/mpeg;base64,SUQzAwAAAAAACg==';
 
 describe('LottieAudio', () => {
+  // v1 has no audio, so these fixtures can only be exercised through a v2 file.
+  async function buildV2WithAudio(): Promise<ArrayBuffer> {
+    const built = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: structuredClone(AUDIO_ANIMATION_1_DATA) as unknown as AnimationType,
+    });
+
+    await built.build();
+
+    return built.toArrayBuffer();
+  }
   it('gets and sets the zipOptions', () => {
     const theme = new LottieAudio({
       id: 'audio_1',
@@ -205,10 +216,14 @@ describe('LottieAudio', () => {
       });
   });
 
-  it('inlines audio assets from .lottie file when getAnimation called with inlineAssets option', async () => {
+  it('writes audio under u/ and inlines it when getAnimation is called with inlineAssets', async () => {
+    const buffer = await buildV2WithAudio();
+
+    expect(Object.keys(unzipSync(new Uint8Array(buffer))).some((key) => key.startsWith('u/'))).toBe(true);
+
     let dotLottie = new DotLottie();
 
-    dotLottie = await dotLottie.fromArrayBuffer(audioDotLottie as ArrayBuffer);
+    dotLottie = await dotLottie.fromArrayBuffer(buffer);
 
     expect(dotLottie.animations.length).toBeGreaterThan(0);
 
@@ -238,7 +253,7 @@ describe('LottieAudio', () => {
   it('inlines audio assets when animation toJSON called with inlineAssets option', async () => {
     let dotLottie = new DotLottie();
 
-    dotLottie = await dotLottie.fromArrayBuffer(audioDotLottie as ArrayBuffer);
+    dotLottie = await dotLottie.fromArrayBuffer(await buildV2WithAudio());
 
     expect(dotLottie.animations.length).toBeGreaterThan(0);
 

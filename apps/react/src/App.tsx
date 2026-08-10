@@ -24,7 +24,7 @@ function App() {
       await dotlottie
         .addAnimation({
           id: 'animation_1',
-          url: 'https://lottie.host/18b639d1-a200-4225-ba0e-3456d40f95a5/wlrsaqWa8r.json',
+          url: 'https://assets10.lottiefiles.com/packages/lf20_ukjcyybw.json',
         })
         .addAnimation({
           id: 'animation_2',

@@ -2,13 +2,16 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable max-classes-per-file -- bare concrete alias of the base class below. */
+
+import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions } from 'fflate';
 
 import type { AnimationData, ExportOptions } from '../../types';
-import { DotLottieError, isAudioAsset } from '../../utils';
+import { DotLottieError, getExtensionTypeFromBase64, uint8ArrayToBase64 } from '../../utils';
 
-import type { LottieAudioCommonV1 } from './audio';
 import type { LottieImageCommonV1 } from './image';
+import { LottieImageV1 } from './image';
 import { PlayMode } from './schemas/manifest';
 import type { ManifestAnimationV1 } from './schemas/manifest';
 
@@ -60,8 +63,6 @@ export class LottieAnimationCommonV1 {
 
   protected _imageAssets: LottieImageCommonV1[] = [];
 
-  protected _audioAssets: LottieAudioCommonV1[] = [];
-
   public constructor(options: AnimationOptionsV1) {
     this._requireValidOptions(options);
 
@@ -107,8 +108,16 @@ export class LottieAnimationCommonV1 {
     }
   }
 
+  /**
+   * Return the animation data as a base64 encoded string.
+   *
+   * @returns data - The animation data as a base64 encoded string.
+   * @throws Error - if the animation data is not set and the url is not provided.
+   * @throws Error - if the animation data is not a valid Lottie animation data object.
+   * @throws Error - if the fetch request fails.
+   */
   public async toBase64(): Promise<string> {
-    throw new DotLottieError('lottie animation controls tobase64 not implemented!');
+    return uint8ArrayToBase64(await this.toArrayBuffer());
   }
 
   public get zipOptions(): ZipOptions {
@@ -135,14 +144,6 @@ export class LottieAnimationCommonV1 {
 
   public set imageAssets(imageAssets: LottieImageCommonV1[]) {
     this._imageAssets = imageAssets;
-  }
-
-  public get audioAssets(): LottieAudioCommonV1[] {
-    return this._audioAssets;
-  }
-
-  public set audioAssets(audioAssets: LottieAudioCommonV1[]) {
-    this._audioAssets = audioAssets;
   }
 
   public get data(): AnimationData | undefined {
@@ -278,12 +279,55 @@ export class LottieAnimationCommonV1 {
     return new TextEncoder().encode(JSON.stringify(dataJson)).buffer;
   }
 
+  /**
+   *
+   * Extract image assets from the animation.
+   *
+   * @returns boolean - true on error otherwise false on success
+   */
   protected async _extractImageAssets(): Promise<boolean> {
-    throw new DotLottieError('_extractImageAssets(): Promise<boolean> method not implemented in concrete class');
-  }
+    if (!this._data) throw new DotLottieError('Failed to extract image assets: Animation data does not exist');
 
-  protected async _extractAudioAssets(): Promise<boolean> {
-    throw new DotLottieError('_extractAudioAssets(): Promise<boolean> method not implemented in concrete class');
+    const animationAssets = this._data.assets as AnimationType['assets'];
+
+    if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
+
+    for (const asset of animationAssets) {
+      if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+        const imageData = asset.p.split(',');
+
+        // Image data is invalid
+        if (!imageData.length || !imageData[0] || !imageData[1]) {
+          break;
+        }
+
+        let extType = null;
+        const fileType = await getExtensionTypeFromBase64(asset.p);
+
+        // If we don't recognize the file type, we leave it inside the animation as is.
+        if (fileType) {
+          extType = fileType;
+
+          const fileName = `${asset.id}.${extType}`;
+
+          this._imageAssets.push(
+            new LottieImageV1({
+              data: asset.p,
+              id: asset.id,
+              lottieAssetId: asset.id,
+              fileName,
+              parentAnimations: [this],
+            }),
+          );
+
+          asset.p = fileName;
+          asset.u = '/images/';
+          asset.e = 0;
+        }
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -316,7 +360,6 @@ export class LottieAnimationCommonV1 {
     if (this._data.assets?.length) {
       // Even if the user wants to inline the assets, we still need to extract them
       await this._extractImageAssets();
-      await this._extractAudioAssets();
 
       if (options?.inlineAssets) {
         const animationAssets = this.data?.assets as AnimationData['assets'];
@@ -325,7 +368,6 @@ export class LottieAnimationCommonV1 {
           throw new DotLottieError("Failed to inline assets, the animation's assets are undefined.");
 
         const images = this.imageAssets;
-        const audios = this.audioAssets;
 
         for (const asset of animationAssets) {
           if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
@@ -336,16 +378,6 @@ export class LottieAnimationCommonV1 {
                 asset.e = 1;
                 asset.u = '';
                 asset.p = await image.toDataURL();
-              }
-            }
-          } else if (isAudioAsset(asset)) {
-            // Audio asset
-            for (const audio of audios) {
-              if (audio.fileName === asset.p) {
-                // encoded is true
-                asset.e = 1;
-                asset.u = '';
-                asset.p = await audio.toDataURL();
               }
             }
           }
@@ -365,6 +397,10 @@ export class LottieAnimationCommonV1 {
    */
   private async _fromUrl(url: string): Promise<AnimationData> {
     const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new DotLottieError(`Failed to fetch animation from ${url}: ${response.status} ${response.statusText}`);
+    }
 
     const text = await response.text();
 
@@ -538,3 +574,6 @@ export class LottieAnimationCommonV1 {
     }
   }
 }
+
+// Platform-agnostic; the subclass only keeps `LottieAnimationV1` a stable exported name.
+export class LottieAnimationV1 extends LottieAnimationCommonV1 {}

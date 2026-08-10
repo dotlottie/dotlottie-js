@@ -3,15 +3,30 @@
  */
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
+import type { Zippable } from 'fflate';
+import { strToU8, strFromU8, unzip, zip } from 'fflate';
 
 import { PACKAGE_NAME } from '../../constants';
 import type { ConversionOptions, GetAnimationOptions } from '../../types';
-import { DotLottieError, isAudioAsset, isImageAsset, isValidURL } from '../../utils';
+import {
+  base64ToUint8Array,
+  DotLottieError,
+  getDotLottieVersion,
+  getExtensionTypeFromBase64,
+  isAudioAsset,
+  isImageAsset,
+  isValidURL,
+  uint8ArrayToBase64,
+} from '../../utils';
 
 import type { AnimationOptions, LottieAnimationCommon } from './animation';
+import { LottieAnimation } from './animation';
 import type { LottieAudioCommon } from './audio';
+import { LottieAudio } from './audio';
 import type { LottieFontCommon } from './font';
+import { LottieFont } from './font';
 import type { LottieImageCommon } from './image';
+import { LottieImage } from './image';
 import type { DotLottiePlugin } from './plugin';
 import type { Manifest } from './schemas';
 import type { DotLottieStateMachineCommonOptions } from './state-machine';
@@ -47,8 +62,8 @@ export class DotLottieCommon {
     this.enableDuplicateImageOptimization = options?.enableDuplicateImageOptimization ?? false;
   }
 
-  public async toBase64(_options?: ConversionOptions): Promise<string> {
-    throw new DotLottieError('toBase64() method not implemented in concrete class!');
+  public async toBase64(options?: ConversionOptions): Promise<string> {
+    return uint8ArrayToBase64(await this.toArrayBuffer(options));
   }
 
   public create(_options?: DotLottieOptions): DotLottieCommon {
@@ -63,18 +78,327 @@ export class DotLottieCommon {
     throw new DotLottieError('addPlugins(...plugins: DotLottiePlugin[]) not implemented in concrete class!');
   }
 
-  public addAnimation(_animationOptions: AnimationOptions): DotLottieCommon {
-    throw new DotLottieError('addAnimation(animationOptions: AnimationOptions) not implemented in concrete class!');
+  // Per platform: has to construct the platform's concrete DotLottieV1.
+  protected async _fromV1ArrayBuffer(_arrayBuffer: ArrayBuffer): Promise<DotLottieCommon> {
+    throw new DotLottieError('_fromV1ArrayBuffer(arrayBuffer: ArrayBuffer) not implemented in concrete class!');
   }
 
-  public async fromArrayBuffer(_arrayBuffer: ArrayBuffer): Promise<DotLottieCommon> {
-    throw new DotLottieError(
-      'fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<DotLottieCommon> not implemented in concrete class!',
-    );
+  public addAnimation(animationOptions: AnimationOptions): this {
+    const animation = new LottieAnimation(animationOptions);
+
+    if (this._animationsMap.get(animationOptions.id)) {
+      throw new DotLottieError('Duplicate animation id detected, aborting.');
+    }
+
+    this._animationsMap.set(animation.id, animation);
+
+    return this;
   }
 
-  public async toArrayBuffer(_options: ConversionOptions | undefined = undefined): Promise<ArrayBuffer> {
-    throw new DotLottieError('toArrayBuffer(): Promise<ArrayBuffer> is not implemented in concrete class!');
+  /**
+   * Creates a DotLottie instance from an array buffer
+   * @param arrayBuffer - array buffer of the dotlottie file
+   * @returns DotLottie instance
+   * @throws Error
+   */
+  public async fromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<this> {
+    const dotLottieVersion = await getDotLottieVersion(new Uint8Array(arrayBuffer));
+
+    if (dotLottieVersion !== '2') {
+      return (await this._fromV1ArrayBuffer(arrayBuffer)) as this;
+    }
+
+    const dotlottie = this.create() as this;
+
+    try {
+      const contentObj = await new Promise<Zippable>((resolve, reject) => {
+        unzip(new Uint8Array(arrayBuffer), (err, data) => {
+          if (err) {
+            reject(err);
+          }
+
+          resolve(data);
+        });
+      });
+
+      const tmpImages = [];
+      const tmpAudio = [];
+      const tmpFonts = [];
+
+      if (contentObj['manifest.json'] instanceof Uint8Array) {
+        try {
+          // Parse the manifest first so that we can pick up animation settings
+          const manifest = JSON.parse(strFromU8(contentObj['manifest.json'], false)) as Manifest;
+
+          for (const key of Object.keys(contentObj)) {
+            const decompressedFile = contentObj[key] as Uint8Array;
+            // JSON entries are UTF-8; binary assets are base64-encoded from the raw bytes below.
+            const decodedStr = strFromU8(decompressedFile, false);
+
+            if (key.startsWith('a/') && key.endsWith('.json')) {
+              // extract animationId from key as the key = `a/${animationId}.json`
+              const animationId = /a\/(.+)\.json/u.exec(key)?.[1];
+
+              if (!animationId) {
+                throw new DotLottieError('Invalid animation id');
+              }
+
+              const animation = JSON.parse(decodedStr);
+
+              const animationSettings = manifest.animations.find((anim) => anim.id === animationId);
+
+              if (animationSettings === undefined) {
+                throw new DotLottieError('Animation not found inside manifest');
+              }
+
+              dotlottie.addAnimation({
+                data: animation,
+                ...animationSettings,
+              });
+            } else if (key.startsWith('i/')) {
+              // extract imageId from key as the key = `i/${imageId}.${ext}`
+              const imageId = /i\/(.+)\./u.exec(key)?.[1];
+
+              if (!imageId) {
+                throw new DotLottieError('Invalid image id');
+              }
+
+              const base64 = uint8ArrayToBase64(decompressedFile);
+
+              const ext = await getExtensionTypeFromBase64(base64);
+
+              if (!ext) {
+                throw new DotLottieError('Unrecognized asset file format.');
+              }
+
+              const imgDataURL = `data:image/${ext};base64,${base64}`;
+
+              tmpImages.push(
+                new LottieImage({
+                  id: imageId,
+                  lottieAssetId: imageId,
+                  data: imgDataURL,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
+            } else if (key.startsWith('u/')) {
+              // extract audioId from key as the key = `u/${audioId}.${ext}`
+              const audioId = /u\/(.+)\./u.exec(key)?.[1];
+
+              if (!audioId) {
+                throw new DotLottieError('Invalid audio id');
+              }
+
+              const base64 = uint8ArrayToBase64(decompressedFile);
+
+              const ext = await getExtensionTypeFromBase64(base64);
+
+              const audioDataURL = `data:audio/${ext};base64,${base64}`;
+
+              tmpAudio.push(
+                new LottieAudio({
+                  id: audioId,
+                  data: audioDataURL,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
+            } else if (key.startsWith('f/')) {
+              // extract fontId from key as the key = `f/${fontId}.${ext}`
+              const fontId = /f\/(.+)\./u.exec(key)?.[1];
+
+              if (!fontId) {
+                throw new DotLottieError('Invalid font id');
+              }
+
+              const base64 = uint8ArrayToBase64(decompressedFile);
+
+              const ext = await getExtensionTypeFromBase64(base64);
+
+              const fontDataURL = `data:font/${ext};base64,${base64}`;
+
+              tmpFonts.push(
+                new LottieFont({
+                  id: fontId,
+                  data: fontDataURL,
+                  fileName: key.split('/')[1] || '',
+                }),
+              );
+            } else if (key.startsWith('t/') && key.endsWith('.json')) {
+              // extract themeId from key as the key = `t/${themeId}.json`
+              const themeId = /t\/(.+)\.json/u.exec(key)?.[1];
+
+              if (!themeId) {
+                throw new DotLottieError('Invalid theme id');
+              }
+
+              manifest.themes?.forEach((theme) => {
+                if (theme.id === themeId) {
+                  dotlottie.addTheme({
+                    id: theme.id,
+                    name: theme.name,
+                    data: JSON.parse(decodedStr),
+                  });
+                }
+              });
+            } else if (key.startsWith('s/') && key.endsWith('.json')) {
+              // extract stateId from key as the key = `s/${stateId}.json`
+              const stateId = /s\/(.+)\.json/u.exec(key)?.[1];
+
+              if (!stateId) {
+                throw new DotLottieError('Invalid statemachine id');
+              }
+
+              manifest.stateMachines?.forEach((stateMachine) => {
+                if (stateMachine.id === stateId) {
+                  dotlottie.addStateMachine({
+                    id: stateMachine.id,
+                    name: stateMachine.name,
+                    data: JSON.parse(decodedStr),
+                  });
+                }
+              });
+            }
+          }
+
+          // Restore manifest.initial.animation → per-animation defaultActiveAnimation
+          // so that toArrayBuffer() → fromArrayBuffer() is a lossless roundtrip.
+          // _buildManifest() derives `manifest.initial` from this flag on write;
+          // without this, any parse → serialize cycle drops the initial marker.
+          if (manifest.initial?.animation) {
+            const initialAnimation = dotlottie.animations.find((anim) => anim.id === manifest.initial?.animation);
+
+            if (initialAnimation) {
+              initialAnimation.defaultActiveAnimation = true;
+            }
+          }
+
+          // Go through the images and find to which animation they belong
+          for (const image of tmpImages) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const animationAssets = parentAnimation.data.assets as AnimationType['assets'];
+
+                if (animationAssets) {
+                  for (const asset of animationAssets) {
+                    if ('w' in asset && 'h' in asset) {
+                      if (asset.p === image.fileName) {
+                        image.parentAnimations.push(parentAnimation);
+                        parentAnimation.imageAssets.push(image);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Go through the audio and find to which animation they belong
+          for (const audio of tmpAudio) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const animationAssets = parentAnimation.data.assets as AnimationType['assets'];
+
+                if (animationAssets) {
+                  for (const asset of animationAssets) {
+                    if (isAudioAsset(asset)) {
+                      if (asset.p.includes(audio.id)) {
+                        audio.parentAnimations.push(parentAnimation);
+                        parentAnimation.audioAssets.push(audio);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          for (const font of tmpFonts) {
+            for (const parentAnimation of dotlottie.animations) {
+              if (parentAnimation.data) {
+                const fontsList = parentAnimation.data.fonts?.list;
+
+                if (fontsList) {
+                  for (const fontDef of fontsList) {
+                    if (fontDef.fPath === `/f/${font.fileName}`) {
+                      font.parentAnimations.push(parentAnimation);
+                      parentAnimation.fontAssets.push(font);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        } catch (err: unknown) {
+          throw new DotLottieError(
+            `Invalid manifest inside buffer! ${err instanceof Error ? err.message : 'Unknown error'}`,
+          );
+        }
+      } else {
+        throw new DotLottieError('Invalid buffer');
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        throw new DotLottieError(err.message);
+      }
+    }
+
+    return dotlottie;
+  }
+
+  public async toArrayBuffer(options: ConversionOptions | undefined = undefined): Promise<ArrayBuffer> {
+    const manifest = this._buildManifest();
+
+    const dotlottie: Zippable = {
+      'manifest.json': [strToU8(JSON.stringify(manifest)), {}],
+    };
+
+    for (const animation of this.animations) {
+      const json = await animation.toJSON();
+
+      dotlottie[`a/${animation.id}.json`] = [strToU8(JSON.stringify(json)), animation.zipOptions];
+
+      for (const asset of animation.imageAssets) {
+        const dataAsString = await asset.toDataURL();
+
+        dotlottie[`i/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
+      }
+
+      for (const asset of animation.audioAssets) {
+        const dataAsString = await asset.toDataURL();
+
+        dotlottie[`u/${asset.fileName}`] = [base64ToUint8Array(dataAsString), asset.zipOptions];
+      }
+
+      for (const font of animation.fontAssets) {
+        const dataAsString = await font.toDataURL();
+
+        dotlottie[`f/${font.fileName}`] = [base64ToUint8Array(dataAsString), font.zipOptions];
+      }
+    }
+
+    for (const theme of this.themes) {
+      const themeData = await theme.toString();
+
+      dotlottie[`t/${theme.id}.json`] = [strToU8(themeData), theme.zipOptions];
+    }
+
+    for (const state of this.stateMachines) {
+      const stateData = state.toString();
+
+      dotlottie[`s/${state.id}.json`] = [strToU8(stateData), state.zipOptions];
+    }
+
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+      zip(dotlottie, options?.zipOptions || {}, (err, data) => {
+        if (err) {
+          reject(err);
+
+          return;
+        }
+
+        resolve(data.buffer as ArrayBuffer);
+      });
+    });
   }
 
   public get plugins(): DotLottiePlugin[] {
@@ -538,7 +862,7 @@ export class DotLottieCommon {
    *
    * @returns DotLottie context
    */
-  public async build(): Promise<DotLottieCommon> {
+  public async build(): Promise<this> {
     this._buildManifest();
 
     // Validate state machine animation references
@@ -588,7 +912,7 @@ export class DotLottieCommon {
    * @param url - url to the dotlottie file
    * @returns DotLottie instance
    */
-  public async fromURL(url: string): Promise<DotLottieCommon> {
+  public async fromURL(url: string): Promise<this> {
     if (!isValidURL(url)) throw new DotLottieError('Invalid URL');
 
     try {

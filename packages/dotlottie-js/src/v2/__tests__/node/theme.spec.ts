@@ -5,7 +5,7 @@
 import type { ZipOptions } from 'fflate';
 import { describe, expect, it, beforeEach } from 'vitest';
 
-import { LottieTheme } from '../../node';
+import { LottieTheme } from '../../index.node';
 
 describe('LottieTheme', () => {
   describe('constructor', () => {

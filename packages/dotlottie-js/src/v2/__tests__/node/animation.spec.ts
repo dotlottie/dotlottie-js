@@ -150,6 +150,25 @@ describe('toJSON', () => {
 
     fetchSpy.mockRestore();
   });
+
+  test('throws the http status when the url responds with an error', async () => {
+    const fetchSpy = vi.spyOn(typeof window === 'undefined' ? global : window, 'fetch').mockResolvedValue(
+      new Response('<?xml version="1.0"?><Error />', {
+        status: 403,
+        statusText: 'Forbidden',
+      }),
+    );
+
+    const animation = new LottieAnimation({
+      id: 'test',
+      url: 'https://lottie.host/forbidden.json',
+    });
+
+    await expect(animation.toJSON()).rejects.toThrow(/403 Forbidden/u);
+    await expect(animation.toJSON()).rejects.not.toThrow(/is not valid JSON/u);
+
+    fetchSpy.mockRestore();
+  });
 });
 
 describe('toBase64', () => {

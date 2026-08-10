@@ -10,6 +10,7 @@ import { Base64 } from 'js-base64';
 import { describe, test, expect, vi } from 'vitest';
 
 import pkg from '../../../../package.json';
+import AUDIO_ANIMATION_DATA from '../../../__tests__/__fixtures__/audio/instruments_1.json';
 import bullData from '../../../__tests__/__fixtures__/image-asset-optimization/bull.json';
 import IMAGE_ANIMATION_1_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-1.json';
 import IMAGE_ANIMATION_5_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/image-animation-layer-2-3-4-5.json';
@@ -848,5 +849,34 @@ describe('build', () => {
     expect(fetchSpy).toHaveBeenCalledWith(animationURL);
 
     fetchSpy.mockRestore();
+  });
+});
+
+describe('v1 zip layout', () => {
+  // v1 defines only manifest.json, animations/ and images/, so audio stays inline as a data URI.
+  test('does not emit an audio/ folder and keeps audio embedded in the animation', async () => {
+    const dotlottie = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: structuredClone(AUDIO_ANIMATION_DATA) as unknown as AnimationType,
+    });
+
+    await dotlottie.build();
+
+    const files = unzipSync(new Uint8Array(await dotlottie.toArrayBuffer()));
+    const keys = Object.keys(files);
+
+    expect(keys.some((key) => key.startsWith('audio/'))).toBe(false);
+    expect(keys).toContain('manifest.json');
+    expect(keys).toContain('animations/animation_1.json');
+
+    const animation = JSON.parse(new TextDecoder().decode(files['animations/animation_1.json'] as Uint8Array));
+    const audioAssets = (animation.assets as Array<Record<string, unknown>>).filter((asset) => !('w' in asset));
+
+    expect(audioAssets).toHaveLength(3);
+
+    for (const asset of audioAssets) {
+      expect(asset['p']).toMatch(/^data:audio\//u);
+      expect(asset['e']).toBe(1);
+    }
   });
 });
