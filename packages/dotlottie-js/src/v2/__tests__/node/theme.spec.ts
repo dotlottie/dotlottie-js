@@ -749,6 +749,181 @@ describe('LottieTheme', () => {
       });
     });
 
+    describe('BezierPath rule', () => {
+      it('creates a theme with a BezierPath rule value', () => {
+        const theme = new LottieTheme({
+          id: 'bezier-path-theme',
+          data: {
+            rules: [
+              {
+                id: 'bezier-path-rule',
+                type: 'BezierPath',
+                value: {
+                  vertices: [
+                    [-80, -80],
+                    [80, -80],
+                    [80, 80],
+                    [-80, 80],
+                  ],
+                  closed: true,
+                },
+              },
+            ],
+          },
+        });
+
+        const rule = theme.data.rules[0] as {
+          type: 'BezierPath';
+          value: { closed?: boolean; vertices: number[][] };
+        };
+
+        expect(rule.type).toBe('BezierPath');
+        expect(rule.value.vertices).toHaveLength(4);
+        expect(rule.value.vertices[0]).toEqual([-80, -80]);
+        expect(rule.value.closed).toBe(true);
+      });
+
+      it('creates a theme with a BezierPath rule value that has tangents', () => {
+        const theme = new LottieTheme({
+          id: 'bezier-path-tangents-theme',
+          data: {
+            rules: [
+              {
+                id: 'bezier-path-tangents-rule',
+                type: 'BezierPath',
+                value: {
+                  vertices: [
+                    [-50, 0],
+                    [50, 0],
+                  ],
+                  inTangents: [
+                    [-20, -20],
+                    [20, -20],
+                  ],
+                  outTangents: [
+                    [20, 20],
+                    [-20, 20],
+                  ],
+                  closed: false,
+                },
+              },
+            ],
+          },
+        });
+
+        const rule = theme.data.rules[0] as {
+          type: 'BezierPath';
+          value: { inTangents?: number[][]; outTangents?: number[][] };
+        };
+
+        expect(rule.value.inTangents).toEqual([
+          [-20, -20],
+          [20, -20],
+        ]);
+        expect(rule.value.outTangents).toEqual([
+          [20, 20],
+          [-20, 20],
+        ]);
+      });
+
+      it('creates a theme with a BezierPath rule and keyframes', () => {
+        const theme = new LottieTheme({
+          id: 'bezier-path-keyframes-theme',
+          data: {
+            rules: [
+              {
+                id: 'bezier-path-keyframes-rule',
+                type: 'BezierPath',
+                keyframes: [
+                  {
+                    frame: 0,
+                    value: {
+                      vertices: [
+                        [-50, -50],
+                        [50, -50],
+                        [0, 50],
+                      ],
+                      closed: true,
+                    },
+                    inTangent: { x: 0.833, y: 0.833 },
+                    outTangent: { x: 0.167, y: 0.167 },
+                  },
+                  {
+                    frame: 60,
+                    value: {
+                      vertices: [
+                        [-90, -90],
+                        [90, -90],
+                        [0, 90],
+                      ],
+                      closed: true,
+                    },
+                    hold: true,
+                  },
+                ],
+              },
+            ],
+          },
+        });
+
+        const rule = theme.data.rules[0] as {
+          keyframes: Array<{
+            frame: number;
+            hold?: boolean;
+            inTangent?: { x: number; y: number };
+            value: { vertices: number[][] };
+          }>;
+          type: 'BezierPath';
+        };
+
+        expect(rule.type).toBe('BezierPath');
+        expect(rule.keyframes).toHaveLength(2);
+        expect(rule.keyframes[0]?.value.vertices).toHaveLength(3);
+        expect(rule.keyframes[0]?.inTangent).toEqual({ x: 0.833, y: 0.833 });
+        expect(rule.keyframes[1]?.frame).toBe(60);
+        expect(rule.keyframes[1]?.hold).toBe(true);
+      });
+
+      it('creates a theme with a BezierPath rule and expression', () => {
+        const theme = new LottieTheme({
+          id: 'bezier-path-expression-theme',
+          data: {
+            rules: [
+              {
+                id: 'bezier-path-expression-rule',
+                type: 'BezierPath',
+                expression: 'content("Shape 1").content("Path 1").path',
+              },
+            ],
+          },
+        });
+
+        const rule = theme.data.rules[0] as { expression: string; type: 'BezierPath' };
+
+        expect(rule.type).toBe('BezierPath');
+        expect(rule.expression).toBe('content("Shape 1").content("Path 1").path');
+      });
+
+      it('throws when a BezierPath rule value is missing vertices', () => {
+        expect(
+          () =>
+            new LottieTheme({
+              id: 'bezier-path-invalid-theme',
+              data: {
+                rules: [
+                  {
+                    id: 'bezier-path-invalid-rule',
+                    type: 'BezierPath',
+                    // @ts-expect-error -- vertices is required on a BezierPath value
+                    value: { closed: true },
+                  },
+                ],
+              },
+            }),
+        ).toThrow('Invalid theme data');
+      });
+    });
+
     // Test themes with multiple rule types
     describe('Multiple rule types', () => {
       it('creates a theme with multiple rule types', () => {
