@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable max-classes-per-file -- bare concrete alias of the base class below. */
+
 import type { ZipOptions } from 'fflate';
 import { safeParse, flatten } from 'valibot';
 
@@ -198,3 +200,6 @@ export class DotLottieStateMachineCommon {
     }
   }
 }
+
+// Platform-agnostic; the subclass only keeps `LottieStateMachine` a stable exported name.
+export class LottieStateMachine extends DotLottieStateMachineCommon {}

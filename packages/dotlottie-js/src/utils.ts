@@ -10,7 +10,7 @@ import { unzip as fflateUnzip, strFromU8 } from 'fflate';
 import { fileTypeFromBuffer } from 'file-type';
 
 import type { ManifestV1 } from './v1/common/schemas/manifest';
-import type { LottieStateMachine } from './v2/browser';
+import type { LottieStateMachine } from './v2/common';
 import type { Manifest as ManifestV2 } from './v2/common/schemas';
 
 export enum ErrorCodes {
@@ -59,6 +59,33 @@ export const base64ToUint8Array = (base64String: string): Uint8Array => {
   }
 
   return uint8Array;
+};
+
+/**
+ * Encodes binary data as base64. The inverse of {@link base64ToUint8Array}.
+ *
+ * @remarks
+ * The browser path chunks the binary string: `String.fromCharCode` cannot take an unbounded argument
+ * list, and per-byte concatenation is quadratic on large assets.
+ *
+ * @param data - The binary data to encode.
+ * @returns The base64 representation of `data`, without a data URL prefix.
+ *
+ * @public
+ */
+export const uint8ArrayToBase64 = (data: ArrayBuffer | Uint8Array): string => {
+  const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+
+  if (typeof window === 'undefined') return Buffer.from(bytes).toString('base64');
+
+  const chunkSize = 0x8000;
+  let binaryString = '';
+
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binaryString += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+
+  return window.btoa(binaryString);
 };
 
 export const getMimeTypeFromUint8Data = async (file: Uint8Array): Promise<string | undefined> => {
@@ -613,15 +640,8 @@ export async function getAudio(
   filename: string,
   filter?: UnzipFileFilter,
 ): Promise<string | undefined> {
-  const version = await getDotLottieVersion(dotLottie);
-
-  let audioPath = 'audio/';
-
-  if (version === '2') {
-    audioPath = 'u/';
-  }
-
-  const audioFilename = `${audioPath}${filename}`;
+  // Audio is a dotLottie v2 feature; the v1 spec defines only manifest.json, animations/ and images/.
+  const audioFilename = `u/${filename}`;
 
   const unzipped = await unzipDotLottieFile(dotLottie, audioFilename, filter);
 
@@ -652,13 +672,8 @@ export async function getAudio(
  * @public
  */
 export async function getAllAudio(dotLottie: Uint8Array, filter?: UnzipFileFilter): Promise<Record<string, string>> {
-  const version = await getDotLottieVersion(dotLottie);
-
-  let audioPath = 'audio/';
-
-  if (version === '2') {
-    audioPath = 'u/';
-  }
+  // Audio is a dotLottie v2 feature; the v1 spec defines only manifest.json, animations/ and images/.
+  const audioPath = 'u/';
 
   const unzippedAudio = await unzipDotLottie(dotLottie, (file) => {
     const name = file.name.replace(audioPath, '');

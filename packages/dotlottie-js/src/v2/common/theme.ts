@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable max-classes-per-file -- bare concrete alias of the base class below. */
+
 import type { ZipOptions } from 'fflate';
 import { safeParse } from 'valibot';
 
@@ -90,3 +92,6 @@ export class LottieThemeCommon {
     }
   }
 }
+
+// Platform-agnostic; the subclass only keeps `LottieTheme` a stable exported name.
+export class LottieTheme extends LottieThemeCommon {}

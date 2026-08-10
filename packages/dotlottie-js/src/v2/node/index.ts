@@ -3,10 +3,3 @@
  */
 
 export * from './dotlottie';
-export * from './animation';
-export * from './image';
-export * from './audio';
-export * from './video';
-export * from './font';
-export * from './theme';
-export * from './state-machine';

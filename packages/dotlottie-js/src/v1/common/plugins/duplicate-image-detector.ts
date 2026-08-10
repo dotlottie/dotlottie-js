@@ -5,8 +5,8 @@
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
 
 import { DotLottieError } from '../../../utils';
-import { LottieImageV1 } from '../../browser/image';
 import type { LottieAnimationCommonV1 } from '../animation';
+import { LottieImageV1 } from '../image';
 import type { LottieImageCommonV1 } from '../image';
 import { DotLottieV1Plugin } from '../plugin';
 

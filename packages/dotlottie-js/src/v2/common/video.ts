@@ -2,6 +2,8 @@
  * Copyright 2025 Design Barn Inc.
  */
 
+/* eslint-disable max-classes-per-file -- bare concrete alias of the base class below. */
+
 import type { ZipOptions } from 'fflate';
 
 import type { VideoData } from '../../types';
@@ -231,3 +233,6 @@ export class LottieVideoCommon {
     if (!fileName) throw new DotLottieError('Invalid video fileName');
   }
 }
+
+// Platform-agnostic; the subclass only keeps `LottieVideo` a stable exported name.
+export class LottieVideo extends LottieVideoCommon {}

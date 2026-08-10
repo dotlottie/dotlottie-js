@@ -5,7 +5,7 @@
 /* eslint-disable @lottiefiles/import-filename-format */
 
 import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
-import { strFromU8, unzipSync } from 'fflate';
+import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 import { Base64 } from 'js-base64';
 import { describe, test, expect, vi } from 'vitest';
 
@@ -933,5 +933,68 @@ describe('theming', () => {
       animations: [{ id: 'ball' }, { id: 'bull', themes: ['dark'] }],
       themes: [{ id: 'light', name: 'Light Theme' }, { id: 'dark' }],
     });
+  });
+});
+
+describe('cross-platform parse behaviour', () => {
+  // The browser used to latin1-decode zip entries before JSON.parse, mangling non-ASCII text.
+  test('round-trips non-ASCII text through animations and themes', async () => {
+    const unicodeAnimation = structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationData & { nm?: string };
+
+    unicodeAnimation.nm = 'café 日本語 🎉 Ünïcödé';
+
+    const dotlottie = new DotLottie();
+
+    dotlottie.addAnimation({ id: 'ball', data: unicodeAnimation });
+    dotlottie.addTheme({
+      id: 'light',
+      name: 'Théme clair 🌞',
+      data: {
+        rules: [
+          {
+            id: 'ball-text',
+            type: 'Text',
+            value: { text: 'très élégant — 日本語 🎉', fontName: 'Arial', fontSize: 24, fillColor: [1, 0, 0, 1] },
+          },
+        ],
+      },
+    });
+
+    await dotlottie.build();
+
+    const parsed = await new DotLottie().fromArrayBuffer(await dotlottie.toArrayBuffer());
+
+    const parsedAnimation = parsed.animations.find((anim) => anim.id === 'ball');
+
+    expect((parsedAnimation?.data as { nm?: string } | undefined)?.nm).toBe('café 日本語 🎉 Ünïcödé');
+
+    const parsedTheme = parsed.themes.find((theme) => theme.id === 'light');
+    const rule = parsedTheme?.data.rules[0] as { value: { text?: string } } | undefined;
+
+    expect(rule?.value.text).toBe('très élégant — 日本語 🎉');
+  });
+
+  // The browser used to emit `data:image/undefined;base64,...` instead of throwing.
+  test('rejects an asset whose format cannot be recognised', async () => {
+    const dotlottie = new DotLottie();
+
+    dotlottie.addAnimation({ id: 'ball', data: structuredClone(BALL_ANIMATION_DATA) as unknown as AnimationData });
+
+    await dotlottie.build();
+
+    const files = unzipSync(new Uint8Array(await dotlottie.toArrayBuffer()));
+
+    files['i/not-an-image.png'] = strToU8('this is definitely not an image');
+
+    await expect(new DotLottie().fromArrayBuffer(zipSync(files).buffer as ArrayBuffer)).rejects.toThrow(
+      /Unrecognized asset file format/u,
+    );
+  });
+
+  // node's create() took no parameters and dropped whatever the caller passed.
+  test('create() honours the options it is given', () => {
+    const created = new DotLottie().create({ generator: 'custom-generator' });
+
+    expect(created.generator).toBe('custom-generator');
   });
 });

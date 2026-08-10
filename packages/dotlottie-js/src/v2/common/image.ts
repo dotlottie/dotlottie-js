@@ -2,6 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
+/* eslint-disable max-classes-per-file -- bare concrete alias of the base class below. */
+
 import type { ZipOptions } from 'fflate';
 
 import type { ImageData } from '../../types';
@@ -236,3 +238,6 @@ export class LottieImageCommon {
     return data instanceof Blob;
   }
 }
+
+// Platform-agnostic; the subclass only keeps `LottieImage` a stable exported name.
+export class LottieImage extends LottieImageCommon {}

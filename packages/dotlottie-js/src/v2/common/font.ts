@@ -2,6 +2,8 @@
  * Copyright 2025 Design Barn Inc.
  */
 
+/* eslint-disable max-classes-per-file -- bare concrete alias of the base class below. */
+
 import type { ZipOptions } from 'fflate';
 
 import type { FontData } from '../../types';
@@ -204,3 +206,6 @@ export class LottieFontCommon {
     return data instanceof Blob;
   }
 }
+
+// Platform-agnostic; the subclass only keeps `LottieFont` a stable exported name.
+export class LottieFont extends LottieFontCommon {}
