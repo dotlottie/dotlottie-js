@@ -652,7 +652,7 @@ export class DotLottieCommon {
       if (!animationAssets) throw new DotLottieError('No audio assets to rename.');
 
       for (const asset of animationAssets.filter(isAudioAsset)) {
-        if (asset.e !== 0 || asset.u === undefined || /^(?:[a-z][a-z\d+.-]*:|\/\/)/iu.test(asset.u)) continue;
+        if (asset.e !== 0 || asset.u === undefined || /^(?:[a-z][\d+.a-z-]*:|\/\/)/iu.test(asset.u)) continue;
 
         const archivePath = normalizeArchivePath(`${asset.u}${asset.p}`);
         const directory = normalizeArchivePath(asset.u);

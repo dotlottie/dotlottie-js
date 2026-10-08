@@ -319,70 +319,82 @@ describe('LottieAudio', () => {
     ['/u/', './shared.mp3'],
     ['/u/', 'folder/../shared.mp3'],
     ['/u/', '../u/shared.mp3'],
-  ])('keeps shared archive audio with path %s%s bound across repeated reloads', async (u, p) => {
-    const archive = zipSync({
-      'manifest.json': strToU8(
-        JSON.stringify({
-          version: '2',
-          generator: 'audio-regression',
-          animations: [{ id: 'animation_1' }, { id: 'animation_2' }],
-        }),
-      ),
-      'a/animation_1.json': strToU8(JSON.stringify(animationDataWithAudio([{ id: 'audio_0', u, p, e: 0 }]))),
-      'a/animation_2.json': strToU8(JSON.stringify(animationDataWithAudio([{ id: 'audio_1', u, p, e: 0 }]))),
-      'u/shared.mp3': new Uint8Array(AUDIO_BYTES),
-    });
-    let dotLottie = await new DotLottie().fromArrayBuffer(archive.buffer);
-
-    for (let round = 0; round < 3; round += 1) {
-      await dotLottie.build();
-
-      const buffer = await dotLottie.toArrayBuffer();
-      const contents = unzipSync(new Uint8Array(buffer));
-
-      dotLottie = await new DotLottie().fromArrayBuffer(buffer);
-
-      expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/audio_1.mp3']);
-      expect(
-        dotLottie.animations.flatMap((animation) =>
-          (animation.data?.assets ?? []).filter(isAudioAsset).map((asset) => ({
-            animation: animation.id,
-            id: asset.id,
-            p: asset.p,
-            bytes: Array.from(contents[`u/${asset.p}`] ?? []),
-          })),
+  ])(
+    'keeps shared archive audio with path %s%s bound across repeated reloads',
+    async (audioDirectory, audioFileName) => {
+      const firstAnimationPath = 'a/animation_1.json';
+      const secondAnimationPath = 'a/animation_2.json';
+      const archive = zipSync({
+        'manifest.json': strToU8(
+          JSON.stringify({
+            version: '2',
+            generator: 'audio-regression',
+            animations: [{ id: 'animation_1' }, { id: 'animation_2' }],
+          }),
         ),
-        `shared audio round ${round}`,
-      ).toEqual([
-        { animation: 'animation_1', id: 'audio_0', p: 'audio_1.mp3', bytes: AUDIO_BYTES },
-        { animation: 'animation_2', id: 'audio_1', p: 'audio_1.mp3', bytes: AUDIO_BYTES },
-      ]);
-    }
-  });
+        [firstAnimationPath]: strToU8(
+          JSON.stringify(animationDataWithAudio([{ id: 'audio_0', u: audioDirectory, p: audioFileName, e: 0 }])),
+        ),
+        [secondAnimationPath]: strToU8(
+          JSON.stringify(animationDataWithAudio([{ id: 'audio_1', u: audioDirectory, p: audioFileName, e: 0 }])),
+        ),
+        'u/shared.mp3': new Uint8Array(AUDIO_BYTES),
+      });
+      let dotLottie = await new DotLottie().fromArrayBuffer(archive.buffer);
 
-  it.each(['https://example.test/', '//example.test/u/', '/v/'])('preserves unrelated audio path %s', async (u) => {
-    const dotLottie = await new DotLottie()
-      .addAnimation({
-        id: 'animation_1',
-        data: animationDataWithAudio([
-          { id: 'audio_0', u: '', p: AUDIO_DATA, e: 1 },
-          { id: 'external', u, p: 'audio_0.mp3', e: 0 },
-        ]),
-      })
-      .addAnimation({
-        id: 'animation_2',
-        data: animationDataWithAudio([{ id: 'other', u: '', p: AUDIO_DATA, e: 1 }]),
-      })
-      .build();
-    const loaded = await new DotLottie().fromArrayBuffer(await dotLottie.toArrayBuffer());
+      for (let round = 0; round < 3; round += 1) {
+        await dotLottie.build();
 
-    expect(loaded.animations[0]?.data?.assets?.find((asset) => asset.id === 'external')).toEqual({
-      id: 'external',
-      u,
-      p: 'audio_0.mp3',
-      e: 0,
-    });
-  });
+        const buffer = await dotLottie.toArrayBuffer();
+        const contents = unzipSync(new Uint8Array(buffer));
+
+        dotLottie = await new DotLottie().fromArrayBuffer(buffer);
+
+        expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/audio_1.mp3']);
+        expect(
+          dotLottie.animations.flatMap((animation) =>
+            (animation.data?.assets ?? []).filter(isAudioAsset).map((asset) => ({
+              animation: animation.id,
+              id: asset.id,
+              p: asset.p,
+              bytes: Array.from(contents[`u/${asset.p}`] ?? []),
+            })),
+          ),
+          `shared audio round ${round}`,
+        ).toEqual([
+          { animation: 'animation_1', id: 'audio_0', p: 'audio_1.mp3', bytes: AUDIO_BYTES },
+          { animation: 'animation_2', id: 'audio_1', p: 'audio_1.mp3', bytes: AUDIO_BYTES },
+        ]);
+      }
+    },
+  );
+
+  it.each(['https://example.test/', '//example.test/u/', '/v/'])(
+    'preserves unrelated audio path %s',
+    async (audioDirectory) => {
+      const dotLottie = await new DotLottie()
+        .addAnimation({
+          id: 'animation_1',
+          data: animationDataWithAudio([
+            { id: 'audio_0', u: '', p: AUDIO_DATA, e: 1 },
+            { id: 'external', u: audioDirectory, p: 'audio_0.mp3', e: 0 },
+          ]),
+        })
+        .addAnimation({
+          id: 'animation_2',
+          data: animationDataWithAudio([{ id: 'other', u: '', p: AUDIO_DATA, e: 1 }]),
+        })
+        .build();
+      const loaded = await new DotLottie().fromArrayBuffer(await dotLottie.toArrayBuffer());
+
+      expect(loaded.animations[0]?.data?.assets?.find((asset) => asset.id === 'external')).toEqual({
+        id: 'external',
+        u: audioDirectory,
+        p: 'audio_0.mp3',
+        e: 0,
+      });
+    },
+  );
 
   it.each([
     'audio,track',
@@ -501,10 +513,10 @@ describe('LottieAudio', () => {
 
   it.each(['', '/u/'])(
     'extracts fresh inline audio with u:%s even when its data URL matches a cached filename',
-    async (u) => {
+    async (audioDirectory) => {
       const dotLottie = new DotLottie().addAnimation({
         id: 'animation_1',
-        data: animationDataWithAudio([{ id: 'fresh', u, p: AUDIO_DATA, e: 0 }]),
+        data: animationDataWithAudio([{ id: 'fresh', u: audioDirectory, p: AUDIO_DATA, e: 0 }]),
       });
       const animation = dotLottie.animations[0];
 
