@@ -225,10 +225,17 @@ describe('LottieAudio', () => {
       });
   });
 
-  it('keeps comma-containing audio ids stable across repeated serialization', async () => {
+  it.each([
+    'audio,track',
+    'data:track',
+    'data:audio,track',
+    'data:audio;base64,track',
+    'data:audio/mpeg;base64,track',
+    'folder/track',
+  ])('keeps audio id %s stable across repeated serialization and archive reload', async (id) => {
     const dotLottie = new DotLottie().addAnimation({
       id: 'animation_1',
-      data: animationDataWithAudio([{ id: 'audio,track', u: '', p: AUDIO_DATA, e: 1 }]),
+      data: animationDataWithAudio([{ id, u: '', p: AUDIO_DATA, e: 1 }]),
     });
 
     await dotLottie.build();
@@ -248,15 +255,36 @@ describe('LottieAudio', () => {
     for (const buffer of [firstBuffer, secondBuffer]) {
       const contents = unzipSync(new Uint8Array(buffer));
 
-      expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/audio,track.mp3']);
-      expect(Array.from(contents['u/audio,track.mp3'] ?? [])).toEqual(AUDIO_BYTES);
+      expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual([`u/${id}.mp3`]);
+      expect(Array.from(contents[`u/${id}.mp3`] ?? [])).toEqual(AUDIO_BYTES);
     }
 
-    expect(dotLottie.getAudio().map((audio) => audio.fileName)).toEqual(['audio,track.mp3']);
+    expect(dotLottie.getAudio().map((audio) => audio.fileName)).toEqual([`${id}.mp3`]);
     expect(json.assets?.find(isAudioAsset)).toMatchObject({
-      id: 'audio,track',
+      id,
       u: '/u/',
-      p: 'audio,track.mp3',
+      p: `${id}.mp3`,
+      e: 0,
+    });
+
+    const loaded = await new DotLottie().fromArrayBuffer(secondBuffer);
+
+    await loaded.build();
+
+    const loadedContents = unzipSync(new Uint8Array(await loaded.toArrayBuffer()));
+
+    expect(loaded.getAudio().map((audio) => audio.fileName)).toEqual([`${id}.mp3`]);
+    expect(Object.keys(loadedContents).filter((path) => path.startsWith('u/'))).toEqual([`u/${id}.mp3`]);
+    expect(Array.from(loadedContents[`u/${id}.mp3`] ?? [])).toEqual(AUDIO_BYTES);
+
+    const loadedAnimation = loaded.animations[0];
+
+    if (!loadedAnimation) throw new Error('Expected animation_1 after reload');
+
+    expect((await loadedAnimation.toJSON()).assets?.find(isAudioAsset)).toMatchObject({
+      id,
+      u: '/u/',
+      p: `${id}.mp3`,
       e: 0,
     });
   });
@@ -291,6 +319,54 @@ describe('LottieAudio', () => {
         p: 'audio,track.mp3',
         e: 0,
       });
+    },
+  );
+
+  it('extracts a fresh data URL with e:0 and does not mistake its packaged filename for data', async () => {
+    const id = 'data:audio,track';
+    const dotLottie = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: animationDataWithAudio([{ id, u: '', p: AUDIO_DATA, e: 0 }]),
+    });
+
+    for (let run = 0; run < 2; run += 1) {
+      await dotLottie.build();
+
+      const contents = unzipSync(new Uint8Array(await dotLottie.toArrayBuffer()));
+
+      expect(dotLottie.getAudio().map((audio) => audio.fileName)).toEqual([`${id}.mp3`]);
+      expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual([`u/${id}.mp3`]);
+      expect(Array.from(contents[`u/${id}.mp3`] ?? [])).toEqual(AUDIO_BYTES);
+    }
+  });
+
+  it.each(['', '/u/'])(
+    'extracts fresh inline audio with u:%s even when its data URL matches a cached filename',
+    async (u) => {
+      const dotLottie = new DotLottie().addAnimation({
+        id: 'animation_1',
+        data: animationDataWithAudio([{ id: 'fresh', u, p: AUDIO_DATA, e: 0 }]),
+      });
+      const animation = dotLottie.animations[0];
+
+      if (!animation) throw new Error('Expected animation_1 to exist');
+
+      animation.audioAssets.push(
+        new LottieAudio({ id: 'cached', fileName: AUDIO_DATA, data: 'data:audio/mpeg;base64,SUQzAwAAAAAACw==' }),
+      );
+
+      await dotLottie.build();
+
+      expect((await animation.toJSON()).assets?.find(isAudioAsset)).toMatchObject({
+        id: 'fresh',
+        u: '/u/',
+        p: 'fresh.mp3',
+        e: 0,
+      });
+
+      const contents = unzipSync(new Uint8Array(await dotLottie.toArrayBuffer()));
+
+      expect(Array.from(contents['u/fresh.mp3'] ?? [])).toEqual(AUDIO_BYTES);
     },
   );
 

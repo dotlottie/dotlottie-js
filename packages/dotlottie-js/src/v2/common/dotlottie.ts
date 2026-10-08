@@ -216,7 +216,7 @@ export class DotLottieCommon {
                 new LottieAudio({
                   id: audioId,
                   data: audioDataURL,
-                  fileName: key.split('/')[1] || '',
+                  fileName: key.slice('u/'.length),
                 }),
               );
             } else if (key.startsWith('v/')) {
