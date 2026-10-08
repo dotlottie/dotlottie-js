@@ -16,6 +16,15 @@ import { DotLottie, LottieAudio } from '../../index.browser';
 
 // Minimal ID3v2.3 header — enough for file-type to detect as mp3
 const AUDIO_DATA = 'data:audio/mpeg;base64,SUQzAwAAAAAACg==';
+const AUDIO_BYTES = [73, 68, 51, 3, 0, 0, 0, 0, 0, 10];
+
+function animationDataWithAudio(assets: Asset.Sound[]): AnimationType {
+  const animation = structuredClone(AUDIO_ANIMATION_1_DATA) as unknown as AnimationType;
+
+  animation.assets = assets;
+
+  return animation;
+}
 
 describe('LottieAudio', () => {
   // v1 has no audio, so these fixtures can only be exercised through a v2 file.
@@ -223,6 +232,124 @@ describe('LottieAudio', () => {
           expect(track.id).toBeDefined();
         }
       });
+  });
+
+  it('keeps comma-containing audio ids stable across repeated serialization', async () => {
+    const dotLottie = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: animationDataWithAudio([{ id: 'audio,track', u: '', p: AUDIO_DATA, e: 1 }]),
+    });
+
+    await dotLottie.build();
+
+    const animation = dotLottie.animations[0];
+
+    if (!animation) throw new Error('Expected animation_1 to exist');
+
+    const firstBuffer = await dotLottie.toArrayBuffer();
+
+    await animation.toJSON();
+    await dotLottie.build();
+
+    const secondBuffer = await dotLottie.toArrayBuffer();
+    const json = await animation.toJSON();
+
+    for (const buffer of [firstBuffer, secondBuffer]) {
+      const contents = unzipSync(new Uint8Array(buffer));
+
+      expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/audio,track.mp3']);
+      expect(Array.from(contents['u/audio,track.mp3'] ?? [])).toEqual(AUDIO_BYTES);
+    }
+
+    expect(dotLottie.getAudio().map((audio) => audio.fileName)).toEqual(['audio,track.mp3']);
+    expect(json.assets?.find(isAudioAsset)).toMatchObject({
+      id: 'audio,track',
+      u: '/u/',
+      p: 'audio,track.mp3',
+      e: 0,
+    });
+  });
+
+  it.each(['Audio/MPEG', 'application/octet-stream', '', 'application/octet-stream;charset=binary', 'text/plain'])(
+    'extracts audio bytes with the MIME header %s across repeated serialization',
+    async (mediaType) => {
+      const dotLottie = new DotLottie().addAnimation({
+        id: 'animation_1',
+        data: animationDataWithAudio([
+          { id: 'audio,track', u: '', p: `data:${mediaType};base64,SUQzAwAAAAAACg==`, e: 1 },
+        ]),
+      });
+
+      for (let run = 0; run < 2; run += 1) {
+        await dotLottie.build();
+
+        const contents = unzipSync(new Uint8Array(await dotLottie.toArrayBuffer()));
+
+        expect(dotLottie.getAudio().map((audio) => audio.fileName)).toEqual(['audio,track.mp3']);
+        expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/audio,track.mp3']);
+        expect(Array.from(contents['u/audio,track.mp3'] ?? [])).toEqual(AUDIO_BYTES);
+      }
+
+      const animation = dotLottie.animations[0];
+
+      if (!animation) throw new Error('Expected animation_1 to exist');
+
+      expect((await animation.toJSON()).assets?.find(isAudioAsset)).toMatchObject({
+        id: 'audio,track',
+        u: '/u/',
+        p: 'audio,track.mp3',
+        e: 0,
+      });
+    },
+  );
+
+  it('extracts embedded audio after an externalized audio asset', async () => {
+    const dotLottie = await new DotLottie()
+      .addAnimation({
+        id: 'animation_1',
+        data: animationDataWithAudio([
+          { id: 'external_audio', u: '/u/', p: 'external_audio.mp3', e: 0 },
+          { id: 'embedded_audio', u: '', p: AUDIO_DATA, e: 1 },
+        ]),
+      })
+      .build();
+
+    const buffer = await dotLottie.toArrayBuffer();
+    const contents = unzipSync(new Uint8Array(buffer));
+
+    expect(dotLottie.getAudio().map((audio) => audio.fileName)).toEqual(['embedded_audio.mp3']);
+    expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/embedded_audio.mp3']);
+    expect(Array.from(contents['u/embedded_audio.mp3'] ?? [])).toEqual(AUDIO_BYTES);
+  });
+
+  it.each([
+    ['missing payload', 'data:audio/mpeg'],
+    ['empty payload', 'data:audio/mpeg;base64,'],
+  ])('leaves malformed audio (%s) inline and extracts the following valid audio', async (_case, malformedData) => {
+    const dotLottie = await new DotLottie()
+      .addAnimation({
+        id: 'animation_1',
+        data: animationDataWithAudio([
+          { id: 'malformed_audio', u: '', p: malformedData, e: 1 },
+          { id: 'embedded_audio', u: '', p: AUDIO_DATA, e: 1 },
+        ]),
+      })
+      .build();
+
+    const animation = dotLottie.animations[0];
+
+    if (!animation) throw new Error('Expected animation_1 to exist');
+
+    const contents = unzipSync(new Uint8Array(await dotLottie.toArrayBuffer()));
+
+    expect((await animation.toJSON()).assets?.find((asset) => asset.id === 'malformed_audio')).toMatchObject({
+      id: 'malformed_audio',
+      u: '',
+      p: malformedData,
+      e: 1,
+    });
+    expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/embedded_audio.mp3']);
+    expect(Array.from(contents['u/embedded_audio.mp3'] ?? [])).toEqual(AUDIO_BYTES);
   });
 
   it('writes audio under u/ and inlines it when getAnimation is called with inlineAssets', async () => {

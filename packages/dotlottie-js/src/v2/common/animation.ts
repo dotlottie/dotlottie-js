@@ -292,13 +292,10 @@ export class LottieAnimationCommon {
     if (!animationAssets) throw new DotLottieError('Failed to extract audio assets: No assets found inside animation');
 
     for (const asset of animationAssets) {
-      if (isAudioAsset(asset)) {
-        const audioData = asset.p.split(',');
+      if (isAudioAsset(asset) && asset.p.startsWith('data:')) {
+        const [, audioData] = asset.p.split(',');
 
-        // Audio data is invalid
-        if (!audioData.length || !audioData[0] || !audioData[1]) {
-          break;
-        }
+        if (!audioData) continue;
 
         let extType = null;
         const fileType = await getExtensionTypeFromBase64(asset.p);
