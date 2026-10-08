@@ -234,74 +234,92 @@ describe('LottieAudio', () => {
       });
   });
 
-  it.each(['rebuild', 'reload'])(
-    'keeps numeric audio IDs bound to their source bytes across multi-animation %s',
-    async (mode) => {
-      let dotLottie = new DotLottie()
-        .addAnimation({
-          id: 'animation_1',
-          data: animationDataWithAudio([
-            { id: 'audio_0', u: '', p: AUDIO_DATA, e: 1 },
-            { id: 'audio_1', u: '', p: 'data:audio/mpeg;base64,SUQzAwAAAAAACw==', e: 1 },
-          ]),
-        })
-        .addAnimation({
-          id: 'animation_2',
-          data: animationDataWithAudio([
-            { id: 'other', u: '', p: 'data:audio/mpeg;base64,SUQzAwAAAAAADA==', e: 1 },
-          ]),
-        });
+  it.each([
+    ['rebuild', 'audio_0', 'audio_1'],
+    ['reload', 'audio_0', 'audio_1'],
+    ['rebuild', 'data:track', 'audio_1'],
+    ['reload', 'data:track', 'audio_1'],
+    ['rebuild', 'data:audio,track', 'audio_1'],
+    ['reload', 'data:audio,track', 'audio_1'],
+    ['rebuild', 'track', './track'],
+    ['reload', 'track', './track'],
+    ['rebuild', 'track', 'folder/../track'],
+    ['reload', 'track', 'folder/../track'],
+    ['rebuild', 'folder/track', 'folder//track'],
+    ['reload', 'folder/track', 'folder//track'],
+  ])('keeps audio IDs bound across multi-animation %s for %s and %s', async (mode, id, secondId) => {
+    let dotLottie = new DotLottie()
+      .addAnimation({
+        id: 'animation_1',
+        data: animationDataWithAudio([
+          { id, u: '', p: AUDIO_DATA, e: 1 },
+          { id: secondId, u: '', p: 'data:audio/mpeg;base64,SUQzAwAAAAAACw==', e: 1 },
+        ]),
+      })
+      .addAnimation({
+        id: 'animation_2',
+        data: animationDataWithAudio([{ id: 'other', u: '', p: 'data:audio/mpeg;base64,SUQzAwAAAAAADA==', e: 1 }]),
+      });
 
-      for (let round = 0; round < 3; round += 1) {
-        await dotLottie.build();
+    for (let round = 0; round < 3; round += 1) {
+      await dotLottie.build();
 
-        const buffer = await dotLottie.toArrayBuffer();
-        const contents = unzipSync(new Uint8Array(buffer));
-        const loaded = await new DotLottie().fromArrayBuffer(buffer);
-        const references = loaded.animations.flatMap((animation) =>
-          (animation.data?.assets ?? []).filter(isAudioAsset).map((asset) => ({
-            animation: animation.id,
-            id: asset.id,
-            u: asset.u,
-            p: asset.p,
-            e: asset.e,
-            bytes: Array.from(contents[`u/${asset.p}`] ?? []),
-          })),
-        );
+      const buffer = await dotLottie.toArrayBuffer();
+      const contents = unzipSync(new Uint8Array(buffer));
+      const loaded = await new DotLottie().fromArrayBuffer(buffer);
+      const references = loaded.animations.flatMap((animation) =>
+        (animation.data?.assets ?? []).filter(isAudioAsset).map((asset) => ({
+          animation: animation.id,
+          id: asset.id,
+          u: asset.u,
+          p: asset.p,
+          e: asset.e,
+          bytes: Array.from(contents[`u/${asset.p}`] ?? []),
+        })),
+      );
 
-        expect(references, `${mode} round ${round}`).toEqual([
-          {
-            animation: 'animation_1',
-            id: 'audio_0',
-            u: '/u/',
-            p: 'audio_1.mp3',
-            e: 0,
-            bytes: AUDIO_BYTES,
-          },
-          {
-            animation: 'animation_1',
-            id: 'audio_1',
-            u: '/u/',
-            p: 'audio_2.mp3',
-            e: 0,
-            bytes: [73, 68, 51, 3, 0, 0, 0, 0, 0, 11],
-          },
-          {
-            animation: 'animation_2',
-            id: 'other',
-            u: '/u/',
-            p: 'audio_3.mp3',
-            e: 0,
-            bytes: [73, 68, 51, 3, 0, 0, 0, 0, 0, 12],
-          },
-        ]);
+      expect(references, `${mode} round ${round}`).toEqual([
+        {
+          animation: 'animation_1',
+          id,
+          u: '/u/',
+          p: 'audio_1.mp3',
+          e: 0,
+          bytes: AUDIO_BYTES,
+        },
+        {
+          animation: 'animation_1',
+          id: secondId,
+          u: '/u/',
+          p: 'audio_2.mp3',
+          e: 0,
+          bytes: [73, 68, 51, 3, 0, 0, 0, 0, 0, 11],
+        },
+        {
+          animation: 'animation_2',
+          id: 'other',
+          u: '/u/',
+          p: 'audio_3.mp3',
+          e: 0,
+          bytes: [73, 68, 51, 3, 0, 0, 0, 0, 0, 12],
+        },
+      ]);
 
-        if (mode === 'reload') dotLottie = loaded;
-      }
-    },
-  );
+      if (mode === 'reload') dotLottie = loaded;
+    }
+  });
 
-  it('keeps shared archive audio bound to every animation across repeated reloads', async () => {
+  it.each([
+    ['/u/', 'shared.mp3'],
+    ['u/', 'shared.mp3'],
+    ['./u/', 'shared.mp3'],
+    ['/u/./', 'shared.mp3'],
+    ['u/./', 'shared.mp3'],
+    ['/u/../u/', 'shared.mp3'],
+    ['/u/', './shared.mp3'],
+    ['/u/', 'folder/../shared.mp3'],
+    ['/u/', '../u/shared.mp3'],
+  ])('keeps shared archive audio with path %s%s bound across repeated reloads', async (u, p) => {
     const archive = zipSync({
       'manifest.json': strToU8(
         JSON.stringify({
@@ -310,12 +328,8 @@ describe('LottieAudio', () => {
           animations: [{ id: 'animation_1' }, { id: 'animation_2' }],
         }),
       ),
-      'a/animation_1.json': strToU8(
-        JSON.stringify(animationDataWithAudio([{ id: 'audio_0', u: '/u/', p: 'shared.mp3', e: 0 }])),
-      ),
-      'a/animation_2.json': strToU8(
-        JSON.stringify(animationDataWithAudio([{ id: 'audio_1', u: '/u/', p: 'shared.mp3', e: 0 }])),
-      ),
+      'a/animation_1.json': strToU8(JSON.stringify(animationDataWithAudio([{ id: 'audio_0', u, p, e: 0 }]))),
+      'a/animation_2.json': strToU8(JSON.stringify(animationDataWithAudio([{ id: 'audio_1', u, p, e: 0 }]))),
       'u/shared.mp3': new Uint8Array(AUDIO_BYTES),
     });
     let dotLottie = await new DotLottie().fromArrayBuffer(archive.buffer);
@@ -344,6 +358,30 @@ describe('LottieAudio', () => {
         { animation: 'animation_2', id: 'audio_1', p: 'audio_1.mp3', bytes: AUDIO_BYTES },
       ]);
     }
+  });
+
+  it.each(['https://example.test/', '//example.test/u/', '/v/'])('preserves unrelated audio path %s', async (u) => {
+    const dotLottie = await new DotLottie()
+      .addAnimation({
+        id: 'animation_1',
+        data: animationDataWithAudio([
+          { id: 'audio_0', u: '', p: AUDIO_DATA, e: 1 },
+          { id: 'external', u, p: 'audio_0.mp3', e: 0 },
+        ]),
+      })
+      .addAnimation({
+        id: 'animation_2',
+        data: animationDataWithAudio([{ id: 'other', u: '', p: AUDIO_DATA, e: 1 }]),
+      })
+      .build();
+    const loaded = await new DotLottie().fromArrayBuffer(await dotLottie.toArrayBuffer());
+
+    expect(loaded.animations[0]?.data?.assets?.find((asset) => asset.id === 'external')).toEqual({
+      id: 'external',
+      u,
+      p: 'audio_0.mp3',
+      e: 0,
+    });
   });
 
   it.each([

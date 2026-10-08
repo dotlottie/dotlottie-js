@@ -2,7 +2,7 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
+import type { Animation as AnimationType, Asset } from '@lottie-animation-community/lottie-types';
 import type { ZipOptions, Zippable } from 'fflate';
 import { strToU8, strFromU8, unzip, zip } from 'fflate';
 
@@ -48,6 +48,22 @@ function imageIdFromFileName(fileName: string): string {
   const dotIndex = fileName.lastIndexOf('.');
 
   return dotIndex > 0 ? fileName.slice(0, dotIndex) : fileName;
+}
+
+function normalizeArchivePath(path: string): string {
+  const segments: string[] = [];
+
+  for (const segment of path.split('/')) {
+    if (!segment || segment === '.') continue;
+
+    if (segment === '..' && segments.length && segments.at(-1) !== '..') {
+      segments.pop();
+    } else if (segment !== '..' || !path.startsWith('/')) {
+      segments.push(segment);
+    }
+  }
+
+  return segments.join('/');
 }
 
 export class DotLottieCommon {
@@ -620,61 +636,45 @@ export class DotLottieCommon {
     }
   }
 
-  /**
-   * Renames the underlying LottieAudio, as well as updating the audio asset path inside the animation data.
-   * @param newName - desired id and fileName,
-   * @param audioId - The id of the LottieAudio to rename
-   */
-  private async _renameAudio(animation: LottieAnimationCommon, newName: string, audioId: string): Promise<void> {
-    for (const audioAsset of animation.audioAssets) {
-      if (audioAsset.id === audioId) {
-        // Rename the LottieImage
-        await audioAsset.renameAudio(newName);
+  private async _renameAudioAssets(): Promise<void> {
+    const audioReferences = new Map<LottieAudioCommon, Asset.Sound[]>();
 
-        if (!animation.data) throw new DotLottieError('No animation data available.');
+    for (const animation of this.animations) {
+      for (const audioAsset of animation.audioAssets) {
+        if (!audioReferences.has(audioAsset)) audioReferences.set(audioAsset, []);
+      }
 
-        const animationAssets = animation.data.assets as AnimationType['assets'];
+      if (!animation.audioAssets.length) continue;
+      if (!animation.data) throw new DotLottieError('No animation data available.');
 
-        if (!animationAssets) throw new DotLottieError('No audio assets to rename.');
+      const animationAssets = animation.data.assets;
 
-        // Find the audio asset inside the animation data and rename its path
-        for (const asset of animationAssets) {
-          if (isAudioAsset(asset)) {
-            if (asset.id === audioId) {
-              asset.p = audioAsset.fileName;
-            }
-          }
-        }
+      if (!animationAssets) throw new DotLottieError('No audio assets to rename.');
+
+      for (const asset of animationAssets.filter(isAudioAsset)) {
+        if (asset.e !== 0 || asset.u === undefined || /^(?:[a-z][a-z\d+.-]*:|\/\/)/iu.test(asset.u)) continue;
+
+        const archivePath = normalizeArchivePath(`${asset.u}${asset.p}`);
+        const directory = normalizeArchivePath(asset.u);
+        const audioAsset =
+          animation.audioAssets.find((audio) => directory === 'u' && asset.p === audio.fileName) ??
+          animation.audioAssets.find((audio) => archivePath === normalizeArchivePath(`u/${audio.fileName}`));
+
+        if (audioAsset) audioReferences.get(audioAsset)?.push(asset);
       }
     }
-  }
 
-  private async _renameAudioAssets(): Promise<void> {
-    const audio: Map<string, LottieAudioCommon[]> = new Map();
+    let size = audioReferences.size;
 
-    this.animations.forEach((animation) => {
-      audio.set(animation.id, animation.audioAssets);
-    });
+    for (const [audioAsset, references] of Array.from(audioReferences).reverse()) {
+      await audioAsset.renameAudio(`audio_${size}`);
 
-    let size = 0;
-
-    audio.forEach((value) => {
-      size += value.length;
-    });
-
-    for (let i = this.animations.length - 1; i >= 0; i -= 1) {
-      const animation = this.animations.at(i);
-
-      if (animation) {
-        for (let j = animation.audioAssets.length - 1; j >= 0; j -= 1) {
-          const audioAsset = animation.audioAssets.at(j);
-
-          if (audioAsset) {
-            await this._renameAudio(animation, `audio_${size}`, audioAsset.id);
-            size -= 1;
-          }
-        }
+      for (const asset of references) {
+        asset.u = '/u/';
+        asset.p = audioAsset.fileName;
       }
+
+      size -= 1;
     }
   }
 
