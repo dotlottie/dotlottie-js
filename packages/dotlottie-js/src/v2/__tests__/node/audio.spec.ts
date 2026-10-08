@@ -6,7 +6,7 @@
 /* eslint-disable @lottiefiles/import-filename-format */
 
 import type { Animation as AnimationType, Asset } from '@lottie-animation-community/lottie-types';
-import { unzipSync } from 'fflate';
+import { strToU8, unzipSync, zipSync } from 'fflate';
 import { describe, it, expect } from 'vitest';
 
 import AUDIO_ANIMATION_1_DATA from '../../../__tests__/__fixtures__/audio/instruments_1.json';
@@ -223,6 +223,118 @@ describe('LottieAudio', () => {
           expect(track.id).toBeDefined();
         }
       });
+  });
+
+  it.each(['rebuild', 'reload'])(
+    'keeps numeric audio IDs bound to their source bytes across multi-animation %s',
+    async (mode) => {
+      let dotLottie = new DotLottie()
+        .addAnimation({
+          id: 'animation_1',
+          data: animationDataWithAudio([
+            { id: 'audio_0', u: '', p: AUDIO_DATA, e: 1 },
+            { id: 'audio_1', u: '', p: 'data:audio/mpeg;base64,SUQzAwAAAAAACw==', e: 1 },
+          ]),
+        })
+        .addAnimation({
+          id: 'animation_2',
+          data: animationDataWithAudio([
+            { id: 'other', u: '', p: 'data:audio/mpeg;base64,SUQzAwAAAAAADA==', e: 1 },
+          ]),
+        });
+
+      for (let round = 0; round < 3; round += 1) {
+        await dotLottie.build();
+
+        const buffer = await dotLottie.toArrayBuffer();
+        const contents = unzipSync(new Uint8Array(buffer));
+        const loaded = await new DotLottie().fromArrayBuffer(buffer);
+        const references = loaded.animations.flatMap((animation) =>
+          (animation.data?.assets ?? []).filter(isAudioAsset).map((asset) => ({
+            animation: animation.id,
+            id: asset.id,
+            u: asset.u,
+            p: asset.p,
+            e: asset.e,
+            bytes: Array.from(contents[`u/${asset.p}`] ?? []),
+          })),
+        );
+
+        expect(references, `${mode} round ${round}`).toEqual([
+          {
+            animation: 'animation_1',
+            id: 'audio_0',
+            u: '/u/',
+            p: 'audio_1.mp3',
+            e: 0,
+            bytes: AUDIO_BYTES,
+          },
+          {
+            animation: 'animation_1',
+            id: 'audio_1',
+            u: '/u/',
+            p: 'audio_2.mp3',
+            e: 0,
+            bytes: [73, 68, 51, 3, 0, 0, 0, 0, 0, 11],
+          },
+          {
+            animation: 'animation_2',
+            id: 'other',
+            u: '/u/',
+            p: 'audio_3.mp3',
+            e: 0,
+            bytes: [73, 68, 51, 3, 0, 0, 0, 0, 0, 12],
+          },
+        ]);
+
+        if (mode === 'reload') dotLottie = loaded;
+      }
+    },
+  );
+
+  it('keeps shared archive audio bound to every animation across repeated reloads', async () => {
+    const archive = zipSync({
+      'manifest.json': strToU8(
+        JSON.stringify({
+          version: '2',
+          generator: 'audio-regression',
+          animations: [{ id: 'animation_1' }, { id: 'animation_2' }],
+        }),
+      ),
+      'a/animation_1.json': strToU8(
+        JSON.stringify(animationDataWithAudio([{ id: 'audio_0', u: '/u/', p: 'shared.mp3', e: 0 }])),
+      ),
+      'a/animation_2.json': strToU8(
+        JSON.stringify(animationDataWithAudio([{ id: 'audio_1', u: '/u/', p: 'shared.mp3', e: 0 }])),
+      ),
+      'u/shared.mp3': new Uint8Array(AUDIO_BYTES),
+    });
+    let dotLottie = await new DotLottie().fromArrayBuffer(archive.buffer);
+
+    for (let round = 0; round < 3; round += 1) {
+      await dotLottie.build();
+
+      const buffer = await dotLottie.toArrayBuffer();
+      const contents = unzipSync(new Uint8Array(buffer));
+
+      dotLottie = await new DotLottie().fromArrayBuffer(buffer);
+
+      expect(Object.keys(contents).filter((path) => path.startsWith('u/'))).toEqual(['u/audio_1.mp3']);
+      expect(
+        dotLottie.animations.flatMap((animation) =>
+          (animation.data?.assets ?? []).filter(isAudioAsset).map((asset) => ({
+            animation: animation.id,
+            id: asset.id,
+            p: asset.p,
+            bytes: Array.from(contents[`u/${asset.p}`] ?? []),
+          })),
+        ),
+        `shared audio round ${round}`,
+      ).toEqual([
+        { animation: 'animation_1', id: 'audio_0', p: 'audio_1.mp3', bytes: AUDIO_BYTES },
+        { animation: 'animation_2', id: 'audio_1', p: 'audio_1.mp3', bytes: AUDIO_BYTES },
+      ]);
+    }
   });
 
   it.each([
