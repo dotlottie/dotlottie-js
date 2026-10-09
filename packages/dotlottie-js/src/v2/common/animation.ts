@@ -291,14 +291,21 @@ export class LottieAnimationCommon {
 
     if (!animationAssets) throw new DotLottieError('Failed to extract audio assets: No assets found inside animation');
 
-    for (const asset of animationAssets) {
-      if (isAudioAsset(asset)) {
-        const audioData = asset.p.split(',');
+    const audioFileNames = new Set(this._audioAssets.map((audio) => audio.fileName));
 
-        // Audio data is invalid
-        if (!audioData.length || !audioData[0] || !audioData[1]) {
-          break;
-        }
+    for (const asset of animationAssets) {
+      if (isAudioAsset(asset) && asset.p.startsWith('data:')) {
+        if (
+          asset.e === 0 &&
+          asset.u === '/u/' &&
+          asset.p.lastIndexOf('.') > asset.p.indexOf(',') &&
+          audioFileNames.has(asset.p)
+        )
+          continue;
+
+        const [, audioData] = asset.p.split(',');
+
+        if (!audioData) continue;
 
         let extType = null;
         const fileType = await getExtensionTypeFromBase64(asset.p);
@@ -319,6 +326,7 @@ export class LottieAnimationCommon {
         asset.p = fileName;
         asset.u = '/u/';
         asset.e = 0;
+        audioFileNames.add(fileName);
       }
     }
 
