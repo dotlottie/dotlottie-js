@@ -2,7 +2,8 @@
  * Copyright 2023 Design Barn Inc.
  */
 
-import type { Animation as AnimationType } from '@lottie-animation-community/lottie-types';
+import type { Animation as AnimationType, Asset } from '@lottie-animation-community/lottie-types';
+import { unzipSync } from 'fflate';
 import { describe, it, expect } from 'vitest';
 
 import BULL_DATA from '../../../__tests__/__fixtures__/image-asset-optimization/bull.json';
@@ -16,7 +17,7 @@ import SIMPLE_IMAGE_ANIMATION from '../../../__tests__/__fixtures__/image-asset-
 import AUDIO_TEST from '../../../__tests__/__fixtures__/mimetype-tests/mp-3-test.txt?raw';
 import SVG_XML_TEST from '../../../__tests__/__fixtures__/mimetype-tests/svg-xml-test.txt?raw';
 import VIDEO_DOTLOTTIE from '../../../__tests__/__fixtures__/simple/video-embedded.lottie?arraybuffer';
-import { getImages, getMimeTypeFromBase64 } from '../../../utils';
+import { base64ToUint8Array, getImages, getMimeTypeFromBase64 } from '../../../utils';
 import type { ThemeOptions } from '../../index.node';
 import { DotLottie, LottieImage } from '../../index.node';
 
@@ -475,5 +476,57 @@ describe('extra images', () => {
     await expect(dotLottie.toArrayBuffer()).rejects.toThrow(
       `Cannot package image "i/${conflictingFileName}": an animation asset already uses that file name.`,
     );
+  });
+});
+
+describe('repeated builds', () => {
+  // A real PNG: file-type needs image bytes to detect the extension.
+  const PNG_DATA = SIMPLE_IMAGE_ANIMATION.assets.find((asset) => asset.id === 'image_4')?.p ?? '';
+  const PNG_BYTES = Array.from(base64ToUint8Array(PNG_DATA));
+
+  function animationDataWithImages(assets: Asset.Image[]): AnimationType {
+    const animation = structuredClone(SIMPLE_IMAGE_ANIMATION) as unknown as AnimationType;
+
+    animation.assets = assets;
+
+    return animation;
+  }
+
+  // After the first build `p` is the packaged file name. A comma in it made the next build decode
+  // that name as base64, which throws in browsers (`atob`).
+  it.each(['logo, v2', 'data:image,logo'])('keeps packaging image %s across builds', async (id) => {
+    const dotLottie = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: animationDataWithImages([{ id, w: 1, h: 1, u: '', p: PNG_DATA, e: 1 }]),
+    });
+
+    for (let run = 0; run < 2; run += 1) {
+      await dotLottie.build();
+
+      const contents = unzipSync(new Uint8Array(await dotLottie.toArrayBuffer()));
+
+      expect(dotLottie.getImages().map((image) => image.fileName)).toEqual([`${id}.png`]);
+      expect(Object.keys(contents).filter((path) => path.startsWith('i/'))).toEqual([`i/${id}.png`]);
+      expect(Array.from(contents[`i/${id}.png`] ?? [])).toEqual(PNG_BYTES);
+    }
+  });
+
+  // The extractor used to stop at the first image that was not a data URL.
+  it('extracts an embedded image after an externalized image asset', async () => {
+    const dotLottie = await new DotLottie()
+      .addAnimation({
+        id: 'animation_1',
+        data: animationDataWithImages([
+          { id: 'external_image', w: 1, h: 1, u: '/i/', p: 'external_image.png', e: 0 },
+          { id: 'embedded_image', w: 1, h: 1, u: '', p: PNG_DATA, e: 1 },
+        ]),
+      })
+      .build();
+
+    const contents = unzipSync(new Uint8Array(await dotLottie.toArrayBuffer()));
+
+    expect(dotLottie.getImages().map((image) => image.fileName)).toEqual(['embedded_image.png']);
+    expect(Object.keys(contents).filter((path) => path.startsWith('i/'))).toEqual(['i/embedded_image.png']);
+    expect(Array.from(contents['i/embedded_image.png'] ?? [])).toEqual(PNG_BYTES);
   });
 });
