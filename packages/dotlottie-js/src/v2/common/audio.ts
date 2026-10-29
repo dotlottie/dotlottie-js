@@ -7,7 +7,14 @@
 import type { ZipOptions } from 'fflate';
 
 import type { AudioData } from '../../types';
-import { dataUrlFromU8, DotLottieError, ErrorCodes, getExtensionTypeFromBase64 } from '../../utils';
+import {
+  base64ToUint8Array,
+  dataUrlFromU8,
+  DotLottieError,
+  ErrorCodes,
+  getAudioFormatFromUint8Data,
+  uint8ArrayToBase64,
+} from '../../utils';
 
 import type { LottieAnimationCommon } from './animation';
 
@@ -107,9 +114,12 @@ export class LottieAudioCommon {
   public async toDataURL(): Promise<string> {
     if (this._data && this._isDataURL(this._data)) return this.data as string;
 
-    const arrayBuffer = await this.toArrayBuffer();
+    const bytes = new Uint8Array(await this.toArrayBuffer());
+    const format = await getAudioFormatFromUint8Data(bytes);
 
-    return dataUrlFromU8(new Uint8Array(arrayBuffer));
+    if (!format) return dataUrlFromU8(bytes);
+
+    return `data:${format.mimeType};base64,${uint8ArrayToBase64(bytes)}`;
   }
 
   /**
@@ -121,13 +131,13 @@ export class LottieAudioCommon {
 
     const data = await this.toDataURL();
 
-    const ext = await getExtensionTypeFromBase64(data);
+    const format = await getAudioFormatFromUint8Data(base64ToUint8Array(data));
 
-    if (!ext) {
+    if (!format) {
       throw new DotLottieError('File extension type could not be detected from asset file.');
     }
 
-    this.fileName = `${newName}.${ext}`;
+    this.fileName = `${newName}.${format.extension}`;
   }
 
   public async toArrayBuffer(): Promise<ArrayBuffer> {

@@ -149,6 +149,54 @@ export const getExtensionTypeFromBase64 = async (base64: string): Promise<string
   return mime?.ext.toString();
 };
 
+export interface AudioFormat {
+  extension: string;
+  mimeType: string;
+}
+
+const AUDIO_MIME_TYPES: Record<string, string> = {
+  mp3: 'audio/mpeg',
+  wav: 'audio/wav',
+  flac: 'audio/flac',
+  ogg: 'audio/ogg',
+  m4a: 'audio/mp4',
+};
+
+// file-type names some containers differently from the extension players expect.
+const AUDIO_EXTENSION_ALIASES: Record<string, string> = {
+  opus: 'ogg',
+  oga: 'ogg',
+  mp4: 'm4a',
+};
+
+/**
+ * Determines the audio format of encoded audio bytes.
+ *
+ * @remarks
+ * MP3, WAV, FLAC, Ogg (Vorbis or Opus) and M4A (any MP4 brand) map to `mp3`, `wav`, `flac`, `ogg` and `m4a` with
+ * their standard MIME types; any other format keeps the extension and MIME type that file-type reports.
+ *
+ * @param data - The audio bytes to analyze.
+ * @returns The extension and MIME type, or undefined if the format cannot be determined.
+ *
+ * @example
+ * ```typescript
+ * const format = await getAudioFormatFromUint8Data(bytes);
+ * // { extension: 'm4a', mimeType: 'audio/mp4' }
+ * ```
+ *
+ * @public
+ */
+export const getAudioFormatFromUint8Data = async (data: Uint8Array): Promise<AudioFormat | undefined> => {
+  const type = await fileTypeFromBuffer(data);
+
+  if (!type) return undefined;
+
+  const extension = AUDIO_EXTENSION_ALIASES[type.ext] ?? type.ext;
+
+  return { extension, mimeType: AUDIO_MIME_TYPES[extension] ?? type.mime };
+};
+
 /**
  * Validates a given URL string.
  *
