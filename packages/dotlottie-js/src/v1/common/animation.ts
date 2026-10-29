@@ -292,13 +292,26 @@ export class LottieAnimationCommonV1 {
 
     if (!animationAssets) throw new DotLottieError('Failed to extract image assets: No assets found inside animation');
 
+    const imageFileNames = new Set(this._imageAssets.map((image) => image.fileName));
+
     for (const asset of animationAssets) {
-      if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset) {
+      // Only an inline data URL is extracted. After a build `p` is the packaged file name, which can
+      // contain a comma when the asset id does, so splitting it on ',' is not enough to tell the two apart.
+      if ('w' in asset && 'h' in asset && !('xt' in asset) && 'p' in asset && asset.p.startsWith('data:')) {
+        // An id that starts with `data:` gives a packaged file name that does too.
+        if (
+          asset.e === 0 &&
+          asset.u === '/images/' &&
+          asset.p.lastIndexOf('.') > asset.p.indexOf(',') &&
+          imageFileNames.has(asset.p)
+        )
+          continue;
+
         const imageData = asset.p.split(',');
 
         // Image data is invalid
         if (!imageData.length || !imageData[0] || !imageData[1]) {
-          break;
+          continue;
         }
 
         let extType = null;
@@ -323,6 +336,7 @@ export class LottieAnimationCommonV1 {
           asset.p = fileName;
           asset.u = '/images/';
           asset.e = 0;
+          imageFileNames.add(fileName);
         }
       }
     }
