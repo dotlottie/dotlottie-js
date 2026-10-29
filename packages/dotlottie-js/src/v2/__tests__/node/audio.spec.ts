@@ -9,9 +9,10 @@ import type { Animation as AnimationType, Asset } from '@lottie-animation-commun
 import { strToU8, unzipSync, zipSync } from 'fflate';
 import { describe, it, expect } from 'vitest';
 
+import AUDIO_FORMATS from '../../../__tests__/__fixtures__/audio/formats.json';
 import AUDIO_ANIMATION_1_DATA from '../../../__tests__/__fixtures__/audio/instruments_1.json';
 import AUDIO_ANIMATION_2_DATA from '../../../__tests__/__fixtures__/audio/instruments_2.json';
-import { isAudioAsset } from '../../../utils';
+import { base64ToUint8Array, isAudioAsset } from '../../../utils';
 import { DotLottie, LottieAudio } from '../../index.node';
 
 // Minimal ID3v2.3 header — enough for file-type to detect as mp3
@@ -710,5 +711,55 @@ describe('LottieAudio', () => {
           expect(await audio[i]?.toDataURL()).toEqual(expectedData[i % 3]);
         }
       });
+  });
+});
+
+// Each fixture is labelled application/octet-stream, so only its bytes identify it.
+const AUDIO_FORMAT_CASES = [
+  ['mp3', 'mp3', 'audio/mpeg'],
+  ['wav', 'wav', 'audio/wav'],
+  ['flac', 'flac', 'audio/flac'],
+  ['ogg-vorbis', 'ogg', 'audio/ogg'],
+  ['ogg-opus', 'ogg', 'audio/ogg'],
+  ['m4a', 'm4a', 'audio/mp4'],
+  ['m4a-isom', 'm4a', 'audio/mp4'],
+] as const;
+
+describe.each(AUDIO_FORMAT_CASES)('%s audio', (fixture, extension, mimeType) => {
+  const dataUrl = AUDIO_FORMATS[fixture];
+
+  it(`renames to .${extension}`, async () => {
+    const audio = new LottieAudio({ id: 'audio_1', fileName: 'audio', data: dataUrl });
+
+    await audio.renameAudio('renamed');
+
+    expect(audio.fileName).toBe(`renamed.${extension}`);
+  });
+
+  it(`converts raw bytes to a ${mimeType} data URL`, async () => {
+    const bytes = base64ToUint8Array(dataUrl);
+    const audio = new LottieAudio({ id: 'audio_1', fileName: 'audio', data: bytes.slice().buffer });
+
+    expect((await audio.toDataURL()).split(',')[0]).toBe(`data:${mimeType};base64`);
+  });
+
+  it(`packages as u/*.${extension} and inlines as ${mimeType}`, async () => {
+    const dotLottie = new DotLottie().addAnimation({
+      id: 'animation_1',
+      data: animationDataWithAudio([{ id: 'sound', u: '', p: dataUrl, e: 1 }]),
+    });
+
+    await dotLottie.build();
+
+    const buffer = await dotLottie.toArrayBuffer();
+    const paths = Object.keys(unzipSync(new Uint8Array(buffer)));
+
+    expect(paths.filter((path) => path.startsWith('u/'))).toEqual([`u/sound.${extension}`]);
+
+    const loaded = await new DotLottie().fromArrayBuffer(buffer);
+    const animation = await loaded.getAnimation('animation_1', { inlineAssets: true });
+    const asset = animation?.data?.assets?.find((value) => isAudioAsset(value as Asset.Value)) as Asset.Sound;
+
+    expect(asset.p.split(',')[0]).toBe(`data:${mimeType};base64`);
   });
 });

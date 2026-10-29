@@ -9,7 +9,9 @@ import type { ZipOptions } from 'fflate';
 
 import type { AnimationData, ExportOptions } from '../../types';
 import {
+  base64ToUint8Array,
   DotLottieError,
+  getAudioFormatFromUint8Data,
   getExtensionTypeFromBase64,
   isAudioAsset,
   isFontDataUrl,
@@ -321,12 +323,8 @@ export class LottieAnimationCommon {
 
         if (!audioData) continue;
 
-        let extType = null;
-        const fileType = await getExtensionTypeFromBase64(asset.p);
-
-        extType = fileType;
-
-        const fileName = `${asset.id}.${extType}`;
+        const format = await getAudioFormatFromUint8Data(base64ToUint8Array(asset.p));
+        const fileName = `${asset.id}.${format?.extension}`;
 
         this._audioAssets.push(
           new LottieAudio({
