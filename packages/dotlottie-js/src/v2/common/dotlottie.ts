@@ -11,6 +11,7 @@ import type { ConversionOptions, GetAnimationOptions, ImageData } from '../../ty
 import {
   base64ToUint8Array,
   DotLottieError,
+  getAudioFormatFromUint8Data,
   getDotLottieVersion,
   getExtensionTypeFromBase64,
   isAudioAsset,
@@ -224,9 +225,9 @@ export class DotLottieCommon {
 
               const base64 = uint8ArrayToBase64(decompressedFile);
 
-              const ext = await getExtensionTypeFromBase64(base64);
+              const format = await getAudioFormatFromUint8Data(decompressedFile);
 
-              const audioDataURL = `data:audio/${ext};base64,${base64}`;
+              const audioDataURL = `data:${format?.mimeType ?? 'audio/mpeg'};base64,${base64}`;
 
               tmpAudio.push(
                 new LottieAudio({
