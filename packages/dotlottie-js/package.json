@@ -19,7 +19,7 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.9.0"
   },
   "main": "./dist/index.node.js",
   "exports": {
@@ -59,7 +59,7 @@
     "browser-image-hash": "^0.0.5",
     "fflate": "^0.8.3",
     "file-type": "^19.6.0",
-    "sharp": "^0.33.2",
+    "sharp": "^0.35.5",
     "sharp-phash": "^2.1.0",
     "valibot": "^0.13.1"
   },
