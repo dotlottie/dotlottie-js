@@ -942,36 +942,44 @@ export async function inlineImageAssets(
   dotLottie: Uint8Array,
   animations: Record<string, AnimationData>,
 ): Promise<void> {
-  const imagesMap = new Map<string, Set<string>>();
+  const stripExtension = (name: string): string => name.replace(/\.[^./]+$/u, '');
 
-  for (const [animationId, animationData] of Object.entries(animations)) {
+  // `getImages` keys the archive's files without their extension, while `asset.p` usually keeps it, and `asset.u`
+  // may name the directory (`images/`, `/images/`, `i/`, `/i/`) or be empty. Try every spelling of the same file.
+  const keysOf = (asset: { p: string; u?: string }): string[] => {
+    if (typeof asset.p !== 'string' || asset.p.startsWith('data:')) return [];
+
+    const relative = `${typeof asset.u === 'string' ? asset.u : ''}${asset.p}`
+      .replace(/^\/+/u, '')
+      .replace(/^(?:images|i)\//u, '');
+
+    return [...new Set([asset.p, stripExtension(asset.p), relative, stripExtension(relative)])];
+  };
+
+  const wanted = new Set<string>();
+
+  for (const animationData of Object.values(animations)) {
     for (const asset of animationData.assets || []) {
       if (isImageAsset(asset)) {
-        const imageId = asset.p;
-
-        if (!imagesMap.has(imageId)) {
-          imagesMap.set(imageId, new Set());
-        }
-        imagesMap.get(imageId)?.add(animationId);
+        for (const key of keysOf(asset)) wanted.add(key);
       }
     }
   }
 
-  const unzippedImages = await getImages(dotLottie, (file) => imagesMap.has(file.name));
+  const unzippedImages = await getImages(
+    dotLottie,
+    (file) => wanted.has(file.name) || wanted.has(stripExtension(file.name)),
+  );
 
-  for (const [imageId, animationIdsSet] of imagesMap) {
-    const imageDataURL = unzippedImages[imageId];
+  for (const animationData of Object.values(animations)) {
+    for (const asset of animationData.assets || []) {
+      if (isImageAsset(asset)) {
+        const hit = keysOf(asset).find((key) => unzippedImages[key]);
 
-    if (imageDataURL) {
-      for (const animationId of animationIdsSet) {
-        const animationData = animations[animationId];
-
-        for (const asset of animationData?.assets || []) {
-          if (isImageAsset(asset) && asset.p === imageId) {
-            asset.p = imageDataURL;
-            asset.u = '';
-            asset.e = 1;
-          }
+        if (hit !== undefined) {
+          asset.p = unzippedImages[hit] as string;
+          asset.u = '';
+          asset.e = 1;
         }
       }
     }
@@ -1297,9 +1305,16 @@ export async function getAnimation(
   { inlineAssets }: { inlineAssets?: boolean } = {},
   filter?: UnzipFileFilter,
 ): Promise<AnimationData | undefined> {
-  const animationFilename = `animations/${animationId}.json`;
+  // A v2 archive keeps its animations under `a/`; read the other directory when the first has no such file.
+  const directories = (await getDotLottieVersion(dotLottie)) === '2' ? ['a/', 'animations/'] : ['animations/', 'a/'];
 
-  const unzippedAnimation = await unzipDotLottieFile(dotLottie, animationFilename, filter);
+  let unzippedAnimation: Uint8Array | undefined;
+
+  for (const directory of directories) {
+    unzippedAnimation = await unzipDotLottieFile(dotLottie, `${directory}${animationId}.json`, filter);
+
+    if (unzippedAnimation !== undefined) break;
+  }
 
   if (typeof unzippedAnimation === 'undefined') {
     return undefined;
